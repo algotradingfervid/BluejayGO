@@ -1,0 +1,114 @@
+{{define "content"}}
+    <!-- Breadcrumb -->
+    <div class="max-w-[1200px] mx-auto px-4 py-4">
+        <nav class="flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
+            <a class="hover:text-[#0066CC]" href="/">Home</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <span class="text-[#0066CC]">Solutions</span>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="max-w-[1200px] mx-auto px-4 pb-12">
+        <div class="manual-border-thick p-8 md:p-12 bg-white manual-shadow-lg relative overflow-hidden">
+            <div class="absolute inset-0 grid-dotted pointer-events-none"></div>
+            <div class="absolute top-4 right-4 font-mono text-[10px] opacity-50 uppercase">Ref. Solutions v2026.01</div>
+            <div class="relative z-10 text-center">
+                <div class="inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase mb-4">
+                    {{.PageHero.Label}}
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black font-mono leading-none uppercase mb-6">
+                    {{.PageHero.Heading}}
+                </h1>
+                <p class="text-lg font-mono opacity-80 max-w-2xl mx-auto">
+                    {{.PageHero.Description}}
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industry Solutions Grid -->
+    <section class="max-w-[1200px] mx-auto px-4 py-12">
+        <div class="flex items-center gap-4 mb-8">
+            <h2 class="font-mono font-black text-2xl uppercase">{{.GridSection.Heading}}</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+            <span class="font-mono text-xs">{{.GridSection.Label}}</span>
+        </div>
+
+        {{if .Solutions}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {{range .Solutions}}
+            <a href="/solutions/{{.Slug}}" class="manual-border bg-white p-8 manual-shadow flex flex-col group hover:-translate-y-1 transition-transform">
+                <div class="w-16 h-16 manual-border bg-[#0066CC]/10 flex items-center justify-center mb-6 group-hover:bg-[#0066CC] transition-colors">
+                    <span class="material-symbols-outlined text-3xl text-[#0066CC] group-hover:text-white transition-colors">{{.Icon}}</span>
+                </div>
+                <h3 class="text-xl font-black uppercase mb-3">{{.Title}}</h3>
+                <p class="text-xs opacity-60 uppercase mb-6 flex-grow leading-relaxed">
+                    {{.ShortDescription}}
+                </p>
+                <div class="font-mono text-sm font-bold text-[#0066CC] flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                    Learn More <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </div>
+            </a>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="text-center py-12 text-sm opacity-60 uppercase">
+            No solutions available at this time.
+        </div>
+        {{end}}
+    </section>
+
+    <!-- Why Choose BlueJay -->
+    {{if .Features}}
+    <section class="bg-[#F5F5F0] py-20 px-4">
+        <div class="max-w-[1200px] mx-auto">
+            <div class="flex items-center gap-4 mb-12">
+                <h2 class="font-mono font-black text-2xl uppercase">{{.FeaturesSection.Heading}}</h2>
+                <div class="flex-grow h-[2px] bg-black/20"></div>
+                <span class="font-mono text-xs">{{.FeaturesSection.Label}}</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {{range .Features}}
+                <div class="manual-border bg-white p-6 manual-shadow flex flex-col items-center text-center">
+                    <div class="w-14 h-14 manual-border bg-[#0066CC] flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-2xl text-white">{{.Icon}}</span>
+                    </div>
+                    <h3 class="font-bold text-sm uppercase mb-2">{{.Title}}</h3>
+                    <p class="text-[10px] opacity-60 uppercase leading-relaxed">
+                        {{.Description}}
+                    </p>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- CTA Section -->
+    {{if .CTA}}{{if .CTA.IsActive.Bool}}
+    <section class="bg-[#0066CC] text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg relative overflow-hidden my-12">
+        <div class="absolute inset-0 grid-dotted opacity-10 pointer-events-none"></div>
+        <div class="max-w-3xl mx-auto text-center relative z-10">
+            <h2 class="font-mono font-black text-3xl md:text-4xl uppercase mb-6">{{.CTA.Heading}}</h2>
+            {{if .CTA.Subheading.Valid}}
+            <p class="font-mono text-lg opacity-90 mb-10 max-w-xl mx-auto">
+                {{.CTA.Subheading.String}}
+            </p>
+            {{end}}
+            <div class="flex flex-wrap justify-center gap-4">
+                {{if .CTA.PrimaryButtonText.Valid}}
+                <a href="{{.CTA.PrimaryButtonUrl.String}}" class="manual-border border-white bg-white text-[#0066CC] px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                    {{.CTA.PrimaryButtonText.String}}
+                </a>
+                {{end}}
+                {{if .CTA.SecondaryButtonText.Valid}}
+                <a href="{{.CTA.SecondaryButtonUrl.String}}" class="manual-border border-white bg-transparent text-white px-8 py-4 font-mono font-bold uppercase hover:bg-white/10 transition-colors inline-flex items-center">
+                    {{.CTA.SecondaryButtonText.String}}
+                </a>
+                {{end}}
+            </div>
+        </div>
+    </section>
+    {{end}}{{end}}
+{{end}}

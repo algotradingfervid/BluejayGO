@@ -1,0 +1,101 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-3xl">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold uppercase tracking-tight" style="font-family: 'JetBrains Mono', monospace;">Blog Settings</h1>
+                <p class="text-sm text-gray-600 mt-1" style="font-family: 'JetBrains Mono', monospace;">Control how blog posts are displayed on the public blog page.</p>
+            </div>
+
+            {{if .Saved}}
+            <div class="bg-green-100 border-2 border-black text-green-900 px-4 py-3 mb-6 font-bold uppercase text-sm" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                ✓ Blog settings saved successfully.
+            </div>
+            {{end}}
+
+            <form method="POST" action="/admin/blog/settings" class="space-y-6">
+
+                <!-- Display Options -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Display Options</h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">Toggle which elements are visible on blog posts and the listing page.</p>
+
+                    <div class="space-y-4">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="blog_show_author" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.BlogShowAuthor}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Show Author</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Display the author name and avatar on blog posts.">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="blog_show_date" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.BlogShowDate}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Show Publish Date</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Display the publish date on blog posts.">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="blog_show_categories" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.BlogShowCategories}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Category Filter</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Show the category filter on the blog listing page.">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="blog_show_tags" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.BlogShowTags}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Tag Cloud</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Show the tag cloud/filter on the blog listing page.">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="blog_show_search" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.BlogShowSearch}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Search Bar</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Show the search bar on the blog listing page.">info</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Pagination</h2>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Posts Per Page</label>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Number of blog posts shown per page on the public blog listing.">info</span>
+                        </div>
+                        <input type="number" name="blog_posts_per_page" value="{{.Settings.BlogPostsPerPage}}" min="3" max="50"
+                            class="w-32 px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                            style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex gap-3">
+                    <button type="submit"
+                        class="px-6 py-3 bg-black text-white font-bold uppercase text-sm border-2 border-black hover:bg-gray-800 active:translate-x-[2px] active:translate-y-[2px]"
+                        style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                        Save Settings
+                    </button>
+                    <a href="/admin/blog/posts"
+                        class="px-6 py-3 bg-white text-black font-bold uppercase text-sm border-2 border-black hover:bg-gray-100"
+                        style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,99 @@
+{{define "product_images"}}
+<div id="images-section" class="font-mono">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <h3 class="text-lg font-bold uppercase tracking-wider">Images</h3>
+            <div class="relative group">
+                <span class="inline-flex items-center justify-center w-5 h-5 border-2 border-black text-xs font-bold cursor-help bg-yellow-300" style="box-shadow: 2px 2px 0px #000;">?</span>
+                <div class="hidden group-hover:block absolute left-0 top-7 z-50 w-72 p-3 bg-white border-2 border-black text-xs" style="box-shadow: 4px 4px 0px #000;">
+                    Product gallery images. First image is used as the main product photo.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{if .Images}}
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        {{range $i, $img := .Images}}
+        <div class="border-2 border-black bg-white relative group" style="box-shadow: 3px 3px 0px #000;">
+            {{if $img.IsThumbnail}}
+            <div class="absolute top-0 left-0 z-10 bg-yellow-300 border-b-2 border-r-2 border-black px-2 py-1">
+                <span class="text-xs font-bold uppercase tracking-wider">Primary</span>
+            </div>
+            {{end}}
+            <div class="relative overflow-hidden">
+                <img src="{{$img.ImagePath}}" alt="{{if $img.AltText.Valid}}{{$img.AltText.String}}{{else}}Product image{{end}}" class="w-full h-40 object-cover">
+                <!-- Hover overlay -->
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+                    {{if not $img.IsThumbnail}}
+                    <button hx-post="/admin/products/{{$.ProductID}}/images/{{$img.ID}}/primary"
+                            hx-target="#images-section"
+                            hx-swap="outerHTML"
+                            class="bg-yellow-300 border-2 border-black px-3 py-1 text-xs font-bold uppercase hover:bg-yellow-400" style="box-shadow: 2px 2px 0px #000;">
+                        Set Primary
+                    </button>
+                    {{end}}
+                    <button hx-delete="/admin/products/{{$.ProductID}}/images/{{$img.ID}}"
+                            hx-target="#images-section"
+                            hx-swap="outerHTML"
+                            hx-confirm="Delete this image?"
+                            class="bg-red-500 text-white border-2 border-black px-3 py-1 text-xs font-bold uppercase hover:bg-red-600" style="box-shadow: 2px 2px 0px #000;">
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <div class="px-3 py-2 border-t-2 border-black">
+                {{if $img.AltText.Valid}}<div class="text-xs text-gray-600 truncate">{{$img.AltText.String}}</div>{{end}}
+                <div class="text-xs text-gray-400 font-bold">#{{$img.DisplayOrder}}</div>
+            </div>
+        </div>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="border-2 border-dashed border-gray-400 p-8 text-center mb-6">
+        <p class="text-gray-500 text-sm uppercase tracking-wider">No images added yet. Click 'Add Images' to get started.</p>
+    </div>
+    {{end}}
+
+    <!-- Add Image Form -->
+    <form hx-post="/admin/products/{{.ProductID}}/images"
+          hx-target="#images-section"
+          hx-swap="outerHTML"
+          hx-encoding="multipart/form-data"
+          class="border-2 border-black p-4 space-y-3 bg-gray-50" style="box-shadow: 4px 4px 0px #000;">
+        <h4 class="text-sm font-bold uppercase tracking-wider">Add Images</h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Alt Text</label>
+                <input type="text" name="alt_text" placeholder="Image description"
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Caption</label>
+                <input type="text" name="caption" placeholder="Optional caption"
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
+                <input type="number" name="display_order" placeholder="0" value="0"
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div class="flex items-end">
+                <label class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider border-2 border-black px-3 py-2 bg-white cursor-pointer w-full">
+                    <input type="checkbox" name="is_thumbnail" value="1" class="border-2 border-black">
+                    Primary
+                </label>
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-wider mb-1">Image File *</label>
+            <input type="file" name="image" accept="image/*" required
+                   class="w-full text-sm border-2 border-black p-2 bg-white file:mr-3 file:py-1 file:px-3 file:border-2 file:border-black file:bg-black file:text-white file:font-bold file:text-xs file:uppercase file:cursor-pointer">
+        </div>
+        <button type="submit" class="bg-black text-white px-6 py-2 text-sm font-bold uppercase tracking-wider border-2 border-black hover:bg-white hover:text-black transition-colors" style="box-shadow: 3px 3px 0px #000;">
+            + Add Image
+        </button>
+    </form>
+</div>
+{{end}}

@@ -1,0 +1,170 @@
+{{define "content"}}
+    <!-- Breadcrumb -->
+    <div class="max-w-[1200px] mx-auto px-4 py-4">
+        <nav class="flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
+            <a class="hover:text-[#0066CC]" href="/">Home</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <span class="text-[#0066CC]">Blog</span>
+        </nav>
+    </div>
+
+    <!-- Page Header -->
+    <section class="max-w-[1200px] mx-auto px-4 pb-8">
+        <div class="manual-border-thick p-8 md:p-12 bg-white manual-shadow-lg relative overflow-hidden">
+            <div class="absolute inset-0 grid-dotted pointer-events-none"></div>
+            <div class="relative z-10 text-center">
+                <div class="inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase mb-4">Blog</div>
+                <h1 class="text-4xl md:text-6xl font-black font-mono leading-none uppercase mb-4">BlueJay Insights</h1>
+                <p class="text-lg font-mono opacity-80 max-w-2xl mx-auto">Stay updated with industry trends, product news, and expert guides</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Post Hero -->
+    {{if .FeaturedPost.ID}}
+    <section class="max-w-[1200px] mx-auto px-4 pb-12">
+        <a href="/blog/{{.FeaturedPost.Slug}}" class="block manual-border-thick bg-white manual-shadow-lg overflow-hidden group hover:-translate-y-1 transition-transform">
+            <div class="grid md:grid-cols-2">
+                <div class="aspect-[16/10] md:aspect-auto relative overflow-hidden">
+                    {{if .FeaturedPost.FeaturedImageUrl.Valid}}
+                    <img src="{{.FeaturedPost.FeaturedImageUrl.String}}" alt="{{if .FeaturedPost.FeaturedImageAlt.Valid}}{{.FeaturedPost.FeaturedImageAlt.String}}{{end}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500">
+                    {{else}}
+                    <div class="w-full h-full bg-gray-100 flex items-center justify-center min-h-[300px]">
+                        <span class="material-symbols-outlined text-6xl opacity-20">article</span>
+                    </div>
+                    {{end}}
+                    <div class="absolute top-4 left-4 px-3 py-1 text-white text-xs font-bold uppercase" style="background-color: {{.FeaturedPost.CategoryColor}}">{{.FeaturedPost.CategoryName}}</div>
+                </div>
+                <div class="p-8 flex flex-col justify-center">
+                    <div class="inline-block bg-black text-white px-2 py-0.5 text-[10px] font-bold uppercase mb-4 w-fit">Featured</div>
+                    <h2 class="text-2xl md:text-3xl font-black font-mono uppercase mb-4 leading-tight">{{.FeaturedPost.Title}}</h2>
+                    <p class="font-mono text-sm opacity-70 mb-6 line-clamp-3">{{.FeaturedPost.Excerpt}}</p>
+                    <div class="flex items-center gap-4 text-xs font-mono opacity-60">
+                        {{if .FeaturedPost.AuthorAvatar.Valid}}
+                        <img src="{{.FeaturedPost.AuthorAvatar.String}}" alt="{{.FeaturedPost.AuthorName}}" class="w-6 h-6 rounded-full object-cover">
+                        {{end}}
+                        <span>{{.FeaturedPost.AuthorName}}</span>
+                        {{if .FeaturedPost.PublishedAt.Valid}}<span>{{formatDate .FeaturedPost.PublishedAt.Time ""}}</span>{{end}}
+                        {{if .FeaturedPost.ReadingTimeMinutes.Valid}}<span>{{.FeaturedPost.ReadingTimeMinutes.Int64}} min read</span>{{end}}
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+    {{end}}
+
+    <!-- Category Filter Tabs -->
+    <section class="max-w-[1200px] mx-auto px-4 pb-8">
+        <div class="flex items-center gap-4 mb-6">
+            <h2 class="font-mono font-black text-lg uppercase">Filter by Category</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="/blog" class="manual-border px-4 py-2 text-xs font-bold uppercase font-mono {{if not .CurrentCategory}}bg-black text-white{{else}}bg-white hover:bg-gray-100{{end}} transition-colors">All Posts</a>
+            {{range .Categories}}
+            <a href="/blog?category={{.Slug}}" class="manual-border px-4 py-2 text-xs font-bold uppercase font-mono flex items-center gap-2 {{if eq $.CurrentCategory .Slug}}bg-black text-white{{else}}bg-white hover:bg-gray-100{{end}} transition-colors">
+                <span class="w-2 h-2 rounded-full" style="background: {{.ColorHex}}"></span>
+                {{.Name}}
+            </a>
+            {{end}}
+        </div>
+    </section>
+
+    <!-- Blog Posts Grid -->
+    <section class="max-w-[1200px] mx-auto px-4 pb-12">
+        {{if .CurrentCategory}}
+            {{if .CatPosts}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {{range .CatPosts}}
+                <article class="manual-border-thick bg-white manual-shadow group hover:-translate-y-1 transition-transform">
+                    <a href="/blog/{{.Slug}}" class="block">
+                        <div class="aspect-[16/10] relative overflow-hidden">
+                            {{if .FeaturedImageUrl.Valid}}
+                            <img src="{{.FeaturedImageUrl.String}}" alt="{{if .FeaturedImageAlt.Valid}}{{.FeaturedImageAlt.String}}{{end}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500">
+                            {{else}}
+                            <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-4xl opacity-20">article</span>
+                            </div>
+                            {{end}}
+                            <div class="absolute top-3 left-3 px-2 py-0.5 text-white text-[10px] font-bold uppercase" style="background-color: {{.CategoryColor}}">{{.CategoryName}}</div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-black font-mono uppercase text-lg mb-2 leading-tight">{{.Title}}</h3>
+                            <p class="font-mono text-xs opacity-60 mb-4 line-clamp-2">{{.Excerpt}}</p>
+                            <div class="flex items-center gap-3 border-t border-gray-200 pt-4">
+                                {{if .AuthorAvatar.Valid}}
+                                <img src="{{.AuthorAvatar.String}}" alt="{{.AuthorName}}" class="w-8 h-8 rounded-full object-cover">
+                                {{end}}
+                                <div>
+                                    <div class="text-xs font-bold">{{.AuthorName}}</div>
+                                    <div class="text-[10px] opacity-60">
+                                        {{if .PublishedAt.Valid}}{{formatDate .PublishedAt.Time ""}}{{end}}
+                                        {{if .ReadingTimeMinutes.Valid}} | {{.ReadingTimeMinutes.Int64}} min read{{end}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </article>
+                {{end}}
+            </div>
+            {{else}}
+            <div class="manual-border bg-white p-12 text-center manual-shadow">
+                <span class="material-symbols-outlined text-6xl opacity-20 block mb-4">article</span>
+                <p class="font-mono text-lg uppercase font-bold opacity-60">No posts found in this category</p>
+            </div>
+            {{end}}
+        {{else}}
+            {{if .Posts}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {{range .Posts}}
+                <article class="manual-border-thick bg-white manual-shadow group hover:-translate-y-1 transition-transform">
+                    <a href="/blog/{{.Slug}}" class="block">
+                        <div class="aspect-[16/10] relative overflow-hidden">
+                            {{if .FeaturedImageUrl.Valid}}
+                            <img src="{{.FeaturedImageUrl.String}}" alt="{{if .FeaturedImageAlt.Valid}}{{.FeaturedImageAlt.String}}{{end}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500">
+                            {{else}}
+                            <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-4xl opacity-20">article</span>
+                            </div>
+                            {{end}}
+                            <div class="absolute top-3 left-3 px-2 py-0.5 text-white text-[10px] font-bold uppercase" style="background-color: {{.CategoryColor}}">{{.CategoryName}}</div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-black font-mono uppercase text-lg mb-2 leading-tight">{{.Title}}</h3>
+                            <p class="font-mono text-xs opacity-60 mb-4 line-clamp-2">{{.Excerpt}}</p>
+                            <div class="flex items-center gap-3 border-t border-gray-200 pt-4">
+                                {{if .AuthorAvatar.Valid}}
+                                <img src="{{.AuthorAvatar.String}}" alt="{{.AuthorName}}" class="w-8 h-8 rounded-full object-cover">
+                                {{end}}
+                                <div>
+                                    <div class="text-xs font-bold">{{.AuthorName}}</div>
+                                    <div class="text-[10px] opacity-60">
+                                        {{if .PublishedAt.Valid}}{{formatDate .PublishedAt.Time ""}}{{end}}
+                                        {{if .ReadingTimeMinutes.Valid}} | {{.ReadingTimeMinutes.Int64}} min read{{end}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </article>
+                {{end}}
+            </div>
+            {{else}}
+            <div class="manual-border bg-white p-12 text-center manual-shadow">
+                <span class="material-symbols-outlined text-6xl opacity-20 block mb-4">article</span>
+                <p class="font-mono text-lg uppercase font-bold opacity-60">No posts found</p>
+            </div>
+            {{end}}
+        {{end}}
+    </section>
+
+    <!-- Pagination -->
+    {{if gt .TotalPages 1}}
+    <section class="max-w-[1200px] mx-auto px-4 pb-12">
+        <div class="flex justify-center items-center gap-4">
+            <span class="manual-border bg-white px-6 py-3 font-mono text-xs font-bold uppercase">Page {{.Page}} of {{.TotalPages}}</span>
+        </div>
+    </section>
+    {{end}}
+{{end}}

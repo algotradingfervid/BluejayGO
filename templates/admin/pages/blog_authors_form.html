@@ -1,0 +1,80 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <div class="max-w-2xl">
+            <h1 class="text-2xl font-bold uppercase tracking-tight mb-6">{{.Title}}</h1>
+            <form method="POST" action="{{.FormAction}}" class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Name
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="Author's display name as shown on blog posts.">ⓘ</span>
+                    </label>
+                    <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Title
+                    </label>
+                    <input type="text" name="title" value="{{if .Item}}{{.Item.Title}}{{end}}" placeholder="Senior Content Writer"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Email
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="Author's email. Not displayed publicly, used for Gravatar.">ⓘ</span>
+                    </label>
+                    <input type="email" name="email" value="{{if .Item}}{{.Item.Email.String}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Bio
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="Short author biography shown on blog posts. Keep to 2-3 sentences.">ⓘ</span>
+                    </label>
+                    <textarea name="bio" rows="4"
+                              class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Bio.String}}{{end}}</textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Avatar URL
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="URL to author's profile photo. Leave blank to auto-generate from initials.">ⓘ</span>
+                    </label>
+                    <input type="url" name="avatar_url" value="{{if .Item}}{{.Item.AvatarUrl.String}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">LinkedIn URL</label>
+                    <input type="url" name="linkedin_url" value="{{if .Item}}{{.Item.LinkedinUrl.String}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                    <input type="number" name="sort_order" value="{{if .Item}}{{.Item.SortOrder}}{{else}}0{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t-2 border-black">
+                    <a href="/admin/blog-authors"
+                       class="bg-white text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100"
+                       style="box-shadow: 2px 2px 0px #000;">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                            style="box-shadow: 4px 4px 0px #000;">
+                        Save Author
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

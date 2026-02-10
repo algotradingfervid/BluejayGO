@@ -1,0 +1,96 @@
+{{define "product_specs"}}
+<div id="specs-section" class="font-mono">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <h3 class="text-lg font-bold uppercase tracking-wider">Specifications</h3>
+            <div class="relative group">
+                <span class="inline-flex items-center justify-center w-5 h-5 border-2 border-black text-xs font-bold cursor-help bg-yellow-300" style="box-shadow: 2px 2px 0px #000;">?</span>
+                <div class="hidden group-hover:block absolute left-0 top-7 z-50 w-72 p-3 bg-white border-2 border-black text-xs" style="box-shadow: 4px 4px 0px #000;">
+                    Add a technical specification. Use Label for the spec name and Value for the measurement. Specs are grouped by category.
+                </div>
+            </div>
+        </div>
+        {{if .Specs}}
+        <button hx-delete="/admin/products/{{.ProductID}}/specs"
+                hx-target="#specs-section"
+                hx-swap="outerHTML"
+                hx-confirm="Delete all specs for this product?"
+                class="text-xs uppercase font-bold tracking-wider px-3 py-1 border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition-colors">Delete All</button>
+        {{end}}
+    </div>
+
+    {{if .Specs}}
+    <!-- Specs grouped by section -->
+    <div class="space-y-4 mb-6">
+        {{$currentSection := ""}}
+        {{range .Specs}}
+            {{if ne .SectionName $currentSection}}
+                {{if ne $currentSection ""}}
+                    </div></div>
+                {{end}}
+                {{$currentSection = .SectionName}}
+                <div class="border-2 border-black" style="box-shadow: 3px 3px 0px #000;">
+                    <button type="button" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.collapse-icon').textContent = this.nextElementSibling.classList.contains('hidden') ? '+' : '−';"
+                            class="w-full flex items-center justify-between px-4 py-3 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer text-left">
+                        <span class="font-bold uppercase tracking-wider text-sm">{{.SectionName}}</span>
+                        <span class="collapse-icon font-bold text-lg">−</span>
+                    </button>
+                    <div class="border-t-2 border-black">
+            {{end}}
+            <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-300 last:border-b-0 group">
+                <div class="flex-1 grid grid-cols-2 gap-3">
+                    <div class="text-sm font-bold">{{.SpecKey}}</div>
+                    <div class="text-sm text-gray-700">{{.SpecValue}}</div>
+                </div>
+                <button hx-delete="/admin/products/{{$.ProductID}}/specs/{{.ID}}"
+                        hx-target="#specs-section"
+                        hx-swap="outerHTML"
+                        hx-confirm="Delete this spec?"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase">&#x2715;</button>
+            </div>
+        {{end}}
+        {{if .Specs}}
+            </div></div>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="border-2 border-dashed border-gray-400 p-8 text-center mb-6">
+        <p class="text-gray-500 text-sm uppercase tracking-wider">No specifications added yet. Click 'Add Spec' to get started.</p>
+    </div>
+    {{end}}
+
+    <!-- Add Spec Form -->
+    <form hx-post="/admin/products/{{.ProductID}}/specs"
+          hx-target="#specs-section"
+          hx-swap="outerHTML"
+          class="border-2 border-black p-4 space-y-3 bg-gray-50" style="box-shadow: 4px 4px 0px #000;">
+        <h4 class="text-sm font-bold uppercase tracking-wider">Add Specification</h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Section</label>
+                <input type="text" name="section_name" placeholder="e.g. Motor" required
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Label</label>
+                <input type="text" name="spec_key" placeholder="e.g. Voltage" required
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Value</label>
+                <input type="text" name="spec_value" placeholder="e.g. 24V DC" required
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
+                <input type="number" name="display_order" placeholder="0" value="0"
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+        </div>
+        <button type="submit" class="bg-black text-white px-6 py-2 text-sm font-bold uppercase tracking-wider border-2 border-black hover:bg-white hover:text-black transition-colors" style="box-shadow: 3px 3px 0px #000;">
+            + Add Spec
+        </button>
+    </form>
+</div>
+{{end}}

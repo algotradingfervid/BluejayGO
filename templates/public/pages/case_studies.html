@@ -1,0 +1,153 @@
+{{define "content"}}
+{{template "header" .}}
+
+<!-- Breadcrumb -->
+<nav class="bg-white manual-border-b">
+  <div class="container mx-auto px-4 py-3">
+    <ol class="flex items-center space-x-2 text-sm font-mono uppercase">
+      <li><a href="/" class="text-gray-600 hover:text-black">Home</a></li>
+      <li class="text-gray-400">/</li>
+      <li class="text-black font-bold">Case Studies</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<section class="bg-white py-16 manual-border-b">
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-block bg-black text-white px-4 py-2 manual-border manual-shadow text-sm font-mono uppercase mb-6">
+        Success Stories
+      </div>
+      <h1 class="text-5xl md:text-6xl font-bold font-mono uppercase mb-6">Case Studies</h1>
+      <p class="text-xl text-gray-600 font-mono">
+        REAL RESULTS FROM REAL CLIENTS. EXPLORE HOW WE'VE HELPED BUSINESSES TRANSFORM AND SUCCEED.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Filter and Grid Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+
+    <!-- Filter Bar -->
+    <div class="max-w-7xl mx-auto mb-12">
+      <div class="bg-white manual-border manual-shadow-lg p-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <span class="material-symbols-outlined text-2xl">filter_list</span>
+            <h2 class="text-xl font-bold font-mono uppercase">Filter By Industry</h2>
+          </div>
+
+          <form method="GET" action="/case-studies" class="flex items-center gap-4">
+            <select name="industry" onchange="this.form.submit()" class="bg-white manual-border px-4 py-3 font-mono uppercase text-sm focus:outline-none focus:manual-shadow">
+              <option value="">All Industries</option>
+              {{range .Industries}}
+              <option value="{{.ID}}" {{if eq $.SelectedIndustryID .ID}}selected{{end}}>{{.Name}}</option>
+              {{end}}
+            </select>
+          </form>
+
+          <div class="text-sm font-mono uppercase text-gray-600">
+            <span class="font-bold text-black">{{.TotalCount}}</span> Case {{if eq .TotalCount 1}}Study{{else}}Studies{{end}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case Studies Grid -->
+    {{if .CaseStudies}}
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {{range .CaseStudies}}
+      <a href="/case-studies/{{.Slug}}" class="group bg-white manual-border manual-shadow hover:manual-shadow-lg transition-all duration-200 hover:-translate-y-1">
+        <!-- Hero Image -->
+        {{if .HeroImageUrl.Valid}}
+        <div class="aspect-video overflow-hidden manual-border-b">
+          <img src="{{.HeroImageUrl.String}}" alt="{{.Title}}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300">
+        </div>
+        {{else}}
+        <div class="aspect-video bg-gray-200 manual-border-b flex items-center justify-center">
+          <span class="material-symbols-outlined text-6xl text-gray-400">business</span>
+        </div>
+        {{end}}
+
+        <!-- Card Content -->
+        <div class="p-6">
+          <!-- Industry Tag -->
+          {{if .IndustryName}}
+          <div class="mb-4">
+            <span class="inline-block tag-{{.IndustrySlug}} px-3 py-1 manual-border text-xs font-mono uppercase font-bold">
+              {{.IndustryName}}
+            </span>
+          </div>
+          {{end}}
+
+          <!-- Title -->
+          <h3 class="text-2xl font-bold font-mono uppercase mb-3 group-hover:text-[#0066CC] transition-colors">
+            {{.Title}}
+          </h3>
+
+          <!-- Client Name -->
+          {{if .ClientName}}
+          <p class="text-sm font-mono uppercase text-gray-500 mb-3">Client: {{.ClientName}}</p>
+          {{end}}
+
+          <!-- Summary -->
+          <p class="text-gray-600 font-mono mb-6 line-clamp-3">
+            {{.Summary}}
+          </p>
+
+          <!-- Read More Link -->
+          <div class="flex items-center gap-2 text-sm font-mono uppercase font-bold group-hover:translate-x-2 transition-transform">
+            <span>Read More</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </div>
+        </div>
+      </a>
+      {{end}}
+    </div>
+    {{else}}
+    <!-- Empty State -->
+    <div class="max-w-2xl mx-auto text-center py-16">
+      <div class="bg-white manual-border manual-shadow-lg p-12">
+        <span class="material-symbols-outlined text-8xl text-gray-300 mb-6 block">folder_open</span>
+        <h3 class="text-2xl font-bold font-mono uppercase mb-4">No Case Studies Found</h3>
+        <p class="text-gray-600 font-mono mb-6">
+          {{if .SelectedIndustryID}}
+          No case studies available for the selected industry. Try selecting a different filter.
+          {{else}}
+          Check back soon for success stories from our clients.
+          {{end}}
+        </p>
+        {{if .SelectedIndustryID}}
+        <a href="/case-studies" class="inline-block bg-black text-white px-6 py-3 manual-border manual-shadow hover:manual-shadow-lg font-mono uppercase text-sm font-bold hover:-translate-y-1 transition-all btn-press">
+          Clear Filter
+        </a>
+        {{end}}
+      </div>
+    </div>
+    {{end}}
+
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-[#0066CC] py-16 manual-border-t-thick">
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto text-center text-white">
+      <h2 class="text-4xl md:text-5xl font-bold font-mono uppercase mb-6">
+        Ready To Write Your Success Story?
+      </h2>
+      <p class="text-xl font-mono mb-8 opacity-90">
+        LET'S DISCUSS HOW WE CAN HELP YOUR BUSINESS ACHIEVE SIMILAR RESULTS.
+      </p>
+      <a href="/contact" class="inline-block bg-white text-[#0066CC] px-8 py-4 manual-border manual-shadow-lg hover:manual-shadow font-mono uppercase text-lg font-bold hover:-translate-y-1 transition-all btn-press">
+        Get Started
+      </a>
+    </div>
+  </div>
+</section>
+
+{{template "footer" .}}
+{{end}}

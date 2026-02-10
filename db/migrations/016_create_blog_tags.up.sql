@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS blog_tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_blog_tags_slug ON blog_tags(slug);

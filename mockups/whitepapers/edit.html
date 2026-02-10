@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Whitepaper - BluejayPOS CMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="../../components/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../components/tailwind.config.js"></script>
+</head>
+<body class="font-display bg-grid-white text-text-primary">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar-light fixed lg:sticky top-0 left-0 h-screen z-50 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <span class="sidebar-logo-text">BLUEJAY</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Content</div>
+                    <a href="../dashboard/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="../homepage/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">home</span>
+                        Homepage
+                    </a>
+                    <a href="../about/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">info</span>
+                        About Us
+                    </a>
+                    <a href="../products/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">inventory_2</span>
+                        Products
+                    </a>
+                    <a href="../solutions/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">lightbulb</span>
+                        Solutions
+                    </a>
+                    <a href="../blog/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">article</span>
+                        Blog
+                    </a>
+                    <a href="../case-studies/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">cases</span>
+                        Case Studies
+                    </a>
+                    <a href="../whitepapers/list.html" class="sidebar-item active">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu_book</span>
+                        Whitepapers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Resources</div>
+                    <a href="../partners/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">handshake</span>
+                        Partners
+                    </a>
+                    <a href="../testimonials/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">format_quote</span>
+                        Testimonials
+                    </a>
+                    <a href="../certifications/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">verified</span>
+                        Certifications
+                    </a>
+                </div>                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Global Elements</div>
+                    <a href="../header/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">web_asset</span>
+                        Header
+                    </a>
+                    <a href="../footer/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">call_to_action</span>
+                        Footer
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="../media/library.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">perm_media</span>
+                        Media
+                    </a>
+                    <a href="../forms/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">mail</span>
+                        Forms
+                        <span class="sidebar-item-badge">3</span>
+                    </a>
+                    <a href="../navigation/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu</span>
+                        Navigation
+                    </a>
+                    <a href="../users/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">group</span>
+                        Users
+                    </a>
+                    <a href="../settings/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User Footer -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">JS</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">John Smith</div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button (Mobile) -->
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 p-2 lg:hidden manual-border bg-white hover:bg-[var(--color-background-light)]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-h-screen">
+            <!-- Top Navigation Bar -->
+            <header class="h-16 bg-white manual-border-thick border-t-0 border-l-0 border-r-0 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+                <!-- Left side - Hamburger (mobile) -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 manual-border hover:bg-[var(--color-background-light)] lg:hidden">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="font-display font-extrabold uppercase lg:hidden">BLUEJAY</span>
+                </div>
+
+                <!-- Right side - Actions -->
+                <div class="flex items-center gap-2">
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-warning)] text-black text-[10px] font-bold flex items-center justify-center manual-border">3</span>
+                    </button>
+                </div>
+            </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 bg-grid-white">
+            <div class="p-6 lg:p-8">
+
+                <!-- Back Link -->
+                <a href="list.html" class="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-primary mb-6 font-mono">
+                    <span class="material-symbols-outlined text-lg">arrow_back</span>
+                    Back to Whitepapers
+                </a>
+
+                <!-- Page Header -->
+                <div class="page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-4">
+                        <h1 class="page-header-title text-2xl font-bold text-text-primary font-display">Edit Whitepaper</h1>
+                        <span class="status-badge status-badge-published">Live</span>
+                    </div>
+                    <div class="page-header-actions flex items-center gap-3">
+                        <button class="btn btn-secondary px-4 py-2 border-2 border-black bg-white hover:bg-gray-100 font-mono font-bold uppercase text-sm">
+                            Save Draft
+                        </button>
+                        <button class="btn btn-primary manual-border bg-primary text-white px-6 py-2 font-mono font-bold uppercase text-sm manual-shadow btn-press">
+                            Publish
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Two Column Layout -->
+                <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+
+                    <!-- Main Content Column -->
+                    <div class="xl:col-span-3 space-y-6">
+
+                        <!-- Basic Information -->
+                        <div class="content-card bg-white border-2 border-black">
+                            <div class="px-6 py-4 border-b-2 border-black bg-gray-50">
+                                <h2 class="font-bold text-lg uppercase font-mono">Basic Information</h2>
+                            </div>
+                            <div class="p-6 space-y-6">
+                                <!-- Title -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-2">
+                                        Title <span class="text-error-red">*</span>
+                                    </label>
+                                    <input type="text" value="2025 Retail POS Trends Report" class="form-input w-full px-4 py-3 border-2 border-black font-mono focus:outline-none focus:border-primary" placeholder="Enter whitepaper title">
+                                </div>
+
+                                <!-- Slug -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-2">
+                                        Slug <span class="text-error-red">*</span>
+                                    </label>
+                                    <div class="flex">
+                                        <span class="px-4 py-3 border-2 border-r-0 border-black bg-gray-100 text-text-secondary text-sm font-mono">/whitepapers/</span>
+                                        <input type="text" value="2025-retail-pos-trends-report" class="form-input flex-1 px-4 py-3 border-2 border-black font-mono focus:outline-none focus:border-primary" placeholder="url-friendly-slug">
+                                    </div>
+                                    <button class="text-xs text-primary font-mono mt-1 hover:underline">Auto-generate from title</button>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-2">
+                                        Description <span class="text-error-red">*</span>
+                                    </label>
+                                    <!-- Rich Text Editor Toolbar -->
+                                    <div class="flex flex-wrap gap-1 p-2 border-2 border-b-0 border-black bg-gray-50">
+                                        <button class="p-1.5 border-2 border-black bg-primary text-white" title="Bold">
+                                            <span class="material-symbols-outlined text-lg">format_bold</span>
+                                        </button>
+                                        <button class="p-1.5 border-2 border-black bg-white hover:bg-gray-100" title="Italic">
+                                            <span class="material-symbols-outlined text-lg">format_italic</span>
+                                        </button>
+                                        <button class="p-1.5 border-2 border-black bg-white hover:bg-gray-100" title="Underline">
+                                            <span class="material-symbols-outlined text-lg">format_underlined</span>
+                                        </button>
+                                        <span class="w-px h-8 bg-black mx-1"></span>
+                                        <button class="p-1.5 border-2 border-black bg-white hover:bg-gray-100" title="Heading 1">
+                                            <span class="text-xs font-bold font-mono">H1</span>
+                                        </button>
+                                        <button class="p-1.5 border-2 border-black bg-white hover:bg-gray-100" title="Heading 2">
+                                            <span class="text-xs font-bold font-mono">H2</span>
+                                        </button>
+                                        <span class="w-px h-8 bg-black mx-1"></span>
+                                        <button class="p-1.5 border-2 border-black bg-white hover:bg-gray-100" title="Bullet List">
+                                            <span class="material-symbols-outlined text-lg">format_list_bulleted</span>
+                                        </button>
+                                        <button class="p-1.5 border-2 border-black bg-white hover:bg-gray-100" title="Numbered List">
+                                            <span class="material-symbols-outlined text-lg">format_list_numbered</span>
+                                        </button>
+                                        <span class="w-px h-8 bg-black mx-1"></span>
+                                        <button class="p-1.5 border-2 border-black bg-white hover:bg-gray-100" title="Link">
+                                            <span class="material-symbols-outlined text-lg">link</span>
+                                        </button>
+                                        <button class="p-1.5 border-2 border-black bg-white hover:bg-gray-100" title="Image">
+                                            <span class="material-symbols-outlined text-lg">image</span>
+                                        </button>
+                                        <span class="w-px h-8 bg-black mx-1"></span>
+                                        <button class="p-1.5 border-2 border-black bg-white hover:bg-gray-100" title="Code">
+                                            <span class="material-symbols-outlined text-lg">code</span>
+                                        </button>
+                                    </div>
+                                    <div class="form-textarea border-2 border-black min-h-[200px] p-4 bg-white focus-within:border-primary">
+                                        <div contenteditable="true" class="outline-none min-h-[150px] font-mono text-sm">
+                                            <p>Discover the latest trends shaping the retail POS industry in 2025. This comprehensive report covers:</p>
+                                            <ul class="list-disc ml-5 mt-2 space-y-1">
+                                                <li>Cloud-native POS adoption rates</li>
+                                                <li>Mobile payment integration trends</li>
+                                                <li>AI and automation in retail</li>
+                                                <li>Security and compliance updates</li>
+                                            </ul>
+                                            <p class="mt-2">Download now to stay ahead of the curve.</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-text-secondary mt-1 font-mono">Word count: 45</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- File Upload Section -->
+                        <div class="content-card bg-white border-2 border-black">
+                            <div class="px-6 py-4 border-b-2 border-black bg-gray-50">
+                                <h2 class="font-bold text-lg uppercase font-mono">File Upload</h2>
+                            </div>
+                            <div class="p-6 space-y-6">
+
+                                <!-- PDF Upload -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-2">
+                                        PDF File <span class="text-error-red">*</span>
+                                    </label>
+
+                                    <!-- Current File Display -->
+                                    <div class="border-2 border-black p-4 bg-gray-50">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-16 h-16 bg-red-100 border-2 border-black flex items-center justify-center shrink-0">
+                                                <span class="material-symbols-outlined text-red-600 text-3xl">picture_as_pdf</span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="font-mono font-bold">2025-retail-pos-trends.pdf</div>
+                                                <div class="text-sm text-text-secondary font-mono">2.4 MB | 24 pages</div>
+                                                <div class="text-xs text-text-secondary mt-1 font-mono">Uploaded Jan 28, 2025</div>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <button class="btn btn-secondary px-3 py-2 border-2 border-black bg-white hover:bg-gray-100 text-xs font-mono font-bold uppercase">
+                                                    Replace
+                                                </button>
+                                                <button class="btn btn-secondary px-3 py-2 border-2 border-black bg-white hover:bg-gray-100 text-xs font-mono font-bold uppercase">
+                                                    Download
+                                                </button>
+                                                <button class="btn btn-secondary px-3 py-2 border-2 border-black bg-white hover:bg-error-red hover:text-white text-xs font-mono font-bold uppercase">
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Upload Zone (Hidden when file exists, shown for reference) -->
+                                    <div class="file-drop-zone p-8 text-center mt-4 hidden border-2 border-dashed border-gray-400 hover:border-primary">
+                                        <span class="material-symbols-outlined text-5xl text-gray-400 mb-3">cloud_upload</span>
+                                        <p class="font-mono font-bold mb-1">Drag & drop PDF file here</p>
+                                        <p class="text-sm text-text-secondary mb-4 font-mono">or</p>
+                                        <button class="btn btn-secondary px-4 py-2 border-2 border-black bg-white hover:bg-gray-100 text-sm font-mono font-bold uppercase">
+                                            Browse Files
+                                        </button>
+                                    </div>
+
+                                    <p class="text-xs text-text-secondary mt-2 font-mono">Accepted formats: PDF only | Max size: 50MB</p>
+                                </div>
+
+                                <!-- Cover Image -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-2">
+                                        Cover Image / Thumbnail <span class="text-error-red">*</span>
+                                    </label>
+                                    <div class="border-2 border-black p-4">
+                                        <div class="flex items-start gap-4">
+                                            <div class="w-32 h-24 bg-gray-200 border-2 border-black flex items-center justify-center shrink-0">
+                                                <span class="material-symbols-outlined text-gray-400 text-3xl">image</span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="font-mono text-sm font-bold mb-1">whitepaper-thumbnail.jpg</div>
+                                                <div class="text-xs text-text-secondary font-mono mb-3">Recommended: 800 x 600px</div>
+                                                <div class="flex gap-2">
+                                                    <button class="btn btn-secondary px-3 py-2 border-2 border-black bg-white hover:bg-gray-100 text-xs font-mono font-bold uppercase">
+                                                        Change Image
+                                                    </button>
+                                                    <button class="btn btn-secondary px-3 py-2 border-2 border-black bg-white hover:bg-error-red hover:text-white text-xs font-mono font-bold uppercase">
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lead Capture Settings -->
+                        <div class="content-card bg-white border-2 border-black">
+                            <div class="px-6 py-4 border-b-2 border-black bg-gray-50">
+                                <h2 class="font-bold text-lg uppercase font-mono">Lead Capture Settings</h2>
+                            </div>
+                            <div class="p-6 space-y-6">
+
+                                <!-- Gated Toggle -->
+                                <div class="flex items-center justify-between p-4 bg-gray-50 border-2 border-black">
+                                    <div>
+                                        <div class="font-bold font-mono">Gated Content</div>
+                                        <div class="text-sm text-text-secondary font-mono">Require form submission to download</div>
+                                    </div>
+                                    <div class="w-12 h-6 bg-success-green border-2 border-black relative cursor-pointer" onclick="this.classList.toggle('bg-success-green'); this.classList.toggle('bg-gray-300');">
+                                        <div class="w-4 h-4 bg-white border-2 border-black absolute top-0 right-0"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Required Fields -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-3">
+                                        Required Form Fields
+                                    </label>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                        <label class="flex items-center gap-2 p-3 border-2 border-black bg-white cursor-pointer hover:bg-gray-50">
+                                            <input type="checkbox" class="w-4 h-4 border-2 border-black appearance-none bg-white checked:bg-primary cursor-pointer" checked disabled>
+                                            <span class="text-sm font-mono">Name</span>
+                                            <span class="text-xs text-text-secondary font-mono">(Required)</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 p-3 border-2 border-black bg-white cursor-pointer hover:bg-gray-50">
+                                            <input type="checkbox" class="w-4 h-4 border-2 border-black appearance-none bg-white checked:bg-primary cursor-pointer" checked disabled>
+                                            <span class="text-sm font-mono">Email</span>
+                                            <span class="text-xs text-text-secondary font-mono">(Required)</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 p-3 border-2 border-black bg-white cursor-pointer hover:bg-gray-50">
+                                            <input type="checkbox" class="w-4 h-4 border-2 border-black appearance-none bg-white checked:bg-primary cursor-pointer" checked>
+                                            <span class="text-sm font-mono">Company</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 p-3 border-2 border-black bg-white cursor-pointer hover:bg-gray-50">
+                                            <input type="checkbox" class="w-4 h-4 border-2 border-black appearance-none bg-white checked:bg-primary cursor-pointer">
+                                            <span class="text-sm font-mono">Phone</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 p-3 border-2 border-black bg-white cursor-pointer hover:bg-gray-50">
+                                            <input type="checkbox" class="w-4 h-4 border-2 border-black appearance-none bg-white checked:bg-primary cursor-pointer" checked>
+                                            <span class="text-sm font-mono">Job Title</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 p-3 border-2 border-black bg-white cursor-pointer hover:bg-gray-50">
+                                            <input type="checkbox" class="w-4 h-4 border-2 border-black appearance-none bg-white checked:bg-primary cursor-pointer">
+                                            <span class="text-sm font-mono">Industry</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Thank You Message -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-2">
+                                        Thank You Message
+                                    </label>
+                                    <textarea rows="4" class="form-textarea w-full px-4 py-3 border-2 border-black font-mono text-sm focus:outline-none focus:border-primary" placeholder="Message shown after form submission">Thank you for downloading the 2025 Retail POS Trends Report! Check your email for the download link. We hope you find this resource valuable for your business.</textarea>
+                                    <p class="text-xs text-text-secondary mt-1 font-mono">This message appears after the user submits the lead capture form.</p>
+                                </div>
+
+                                <!-- Marketing Consent -->
+                                <div class="flex items-center justify-between p-4 bg-gray-50 border-2 border-black">
+                                    <div>
+                                        <div class="font-bold font-mono">Marketing Consent Checkbox</div>
+                                        <div class="text-sm text-text-secondary font-mono">Ask users to opt-in for marketing communications</div>
+                                    </div>
+                                    <div class="w-12 h-6 bg-success-green border-2 border-black relative cursor-pointer" onclick="this.classList.toggle('bg-success-green'); this.classList.toggle('bg-gray-300');">
+                                        <div class="w-4 h-4 bg-white border-2 border-black absolute top-0 right-0"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SEO Settings -->
+                        <div class="content-card bg-white border-2 border-black">
+                            <div class="px-6 py-4 border-b-2 border-black bg-gray-50">
+                                <h2 class="font-bold text-lg uppercase font-mono">SEO Settings</h2>
+                            </div>
+                            <div class="p-6 space-y-6">
+
+                                <!-- Meta Title -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-2">
+                                        Meta Title
+                                    </label>
+                                    <input type="text" value="2025 Retail POS Trends Report | Free Download | BluejayPOS" class="form-input w-full px-4 py-3 border-2 border-black font-mono focus:outline-none focus:border-primary" placeholder="SEO title for search engines">
+                                    <div class="flex items-center justify-between mt-2">
+                                        <span class="text-xs font-mono text-text-secondary">55 / 60 characters</span>
+                                        <div class="w-32 h-1 bg-gray-200 border border-black">
+                                            <div class="h-full bg-warning-orange" style="width: 92%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Meta Description -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-2">
+                                        Meta Description
+                                    </label>
+                                    <textarea rows="3" class="form-textarea w-full px-4 py-3 border-2 border-black font-mono text-sm focus:outline-none focus:border-primary" placeholder="SEO description for search engines">Download our free 2025 Retail POS Trends Report. Discover cloud POS adoption rates, mobile payment trends, and AI innovations shaping retail technology.</textarea>
+                                    <div class="flex items-center justify-between mt-2">
+                                        <span class="text-xs font-mono text-text-secondary">148 / 160 characters</span>
+                                        <div class="w-32 h-1 bg-gray-200 border border-black">
+                                            <div class="h-full bg-warning-orange" style="width: 93%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Search Preview -->
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-bold uppercase font-mono mb-2">
+                                        Search Preview
+                                    </label>
+                                    <div class="border-2 border-black p-4 bg-gray-50">
+                                        <div class="text-lg text-blue-700 hover:underline cursor-pointer font-display">
+                                            2025 Retail POS Trends Report | Free Download | BluejayPOS
+                                        </div>
+                                        <div class="text-sm text-green-700 font-mono mt-1">
+                                            https://bluejaypos.com/whitepapers/2025-retail-pos-trends-report
+                                        </div>
+                                        <div class="text-sm text-text-secondary mt-1 font-mono">
+                                            Download our free 2025 Retail POS Trends Report. Discover cloud POS adoption rates, mobile payment trends, and AI innovations...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Sidebar Column -->
+                    <div class="xl:col-span-1 space-y-6">
+
+                        <!-- Publishing -->
+                        <div class="content-card bg-white border-2 border-black">
+                            <div class="px-4 py-3 border-b-2 border-black bg-gray-50">
+                                <h3 class="font-bold text-sm uppercase font-mono">Publishing</h3>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div class="form-field">
+                                    <label class="form-label block text-xs font-bold uppercase font-mono mb-2 text-text-secondary">Status</label>
+                                    <select class="form-select w-full px-3 py-2 border-2 border-black font-mono text-sm focus:outline-none focus:border-primary appearance-none bg-white cursor-pointer">
+                                        <option>Draft</option>
+                                        <option selected>Published</option>
+                                        <option>Archived</option>
+                                    </select>
+                                </div>
+
+                                <!-- Featured Toggle -->
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="text-sm font-bold font-mono">Featured</div>
+                                        <div class="text-xs text-text-secondary font-mono">Show on homepage</div>
+                                    </div>
+                                    <div class="w-12 h-6 bg-gray-300 border-2 border-black relative cursor-pointer" onclick="this.classList.toggle('bg-success-green'); this.classList.toggle('bg-gray-300');">
+                                        <div class="w-4 h-4 bg-white border-2 border-black absolute top-0 left-0"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div class="content-card bg-white border-2 border-black">
+                            <div class="px-4 py-3 border-b-2 border-black bg-gray-50">
+                                <h3 class="font-bold text-sm uppercase font-mono">Statistics</h3>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-text-secondary font-mono">Downloads</span>
+                                    <span class="text-lg font-bold font-mono text-primary">847</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-text-secondary font-mono">Leads</span>
+                                    <span class="text-lg font-bold font-mono text-warning-orange">623</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-text-secondary font-mono">Conversion</span>
+                                    <span class="text-lg font-bold font-mono text-success-green">73.6%</span>
+                                </div>
+                                <hr class="border-black">
+                                <a href="#" class="flex items-center justify-center gap-2 text-sm text-primary font-bold hover:underline font-mono">
+                                    <span class="material-symbols-outlined text-lg">group</span>
+                                    View All Leads
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="content-card bg-white border-2 border-black">
+                            <div class="px-4 py-3 border-b-2 border-black bg-gray-50">
+                                <h3 class="font-bold text-sm uppercase font-mono">Preview</h3>
+                            </div>
+                            <div class="p-4">
+                                <div class="border-2 border-black">
+                                    <div class="aspect-[4/3] bg-gray-200 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-gray-400 text-5xl">picture_as_pdf</span>
+                                    </div>
+                                    <div class="p-3 border-t-2 border-black">
+                                        <div class="text-sm font-bold mb-1">2025 Retail POS Trends Report</div>
+                                        <span class="inline-block px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold uppercase border border-black">Industry Research</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Last Saved -->
+                        <div class="content-card bg-white border-2 border-black p-4">
+                            <div class="text-xs text-text-secondary font-mono text-center">
+                                Last saved:<br>
+                                <span class="font-bold text-text-primary">Jan 28, 2025 2:30pm</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+        </div>
+    </div>
+
+</body>
+</html>

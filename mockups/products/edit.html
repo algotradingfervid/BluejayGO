@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product - Bluejay CMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+    <!-- Component Library -->
+    <link rel="stylesheet" href="../../components/main.css">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../components/tailwind.config.js"></script>
+
+    <style>
+        .collapsible-section {
+            border: 2px solid var(--color-text-primary);
+        }
+        .collapsible-header {
+            cursor: pointer;
+            user-select: none;
+        }
+        .collapsible-header:hover {
+            background-color: var(--color-background-light);
+        }
+        .collapsible-content {
+            display: none;
+        }
+        .collapsible-content.open {
+            display: block;
+        }
+        .collapsible-icon {
+            transition: transform 0.2s ease;
+        }
+        .collapsible-section.open .collapsible-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="admin-body">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar-light fixed lg:sticky top-0 left-0 h-screen z-50 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <span class="sidebar-logo-text">BLUEJAY</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Content</div>
+                    <a href="../dashboard/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="../homepage/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">home</span>
+                        Homepage
+                    </a>
+                    <a href="../about/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">info</span>
+                        About Us
+                    </a>
+                    <a href="../products/list.html" class="sidebar-item active">
+                        <span class="material-symbols-outlined sidebar-item-icon">inventory_2</span>
+                        Products
+                    </a>
+                    <a href="../solutions/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">lightbulb</span>
+                        Solutions
+                    </a>
+                    <a href="../blog/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">article</span>
+                        Blog
+                    </a>
+                    <a href="../case-studies/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">cases</span>
+                        Case Studies
+                    </a>
+                    <a href="../whitepapers/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu_book</span>
+                        Whitepapers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Resources</div>
+                    <a href="../partners/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">handshake</span>
+                        Partners
+                    </a>
+                    <a href="../testimonials/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">format_quote</span>
+                        Testimonials
+                    </a>
+                    <a href="../certifications/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">verified</span>
+                        Certifications
+                    </a>
+                </div>                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Global Elements</div>
+                    <a href="../header/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">web_asset</span>
+                        Header
+                    </a>
+                    <a href="../footer/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">call_to_action</span>
+                        Footer
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="../media/library.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">perm_media</span>
+                        Media
+                    </a>
+                    <a href="../forms/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">mail</span>
+                        Forms
+                        <span class="sidebar-item-badge">3</span>
+                    </a>
+                    <a href="../navigation/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu</span>
+                        Navigation
+                    </a>
+                    <a href="../users/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">group</span>
+                        Users
+                    </a>
+                    <a href="../settings/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User Footer -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">JS</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">John Smith</div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button (Mobile) -->
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 p-2 lg:hidden manual-border bg-white hover:bg-[var(--color-background-light)]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 min-h-screen">
+            <!-- Top Navigation Bar -->
+            <header class="h-16 bg-white manual-border-thick border-t-0 border-l-0 border-r-0 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+                <!-- Left side - Hamburger (mobile) -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 manual-border hover:bg-[var(--color-background-light)] lg:hidden">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="font-display font-extrabold uppercase lg:hidden">BLUEJAY</span>
+                </div>
+
+                <!-- Right side - Actions -->
+                <div class="flex items-center gap-2">
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-warning)] text-black text-[10px] font-bold flex items-center justify-center manual-border">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="p-4 md:p-6 lg:p-8 bg-grid-white">
+                <!-- Back Link & Page Header -->
+                <div class="mb-6">
+                    <a href="list.html" class="inline-flex items-center gap-1 text-xs font-bold uppercase text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] mb-4">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Back to Products
+                    </a>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <h1 class="text-2xl font-black uppercase">Edit Product</h1>
+                            <span class="status-badge-draft">Draft</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="btn btn-secondary btn-sm">
+                                Save Draft
+                            </button>
+                            <button class="btn btn-primary btn-sm">
+                                Publish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Single Scrolling Form -->
+                <div class="max-w-4xl space-y-4">
+
+                    <!-- ============================================
+                         SECTION 1: BASIC INFO
+                         ============================================ -->
+                    <div class="collapsible-section open">
+                        <div class="collapsible-header bg-black text-white px-4 py-3 flex items-center justify-between" onclick="toggleSection(this)">
+                            <h2 class="text-xs font-bold uppercase flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">info</span>
+                                Basic Info
+                            </h2>
+                            <span class="material-symbols-outlined collapsible-icon">expand_more</span>
+                        </div>
+                        <div class="collapsible-content open p-6 bg-white space-y-6">
+                            <!-- Product Name & Model Number -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-field">
+                                    <label class="form-label">
+                                        Product Name <span class="text-[var(--color-error)]">*</span>
+                                    </label>
+                                    <input type="text" class="form-input" value="Pro Wireless Headset" placeholder="Enter product name">
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label">
+                                        Model Number <span class="text-[var(--color-error)]">*</span>
+                                    </label>
+                                    <input type="text" class="form-input" value="BWH-500" placeholder="e.g., BWH-500">
+                                </div>
+                            </div>
+
+                            <!-- Subtitle -->
+                            <div class="form-field">
+                                <label class="form-label">
+                                    Subtitle <span class="text-[var(--color-error)]">*</span>
+                                </label>
+                                <input type="text" class="form-input" value="Premium Wireless Headset" placeholder="e.g., Entry Desktop, Business Laptop">
+                                <span class="text-[10px] text-[var(--color-text-secondary)] mt-1">Short descriptor shown below product name on cards</span>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="form-field">
+                                <label class="form-label">
+                                    Category <span class="text-[var(--color-error)]">*</span>
+                                </label>
+                                <select class="form-select">
+                                    <option value="">Select category...</option>
+                                    <option>Desktops</option>
+                                    <option>Laptops</option>
+                                    <option>Monitors</option>
+                                    <option selected>Audio Equipment</option>
+                                    <option>Accessories</option>
+                                    <option>Networking</option>
+                                </select>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-field">
+                                <label class="form-label">
+                                    Description
+                                </label>
+                                <textarea class="form-input" rows="5" placeholder="Product overview text...">The Pro Wireless Headset delivers exceptional audio quality with advanced noise cancellation and crystal-clear communication. Designed for professionals who demand the best in wireless audio technology.</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         SECTION 2: LISTING CARD
+                         ============================================ -->
+                    <div class="collapsible-section open">
+                        <div class="collapsible-header bg-black text-white px-4 py-3 flex items-center justify-between" onclick="toggleSection(this)">
+                            <h2 class="text-xs font-bold uppercase flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">view_agenda</span>
+                                Listing Card
+                            </h2>
+                            <span class="material-symbols-outlined collapsible-icon">expand_more</span>
+                        </div>
+                        <div class="collapsible-content open p-6 bg-white space-y-6">
+                            <!-- Quick Specs -->
+                            <div>
+                                <label class="form-label mb-3">Quick Specs (max 4)</label>
+                                <p class="text-[10px] text-[var(--color-text-secondary)] mb-4">These specs appear on product listing cards.</p>
+                                <div class="space-y-2" id="quickSpecRows">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[var(--color-text-secondary)] cursor-move text-sm">drag_indicator</span>
+                                        <input type="text" class="form-input flex-1" value="Battery" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="30 hours" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[var(--color-text-secondary)] cursor-move text-sm">drag_indicator</span>
+                                        <input type="text" class="form-input flex-1" value="Connectivity" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="Bluetooth 5.2" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[var(--color-text-secondary)] cursor-move text-sm">drag_indicator</span>
+                                        <input type="text" class="form-input flex-1" value="Weight" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="250g" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[var(--color-text-secondary)] cursor-move text-sm">drag_indicator</span>
+                                        <input type="text" class="form-input flex-1" value="ANC" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="Yes" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary btn-sm mt-4 inline-flex items-center gap-1" id="addQuickSpec">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                    Add Spec
+                                </button>
+                            </div>
+
+                            <!-- Price Tier, Badge, Featured -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="form-field">
+                                    <label class="form-label">Price Tier <span class="text-[var(--color-error)]">*</span></label>
+                                    <select class="form-select">
+                                        <option value="">Select...</option>
+                                        <option>$ (Budget)</option>
+                                        <option selected>$$ (Value)</option>
+                                        <option>$$$ (Premium)</option>
+                                        <option>$$$$ (Enterprise)</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label">Badge</label>
+                                    <select class="form-select">
+                                        <option value="">None</option>
+                                        <option>New</option>
+                                        <option selected>Popular</option>
+                                        <option>Premium</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label">Featured</label>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <button class="toggle-switch active" id="featuredToggle"></button>
+                                        <span class="text-xs text-[var(--color-text-secondary)]">Show on homepage</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         SECTION 3: IMAGES
+                         ============================================ -->
+                    <div class="collapsible-section open">
+                        <div class="collapsible-header bg-black text-white px-4 py-3 flex items-center justify-between" onclick="toggleSection(this)">
+                            <h2 class="text-xs font-bold uppercase flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">image</span>
+                                Images
+                            </h2>
+                            <span class="material-symbols-outlined collapsible-icon">expand_more</span>
+                        </div>
+                        <div class="collapsible-content open p-6 bg-white">
+                            <p class="text-[10px] text-[var(--color-text-secondary)] mb-4">Drag to reorder. First image is primary.</p>
+
+                            <!-- Image Grid -->
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+                                <!-- Existing Image 1 -->
+                                <div class="relative group">
+                                    <div class="aspect-square manual-border bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <span class="material-symbols-outlined text-4xl text-gray-400">headphones</span>
+                                    </div>
+                                    <div class="absolute top-2 left-2">
+                                        <span class="bg-black text-white text-[10px] font-bold px-2 py-1">PRIMARY</span>
+                                    </div>
+                                    <button class="absolute top-2 right-2 w-6 h-6 bg-white manual-border flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-[var(--color-error)] hover:text-white">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                                <!-- Existing Image 2 -->
+                                <div class="relative group">
+                                    <div class="aspect-square manual-border bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <span class="material-symbols-outlined text-4xl text-gray-400">headphones</span>
+                                    </div>
+                                    <button class="absolute top-2 right-2 w-6 h-6 bg-white manual-border flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-[var(--color-error)] hover:text-white">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                                <!-- Existing Image 3 -->
+                                <div class="relative group">
+                                    <div class="aspect-square manual-border bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <span class="material-symbols-outlined text-4xl text-gray-400">headphones</span>
+                                    </div>
+                                    <button class="absolute top-2 right-2 w-6 h-6 bg-white manual-border flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-[var(--color-error)] hover:text-white">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                                <!-- Add Image Button -->
+                                <div class="aspect-square manual-border border-dashed bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100">
+                                    <span class="material-symbols-outlined text-2xl text-[var(--color-text-secondary)]">add_photo_alternate</span>
+                                    <span class="text-[10px] text-[var(--color-text-secondary)] mt-1">Add Image</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         SECTION 4: KEY FEATURES
+                         ============================================ -->
+                    <div class="collapsible-section open">
+                        <div class="collapsible-header bg-black text-white px-4 py-3 flex items-center justify-between" onclick="toggleSection(this)">
+                            <h2 class="text-xs font-bold uppercase flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">star</span>
+                                Key Features
+                            </h2>
+                            <span class="material-symbols-outlined collapsible-icon">expand_more</span>
+                        </div>
+                        <div class="collapsible-content open p-6 bg-white">
+                            <p class="text-[10px] text-[var(--color-text-secondary)] mb-4">Bullet points displayed on the product page. Drag to reorder.</p>
+
+                            <!-- Feature Rows -->
+                            <div class="space-y-2" id="featureRows">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[var(--color-text-secondary)] cursor-move text-sm">drag_indicator</span>
+                                    <input type="text" class="form-input flex-1" value="Active noise cancellation technology">
+                                    <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[var(--color-text-secondary)] cursor-move text-sm">drag_indicator</span>
+                                    <input type="text" class="form-input flex-1" value="30-hour battery life with quick charge">
+                                    <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[var(--color-text-secondary)] cursor-move text-sm">drag_indicator</span>
+                                    <input type="text" class="form-input flex-1" value="Bluetooth 5.2 multipoint connectivity">
+                                    <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[var(--color-text-secondary)] cursor-move text-sm">drag_indicator</span>
+                                    <input type="text" class="form-input flex-1" value="Premium memory foam ear cushions">
+                                    <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary btn-sm mt-4 inline-flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">add</span>
+                                Add Feature
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         SECTION 5: DETAILED SPECIFICATIONS
+                         ============================================ -->
+                    <div class="collapsible-section open">
+                        <div class="collapsible-header bg-black text-white px-4 py-3 flex items-center justify-between" onclick="toggleSection(this)">
+                            <h2 class="text-xs font-bold uppercase flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">list_alt</span>
+                                Detailed Specifications
+                            </h2>
+                            <span class="material-symbols-outlined collapsible-icon">expand_more</span>
+                        </div>
+                        <div class="collapsible-content open p-6 bg-white space-y-6">
+                            <p class="text-[10px] text-[var(--color-text-secondary)] mb-4">Organized in accordion groups on the product page.</p>
+
+                            <!-- Spec Group 1: Audio -->
+                            <div class="manual-border">
+                                <div class="bg-gray-100 px-4 py-3 flex items-center justify-between">
+                                    <input type="text" class="bg-transparent text-xs font-bold uppercase border-none focus:outline-none flex-1" value="Audio">
+                                    <button class="text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" class="form-input flex-1" value="Driver Size" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="40mm" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" class="form-input flex-1" value="Frequency Response" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="20Hz - 20kHz" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" class="form-input flex-1" value="Impedance" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="32 Ohm" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <button class="text-xs font-bold uppercase text-[var(--color-primary)] hover:underline inline-flex items-center gap-1 mt-2">
+                                        <span class="material-symbols-outlined text-sm">add</span>
+                                        Add Spec
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Spec Group 2: Connectivity -->
+                            <div class="manual-border">
+                                <div class="bg-gray-100 px-4 py-3 flex items-center justify-between">
+                                    <input type="text" class="bg-transparent text-xs font-bold uppercase border-none focus:outline-none flex-1" value="Connectivity">
+                                    <button class="text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" class="form-input flex-1" value="Bluetooth Version" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="5.2" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" class="form-input flex-1" value="Wireless Range" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="30m / 100ft" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <button class="text-xs font-bold uppercase text-[var(--color-primary)] hover:underline inline-flex items-center gap-1 mt-2">
+                                        <span class="material-symbols-outlined text-sm">add</span>
+                                        Add Spec
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Spec Group 3: Physical -->
+                            <div class="manual-border">
+                                <div class="bg-gray-100 px-4 py-3 flex items-center justify-between">
+                                    <input type="text" class="bg-transparent text-xs font-bold uppercase border-none focus:outline-none flex-1" value="Physical">
+                                    <button class="text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" class="form-input flex-1" value="Weight" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="250g" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" class="form-input flex-1" value="Colors" placeholder="Spec name">
+                                        <input type="text" class="form-input flex-1" value="Black, Silver" placeholder="Value">
+                                        <button class="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                    <button class="text-xs font-bold uppercase text-[var(--color-primary)] hover:underline inline-flex items-center gap-1 mt-2">
+                                        <span class="material-symbols-outlined text-sm">add</span>
+                                        Add Spec
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-secondary btn-sm inline-flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">add</span>
+                                Add Spec Group
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         SECTION 6: CERTIFICATIONS
+                         ============================================ -->
+                    <div class="collapsible-section">
+                        <div class="collapsible-header bg-black text-white px-4 py-3 flex items-center justify-between" onclick="toggleSection(this)">
+                            <h2 class="text-xs font-bold uppercase flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">verified</span>
+                                Certifications
+                            </h2>
+                            <span class="material-symbols-outlined collapsible-icon">expand_more</span>
+                        </div>
+                        <div class="collapsible-content p-6 bg-white">
+                            <p class="text-[10px] text-[var(--color-text-secondary)] mb-4">Select applicable certifications.</p>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="custom-checkbox" checked>
+                                    <span class="text-sm">BIS</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="custom-checkbox" checked>
+                                    <span class="text-sm">CE</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="custom-checkbox" checked>
+                                    <span class="text-sm">FCC</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="custom-checkbox">
+                                    <span class="text-sm">RoHS</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="custom-checkbox">
+                                    <span class="text-sm">Energy Star</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="custom-checkbox">
+                                    <span class="text-sm">ISO 9001</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="custom-checkbox">
+                                    <span class="text-sm">ISO 14001</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="custom-checkbox">
+                                    <span class="text-sm">UL Listed</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         SECTION 7: VIDEO
+                         ============================================ -->
+                    <div class="collapsible-section">
+                        <div class="collapsible-header bg-black text-white px-4 py-3 flex items-center justify-between" onclick="toggleSection(this)">
+                            <h2 class="text-xs font-bold uppercase flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">videocam</span>
+                                Video
+                            </h2>
+                            <span class="material-symbols-outlined collapsible-icon">expand_more</span>
+                        </div>
+                        <div class="collapsible-content p-6 bg-white">
+                            <div class="form-field">
+                                <label class="form-label">Video URL</label>
+                                <input type="url" class="form-input" value="https://youtube.com/watch?v=abc123" placeholder="https://youtube.com/watch?v=...">
+                                <span class="text-[10px] text-[var(--color-text-secondary)] mt-1">YouTube or Vimeo URL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         SECTION 8: DOWNLOADS
+                         ============================================ -->
+                    <div class="collapsible-section">
+                        <div class="collapsible-header bg-black text-white px-4 py-3 flex items-center justify-between" onclick="toggleSection(this)">
+                            <h2 class="text-xs font-bold uppercase flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">download</span>
+                                Downloads
+                            </h2>
+                            <span class="material-symbols-outlined collapsible-icon">expand_more</span>
+                        </div>
+                        <div class="collapsible-content p-6 bg-white">
+                            <p class="text-[10px] text-[var(--color-text-secondary)] mb-4">PDF datasheets, drivers, software, etc.</p>
+
+                            <div class="space-y-2" id="downloadRows">
+                                <div class="flex items-center gap-2 manual-border p-3 bg-gray-50">
+                                    <span class="material-symbols-outlined text-[var(--color-text-secondary)] text-sm">description</span>
+                                    <span class="text-sm flex-1">Product Datasheet.pdf</span>
+                                    <span class="text-[10px] text-[var(--color-text-secondary)]">1.2 MB</span>
+                                    <button class="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2 manual-border p-3 bg-gray-50">
+                                    <span class="material-symbols-outlined text-[var(--color-text-secondary)] text-sm">description</span>
+                                    <span class="text-sm flex-1">User Manual.pdf</span>
+                                    <span class="text-[10px] text-[var(--color-text-secondary)]">3.5 MB</span>
+                                    <button class="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 manual-border border-dashed p-6 text-center bg-gray-50 cursor-pointer hover:bg-gray-100">
+                                <span class="material-symbols-outlined text-2xl text-[var(--color-text-secondary)]">upload_file</span>
+                                <p class="text-xs text-[var(--color-text-secondary)] mt-1">Drop files here or click to upload</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================
+                         SECTION 9: RELATED PRODUCTS
+                         ============================================ -->
+                    <div class="collapsible-section">
+                        <div class="collapsible-header bg-black text-white px-4 py-3 flex items-center justify-between" onclick="toggleSection(this)">
+                            <h2 class="text-xs font-bold uppercase flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">link</span>
+                                Related Products
+                            </h2>
+                            <span class="material-symbols-outlined collapsible-icon">expand_more</span>
+                        </div>
+                        <div class="collapsible-content p-6 bg-white">
+                            <p class="text-[10px] text-[var(--color-text-secondary)] mb-4">Select products to display in the related products section.</p>
+
+                            <!-- Search -->
+                            <div class="relative mb-4">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)]">search</span>
+                                <input type="text" placeholder="Search products..." class="form-input pl-10">
+                            </div>
+
+                            <!-- Selected Products -->
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-3 manual-border p-3 bg-gray-50">
+                                    <div class="w-10 h-10 bg-gray-200 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-gray-400">headphones</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-bold">Pro Wired Headset</div>
+                                        <div class="text-[10px] text-[var(--color-text-secondary)]">BWH-300</div>
+                                    </div>
+                                    <button class="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-3 manual-border p-3 bg-gray-50">
+                                    <div class="w-10 h-10 bg-gray-200 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-gray-400">headphones</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-bold">USB Headset Adapter</div>
+                                        <div class="text-[10px] text-[var(--color-text-secondary)]">BHA-100</div>
+                                    </div>
+                                    <button class="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-error)]">
+                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Action Bar -->
+                    <div class="flex items-center justify-between pt-6 pb-12">
+                        <button class="btn btn-secondary text-[var(--color-error)] border-[var(--color-error)]">
+                            <span class="material-symbols-outlined text-sm mr-1">delete</span>
+                            Delete Product
+                        </button>
+                        <div class="flex items-center gap-2">
+                            <button class="btn btn-secondary">
+                                Save Draft
+                            </button>
+                            <button class="btn btn-primary">
+                                Publish
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        // Collapsible section toggle
+        function toggleSection(header) {
+            const section = header.parentElement;
+            const content = section.querySelector('.collapsible-content');
+
+            section.classList.toggle('open');
+            content.classList.toggle('open');
+        }
+
+        // Toggle switch functionality
+        document.getElementById('featuredToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+    </script>
+
+</body>
+</html>

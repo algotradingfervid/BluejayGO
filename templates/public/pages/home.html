@@ -1,0 +1,328 @@
+{{define "content"}}
+<div class="min-h-screen">
+
+    <!-- ==================== HERO BANNER ==================== -->
+    {{if .Hero.ID}}
+    <section class="relative min-h-[600px] manual-border-thick mx-4 md:mx-10 mt-8 bg-white manual-shadow-lg overflow-hidden">
+        <div class="absolute inset-0 grid-dotted pointer-events-none"></div>
+        <div class="absolute top-4 right-4 font-mono text-[10px] opacity-50 uppercase">Ref. Manual v2026.01</div>
+
+        <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]">
+            <div class="space-y-8 relative z-10">
+                {{if .Hero.BadgeText.Valid}}
+                <div class="inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase">
+                    {{.Hero.BadgeText.String}}
+                </div>
+                {{end}}
+                <h1 class="text-4xl md:text-6xl font-black font-mono leading-none uppercase">
+                    {{.Hero.Headline}}
+                </h1>
+                <p class="text-lg font-mono opacity-80 border-l-4 border-primary pl-4 max-w-xl">
+                    {{.Hero.Subheadline}}
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="{{.Hero.PrimaryCtaUrl}}" class="manual-border bg-primary text-white px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                        {{.Hero.PrimaryCtaText}}
+                    </a>
+                    {{if .Hero.SecondaryCtaText.Valid}}
+                    <a href="{{.Hero.SecondaryCtaUrl.String}}" class="manual-border bg-white text-black px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                        {{.Hero.SecondaryCtaText.String}}
+                    </a>
+                    {{end}}
+                </div>
+                <!-- Slide Indicators -->
+                <div class="flex gap-2 pt-4">
+                    <div class="w-8 h-2 bg-primary manual-border"></div>
+                    <div class="w-8 h-2 bg-gray-200 manual-border"></div>
+                    <div class="w-8 h-2 bg-gray-200 manual-border"></div>
+                    <div class="w-8 h-2 bg-gray-200 manual-border"></div>
+                    <div class="w-8 h-2 bg-gray-200 manual-border"></div>
+                </div>
+            </div>
+            <div class="manual-border bg-gray-200 aspect-square relative group overflow-hidden">
+                {{if .Hero.BackgroundImage.Valid}}
+                <div class="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
+                <img class="w-full h-full object-cover grayscale contrast-125" alt="Interactive display technology" src="{{.Hero.BackgroundImage.String}}">
+                {{else}}
+                <div class="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
+                <div class="w-full h-full flex items-center justify-center">
+                    <div class="bg-white p-8 manual-border manual-shadow">
+                        <div class="aspect-square w-48 bg-gradient-to-br from-[#0066CC] to-[#004499] manual-border flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-6xl">memory</span>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+                <div class="absolute bottom-4 left-4 right-4 bg-white/90 manual-border p-2 font-mono text-[10px]">
+                    FIG 01: {{upper .Settings.SiteName}} INTERACTIVE DISPLAY SYSTEM v4.0
+                </div>
+            </div>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- ==================== FEATURED PRODUCTS ==================== -->
+    {{if .FeaturedProducts}}
+    <section class="max-w-[1200px] mx-auto px-4 py-20">
+        <div class="flex items-center gap-4 mb-8">
+            <h2 class="font-mono font-black text-2xl uppercase">Featured Products</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+            <span class="font-mono text-xs">Section 02</span>
+        </div>
+        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">Discover our most popular interactive solutions</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {{range .FeaturedProducts}}
+            <a href="/products/{{.CategorySlug}}/{{.Slug}}" class="manual-border bg-white p-4 manual-shadow flex flex-col group hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer">
+                <div class="manual-border bg-gray-100 aspect-video mb-4 overflow-hidden relative">
+                    {{if .PrimaryImage.Valid}}
+                    <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" alt="{{.Name}}" src="{{.PrimaryImage.String}}">
+                    {{else}}
+                    <div class="w-full h-full flex items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-gray-400">devices</span>
+                    </div>
+                    {{end}}
+                </div>
+                <h3 class="font-mono font-bold text-lg mb-1">{{.Name}}</h3>
+                {{if .Tagline.Valid}}
+                <p class="font-mono text-xs opacity-60 mb-4 flex-grow uppercase">{{.Tagline.String}}</p>
+                {{end}}
+                <span class="font-mono text-sm font-bold text-primary group-hover:text-white flex items-center gap-2 group-hover:translate-x-1 transition-all">
+                    Learn More <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
+            </a>
+            {{end}}
+        </div>
+
+        <div class="text-center mt-12">
+            <a class="font-mono text-sm font-bold text-primary flex items-center justify-center gap-2 hover:gap-4 transition-all" href="/products">
+                View All Products <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- ==================== INDUSTRY SOLUTIONS ==================== -->
+    {{if .Solutions}}
+    <section class="max-w-[1200px] mx-auto px-4 py-20">
+        <div class="flex items-center gap-4 mb-8">
+            <h2 class="font-mono font-black text-2xl uppercase">Solutions By Industry</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+            <span class="font-mono text-xs">Section 03</span>
+        </div>
+        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">Tailored technology solutions for every sector</p>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {{range .Solutions}}
+            <a href="/solutions/{{.Slug}}" class="manual-border p-6 bg-white flex flex-col items-center justify-center gap-4 manual-shadow hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer group">
+                <span class="material-symbols-outlined text-4xl">{{.Icon}}</span>
+                <span class="font-mono font-bold text-sm uppercase text-center">{{.Title}}</span>
+                <p class="font-mono text-[10px] text-center opacity-60 group-hover:opacity-80 uppercase hidden md:block">{{.ShortDescription}}</p>
+                <span class="font-mono text-[10px] font-bold flex items-center gap-1 group-hover:text-white">
+                    Explore <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+                </span>
+            </a>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+
+    <!-- ==================== COMPANY STATISTICS ==================== -->
+    {{if .Stats}}
+    <section class="bg-black text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg">
+        <h2 class="font-mono font-black text-3xl uppercase mb-12 text-center tracking-widest">{{.Settings.SiteName}} By The Numbers</h2>
+        <div class="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            {{range .Stats}}
+            <div class="border-2 border-white/30 p-6 flex flex-col items-center text-center">
+                <div class="text-5xl font-mono font-black mb-2">{{.StatValue}}</div>
+                <div class="text-[10px] font-mono uppercase tracking-tighter opacity-70">{{.StatLabel}}</div>
+            </div>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+
+    <!-- ==================== CLIENT TESTIMONIALS ==================== -->
+    {{if .Testimonials}}
+    <section class="max-w-[1200px] mx-auto px-4 py-20">
+        <div class="flex items-center gap-4 mb-8">
+            <h2 class="font-mono font-black text-2xl uppercase">What Our Clients Say</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+            <span class="font-mono text-xs">Section 05</span>
+        </div>
+        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">Trusted by organizations worldwide</p>
+
+        <div id="testimonial-container" class="relative">
+            {{range $i, $t := .Testimonials}}
+            <div class="manual-border p-10 bg-white manual-shadow relative max-w-4xl mx-auto {{if gt $i 0}}hidden{{end}}" data-testimonial="{{$i}}">
+                <div class="absolute -top-4 left-6 bg-black text-white px-4 py-1 font-mono text-xs font-bold uppercase">
+                    Client Feedback
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    {{if $t.AuthorImage.Valid}}
+                    <div class="size-24 bg-gray-300 manual-border shrink-0 overflow-hidden grayscale">
+                        <img class="w-full h-full object-cover" alt="{{$t.AuthorName}}" src="{{$t.AuthorImage.String}}">
+                    </div>
+                    {{else}}
+                    <div class="size-24 bg-gray-300 manual-border shrink-0 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-3xl text-gray-500">person</span>
+                    </div>
+                    {{end}}
+                    <div class="space-y-4">
+                        <div class="flex gap-1 text-primary">
+                            {{range seq $t.Rating}}
+                            <span class="material-symbols-outlined text-xl">star</span>
+                            {{end}}
+                        </div>
+                        <p class="text-xl md:text-2xl font-mono leading-relaxed italic border-l-8 border-primary pl-6">
+                            "{{$t.Quote}}"
+                        </p>
+                        <div class="font-mono font-bold uppercase text-sm">
+                            — {{$t.AuthorName}}{{if $t.AuthorTitle.Valid}}, {{$t.AuthorTitle.String}}{{end}}
+                        </div>
+                        {{if $t.AuthorCompany.Valid}}
+                        <div class="font-mono text-xs opacity-60 uppercase">
+                            {{$t.AuthorCompany.String}}
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            {{end}}
+
+            <!-- Carousel Indicators -->
+            <div class="flex justify-center gap-2 mt-8">
+                {{range $i, $t := .Testimonials}}
+                <button class="w-3 h-3 manual-border transition-colors {{if eq $i 0}}bg-primary{{else}}bg-gray-200{{end}}" data-testimonial-btn="{{$i}}" onclick="showTestimonial({{$i}})"></button>
+                {{end}}
+            </div>
+        </div>
+    </section>
+    <script>
+    function showTestimonial(index) {
+        document.querySelectorAll('[data-testimonial]').forEach(function(el) {
+            el.classList.add('hidden');
+        });
+        document.querySelectorAll('[data-testimonial-btn]').forEach(function(el) {
+            el.classList.remove('bg-primary');
+            el.classList.add('bg-gray-200');
+        });
+        var target = document.querySelector('[data-testimonial="' + index + '"]');
+        if (target) target.classList.remove('hidden');
+        var btn = document.querySelector('[data-testimonial-btn="' + index + '"]');
+        if (btn) {
+            btn.classList.remove('bg-gray-200');
+            btn.classList.add('bg-primary');
+        }
+    }
+    </script>
+    {{end}}
+
+    <!-- ==================== TRUSTED PARTNERS ==================== -->
+    {{if .FeaturedPartners}}
+    <section class="bg-[#F8F9FA] py-16 px-4">
+        <div class="max-w-[1200px] mx-auto">
+            <h2 class="font-mono font-black text-2xl uppercase mb-12 text-center">Trusted Partners</h2>
+
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6">
+                {{range .FeaturedPartners}}
+                <a href="{{if .WebsiteUrl.Valid}}{{.WebsiteUrl.String}}{{else}}/partners{{end}}" class="block w-full h-full manual-border manual-shadow p-6 bg-white flex flex-col items-center justify-center gap-3 hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer group" target="_blank" rel="noopener">
+                    {{if .LogoUrl.Valid}}
+                    <img class="max-h-10 mx-auto" alt="{{.Name}}" src="{{.LogoUrl.String}}">
+                    {{else if .Icon.Valid}}
+                    <span class="material-symbols-outlined text-4xl text-[#0066CC] group-hover:text-white">{{.Icon.String}}</span>
+                    {{end}}
+                    <p class="font-mono text-sm font-bold uppercase">{{.Name}}</p>
+                </a>
+                {{end}}
+            </div>
+
+            <div class="text-center mt-8">
+                <a class="font-mono text-sm font-bold text-primary flex items-center justify-center gap-2 hover:gap-4 transition-all" href="/partners">
+                    Become a Partner <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- ==================== LATEST NEWS & INSIGHTS ==================== -->
+    {{if .LatestPosts}}
+    <section class="max-w-[1200px] mx-auto px-4 py-20">
+        <div class="flex items-center gap-4 mb-8">
+            <h2 class="font-mono font-black text-2xl uppercase">Latest News & Insights</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+            <span class="font-mono text-xs">Section 07</span>
+        </div>
+        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">Stay updated with industry trends</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {{range .LatestPosts}}
+            <a href="/blog/{{.Slug}}" class="manual-border bg-white manual-shadow group flex flex-col hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer">
+                <div class="bg-gray-100 aspect-video overflow-hidden relative border-b-2 border-black">
+                    {{if .FeaturedImageUrl.Valid}}
+                    <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" alt="{{.Title}}" src="{{.FeaturedImageUrl.String}}">
+                    {{else}}
+                    <div class="w-full h-full flex items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-gray-400">article</span>
+                    </div>
+                    {{end}}
+                </div>
+                <div class="p-6 flex flex-col flex-grow">
+                    <div class="inline-block bg-primary/10 text-primary group-hover:bg-white/20 group-hover:text-white px-2 py-1 text-[10px] font-bold uppercase mb-3 w-fit">
+                        {{.CategoryName}}
+                    </div>
+                    <h3 class="font-mono font-bold text-lg mb-2 uppercase">{{.Title}}</h3>
+                    <p class="font-mono text-xs opacity-60 group-hover:opacity-80 mb-4 flex-grow uppercase">{{.Excerpt}}</p>
+                    <div class="flex items-center justify-between text-[10px] font-mono opacity-50 group-hover:opacity-70 uppercase mb-4">
+                        {{if .PublishedAt.Valid}}
+                        <span>{{.PublishedAt.Time.Format "Jan 02, 2006"}}</span>
+                        {{end}}
+                        {{if .ReadingTimeMinutes.Valid}}
+                        <span>{{.ReadingTimeMinutes.Int64}} min read</span>
+                        {{end}}
+                    </div>
+                    <span class="font-mono text-sm font-bold text-primary group-hover:text-white flex items-center gap-2 group-hover:translate-x-1 transition-all">
+                        Read More <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </span>
+                </div>
+            </a>
+            {{end}}
+        </div>
+
+        <div class="text-center mt-12">
+            <a class="font-mono text-sm font-bold text-primary flex items-center justify-center gap-2 hover:gap-4 transition-all" href="/blog">
+                View All Articles <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- ==================== FINAL CTA SECTION ==================== -->
+    {{if .CTA.ID}}
+    <section class="bg-primary text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 grid-dotted opacity-10 pointer-events-none"></div>
+        <div class="max-w-3xl mx-auto text-center relative z-10">
+            <h2 class="font-mono font-black text-3xl md:text-4xl uppercase mb-6">{{.CTA.Headline}}</h2>
+            {{if .CTA.Description.Valid}}
+            <p class="font-mono text-lg opacity-90 mb-10 max-w-xl mx-auto">
+                {{.CTA.Description.String}}
+            </p>
+            {{end}}
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="{{.CTA.PrimaryCtaUrl}}" class="manual-border border-white bg-white text-primary px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                    {{.CTA.PrimaryCtaText}}
+                </a>
+                {{if .CTA.SecondaryCtaText.Valid}}
+                <a href="{{.CTA.SecondaryCtaUrl.String}}" class="manual-border border-white bg-transparent text-white px-8 py-4 font-mono font-bold uppercase hover:bg-white/10 transition-colors">
+                    {{.CTA.SecondaryCtaText.String}}
+                </a>
+                {{end}}
+            </div>
+        </div>
+    </section>
+    {{end}}
+
+</div>
+{{end}}

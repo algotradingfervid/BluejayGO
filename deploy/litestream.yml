@@ -1,0 +1,9 @@
+dbs:
+  - path: /var/www/bluejay-cms/bluejay.db
+    replicas:
+      - type: s3
+        bucket: your-backup-bucket
+        path: bluejay-cms
+        region: us-east-1
+        # access-key-id: $AWS_ACCESS_KEY_ID
+        # secret-access-key: $AWS_SECRET_ACCESS_KEY

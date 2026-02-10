@@ -1,0 +1,18 @@
+{{define "base"}}
+{{range .Products}}
+<div class="flex items-center justify-between p-3 border-2 border-black mb-2 hover:bg-gray-50">
+    <span class="text-sm font-bold">{{.ProductName}}</span>
+    <div class="flex items-center gap-3">
+        <span class="text-xs text-gray-500 uppercase">Order: {{.DisplayOrder}}</span>
+        <button hx-delete="/admin/case-studies/0/products/{{.ProductID}}"
+                hx-target="closest div"
+                hx-swap="outerHTML"
+                hx-confirm="Remove this product?"
+                class="bg-white text-red-600 px-2 py-1 text-xs font-bold uppercase border-2 border-red-600 hover:bg-red-50"
+                style="box-shadow: 2px 2px 0px #991b1b;">
+            Remove
+        </button>
+    </div>
+</div>
+{{end}}
+{{end}}

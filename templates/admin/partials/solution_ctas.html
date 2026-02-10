@@ -1,0 +1,100 @@
+<div class="mb-3">
+    <p class="text-xs text-gray-500 mb-3" title="Call-to-action buttons shown at the bottom of the solution page.">
+        <span class="inline-block cursor-help text-gray-400 mr-1">ⓘ</span>
+        Call-to-action buttons shown at the bottom of the solution page.
+    </p>
+</div>
+<div id="ctas-list">
+{{range .CTAs}}
+<div class="flex items-center gap-4 mb-3 p-3 border-2 border-black bg-white" style="box-shadow: 2px 2px 0px #000;">
+    <div class="flex-grow min-w-0">
+        <div class="font-bold text-sm">{{.Heading}}</div>
+        {{if .Subheading.Valid}}<div class="text-xs text-gray-600">{{.Subheading.String}}</div>{{end}}
+        <div class="flex flex-wrap gap-2 mt-2">
+            <span class="bg-gray-100 text-black px-2 py-1 text-xs font-bold uppercase border border-black">{{.SectionName}}</span>
+            {{if .PrimaryButtonText.Valid}}
+            <span class="bg-blue-100 text-blue-700 px-2 py-1 text-xs border border-blue-700">{{.PrimaryButtonText.String}} &rarr; {{.PrimaryButtonUrl.String}}</span>
+            {{end}}
+            {{if .SecondaryButtonText.Valid}}
+            <span class="bg-gray-100 text-gray-700 px-2 py-1 text-xs border border-gray-700">{{.SecondaryButtonText.String}} &rarr; {{.SecondaryButtonUrl.String}}</span>
+            {{end}}
+        </div>
+    </div>
+    <button hx-delete="/admin/solutions/{{.SolutionID}}/ctas/{{.ID}}"
+            hx-target="closest div"
+            hx-swap="outerHTML swap:0.3s"
+            hx-confirm="Delete this CTA?"
+            class="bg-white text-red-600 px-2 py-1 text-xs font-bold uppercase border-2 border-red-600 hover:bg-red-50 shrink-0"
+            style="box-shadow: 2px 2px 0px #991b1b;">
+        Remove
+    </button>
+</div>
+{{end}}
+{{if not .CTAs}}
+<div class="py-8 text-center border-2 border-dashed border-gray-300 mb-3">
+    <span class="material-symbols-outlined text-4xl text-gray-300 block mb-2">ads_click</span>
+    <p class="text-sm text-gray-500">No CTAs added yet.</p>
+</div>
+{{end}}
+</div>
+<form hx-post="/admin/solutions/{{.SolutionID}}/ctas" hx-target="#ctas-list" hx-swap="innerHTML" class="mt-4 space-y-3 border-t-2 border-black pt-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Heading *</label>
+            <input type="text" name="heading" required
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Section Name</label>
+            <input type="text" name="section_name" required value="main_cta"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+    </div>
+    <div>
+        <label class="block text-xs font-bold uppercase mb-1">Subheading</label>
+        <input type="text" name="subheading"
+               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+               style="font-family: 'JetBrains Mono', monospace;">
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Primary Button Text</label>
+            <input type="text" name="primary_button_text"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Primary Button URL</label>
+            <input type="text" name="primary_button_url"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Secondary Button Text</label>
+            <input type="text" name="secondary_button_text"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Secondary Button URL</label>
+            <input type="text" name="secondary_button_url"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+    </div>
+    <div>
+        <label class="block text-xs font-bold uppercase mb-1">Phone Number</label>
+        <input type="text" name="phone_number"
+               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+               style="font-family: 'JetBrains Mono', monospace;">
+    </div>
+    <button type="submit"
+            class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+            style="box-shadow: 4px 4px 0px #000;">
+        + Add CTA
+    </button>
+</form>

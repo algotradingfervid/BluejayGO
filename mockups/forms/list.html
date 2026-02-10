@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms - Bluejay CMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="../../components/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../components/tailwind.config.js"></script>
+</head>
+<body class="bg-background-light">
+
+    <div class="admin-layout flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar-light fixed lg:sticky top-0 left-0 h-screen z-50 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <span class="sidebar-logo-text">BLUEJAY</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Content</div>
+                    <a href="../dashboard/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="../homepage/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">home</span>
+                        Homepage
+                    </a>
+                    <a href="../about/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">info</span>
+                        About Us
+                    </a>
+                    <a href="../products/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">inventory_2</span>
+                        Products
+                    </a>
+                    <a href="../solutions/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">lightbulb</span>
+                        Solutions
+                    </a>
+                    <a href="../blog/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">article</span>
+                        Blog
+                    </a>
+                    <a href="../case-studies/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">cases</span>
+                        Case Studies
+                    </a>
+                    <a href="../whitepapers/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu_book</span>
+                        Whitepapers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Resources</div>
+                    <a href="../partners/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">handshake</span>
+                        Partners
+                    </a>
+                    <a href="../testimonials/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">format_quote</span>
+                        Testimonials
+                    </a>
+                    <a href="../certifications/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">verified</span>
+                        Certifications
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Global Elements</div>
+                    <a href="../header/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">web_asset</span>
+                        Header
+                    </a>
+                    <a href="../footer/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">call_to_action</span>
+                        Footer
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="../media/library.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">perm_media</span>
+                        Media
+                    </a>
+                    <a href="../forms/list.html" class="sidebar-item active">
+                        <span class="material-symbols-outlined sidebar-item-icon">mail</span>
+                        Forms
+                        <span class="sidebar-item-badge">3</span>
+                    </a>
+                    <a href="../navigation/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu</span>
+                        Navigation
+                    </a>
+                    <a href="../users/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">group</span>
+                        Users
+                    </a>
+                    <a href="../settings/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User Footer -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">JS</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">John Smith</div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button (Mobile) -->
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 p-2 lg:hidden manual-border bg-white hover:bg-[var(--color-background-light)]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main bg-grid-white">
+            <!-- Top Navigation Bar -->
+            <header class="h-16 bg-white manual-border-thick border-t-0 border-l-0 border-r-0 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+                <!-- Left side - Hamburger (mobile) -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 manual-border hover:bg-[var(--color-background-light)] lg:hidden">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="font-display font-extrabold uppercase lg:hidden">BLUEJAY</span>
+                </div>
+
+                <!-- Right side - Actions -->
+                <div class="flex items-center gap-2">
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-warning)] text-black text-[10px] font-bold flex items-center justify-center manual-border">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="admin-content">
+                <!-- Page Header -->
+                <div class="page-header mb-6">
+                    <div class="page-header-content">
+                        <h1 class="page-header-title">Forms</h1>
+                        <p class="page-header-subtitle">Manage contact forms and view submissions</p>
+                    </div>
+                </div>
+
+                <!-- Forms Grid -->
+                <div id="formsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Contact Form Card - Has Unread -->
+                    <div class="content-card overflow-hidden hover:shadow-manual-lg transition-shadow">
+                        <!-- Unread highlight strip -->
+                        <div class="bg-primary text-white text-center py-2 font-mono text-xs font-bold uppercase">
+                            12 NEW
+                        </div>
+                        <div class="content-card-body">
+                            <div class="flex items-start gap-4 mb-4">
+                                <div class="w-12 h-12 bg-primary-light manual-border flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-primary text-2xl">mail</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-display font-bold text-text-primary text-lg uppercase">Contact Form</h3>
+                                    <p class="font-mono text-xs text-text-secondary">General inquiries from website visitors</p>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <p class="font-mono text-xs text-text-secondary">Total Submissions: <span class="font-bold text-text-primary">47</span></p>
+                            </div>
+
+                            <div class="bg-primary-light manual-border px-4 py-2 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-primary"></span>
+                                    <span class="font-mono text-xs font-bold text-primary">12 unread submissions</span>
+                                </div>
+                            </div>
+
+                            <p class="font-mono text-2xs text-text-secondary mb-4">Last: Jan 28, 2025 at 3:45 PM</p>
+
+                            <div class="flex items-center gap-3">
+                                <a href="submissions.html" class="flex-1 manual-border manual-shadow btn-press bg-primary hover:bg-primary-dark text-white font-mono text-xs font-bold uppercase py-2 px-4 text-center transition-colors">
+                                    View Submissions
+                                </a>
+                                <a href="settings.html" class="p-2 manual-border bg-white btn-press hover:bg-background-light transition-colors">
+                                    <span class="material-symbols-outlined text-text-secondary">settings</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Inquiry Card - Has Unread -->
+                    <div class="content-card overflow-hidden hover:shadow-manual-lg transition-shadow">
+                        <!-- Unread highlight strip -->
+                        <div class="bg-primary text-white text-center py-2 font-mono text-xs font-bold uppercase">
+                            5 NEW
+                        </div>
+                        <div class="content-card-body">
+                            <div class="flex items-start gap-4 mb-4">
+                                <div class="w-12 h-12 bg-[#FFF7ED] manual-border flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-[#FD7E14] text-2xl">inventory_2</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-display font-bold text-text-primary text-lg uppercase">Product Inquiry</h3>
+                                    <p class="font-mono text-xs text-text-secondary">Product-specific questions</p>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <p class="font-mono text-xs text-text-secondary">Total Submissions: <span class="font-bold text-text-primary">23</span></p>
+                            </div>
+
+                            <div class="bg-primary-light manual-border px-4 py-2 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-primary"></span>
+                                    <span class="font-mono text-xs font-bold text-primary">5 unread submissions</span>
+                                </div>
+                            </div>
+
+                            <p class="font-mono text-2xs text-text-secondary mb-4">Last: Jan 27, 2025 at 11:20 AM</p>
+
+                            <div class="flex items-center gap-3">
+                                <a href="submissions.html" class="flex-1 manual-border manual-shadow btn-press bg-primary hover:bg-primary-dark text-white font-mono text-xs font-bold uppercase py-2 px-4 text-center transition-colors">
+                                    View Submissions
+                                </a>
+                                <a href="settings.html" class="p-2 manual-border bg-white btn-press hover:bg-background-light transition-colors">
+                                    <span class="material-symbols-outlined text-text-secondary">settings</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Request Card - Has Unread -->
+                    <div class="content-card overflow-hidden hover:shadow-manual-lg transition-shadow">
+                        <!-- Unread highlight strip -->
+                        <div class="bg-primary text-white text-center py-2 font-mono text-xs font-bold uppercase">
+                            8 NEW
+                        </div>
+                        <div class="content-card-body">
+                            <div class="flex items-start gap-4 mb-4">
+                                <div class="w-12 h-12 bg-[#F3E8FF] manual-border flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-[#6F42C1] text-2xl">calendar_month</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-display font-bold text-text-primary text-lg uppercase">Demo Request</h3>
+                                    <p class="font-mono text-xs text-text-secondary">Request a product demonstration</p>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <p class="font-mono text-xs text-text-secondary">Total Submissions: <span class="font-bold text-text-primary">89</span></p>
+                            </div>
+
+                            <div class="bg-primary-light manual-border px-4 py-2 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-primary"></span>
+                                    <span class="font-mono text-xs font-bold text-primary">8 unread submissions</span>
+                                </div>
+                            </div>
+
+                            <p class="font-mono text-2xs text-text-secondary mb-4">Last: Jan 28, 2025 at 5:12 PM</p>
+
+                            <div class="flex items-center gap-3">
+                                <a href="submissions.html" class="flex-1 manual-border manual-shadow btn-press bg-primary hover:bg-primary-dark text-white font-mono text-xs font-bold uppercase py-2 px-4 text-center transition-colors">
+                                    View Submissions
+                                </a>
+                                <a href="settings.html" class="p-2 manual-border bg-white btn-press hover:bg-background-light transition-colors">
+                                    <span class="material-symbols-outlined text-text-secondary">settings</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Whitepaper Download Card - Special (Leads) -->
+                    <div class="content-card overflow-hidden hover:shadow-manual-lg transition-shadow">
+                        <div class="content-card-body">
+                            <div class="flex items-start gap-4 mb-4">
+                                <div class="w-12 h-12 bg-success-light manual-border flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-success text-2xl">description</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-display font-bold text-text-primary text-lg uppercase">Whitepaper Download</h3>
+                                    <p class="font-mono text-xs text-text-secondary">Lead capture for whitepapers</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-info-light manual-border-primary px-4 py-2 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-lg">info</span>
+                                    <span class="font-mono text-xs text-primary">Managed separately in Leads</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <p class="font-mono text-xs text-text-secondary">Total Leads Captured: <span class="font-bold text-text-primary">156</span></p>
+                            </div>
+
+                            <p class="font-mono text-2xs text-text-secondary mb-4">Last: Jan 26, 2025 at 9:30 AM</p>
+
+                            <div class="flex items-center gap-3">
+                                <a href="#" class="flex-1 font-mono text-xs font-bold uppercase text-primary hover:text-primary-dark text-center transition-colors inline-flex items-center justify-center gap-1">
+                                    View Leads
+                                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State (hidden by default) -->
+                <div id="emptyState" class="hidden">
+                    <div class="content-card p-12 text-center">
+                        <div class="w-16 h-16 bg-background-light manual-border flex items-center justify-center mx-auto mb-4">
+                            <span class="material-symbols-outlined text-text-secondary text-3xl">inbox</span>
+                        </div>
+                        <h3 class="font-display text-lg font-bold uppercase text-text-primary mb-2">No Forms Configured</h3>
+                        <p class="font-mono text-xs text-text-secondary">Your forms will appear here once configured.<br>Contact your administrator to set up forms.</p>
+                    </div>
+                </div>
+
+                <!-- Example: All Caught Up Card -->
+                <div class="mt-8">
+                    <h2 class="font-mono text-xs font-bold uppercase text-text-secondary mb-4">Example: All Caught Up Card</h2>
+                    <div class="max-w-md">
+                        <div class="content-card overflow-hidden">
+                            <div class="content-card-body">
+                                <div class="flex items-start gap-4 mb-4">
+                                    <div class="w-12 h-12 bg-primary-light manual-border flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined text-primary text-2xl">mail</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-display font-bold text-text-primary text-lg uppercase">Contact Form</h3>
+                                        <p class="font-mono text-xs text-text-secondary">General inquiries from website visitors</p>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <p class="font-mono text-xs text-text-secondary">Total Submissions: <span class="font-bold text-text-primary">47</span></p>
+                                </div>
+
+                                <div class="bg-success-light manual-border px-4 py-2 mb-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-success text-lg">check_circle</span>
+                                        <span class="font-mono text-xs font-bold text-success">All caught up!</span>
+                                    </div>
+                                </div>
+
+                                <p class="font-mono text-2xs text-text-secondary mb-4">Last: Jan 28, 2025 at 3:45 PM</p>
+
+                                <div class="flex items-center gap-3">
+                                    <a href="submissions.html" class="flex-1 manual-border manual-shadow btn-press bg-primary hover:bg-primary-dark text-white font-mono text-xs font-bold uppercase py-2 px-4 text-center transition-colors">
+                                        View Submissions
+                                    </a>
+                                    <a href="settings.html" class="p-2 manual-border bg-white btn-press hover:bg-background-light transition-colors">
+                                        <span class="material-symbols-outlined text-text-secondary">settings</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- State Toggle Buttons (for demo purposes) -->
+                <div class="mt-8 p-4 bg-background-light manual-border">
+                    <p class="font-mono text-xs text-text-secondary mb-3">Demo Controls - Toggle States:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="showState('normal')" class="px-4 py-2 manual-border manual-shadow btn-press bg-primary text-white font-mono text-xs font-bold uppercase">Normal</button>
+                        <button onclick="showState('empty')" class="px-4 py-2 manual-border btn-press bg-white font-mono text-xs font-bold uppercase hover:bg-background-light">Empty</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function showState(state) {
+            const formsGrid = document.getElementById('formsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            // Hide all
+            formsGrid.classList.add('hidden');
+            emptyState.classList.add('hidden');
+
+            // Show selected
+            switch(state) {
+                case 'normal':
+                    formsGrid.classList.remove('hidden');
+                    break;
+                case 'empty':
+                    emptyState.classList.remove('hidden');
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <div class="mb-6">
+            <a href="/admin/homepage/cta" class="text-sm text-gray-600 hover:text-black uppercase font-bold">← Back to CTAs</a>
+            <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+        </div>
+
+        {{if .Saved}}
+        <div class="bg-green-400 text-black p-3 mb-6 text-sm font-bold uppercase border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+            ✓ Saved successfully!
+        </div>
+        {{end}}
+
+        <form method="POST" action="{{if and .Item .Item.ID}}/admin/homepage/cta/{{.Item.ID}}{{else}}/admin/homepage/cta{{end}}"
+              class="bg-white border-2 border-black p-6 space-y-5 max-w-2xl" style="box-shadow: 4px 4px 0px #000;">
+
+            <div>
+                <label class="block text-xs font-bold uppercase mb-1">Heading</label>
+                <input type="text" name="headline" value="{{.Item.Headline}}"
+                       class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       style="font-family: 'JetBrains Mono', monospace;" required
+                       title="CTA section heading (e.g., 'Ready to get started?').">
+                <p class="text-xs text-gray-500 mt-1">CTA section heading (e.g., "Ready to get started?").</p>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase mb-1">Description</label>
+                <textarea name="description" rows="3"
+                          class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          style="font-family: 'JetBrains Mono', monospace;"
+                          title="Supporting text encouraging action.">{{.Item.Description.String}}</textarea>
+                <p class="text-xs text-gray-500 mt-1">Supporting text encouraging action.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Button Text</label>
+                    <input type="text" name="primary_cta_text" value="{{.Item.PrimaryCtaText}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;" required
+                           title="Primary button label.">
+                    <p class="text-xs text-gray-500 mt-1">Primary button label.</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Button Link</label>
+                    <input type="text" name="primary_cta_url" value="{{.Item.PrimaryCtaUrl}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Secondary Button Text</label>
+                    <input type="text" name="secondary_cta_text" value="{{.Item.SecondaryCtaText.String}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Secondary Button URL</label>
+                    <input type="text" name="secondary_cta_url" value="{{.Item.SecondaryCtaUrl.String}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase mb-1">Background Style</label>
+                <div class="flex gap-3">
+                    <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 hover:bg-gray-50">
+                        <input type="radio" name="background_style" value="light" {{if or (not .Item.BackgroundStyle.Valid) (eq .Item.BackgroundStyle.String "light")}}checked{{end}}>
+                        <span class="text-xs font-bold uppercase">Light</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 hover:bg-gray-50">
+                        <input type="radio" name="background_style" value="dark" {{if eq .Item.BackgroundStyle.String "dark"}}checked{{end}}>
+                        <span class="text-xs font-bold uppercase">Dark</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 hover:bg-gray-50">
+                        <input type="radio" name="background_style" value="primary" {{if eq .Item.BackgroundStyle.String "primary"}}checked{{end}}>
+                        <span class="text-xs font-bold uppercase">Primary</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                    <input type="number" name="display_order" value=""
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div class="flex items-end pb-2">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="is_active" id="is_active" {{if eq .Item.IsActive 1}}checked{{end}}
+                               class="w-5 h-5 border-2 border-black">
+                        <span class="text-xs font-bold uppercase">Active</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t-2 border-black">
+                <button type="submit"
+                        class="bg-blue-600 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 4px 4px 0px #000;">
+                    Save CTA
+                </button>
+                <a href="/admin/homepage/cta"
+                   class="bg-white text-black px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100"
+                   style="box-shadow: 4px 4px 0px #000;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

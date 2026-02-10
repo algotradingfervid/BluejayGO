@@ -1,0 +1,339 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="mb-6">
+            <a href="/admin/products" class="text-sm font-bold uppercase text-blue-600 hover:text-blue-800 border-b-2 border-blue-600">&larr; Back to Products</a>
+            <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+        </div>
+
+        <form action="{{.FormAction}}" method="POST" enctype="multipart/form-data" class="max-w-4xl space-y-4" id="product-form">
+
+            <!-- Section 1: Basic Information (open by default) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section>
+                <button type="button" onclick="toggleSection(this)"
+                        class="w-full flex items-center justify-between px-5 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>Basic Information</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform">expand_more</span>
+                </button>
+                <div class="section-body p-5 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Product Name *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="The product name as it appears on your site.">ⓘ</span>
+                            </label>
+                            <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                SKU *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="Unique stock-keeping unit code for this product.">ⓘ</span>
+                            </label>
+                            <input type="text" name="sku" value="{{if .Item}}{{.Item.Sku}}{{end}}" required
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Slug *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="URL-friendly version of the name. Auto-generated but editable.">ⓘ</span>
+                            </label>
+                            <input type="text" name="slug" value="{{if .Item}}{{.Item.Slug}}{{end}}" required
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Category *</label>
+                            <select name="category_id" required
+                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    style="font-family: 'JetBrains Mono', monospace;">
+                                <option value="">Select Category</option>
+                                {{range .Categories}}
+                                <option value="{{.ID}}" {{if and $.Item (eq $.Item.CategoryID .ID)}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Status *</label>
+                            <select name="status" required
+                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    style="font-family: 'JetBrains Mono', monospace;">
+                                <option value="draft" {{if and .Item (eq .Item.Status "draft")}}selected{{end}}>Draft</option>
+                                <option value="published" {{if and .Item (eq .Item.Status "published")}}selected{{end}}>Published</option>
+                                <option value="archived" {{if and .Item (eq .Item.Status "archived")}}selected{{end}}>Archived</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Description (open by default) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section>
+                <button type="button" onclick="toggleSection(this)"
+                        class="w-full flex items-center justify-between px-5 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>Description</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform">expand_more</span>
+                </button>
+                <div class="section-body p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Tagline
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="A one-line summary shown on product cards. Keep under 100 characters.">ⓘ</span>
+                        </label>
+                        <input type="text" name="tagline" maxlength="100"
+                               value="{{if .Item}}{{if .Item.Tagline.Valid}}{{.Item.Tagline.String}}{{end}}{{end}}"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Description *</label>
+                        <textarea name="description" required rows="4"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Overview
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Detailed product description with formatting. Shown on the product detail page.">ⓘ</span>
+                        </label>
+                        <input id="overview-input" type="hidden" name="overview"
+                               value="{{if .Item}}{{if .Item.Overview.Valid}}{{.Item.Overview.String}}{{end}}{{end}}">
+                        <trix-editor input="overview-input"
+                                     class="border-2 border-black text-sm min-h-[150px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                     style="font-family: 'JetBrains Mono', monospace;"></trix-editor>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Media (collapsed by default) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section data-collapsed>
+                <button type="button" onclick="toggleSection(this)"
+                        class="w-full flex items-center justify-between px-5 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>Media</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform rotate-[-90deg]">expand_more</span>
+                </button>
+                <div class="section-body p-5 space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Primary Image</label>
+                        <input type="file" name="primary_image" accept="image/*"
+                               class="w-full border-2 border-black px-3 py-2 text-sm"
+                               onchange="previewImage(this)">
+                        {{if .Item}}{{if .Item.PrimaryImage.Valid}}
+                        <div class="mt-2">
+                            <img src="{{.Item.PrimaryImage.String}}" alt="Current image" id="image-preview"
+                                 class="w-32 h-32 object-cover border-2 border-black">
+                        </div>
+                        {{end}}{{end}}
+                        <div id="new-image-preview" class="mt-2 hidden">
+                            <img src="" alt="Preview" class="w-32 h-32 object-cover border-2 border-black">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Video URL
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="YouTube or Vimeo embed URL for the product video.">ⓘ</span>
+                        </label>
+                        <input type="url" name="video_url"
+                               value="{{if .Item}}{{if .Item.VideoUrl.Valid}}{{.Item.VideoUrl.String}}{{end}}{{end}}"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;"
+                               placeholder="https://youtube.com/embed/...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Display Options (collapsed by default) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section data-collapsed>
+                <button type="button" onclick="toggleSection(this)"
+                        class="w-full flex items-center justify-between px-5 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>Display Options</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform rotate-[-90deg]">expand_more</span>
+                </button>
+                <div class="section-body p-5 space-y-4 hidden">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" name="is_featured" value="1" id="is_featured"
+                               {{if .Item}}{{if .Item.IsFeatured}}checked{{end}}{{end}}
+                               class="w-5 h-5 border-2 border-black"
+                               onchange="toggleFeaturedOrder()">
+                        <label for="is_featured" class="text-sm font-bold uppercase cursor-pointer">
+                            Featured Product
+                            <span class="inline-block ml-1 cursor-help text-gray-400 font-normal normal-case" title="Featured products appear in the homepage featured section.">ⓘ</span>
+                        </label>
+                    </div>
+                    <div id="featured-order-wrapper" class="{{if not .Item}}hidden{{else}}{{if not .Item.IsFeatured}}hidden{{end}}{{end}}">
+                        <label class="block text-xs font-bold uppercase mb-1">Featured Order</label>
+                        <input type="number" name="featured_order" min="0"
+                               value="{{if .Item}}{{if .Item.FeaturedOrder.Valid}}{{.Item.FeaturedOrder.Int64}}{{end}}{{end}}"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;"
+                               placeholder="Display order (lower = first)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: SEO (collapsed by default) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section data-collapsed>
+                <button type="button" onclick="toggleSection(this)"
+                        class="w-full flex items-center justify-between px-5 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>SEO</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform rotate-[-90deg]">expand_more</span>
+                </button>
+                <div class="section-body p-5 space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Meta Title</label>
+                        <input type="text" name="meta_title" maxlength="70"
+                               value="{{if .Item}}{{if .Item.MetaTitle.Valid}}{{.Item.MetaTitle.String}}{{end}}{{end}}"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;"
+                               oninput="updateCharCount(this, 'meta-title-count', 70)">
+                        <p class="text-xs text-gray-500 mt-1"><span id="meta-title-count">0</span>/70 characters</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Meta Description</label>
+                        <textarea name="meta_description" maxlength="160" rows="2"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;"
+                                  oninput="updateCharCount(this, 'meta-desc-count', 160)">{{if .Item}}{{if .Item.MetaDescription.Valid}}{{.Item.MetaDescription.String}}{{end}}{{end}}</textarea>
+                        <p class="text-xs text-gray-500 mt-1"><span id="meta-desc-count">0</span>/160 characters</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-2 flex gap-3 items-center">
+                <button type="submit"
+                        class="bg-blue-600 text-white px-8 py-3 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 4px 4px 0px #000;">
+                    {{if .Item}}Update Product{{else}}Create Product{{end}}
+                </button>
+                {{if .Item}}
+                <a href="/products/{{.CategorySlug}}/{{.Item.Slug}}?preview=true" target="_blank"
+                   title="Preview how this content will look on the public site."
+                   class="bg-white text-black px-6 py-3 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-flex items-center gap-2"
+                   style="box-shadow: 4px 4px 0px #000; text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    Preview
+                </a>
+                {{end}}
+            </div>
+        </form>
+
+        {{if .Item}}
+        <!-- Product Details (HTMX sub-pages) -->
+        <div class="mt-8 max-w-4xl">
+            <h2 class="text-lg font-bold uppercase mb-4">Product Details</h2>
+            <div class="border-b-2 border-black mb-6">
+                <nav class="flex" id="detail-tabs">
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-black text-white border-2 border-black border-b-0"
+                            hx-get="/admin/products/{{.Item.ID}}/specs"
+                            hx-target="#detail-content"
+                            hx-swap="innerHTML"
+                            onclick="setActiveTab(this)">Specs</button>
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100"
+                            hx-get="/admin/products/{{.Item.ID}}/features"
+                            hx-target="#detail-content"
+                            hx-swap="innerHTML"
+                            onclick="setActiveTab(this)">Features</button>
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100"
+                            hx-get="/admin/products/{{.Item.ID}}/certifications"
+                            hx-target="#detail-content"
+                            hx-swap="innerHTML"
+                            onclick="setActiveTab(this)">Certs</button>
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100"
+                            hx-get="/admin/products/{{.Item.ID}}/downloads"
+                            hx-target="#detail-content"
+                            hx-swap="innerHTML"
+                            onclick="setActiveTab(this)">Downloads</button>
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100"
+                            hx-get="/admin/products/{{.Item.ID}}/images"
+                            hx-target="#detail-content"
+                            hx-swap="innerHTML"
+                            onclick="setActiveTab(this)">Images</button>
+                </nav>
+            </div>
+            <div id="detail-content"
+                 class="bg-white border-2 border-black border-t-0 p-5"
+                 hx-get="/admin/products/{{.Item.ID}}/specs"
+                 hx-trigger="load"
+                 hx-swap="innerHTML"
+                 style="box-shadow: 4px 4px 0px #000;">
+                <p class="text-gray-500 text-sm">Loading...</p>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+<script>
+function toggleSection(btn) {
+    var body = btn.nextElementSibling;
+    var chevron = btn.querySelector('.section-chevron');
+    if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        chevron.style.transform = 'rotate(0deg)';
+    } else {
+        body.classList.add('hidden');
+        chevron.style.transform = 'rotate(-90deg)';
+    }
+}
+
+function toggleFeaturedOrder() {
+    var cb = document.getElementById('is_featured');
+    var wrapper = document.getElementById('featured-order-wrapper');
+    if (cb.checked) {
+        wrapper.classList.remove('hidden');
+    } else {
+        wrapper.classList.add('hidden');
+    }
+}
+
+function updateCharCount(input, countId, max) {
+    var el = document.getElementById(countId);
+    if (el) el.textContent = input.value.length;
+}
+
+function previewImage(input) {
+    var preview = document.getElementById('new-image-preview');
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.querySelector('img').src = e.target.result;
+            preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function setActiveTab(el) {
+    document.querySelectorAll('#detail-tabs button').forEach(function(btn) {
+        btn.className = 'px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100';
+    });
+    el.className = 'px-4 py-2 text-sm font-bold uppercase bg-black text-white border-2 border-black border-b-0';
+}
+
+// Auto-slug generation
+(function() {
+    var nameInput = document.querySelector('input[name="name"]');
+    var slugInput = document.querySelector('input[name="slug"]');
+    if (nameInput && slugInput) {
+        nameInput.addEventListener('blur', function() {
+            if (slugInput.value === '') {
+                slugInput.value = nameInput.value.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            }
+        });
+    }
+})();
+
+// Init char counts
+(function() {
+    var mt = document.querySelector('input[name="meta_title"]');
+    var md = document.querySelector('textarea[name="meta_description"]');
+    if (mt) updateCharCount(mt, 'meta-title-count', 70);
+    if (md) updateCharCount(md, 'meta-desc-count', 160);
+})();
+</script>
+{{end}}

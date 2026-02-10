@@ -1,0 +1,90 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold uppercase tracking-tight">{{.Title}}</h1>
+                <p class="text-sm text-gray-600 mt-1">Manage blog post tags</p>
+            </div>
+        </div>
+
+        <!-- Add Tag Form -->
+        <div class="bg-white border-2 border-black p-6 mb-6 max-w-xl" style="box-shadow: 4px 4px 0px #000;">
+            <h2 class="text-sm font-bold uppercase mb-4">+ New Tag</h2>
+            <form action="/admin/blog/tags" method="POST" class="flex items-end gap-4">
+                <div class="flex-1">
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Name
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="Tag name. Use lowercase, hyphen-separated (e.g., 'machine-learning').">ⓘ</span>
+                    </label>
+                    <input type="text" name="name" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;"
+                           placeholder="e.g., machine-learning">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Slug
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="URL-friendly version. Auto-generated from name.">ⓘ</span>
+                    </label>
+                    <input type="text" name="slug" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <button type="submit"
+                        class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 4px 4px 0px #000;">
+                    Add
+                </button>
+            </form>
+        </div>
+
+        {{if .Items}}
+        <!-- Search -->
+        <div class="mb-4">
+            <input type="text" id="tag-search" placeholder="Search tags..."
+                   class="border-2 border-black px-3 py-2 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;"
+                   oninput="filterTags(this.value)">
+        </div>
+
+        <!-- Tag Cloud -->
+        <div class="bg-white border-2 border-black p-6" style="box-shadow: 4px 4px 0px #000;">
+            <div id="tag-cloud" class="flex flex-wrap gap-3">
+                {{range .Items}}
+                <a href="/admin/blog/tags/{{.ID}}/edit"
+                   class="tag-chip inline-flex items-center gap-2 bg-gray-100 text-black px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-blue-50 hover:translate-x-[1px] hover:translate-y-[1px] transition-transform"
+                   style="box-shadow: 2px 2px 0px #000;"
+                   data-tag-name="{{.Name}}">
+                    {{.Name}}
+                    <button type="button"
+                            onclick="event.preventDefault(); event.stopPropagation(); if(confirm('Delete tag {{.Name}}?')) htmx.ajax('DELETE', '/admin/blog/tags/{{.ID}}', {target: this.parentElement, swap: 'outerHTML swap:0.3s'})"
+                            class="ml-1 text-red-500 hover:text-red-700 text-xs">&times;</button>
+                </a>
+                {{end}}
+            </div>
+        </div>
+
+        <script>
+        function filterTags(query) {
+            const chips = document.querySelectorAll('.tag-chip');
+            const q = query.toLowerCase();
+            chips.forEach(chip => {
+                const name = chip.getAttribute('data-tag-name').toLowerCase();
+                chip.style.display = name.includes(q) ? '' : 'none';
+            });
+        }
+        </script>
+        {{else}}
+        <!-- Empty State -->
+        <div class="bg-white border-2 border-black p-12 text-center" style="box-shadow: 4px 4px 0px #000;">
+            <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">label</span>
+            <h2 class="text-xl font-bold uppercase mb-2">No Tags Yet</h2>
+            <p class="text-gray-600 text-sm mb-6">Add tags using the form above to organize your posts.</p>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

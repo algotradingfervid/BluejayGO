@@ -1,0 +1,8 @@
+{{define "base"}}
+<span class="inline-flex items-center gap-1 bg-black text-white px-3 py-1 text-xs font-bold uppercase border-2 border-black"
+      style="font-family: 'JetBrains Mono', monospace;">
+    {{.Name}}
+    <input type="hidden" name="tag_ids" value="{{.ID}}">
+    <button type="button" class="ml-1 hover:text-red-400" onclick="this.parentElement.remove()">&times;</button>
+</span>
+{{end}}

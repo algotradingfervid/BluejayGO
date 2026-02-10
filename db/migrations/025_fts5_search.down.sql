@@ -1,0 +1,12 @@
+DROP TRIGGER IF EXISTS case_studies_au;
+DROP TRIGGER IF EXISTS case_studies_ad;
+DROP TRIGGER IF EXISTS case_studies_ai;
+DROP TRIGGER IF EXISTS blog_posts_au;
+DROP TRIGGER IF EXISTS blog_posts_ad;
+DROP TRIGGER IF EXISTS blog_posts_ai;
+DROP TRIGGER IF EXISTS products_au;
+DROP TRIGGER IF EXISTS products_ad;
+DROP TRIGGER IF EXISTS products_ai;
+DROP TABLE IF EXISTS case_studies_fts;
+DROP TABLE IF EXISTS blog_posts_fts;
+DROP TABLE IF EXISTS products_fts;

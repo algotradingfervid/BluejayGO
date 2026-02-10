@@ -1,0 +1,60 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <div class="max-w-2xl">
+            <h1 class="text-2xl font-bold uppercase tracking-tight mb-6">{{.Title}}</h1>
+            <form method="POST" action="{{.FormAction}}" class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Name
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="Category name displayed on the site (e.g., 'Industry News', 'Product Updates').">ⓘ</span>
+                    </label>
+                    <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Color
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <input type="color" name="color_hex" value="{{if .Item}}{{.Item.ColorHex}}{{else}}#1E88E5{{end}}"
+                               class="h-10 w-14 border-2 border-black cursor-pointer">
+                        <input type="text" name="color_hex_text" value="{{if .Item}}{{.Item.ColorHex}}{{else}}#1E88E5{{end}}"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;" pattern="#[0-9A-Fa-f]{6}">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Description
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="Optional description shown on the category archive page.">ⓘ</span>
+                    </label>
+                    <textarea name="description" rows="3"
+                              class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description.String}}{{end}}</textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                    <input type="number" name="sort_order" value="{{if .Item}}{{.Item.SortOrder}}{{else}}0{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t-2 border-black">
+                    <a href="/admin/blog-categories"
+                       class="bg-white text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100"
+                       style="box-shadow: 2px 2px 0px #000;">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                            style="box-shadow: 4px 4px 0px #000;">
+                        Save Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

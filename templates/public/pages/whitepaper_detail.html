@@ -1,0 +1,150 @@
+{{define "content"}}
+
+<!-- Breadcrumb -->
+<nav class="bg-white manual-border-b">
+  <div class="container mx-auto px-4 py-3">
+    <ol class="flex items-center space-x-2 text-sm font-mono uppercase">
+      <li><a href="/" class="text-gray-600 hover:text-black">Home</a></li>
+      <li class="text-gray-400">/</li>
+      <li><a href="/whitepapers" class="text-gray-600 hover:text-black">Whitepapers</a></li>
+      <li class="text-gray-400">/</li>
+      <li class="text-black font-bold truncate">{{.Whitepaper.Title}}</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Whitepaper Detail -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+      <!-- Left Column: Whitepaper Info -->
+      <div>
+        <!-- Cover Preview -->
+        <div class="aspect-[4/3] manual-border manual-shadow-lg flex items-center justify-center mb-8" style="background: linear-gradient(to bottom right, {{.Whitepaper.CoverColorFrom}}, {{.Whitepaper.CoverColorTo}})">
+          <div class="text-center text-white">
+            <span class="material-symbols-outlined text-8xl opacity-80 mb-4 block">description</span>
+            <p class="text-2xl font-mono uppercase font-bold opacity-90">{{.Whitepaper.Title}}</p>
+          </div>
+        </div>
+
+        <!-- Topic Badge -->
+        {{if .Whitepaper.TopicName}}
+        <div class="mb-6">
+          <span class="inline-block px-3 py-1 manual-border text-xs font-mono uppercase font-bold" style="background-color: {{.Whitepaper.TopicColorHex}}20; color: {{.Whitepaper.TopicColorHex}}; border-color: {{.Whitepaper.TopicColorHex}}">
+            {{.Whitepaper.TopicName}}
+          </span>
+        </div>
+        {{end}}
+
+        <!-- Title -->
+        <h1 class="text-4xl md:text-5xl font-bold font-mono uppercase mb-6">{{.Whitepaper.Title}}</h1>
+
+        <!-- Description -->
+        <p class="text-lg text-gray-600 font-mono mb-8 leading-relaxed">
+          {{.Whitepaper.Description}}
+        </p>
+
+        <!-- What You'll Learn -->
+        {{if .LearningPoints}}
+        <div class="bg-white manual-border manual-shadow p-6">
+          <h2 class="text-2xl font-bold font-mono uppercase mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-[#0066CC]">school</span>
+            What You'll Learn
+          </h2>
+          <ul class="space-y-4">
+            {{range .LearningPoints}}
+            <li class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-green-600 mt-0.5">check_circle</span>
+              <span class="font-mono text-gray-700">{{.PointText}}</span>
+            </li>
+            {{end}}
+          </ul>
+        </div>
+        {{end}}
+      </div>
+
+      <!-- Right Column: Download Form -->
+      <div>
+        <div class="bg-white manual-border manual-shadow-lg p-8 sticky top-8">
+          <div id="downloadFormContainer">
+            <h2 class="text-2xl font-bold font-mono uppercase mb-2">Download This Whitepaper</h2>
+            <p class="text-gray-600 font-mono text-sm mb-8">FILL IN YOUR DETAILS TO GET INSTANT ACCESS.</p>
+
+            <form hx-post="/whitepapers/{{.Whitepaper.Slug}}/download" hx-target="#downloadFormContainer" hx-swap="innerHTML">
+              <!-- Name -->
+              <div class="mb-6">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Name *</label>
+                <input type="text" name="name" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="Your full name">
+              </div>
+
+              <!-- Email -->
+              <div class="mb-6">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Email *</label>
+                <input type="email" name="email" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="your@email.com">
+              </div>
+
+              <!-- Company -->
+              <div class="mb-6">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Company *</label>
+                <input type="text" name="company" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="Company name">
+              </div>
+
+              <!-- Designation -->
+              <div class="mb-6">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Designation</label>
+                <input type="text" name="designation" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="Your role / title">
+              </div>
+
+              <!-- Marketing Consent -->
+              <div class="mb-8">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" name="marketing_consent" value="true" class="mt-1 manual-border">
+                  <span class="text-sm font-mono text-gray-600">I agree to receive marketing communications and industry insights.</span>
+                </label>
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" class="w-full bg-black text-white px-6 py-4 manual-border manual-shadow hover:manual-shadow-lg font-mono uppercase text-sm font-bold hover:-translate-y-1 transition-all btn-press flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-sm">download</span>
+                <span>Download Whitepaper</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Related Whitepapers -->
+{{if .RelatedPapers}}
+<section class="py-16 bg-white manual-border-t">
+  <div class="container mx-auto px-4">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-bold font-mono uppercase mb-10 text-center">Related Whitepapers</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {{range .RelatedPapers}}
+        <a href="/whitepapers/{{.Slug}}" class="group bg-white manual-border manual-shadow hover:manual-shadow-lg transition-all duration-200 hover:-translate-y-1">
+          <div class="aspect-video manual-border-b flex items-center justify-center" style="background: linear-gradient(to bottom right, {{.CoverColorFrom}}, {{.CoverColorTo}})">
+            <span class="material-symbols-outlined text-6xl text-white opacity-80">description</span>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-mono uppercase mb-3 group-hover:text-[#0066CC] transition-colors">
+              {{.Title}}
+            </h3>
+            <div class="flex items-center gap-2 text-sm font-mono uppercase font-bold group-hover:translate-x-2 transition-transform">
+              <span>View Details</span>
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </div>
+          </div>
+        </a>
+        {{end}}
+      </div>
+    </div>
+  </div>
+</section>
+{{end}}
+
+{{end}}

@@ -1,0 +1,35 @@
+{{define "base"}}
+<section class="max-w-[1200px] mx-auto px-4 py-8">
+    <div class="flex items-center gap-4 mb-6">
+        <h2 class="font-mono font-black text-xl uppercase">Search Results{{if .Query}} for "{{.Query}}"{{end}}</h2>
+        <div class="flex-grow h-[2px] bg-black/20"></div>
+    </div>
+
+    {{if .Products}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {{range .Products}}
+        <div class="manual-border-thick bg-white p-4 manual-shadow-lg group hover:-translate-y-1 transition-transform">
+            {{if .PrimaryImage.Valid}}
+            <div class="manual-border bg-gray-100 aspect-[4/3] mb-4 overflow-hidden">
+                <img alt="{{.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="{{.PrimaryImage.String}}">
+            </div>
+            {{end}}
+            <h3 class="text-lg font-black uppercase mb-1">{{.Name}}</h3>
+            {{if .Tagline.Valid}}
+            <p class="text-xs opacity-60 mb-3">{{.Tagline.String}}</p>
+            {{end}}
+            <p class="text-sm opacity-70 mb-4 line-clamp-2">{{.Description}}</p>
+            <span class="manual-border bg-white text-black px-4 py-2 text-xs font-bold uppercase manual-shadow btn-press group-hover:bg-[#0066CC] group-hover:text-white transition-colors inline-block">
+                View Details
+            </span>
+        </div>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="manual-border bg-white p-12 text-center manual-shadow">
+        <span class="material-symbols-outlined text-6xl opacity-20 mb-4">search_off</span>
+        <p class="font-mono text-lg uppercase font-bold opacity-60">No products found</p>
+    </div>
+    {{end}}
+</section>
+{{end}}

@@ -1,0 +1,78 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-3xl">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold uppercase tracking-tight" style="font-family: 'JetBrains Mono', monospace;">About Settings</h1>
+                <p class="text-sm text-gray-600 mt-1" style="font-family: 'JetBrains Mono', monospace;">Control which sections appear on the public About page.</p>
+            </div>
+
+            {{if .Saved}}
+            <div class="bg-green-100 border-2 border-black text-green-900 px-4 py-3 mb-6 font-bold uppercase text-sm" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                ✓ About settings saved successfully.
+            </div>
+            {{end}}
+
+            <form method="POST" action="/admin/about/settings" class="space-y-6">
+
+                <!-- Section Visibility -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Section Visibility</h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">Toggle which sections are visible on the public About page.</p>
+
+                    <div class="space-y-4">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="about_show_mission" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.AboutShowMission}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Mission / Vision / Values</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Show the mission, vision, and values section on the About page.">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="about_show_milestones" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.AboutShowMilestones}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Company Milestones</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Show the company milestones timeline on the About page.">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="about_show_certifications" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.AboutShowCertifications}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Certifications</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Show the certifications and accreditations section on the About page.">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="about_show_team" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.AboutShowTeam}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Team</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Show the team members section on the About page.">info</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex gap-3">
+                    <button type="submit"
+                        class="px-6 py-3 bg-black text-white font-bold uppercase text-sm border-2 border-black hover:bg-gray-800 active:translate-x-[2px] active:translate-y-[2px]"
+                        style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                        Save Settings
+                    </button>
+                    <a href="/admin/about/overview"
+                        class="px-6 py-3 bg-white text-black font-bold uppercase text-sm border-2 border-black hover:bg-gray-100"
+                        style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

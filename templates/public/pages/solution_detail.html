@@ -1,0 +1,195 @@
+{{define "content"}}
+    <!-- Breadcrumb -->
+    <div class="max-w-[1200px] mx-auto px-4 py-4">
+        <nav class="flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
+            <a class="hover:text-[#0066CC]" href="/">Home</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <a class="hover:text-[#0066CC]" href="/solutions">Solutions</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <span class="text-[#0066CC]">{{.Solution.Title}}</span>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="max-w-[1200px] mx-auto px-4 pb-12">
+        <div class="manual-border-thick bg-white manual-shadow-lg relative overflow-hidden">
+            <div class="absolute inset-0 grid-dotted pointer-events-none"></div>
+            {{if .Solution.ReferenceCode.Valid}}
+            <div class="absolute top-4 right-4 font-mono text-[10px] opacity-50 uppercase z-10">Ref. {{.Solution.ReferenceCode.String}}</div>
+            {{end}}
+            <div class="grid md:grid-cols-2 gap-8 p-8 md:p-12">
+                {{if .Solution.HeroImageUrl.Valid}}
+                <div class="manual-border bg-gray-100 aspect-[4/3] relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[#0066CC]/5 mix-blend-multiply"></div>
+                    <img alt="{{.Solution.Title}}" class="w-full h-full object-cover grayscale contrast-125" src="{{.Solution.HeroImageUrl.String}}"/>
+                    <div class="absolute bottom-2 left-2 bg-black text-white text-[8px] px-2 py-1 uppercase">Fig 01: BlueJay Solution</div>
+                </div>
+                {{end}}
+                <div class="flex flex-col justify-center relative z-10">
+                    <div class="inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase mb-4 w-fit">
+                        {{.Solution.Title}} Solutions
+                    </div>
+                    <h1 class="text-3xl md:text-5xl font-black font-mono leading-none uppercase mb-6">
+                        {{if .Solution.HeroTitle.Valid}}{{.Solution.HeroTitle.String}}{{else}}{{.Solution.Title}}{{end}}
+                    </h1>
+                    {{if .Solution.HeroDescription.Valid}}
+                    <p class="text-lg font-mono opacity-80 border-l-4 border-[#0066CC] pl-4 mb-8">
+                        {{.Solution.HeroDescription.String}}
+                    </p>
+                    {{end}}
+                    <div class="flex flex-wrap gap-4">
+                        <a href="{{(index .Sections "hero_buttons").PrimaryButtonUrl}}" class="manual-border bg-[#0066CC] text-white px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                            {{(index .Sections "hero_buttons").PrimaryButtonText}}
+                        </a>
+                        <a href="{{(index .Sections "hero_buttons").SecondaryButtonUrl}}" class="manual-border bg-white text-black px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press inline-flex items-center">
+                            {{(index .Sections "hero_buttons").SecondaryButtonText}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industry Overview -->
+    <section class="max-w-[1200px] mx-auto px-4 py-12">
+        <div class="flex items-center gap-4 mb-8">
+            <h2 class="font-mono font-black text-2xl uppercase">{{(index .Sections "overview_section").Heading}}</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+            <span class="font-mono text-xs">{{(index .Sections "overview_section").Label}}</span>
+        </div>
+        {{if .Solution.OverviewContent.Valid}}
+        <div class="manual-border bg-white p-8 mb-12">
+            <div class="text-sm font-mono opacity-80 leading-relaxed prose max-w-none">
+                {{.Solution.OverviewContent.String | safeHTML}}
+            </div>
+        </div>
+        {{end}}
+        {{if .Stats}}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {{range .Stats}}
+            <div class="manual-border bg-white p-6 manual-shadow flex flex-col items-center text-center">
+                <div class="text-4xl md:text-5xl font-mono font-black text-[#0066CC] mb-2">{{.Value}}</div>
+                <div class="text-xs font-mono uppercase opacity-60">{{.Label}}</div>
+            </div>
+            {{end}}
+        </div>
+        {{end}}
+    </section>
+
+    <!-- Challenges We Address -->
+    {{if .Challenges}}
+    <section class="bg-[#F5F5F0] py-20 px-4">
+        <div class="max-w-[1200px] mx-auto">
+            <div class="flex items-center gap-4 mb-12">
+                <h2 class="font-mono font-black text-2xl uppercase">{{(index .Sections "challenges_section").Heading}}</h2>
+                <div class="flex-grow h-[2px] bg-black/20"></div>
+                <span class="font-mono text-xs">{{(index .Sections "challenges_section").Label}}</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{range .Challenges}}
+                <div class="manual-border bg-white p-6 manual-shadow">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 manual-border bg-[#0066CC] flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-xl text-white">{{.Icon}}</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm uppercase mb-2">{{.Title}}</h3>
+                            <p class="text-xs opacity-60 uppercase leading-relaxed">{{.Description}}</p>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Recommended Products -->
+    {{if .Products}}
+    <section class="max-w-[1200px] mx-auto px-4 py-20">
+        <div class="flex items-center gap-4 mb-12">
+            <h2 class="font-mono font-black text-2xl uppercase">{{(index .Sections "products_section").Heading}}</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+            <span class="font-mono text-xs">{{(index .Sections "products_section").Label}}</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {{range .Products}}
+            <div class="manual-border bg-white p-4 manual-shadow flex flex-col group">
+                {{if .ProductImage.Valid}}
+                <div class="manual-border bg-gray-100 aspect-video mb-4 overflow-hidden relative">
+                    <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" alt="{{.ProductName}}" src="{{.ProductImage.String}}"/>
+                    {{if .IsFeatured.Bool}}
+                    <div class="absolute top-2 left-2 bg-[#0066CC] text-white text-[9px] font-bold px-2 py-0.5 uppercase">Featured</div>
+                    {{end}}
+                </div>
+                {{end}}
+                <h3 class="font-mono font-bold text-lg mb-1">{{.ProductName}}</h3>
+                {{if .ProductTagline.Valid}}
+                <p class="font-mono text-xs opacity-60 mb-4 flex-grow uppercase">{{.ProductTagline.String}}</p>
+                {{end}}
+                <a class="font-mono text-sm font-bold text-[#0066CC] flex items-center gap-2 hover:translate-x-1 transition-transform" href="/products/{{.ProductSlug}}">
+                    View Details <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
+            {{end}}
+        </div>
+        <div class="text-center mt-12">
+            <a class="font-mono text-sm font-bold text-[#0066CC] flex items-center justify-center gap-2 hover:gap-4 transition-all" href="/products">
+                View All Products <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- CTA Section -->
+    {{range .CTAs}}
+    {{if eq .SectionName "main_cta"}}
+    <section class="bg-[#0066CC] text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 grid-dotted opacity-10 pointer-events-none"></div>
+        <div class="max-w-3xl mx-auto text-center relative z-10">
+            <h2 class="font-mono font-black text-3xl md:text-4xl uppercase mb-6">{{.Heading}}</h2>
+            {{if .Subheading.Valid}}
+            <p class="font-mono text-lg opacity-90 mb-10 max-w-xl mx-auto">{{.Subheading.String}}</p>
+            {{end}}
+            <div class="flex flex-wrap justify-center gap-4 mb-6">
+                {{if .PrimaryButtonText.Valid}}
+                <a href="{{.PrimaryButtonUrl.String}}" class="manual-border border-white bg-white text-[#0066CC] px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                    {{.PrimaryButtonText.String}}
+                </a>
+                {{end}}
+                {{if .SecondaryButtonText.Valid}}
+                <a href="{{.SecondaryButtonUrl.String}}" class="manual-border border-white bg-transparent text-white px-8 py-4 font-mono font-bold uppercase hover:bg-white/10 transition-colors">
+                    {{.SecondaryButtonText.String}}
+                </a>
+                {{end}}
+            </div>
+            {{if .PhoneNumber.Valid}}
+            <p class="font-mono text-sm opacity-80">
+                Or call us directly: <span class="font-bold">{{.PhoneNumber.String}}</span>
+            </p>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+    {{end}}
+
+    <!-- Explore Other Solutions -->
+    {{if .OtherSolutions}}
+    <section class="max-w-[1200px] mx-auto px-4 py-20">
+        <div class="flex items-center gap-4 mb-12">
+            <h2 class="font-mono font-black text-2xl uppercase">{{(index .Sections "other_solutions").Heading}}</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+            <span class="font-mono text-xs">{{(index .Sections "other_solutions").Label}}</span>
+        </div>
+        <div class="flex flex-wrap justify-center gap-4">
+            {{range .OtherSolutions}}
+            <a href="/solutions/{{.Slug}}" class="manual-border p-4 bg-white flex items-center gap-3 manual-shadow hover:bg-[#0066CC] hover:text-white transition-colors group">
+                <span class="material-symbols-outlined text-2xl">{{.Icon}}</span>
+                <span class="font-mono font-bold text-sm uppercase">{{.Title}}</span>
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+{{end}}

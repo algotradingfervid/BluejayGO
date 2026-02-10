@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Solution - BlueJay CMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="../../components/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../components/tailwind.config.js"></script>
+</head>
+<body class="font-mono bg-background-light text-text-primary min-h-screen">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar-light fixed lg:sticky top-0 left-0 h-screen z-50 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <span class="sidebar-logo-text">BLUEJAY</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Content</div>
+                    <a href="../dashboard/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="../homepage/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">home</span>
+                        Homepage
+                    </a>
+                    <a href="../about/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">info</span>
+                        About Us
+                    </a>
+                    <a href="../products/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">inventory_2</span>
+                        Products
+                    </a>
+                    <a href="../solutions/list.html" class="sidebar-item active">
+                        <span class="material-symbols-outlined sidebar-item-icon">lightbulb</span>
+                        Solutions
+                    </a>
+                    <a href="../blog/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">article</span>
+                        Blog
+                    </a>
+                    <a href="../case-studies/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">cases</span>
+                        Case Studies
+                    </a>
+                    <a href="../whitepapers/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu_book</span>
+                        Whitepapers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Resources</div>
+                    <a href="../partners/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">handshake</span>
+                        Partners
+                    </a>
+                    <a href="../testimonials/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">format_quote</span>
+                        Testimonials
+                    </a>
+                    <a href="../certifications/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">verified</span>
+                        Certifications
+                    </a>
+                </div>                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Global Elements</div>
+                    <a href="../header/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">web_asset</span>
+                        Header
+                    </a>
+                    <a href="../footer/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">call_to_action</span>
+                        Footer
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="../media/library.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">perm_media</span>
+                        Media
+                    </a>
+                    <a href="../forms/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">mail</span>
+                        Forms
+                        <span class="sidebar-item-badge">3</span>
+                    </a>
+                    <a href="../navigation/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu</span>
+                        Navigation
+                    </a>
+                    <a href="../users/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">group</span>
+                        Users
+                    </a>
+                    <a href="../settings/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User Footer -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">JS</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">John Smith</div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button (Mobile) -->
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 p-2 lg:hidden manual-border bg-white hover:bg-[var(--color-background-light)]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 min-h-screen">
+            <!-- Top Navigation Bar -->
+            <header class="h-16 bg-white manual-border-thick border-t-0 border-l-0 border-r-0 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+                <!-- Left side - Hamburger (mobile) -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 manual-border hover:bg-[var(--color-background-light)] lg:hidden">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="font-display font-extrabold uppercase lg:hidden">BLUEJAY</span>
+                </div>
+
+                <!-- Right side - Actions -->
+                <div class="flex items-center gap-2">
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-warning)] text-black text-[10px] font-bold flex items-center justify-center manual-border">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="p-4 md:p-6 lg:p-8 bg-grid-white">
+
+        <!-- Back Link -->
+        <a href="list.html" class="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-primary mb-4 font-mono">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+            Back to Solutions
+        </a>
+
+        <!-- Page Header -->
+        <div class="page-header flex items-center justify-between mb-6">
+            <div class="page-header-content">
+                <div class="flex items-center gap-3">
+                    <h1 class="page-header-title text-2xl font-display font-bold text-text-primary">Create New Solution</h1>
+                    <span class="status-badge status-badge-draft">Draft</span>
+                </div>
+            </div>
+            <div class="page-header-actions flex items-center gap-3">
+                <button class="btn btn-secondary px-5 py-2.5 border-2 border-black bg-white font-bold hover:bg-background-light transition-colors text-sm">
+                    Save Draft
+                </button>
+                <button class="btn btn-primary px-5 py-2.5 bg-primary text-white font-bold manual-border manual-shadow btn-press hover:bg-primary-dark transition-colors text-sm">
+                    Publish
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="grid grid-cols-[280px_1fr] gap-6">
+
+            <!-- Left Sidebar - Section Navigation -->
+            <div class="content-card bg-white manual-border">
+                <div class="content-card-header p-4 border-b-2 border-black">
+                    <h3 class="font-mono font-bold text-sm uppercase text-text-secondary">Section Navigation</h3>
+                </div>
+                <nav class="admin-tabs flex flex-col py-2">
+                    <button class="admin-tab active flex items-center gap-2 px-4 py-3 text-left border-l-4 border-primary bg-primary/10 text-primary font-bold text-sm" data-section="basic-info">
+                        <span class="material-symbols-outlined text-lg">info</span>
+                        Basic Information
+                    </button>
+                    <button class="admin-tab flex items-center gap-2 px-4 py-3 text-left border-l-4 border-transparent hover:bg-background-light text-sm" data-section="challenges">
+                        <span class="material-symbols-outlined text-lg">target</span>
+                        Challenges
+                    </button>
+                    <button class="admin-tab flex items-center gap-2 px-4 py-3 text-left border-l-4 border-transparent hover:bg-background-light text-sm" data-section="cta">
+                        <span class="material-symbols-outlined text-lg">ads_click</span>
+                        Call to Action
+                    </button>
+                    <button class="admin-tab flex items-center gap-2 px-4 py-3 text-left border-l-4 border-transparent hover:bg-background-light text-sm" data-section="products">
+                        <span class="material-symbols-outlined text-lg">inventory_2</span>
+                        Linked Products
+                    </button>
+                    <button class="admin-tab flex items-center gap-2 px-4 py-3 text-left border-l-4 border-transparent hover:bg-background-light text-sm" data-section="seo">
+                        <span class="material-symbols-outlined text-lg">search</span>
+                        SEO Settings
+                    </button>
+                </nav>
+
+                <!-- Publishing Info -->
+                <div class="p-4 border-t-2 border-black">
+                    <h4 class="font-mono font-bold text-xs uppercase text-text-secondary mb-3">Publishing</h4>
+                    <div class="space-y-2 text-sm font-mono">
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-secondary">Status:</span>
+                            <select class="form-select px-2 py-1 text-sm">
+                                <option>Draft</option>
+                                <option>Published</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-secondary">Created:</span>
+                            <span class="text-text-primary">--</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-secondary">Updated:</span>
+                            <span class="text-text-primary">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Content Area -->
+            <div class="space-y-6">
+
+                <!-- ============================================
+                     BASIC INFORMATION SECTION
+                     ============================================ -->
+                <section id="basic-info" class="content-card section-content active bg-white manual-border p-6">
+                    <h2 class="content-card-title text-lg font-display font-bold mb-6">Basic Information</h2>
+
+                    <div class="space-y-5">
+                        <!-- Name -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">Name <span class="text-error">*</span></label>
+                            <input type="text" class="form-input w-full" placeholder="Enter solution name">
+                        </div>
+
+                        <!-- Slug -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">Slug <span class="text-error">*</span></label>
+                            <input type="text" class="form-input w-full" placeholder="e-commerce" value="e-commerce">
+                            <p class="text-xs text-text-secondary mt-1 font-mono">URL Preview: /solutions/e-commerce</p>
+                        </div>
+
+                        <!-- Icon and Position -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-field">
+                                <label class="form-label block text-sm font-mono font-bold mb-2">Icon <span class="text-error">*</span></label>
+                                <button onclick="openIconModal()" class="w-full flex items-center justify-between px-4 py-2.5 border-2 border-black bg-white hover:bg-background-light transition-colors text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary">shopping_cart</span>
+                                        <span class="font-mono">shopping_cart</span>
+                                    </div>
+                                    <span class="material-symbols-outlined text-text-secondary">expand_more</span>
+                                </button>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label block text-sm font-mono font-bold mb-2">Position <span class="text-error">*</span></label>
+                                <input type="number" class="form-input w-full" value="1" min="1" max="999">
+                            </div>
+                        </div>
+
+                        <!-- Tagline -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">Tagline <span class="text-error">*</span></label>
+                            <input type="text" class="form-input w-full" placeholder="Brief tagline for this solution" maxlength="120" id="taglineInput">
+                            <div class="flex items-center justify-between mt-1">
+                                <p class="text-xs text-text-secondary font-mono"><span id="taglineCount">0</span>/120 characters</p>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">Description <span class="text-error">*</span></label>
+                            <div class="manual-border">
+                                <div class="editor-toolbar flex flex-wrap gap-1 p-2 bg-background-light border-b-2 border-black">
+                                    <button class="editor-btn p-2" title="Bold"><span class="material-symbols-outlined text-lg">format_bold</span></button>
+                                    <button class="editor-btn p-2" title="Italic"><span class="material-symbols-outlined text-lg">format_italic</span></button>
+                                    <button class="editor-btn p-2" title="Underline"><span class="material-symbols-outlined text-lg">format_underlined</span></button>
+                                    <span class="w-px h-6 bg-black mx-1"></span>
+                                    <button class="editor-btn p-2 text-xs font-bold" title="Heading 1">H1</button>
+                                    <button class="editor-btn p-2 text-xs font-bold" title="Heading 2">H2</button>
+                                    <span class="w-px h-6 bg-black mx-1"></span>
+                                    <button class="editor-btn p-2" title="Quote"><span class="material-symbols-outlined text-lg">format_quote</span></button>
+                                    <button class="editor-btn p-2" title="Link"><span class="material-symbols-outlined text-lg">link</span></button>
+                                    <button class="editor-btn p-2" title="Bullet List"><span class="material-symbols-outlined text-lg">format_list_bulleted</span></button>
+                                    <button class="editor-btn p-2" title="Numbered List"><span class="material-symbols-outlined text-lg">format_list_numbered</span></button>
+                                </div>
+                                <textarea class="form-textarea w-full p-4 min-h-[200px] resize-y border-0" placeholder="Start typing your description here..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Hero Image -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">Hero Image</label>
+                            <div class="border-2 border-dashed border-black p-10 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors" id="uploadZone">
+                                <div class="flex flex-col items-center gap-3">
+                                    <span class="material-symbols-outlined text-5xl text-text-muted">cloud_upload</span>
+                                    <div>
+                                        <p class="text-text-primary font-bold font-mono">Drag & drop or click to upload</p>
+                                        <p class="text-sm text-text-secondary font-mono">PNG, JPG up to 5MB</p>
+                                    </div>
+                                    <button class="btn btn-secondary px-4 py-2 border-2 border-black bg-white hover:bg-background-light transition-colors text-sm font-bold">
+                                        Browse Files
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Is Active -->
+                        <div class="bg-background-light p-4 manual-border">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" class="mt-0.5 w-5 h-5 border-2 border-black accent-primary">
+                                <div>
+                                    <span class="font-bold font-mono">Is Active</span>
+                                    <p class="text-sm text-text-secondary font-mono">Display this solution on the website</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============================================
+                     CHALLENGES SECTION
+                     ============================================ -->
+                <section id="challenges" class="content-card section-content bg-white manual-border p-6 hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="content-card-title text-lg font-display font-bold">Challenges Section</h2>
+                            <p class="text-sm text-text-secondary mt-1 font-mono">Add challenges that your solution addresses</p>
+                        </div>
+                    </div>
+
+                    <div class="repeater-field space-y-4" id="challengesList">
+                        <!-- Challenge 1 -->
+                        <div class="repeater-item manual-border">
+                            <div class="flex items-center justify-between p-4 bg-background-light border-b-2 border-black">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                                    <span class="font-mono font-bold text-sm">CHALLENGE 1</span>
+                                </div>
+                                <button class="flex items-center gap-1 text-error hover:bg-error/10 px-2 py-1 transition-colors text-sm font-mono">
+                                    <span class="material-symbols-outlined text-lg">close</span>
+                                    Remove
+                                </button>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-mono font-bold mb-2">Title <span class="text-error">*</span></label>
+                                    <input type="text" class="form-input w-full" placeholder="Challenge title" value="Inventory Management">
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-mono font-bold mb-2">Icon</label>
+                                    <button class="flex items-center justify-between px-4 py-2.5 border-2 border-black bg-white hover:bg-background-light transition-colors text-sm w-64">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-primary">inventory_2</span>
+                                            <span class="font-mono">inventory_2</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-text-secondary">expand_more</span>
+                                    </button>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-mono font-bold mb-2">Description <span class="text-error">*</span></label>
+                                    <textarea class="form-textarea w-full resize-none" rows="3" maxlength="300" placeholder="Describe this challenge">Keep track of your stock levels across multiple warehouses and locations with real-time inventory updates.</textarea>
+                                    <p class="text-xs text-text-secondary mt-1 font-mono">0/300 characters</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge 2 -->
+                        <div class="repeater-item manual-border">
+                            <div class="flex items-center justify-between p-4 bg-background-light border-b-2 border-black">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                                    <span class="font-mono font-bold text-sm">CHALLENGE 2</span>
+                                </div>
+                                <button class="flex items-center gap-1 text-error hover:bg-error/10 px-2 py-1 transition-colors text-sm font-mono">
+                                    <span class="material-symbols-outlined text-lg">close</span>
+                                    Remove
+                                </button>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-mono font-bold mb-2">Title <span class="text-error">*</span></label>
+                                    <input type="text" class="form-input w-full" placeholder="Challenge title" value="Payment Processing">
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-mono font-bold mb-2">Icon</label>
+                                    <button class="flex items-center justify-between px-4 py-2.5 border-2 border-black bg-white hover:bg-background-light transition-colors text-sm w-64">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-primary">credit_card</span>
+                                            <span class="font-mono">credit_card</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-text-secondary">expand_more</span>
+                                    </button>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-mono font-bold mb-2">Description <span class="text-error">*</span></label>
+                                    <textarea class="form-textarea w-full resize-none" rows="3" maxlength="300" placeholder="Describe this challenge">Accept payments securely with multiple payment gateway integrations including Stripe, PayPal, and more.</textarea>
+                                    <p class="text-xs text-text-secondary mt-1 font-mono">0/300 characters</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Challenge Button -->
+                    <button class="repeater-add mt-4 w-full flex items-center justify-center gap-2 border-2 border-dashed border-black text-primary font-bold p-4 hover:border-primary hover:bg-primary/5 transition-colors">
+                        <span class="material-symbols-outlined">add</span>
+                        Add Another Challenge
+                    </button>
+                </section>
+
+                <!-- ============================================
+                     CALL TO ACTION SECTION
+                     ============================================ -->
+                <section id="cta" class="content-card section-content bg-white manual-border p-6 hidden">
+                    <div class="mb-6">
+                        <h2 class="content-card-title text-lg font-display font-bold">Call to Action</h2>
+                        <p class="text-sm text-text-secondary mt-1 font-mono">Configure the call-to-action button for this solution</p>
+                    </div>
+
+                    <div class="space-y-5">
+                        <!-- CTA Button Text -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">CTA Button Text <span class="text-error">*</span></label>
+                            <input type="text" class="form-input w-full" placeholder="e.g., Get Started Today" value="Get Started Today" id="ctaTextInput">
+                        </div>
+
+                        <!-- CTA URL -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">CTA URL <span class="text-error">*</span></label>
+                            <input type="text" class="form-input w-full" placeholder="/contact?solution=e-commerce" value="/contact?solution=e-commerce">
+                            <p class="text-xs text-text-secondary mt-1 font-mono">Enter a relative path (e.g., /contact) or full URL</p>
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">Preview</label>
+                            <div class="bg-background-light p-6 flex items-center justify-center manual-border">
+                                <button class="btn btn-primary px-8 py-3 bg-primary text-white font-bold manual-border manual-shadow btn-press hover:bg-primary-dark transition-colors" id="ctaPreviewButton">
+                                    Get Started Today
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============================================
+                     LINKED PRODUCTS SECTION
+                     ============================================ -->
+                <section id="products" class="content-card section-content bg-white manual-border p-6 hidden">
+                    <div class="mb-6">
+                        <h2 class="content-card-title text-lg font-display font-bold">Linked Products</h2>
+                        <p class="text-sm text-text-secondary mt-1 font-mono">Select products to display with this solution</p>
+                    </div>
+
+                    <!-- Search and Add -->
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="relative flex-1">
+                            <input type="text" class="form-input w-full pl-10" placeholder="Search products...">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-xl">search</span>
+                        </div>
+                        <button onclick="openProductModal()" class="btn btn-primary flex items-center gap-2 px-4 py-2.5 bg-primary text-white font-bold manual-border hover:bg-primary-dark transition-colors text-sm">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                            Add Products
+                        </button>
+                    </div>
+
+                    <!-- Selected Products -->
+                    <div class="mb-4">
+                        <h3 class="text-sm font-mono font-bold text-text-secondary uppercase mb-3">Selected Products (4)</h3>
+                    </div>
+
+                    <div class="space-y-2" id="productsList">
+                        <div class="repeater-item flex items-center gap-3 p-3 manual-border bg-white hover:bg-background-light">
+                            <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                            <div class="w-12 h-12 bg-background-light manual-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-text-muted">image</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-bold text-sm font-mono">Payment Gateway Pro</p>
+                                <p class="text-xs text-text-secondary font-mono">SKU: PAY-001</p>
+                            </div>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" checked class="w-4 h-4 border-2 border-black accent-primary">
+                                <span class="text-sm font-mono">Featured</span>
+                            </label>
+                            <button class="text-error hover:bg-error/10 p-1 transition-colors">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        <div class="repeater-item flex items-center gap-3 p-3 manual-border bg-white hover:bg-background-light">
+                            <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                            <div class="w-12 h-12 bg-background-light manual-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-text-muted">image</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-bold text-sm font-mono">Inventory Manager</p>
+                                <p class="text-xs text-text-secondary font-mono">SKU: INV-002</p>
+                            </div>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 border-2 border-black accent-primary">
+                                <span class="text-sm font-mono">Featured</span>
+                            </label>
+                            <button class="text-error hover:bg-error/10 p-1 transition-colors">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        <div class="repeater-item flex items-center gap-3 p-3 manual-border bg-white hover:bg-background-light">
+                            <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                            <div class="w-12 h-12 bg-background-light manual-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-text-muted">image</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-bold text-sm font-mono">Customer Portal</p>
+                                <p class="text-xs text-text-secondary font-mono">SKU: CUS-003</p>
+                            </div>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" checked class="w-4 h-4 border-2 border-black accent-primary">
+                                <span class="text-sm font-mono">Featured</span>
+                            </label>
+                            <button class="text-error hover:bg-error/10 p-1 transition-colors">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        <div class="repeater-item flex items-center gap-3 p-3 manual-border bg-white hover:bg-background-light">
+                            <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                            <div class="w-12 h-12 bg-background-light manual-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-text-muted">image</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-bold text-sm font-mono">Analytics Dashboard</p>
+                                <p class="text-xs text-text-secondary font-mono">SKU: ANA-004</p>
+                            </div>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 border-2 border-black accent-primary">
+                                <span class="text-sm font-mono">Featured</span>
+                            </label>
+                            <button class="text-error hover:bg-error/10 p-1 transition-colors">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============================================
+                     SEO SETTINGS SECTION
+                     ============================================ -->
+                <section id="seo" class="content-card section-content bg-white manual-border p-6 hidden">
+                    <div class="mb-6">
+                        <h2 class="content-card-title text-lg font-display font-bold">SEO Settings</h2>
+                        <p class="text-sm text-text-secondary mt-1 font-mono">Optimize this solution page for search engines</p>
+                    </div>
+
+                    <div class="space-y-5">
+                        <!-- Meta Title -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">Meta Title</label>
+                            <input type="text" class="form-input w-full" placeholder="E-Commerce Solutions | Bluejay Software" value="E-Commerce Solutions | Bluejay Software" maxlength="60" id="metaTitleInput">
+                            <div class="mt-2">
+                                <div class="flex items-center justify-between text-xs mb-1 font-mono">
+                                    <span class="text-text-secondary"><span id="metaTitleCount">43</span>/60 characters</span>
+                                </div>
+                                <div class="h-1 bg-gray-200">
+                                    <div class="h-full bg-primary transition-all" style="width: 71.6%" id="metaTitleBar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Meta Description -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">Meta Description</label>
+                            <textarea class="form-textarea w-full resize-none" rows="3" placeholder="Brief description for search engines" maxlength="160" id="metaDescInput">Build your online store with our powerful e-commerce platform. Features include inventory management, secure payments, and customer analytics.</textarea>
+                            <div class="mt-2">
+                                <div class="flex items-center justify-between text-xs mb-1 font-mono">
+                                    <span class="text-text-secondary"><span id="metaDescCount">142</span>/160 characters</span>
+                                </div>
+                                <div class="h-1 bg-gray-200">
+                                    <div class="h-full bg-primary transition-all" style="width: 88.75%" id="metaDescBar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Google Search Preview -->
+                        <div class="form-field">
+                            <label class="form-label block text-sm font-mono font-bold mb-2">Google Search Preview</label>
+                            <div class="seo-preview p-4 manual-border bg-white">
+                                <div class="seo-preview-title text-lg text-blue-700 mb-1" id="previewTitle">E-Commerce Solutions | Bluejay Software</div>
+                                <div class="seo-preview-url text-sm text-green-700 mb-1 font-mono">https://bluejay.com > solutions > e-commerce</div>
+                                <div class="seo-preview-description text-sm text-text-secondary" id="previewDesc">Build your online store with our powerful e-commerce platform. Features include inventory management, secure payments, and customer analytics.</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ============================================
+         ICON PICKER MODAL
+         ============================================ -->
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden" id="iconModal">
+        <div class="bg-white w-full max-w-2xl max-h-[80vh] flex flex-col manual-border manual-shadow">
+            <div class="flex items-center justify-between p-4 border-b-2 border-black">
+                <h3 class="text-lg font-display font-bold">Select Icon</h3>
+                <button onclick="closeIconModal()" class="p-1 hover:bg-background-light border-2 border-transparent hover:border-black">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-4 border-b-2 border-black">
+                <input type="text" class="form-input w-full" placeholder="Search icons...">
+            </div>
+            <div class="p-4 border-b-2 border-black">
+                <div class="flex flex-wrap gap-2">
+                    <button class="btn btn-primary px-3 py-1.5 bg-primary text-white text-sm font-bold">All</button>
+                    <button class="btn btn-secondary px-3 py-1.5 border-2 border-black bg-white hover:bg-background-light text-sm font-mono">Commerce</button>
+                    <button class="btn btn-secondary px-3 py-1.5 border-2 border-black bg-white hover:bg-background-light text-sm font-mono">Healthcare</button>
+                    <button class="btn btn-secondary px-3 py-1.5 border-2 border-black bg-white hover:bg-background-light text-sm font-mono">Finance</button>
+                    <button class="btn btn-secondary px-3 py-1.5 border-2 border-black bg-white hover:bg-background-light text-sm font-mono">Technology</button>
+                    <button class="btn btn-secondary px-3 py-1.5 border-2 border-black bg-white hover:bg-background-light text-sm font-mono">General</button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="grid grid-cols-6 gap-3">
+                    <button class="p-4 manual-border hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+                        <span class="text-xs text-text-secondary font-mono">cart</span>
+                    </button>
+                    <button class="p-4 manual-border-primary bg-primary/10 flex flex-col items-center gap-2 border-2 border-primary">
+                        <span class="material-symbols-outlined text-2xl text-primary">store</span>
+                        <span class="text-xs text-primary font-mono">store</span>
+                    </button>
+                    <button class="p-4 manual-border hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-2xl">credit_card</span>
+                        <span class="text-xs text-text-secondary font-mono">credit</span>
+                    </button>
+                    <button class="p-4 manual-border hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-2xl">account_balance</span>
+                        <span class="text-xs text-text-secondary font-mono">bank</span>
+                    </button>
+                    <button class="p-4 manual-border hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-2xl">local_hospital</span>
+                        <span class="text-xs text-text-secondary font-mono">medical</span>
+                    </button>
+                    <button class="p-4 manual-border hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-2xl">school</span>
+                        <span class="text-xs text-text-secondary font-mono">school</span>
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center justify-between p-4 border-t-2 border-black">
+                <div class="flex items-center gap-2 text-sm font-mono">
+                    <span class="text-text-secondary">Selected:</span>
+                    <span class="material-symbols-outlined text-primary">store</span>
+                    <span>store</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeIconModal()" class="btn btn-secondary px-4 py-2 border-2 border-black bg-white hover:bg-background-light text-sm font-bold">Cancel</button>
+                    <button onclick="closeIconModal()" class="btn btn-primary px-4 py-2 bg-primary text-white text-sm font-bold manual-border hover:bg-primary-dark">Select Icon</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         PRODUCT PICKER MODAL
+         ============================================ -->
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden" id="productModal">
+        <div class="bg-white w-full max-w-2xl max-h-[80vh] flex flex-col manual-border manual-shadow">
+            <div class="flex items-center justify-between p-4 border-b-2 border-black">
+                <h3 class="text-lg font-display font-bold">Select Products</h3>
+                <button onclick="closeProductModal()" class="p-1 hover:bg-background-light border-2 border-transparent hover:border-black">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-4 border-b-2 border-black">
+                <input type="text" class="form-input w-full" placeholder="Search products by name or SKU...">
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <div class="divide-y-2 divide-gray-200">
+                    <label class="flex items-center gap-4 p-4 hover:bg-background-light cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 border-2 border-black accent-primary">
+                        <div class="w-12 h-12 bg-background-light manual-border flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-text-muted">image</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm font-mono">Payment Gateway Pro</p>
+                            <p class="text-xs text-text-secondary font-mono">$299/mo</p>
+                        </div>
+                        <span class="text-xs px-2 py-1 bg-background-light text-text-secondary font-mono">Payments</span>
+                    </label>
+                    <label class="flex items-center gap-4 p-4 hover:bg-background-light cursor-pointer">
+                        <input type="checkbox" checked class="w-5 h-5 border-2 border-black accent-primary">
+                        <div class="w-12 h-12 bg-background-light manual-border flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-text-muted">image</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm font-mono">Inventory Manager</p>
+                            <p class="text-xs text-text-secondary font-mono">$199/mo</p>
+                        </div>
+                        <span class="text-xs px-2 py-1 bg-background-light text-text-secondary font-mono">Inventory</span>
+                    </label>
+                    <label class="flex items-center gap-4 p-4 hover:bg-background-light cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 border-2 border-black accent-primary">
+                        <div class="w-12 h-12 bg-background-light manual-border flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-text-muted">image</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm font-mono">Customer Portal</p>
+                            <p class="text-xs text-text-secondary font-mono">$149/mo</p>
+                        </div>
+                        <span class="text-xs px-2 py-1 bg-background-light text-text-secondary font-mono">CRM</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-between p-4 border-t-2 border-black">
+                <span class="text-sm text-text-secondary font-mono">2 products selected</span>
+                <div class="flex gap-3">
+                    <button onclick="closeProductModal()" class="btn btn-secondary px-4 py-2 border-2 border-black bg-white hover:bg-background-light text-sm font-bold">Cancel</button>
+                    <button onclick="closeProductModal()" class="btn btn-primary px-4 py-2 bg-primary text-white text-sm font-bold manual-border hover:bg-primary-dark">Add Selected (2)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        // Section Navigation
+        const sectionNavItems = document.querySelectorAll('.admin-tab');
+        const sectionContents = document.querySelectorAll('.section-content');
+
+        sectionNavItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const targetSection = this.dataset.section;
+
+                // Update nav items
+                sectionNavItems.forEach(nav => {
+                    nav.classList.remove('active', 'border-primary', 'bg-primary/10', 'text-primary', 'font-bold');
+                    nav.classList.add('border-transparent');
+                });
+                this.classList.add('active', 'border-primary', 'bg-primary/10', 'text-primary', 'font-bold');
+                this.classList.remove('border-transparent');
+
+                // Show target section
+                sectionContents.forEach(section => {
+                    if (section.id === targetSection) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Character counters
+        const taglineInput = document.getElementById('taglineInput');
+        const taglineCount = document.getElementById('taglineCount');
+        if (taglineInput) {
+            taglineInput.addEventListener('input', function() {
+                taglineCount.textContent = this.value.length;
+            });
+        }
+
+        // Meta title counter
+        const metaTitleInput = document.getElementById('metaTitleInput');
+        const metaTitleCount = document.getElementById('metaTitleCount');
+        const metaTitleBar = document.getElementById('metaTitleBar');
+        const previewTitle = document.getElementById('previewTitle');
+        if (metaTitleInput) {
+            metaTitleInput.addEventListener('input', function() {
+                const len = this.value.length;
+                metaTitleCount.textContent = len;
+                const pct = (len / 60) * 100;
+                metaTitleBar.style.width = Math.min(pct, 100) + '%';
+                previewTitle.textContent = this.value || 'Page Title';
+            });
+        }
+
+        // Meta description counter
+        const metaDescInput = document.getElementById('metaDescInput');
+        const metaDescCount = document.getElementById('metaDescCount');
+        const metaDescBar = document.getElementById('metaDescBar');
+        const previewDesc = document.getElementById('previewDesc');
+        if (metaDescInput) {
+            metaDescInput.addEventListener('input', function() {
+                const len = this.value.length;
+                metaDescCount.textContent = len;
+                const pct = (len / 160) * 100;
+                metaDescBar.style.width = Math.min(pct, 100) + '%';
+                previewDesc.textContent = this.value || 'Page description will appear here...';
+            });
+        }
+
+        // CTA Preview
+        const ctaTextInput = document.getElementById('ctaTextInput');
+        const ctaPreviewButton = document.getElementById('ctaPreviewButton');
+        if (ctaTextInput) {
+            ctaTextInput.addEventListener('input', function() {
+                ctaPreviewButton.textContent = this.value || 'Button Text';
+            });
+        }
+
+        // Upload zone drag and drop
+        const uploadZone = document.getElementById('uploadZone');
+        if (uploadZone) {
+            uploadZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('border-primary', 'bg-primary/5');
+            });
+            uploadZone.addEventListener('dragleave', function() {
+                this.classList.remove('border-primary', 'bg-primary/5');
+            });
+            uploadZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('border-primary', 'bg-primary/5');
+            });
+        }
+
+        // Modal functions
+        function openIconModal() {
+            document.getElementById('iconModal').classList.remove('hidden');
+        }
+        function closeIconModal() {
+            document.getElementById('iconModal').classList.add('hidden');
+        }
+        function openProductModal() {
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        // Close modals on escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeIconModal();
+                closeProductModal();
+            }
+        });
+
+        // Close modals on backdrop click
+        document.getElementById('iconModal').addEventListener('click', function(e) {
+            if (e.target === this) closeIconModal();
+        });
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) closeProductModal();
+        });
+    </script>
+
+</body>
+</html>

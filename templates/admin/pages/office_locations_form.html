@@ -1,0 +1,137 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <div class="mb-6">
+            <a href="/admin/contact/offices" class="text-sm font-bold uppercase hover:underline">&larr; Back to Office Locations</a>
+            <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+        </div>
+
+        <form method="POST" action="{{.FormAction}}" class="bg-white border-2 border-black p-6 max-w-4xl space-y-6" style="box-shadow: 4px 4px 0px #000;">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Office Name -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Office Name *
+                        <span class="text-gray-400 cursor-help" title="Name for this location (e.g., 'Houston Headquarters', 'Dallas Office').">&#9432;</span>
+                    </label>
+                    <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="e.g., Houston Headquarters"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- Address Line 1 -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Address Line 1 *</label>
+                    <input type="text" name="address_line1" value="{{if .Item}}{{.Item.AddressLine1}}{{end}}" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- Address Line 2 -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Address Line 2</label>
+                    <input type="text" name="address_line2" value="{{if .Item}}{{if .Item.AddressLine2.Valid}}{{.Item.AddressLine2.String}}{{end}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- City -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">City *</label>
+                    <input type="text" name="city" value="{{if .Item}}{{.Item.City}}{{end}}" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- State -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">State *</label>
+                    <input type="text" name="state" value="{{if .Item}}{{.Item.State}}{{end}}" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- Postal Code -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Postal Code *</label>
+                    <input type="text" name="postal_code" value="{{if .Item}}{{.Item.PostalCode}}{{end}}" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- Country -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Country *</label>
+                    <input type="text" name="country" value="{{if .Item}}{{.Item.Country}}{{else}}India{{end}}" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Phone</label>
+                    <input type="text" name="phone" value="{{if .Item}}{{if .Item.Phone.Valid}}{{.Item.Phone.String}}{{end}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Email</label>
+                    <input type="email" name="email" value="{{if .Item}}{{if .Item.Email.Valid}}{{.Item.Email.String}}{{end}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- Map URL -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Map URL
+                        <span class="text-gray-400 cursor-help" title="Google Maps link for this location. Visitors can click to get directions.">&#9432;</span>
+                    </label>
+                    <input type="url" name="map_url" value=""
+                           placeholder="https://maps.google.com/..."
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+
+                <!-- Display Order -->
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                    <input type="number" name="display_order" min="0" value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+            </div>
+
+            <!-- Toggles -->
+            <div class="flex items-center gap-6 pt-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="is_primary" value="1" {{if .Item}}{{if eq .Item.IsPrimary 1}}checked{{end}}{{end}}
+                           class="w-4 h-4 border-2 border-black">
+                    <span class="text-sm font-bold uppercase"
+                          title="Primary office is shown first and used as the default contact address.">
+                        Primary Office <span class="text-gray-400 cursor-help">&#9432;</span>
+                    </span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="is_active" value="1" {{if .Item}}{{if eq .Item.IsActive 1}}checked{{end}}{{else}}checked{{end}}
+                           class="w-4 h-4 border-2 border-black">
+                    <span class="text-sm font-bold uppercase">Active</span>
+                </label>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-4 border-t-2 border-black">
+                <button type="submit"
+                        class="bg-black text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 4px 4px 0px #000;">
+                    {{if .Item}}Update Office{{else}}Create Office{{end}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

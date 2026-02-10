@@ -1,0 +1,87 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold uppercase tracking-tight">Homepage Heroes</h1>
+                <p class="text-sm text-gray-600 mt-1">Manage hero banners on your homepage</p>
+            </div>
+            <a href="/admin/homepage/heroes/new"
+               class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-block"
+               style="box-shadow: 4px 4px 0px #000;">
+                + New Hero
+            </a>
+        </div>
+
+        {{if .Items}}
+        <!-- Hero Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {{range .Items}}
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <!-- Hero Image Preview -->
+                <div class="relative h-40 bg-gray-200 border-b-2 border-black overflow-hidden">
+                    {{if .BackgroundImage.Valid}}
+                    <img src="{{.BackgroundImage.String}}" alt="{{.Headline}}" class="w-full h-full object-cover">
+                    {{else}}
+                    <div class="w-full h-full flex items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-gray-400">image</span>
+                    </div>
+                    {{end}}
+                    <!-- Sort Order Badge -->
+                    <span class="absolute top-2 left-2 bg-black text-white px-2 py-1 text-xs font-bold uppercase border-2 border-white">
+                        #{{.DisplayOrder}}
+                    </span>
+                    <!-- Status Indicator -->
+                    {{if eq .IsActive 1}}
+                    <span class="absolute top-2 right-2 bg-green-400 text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black">Active</span>
+                    {{else}}
+                    <span class="absolute top-2 right-2 bg-gray-300 text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black">Inactive</span>
+                    {{end}}
+                </div>
+                <!-- Hero Content -->
+                <div class="p-4">
+                    <h3 class="font-bold text-sm uppercase mb-1 truncate">{{.Headline}}</h3>
+                    <p class="text-xs text-gray-600 mb-3 line-clamp-2">{{.Subheadline}}</p>
+                    {{if .PrimaryCtaText}}
+                    <div class="mb-3">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 text-xs font-bold uppercase border-2 border-blue-800">{{.PrimaryCtaText}}</span>
+                    </div>
+                    {{end}}
+                    <!-- Actions -->
+                    <div class="flex gap-2 pt-2 border-t-2 border-black">
+                        <a href="/admin/homepage/heroes/{{.ID}}/edit"
+                           class="flex-1 bg-white text-black px-3 py-1 text-xs font-bold uppercase border-2 border-black text-center hover:bg-blue-50"
+                           style="box-shadow: 2px 2px 0px #000;">
+                            Edit
+                        </a>
+                        <button hx-delete="/admin/homepage/heroes/{{.ID}}"
+                                hx-confirm="Delete this hero?"
+                                hx-target="closest div.bg-white"
+                                hx-swap="outerHTML swap:0.3s"
+                                class="flex-1 bg-white text-red-600 px-3 py-1 text-xs font-bold uppercase border-2 border-red-600 text-center hover:bg-red-50"
+                                style="box-shadow: 2px 2px 0px #991b1b;">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <!-- Empty State -->
+        <div class="bg-white border-2 border-black p-12 text-center" style="box-shadow: 4px 4px 0px #000;">
+            <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">view_carousel</span>
+            <h2 class="text-xl font-bold uppercase mb-2">No Heroes Yet</h2>
+            <p class="text-gray-600 text-sm mb-6">Create your first hero banner to get started.</p>
+            <a href="/admin/homepage/heroes/new"
+               class="bg-blue-600 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black inline-block hover:bg-blue-700"
+               style="box-shadow: 4px 4px 0px #000;">
+                Create Your First Hero
+            </a>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

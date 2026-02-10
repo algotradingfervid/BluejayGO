@@ -1,0 +1,6 @@
+INSERT INTO product_categories (name, slug, description, icon, image_url, product_count, sort_order) VALUES
+('Desktops', 'desktops', 'High-performance desktop computers and workstations for enterprise environments. Built with premium components and backed by industry-leading certifications.', 'computer', '/uploads/categories/desktops.jpg', 12, 1),
+('OPS Modules', 'ops-modules', 'Open Pluggable Specification modules for seamless integration with IFPs and digital signage. Modular computing for flexible deployments.', 'memory', '/uploads/categories/ops-modules.jpg', 8, 2),
+('Interactive Flat Panels', 'interactive-flat-panels', 'Touch-enabled smart displays for collaboration and education. High-fidelity interactive panels designed for modern classrooms and meeting rooms.', 'display_settings', '/uploads/categories/interactive-flat-panels.jpg', 6, 3),
+('AV Accessories', 'av-accessories', 'Professional audio-visual equipment and mounting solutions for enterprise use. Complete your setup with our range of AV peripherals.', 'speaker', '/uploads/categories/av-accessories.jpg', 15, 4),
+('IoT Products', 'iot-products', 'Connected devices and smart solutions for modern enterprises. Enable automation and intelligent monitoring with our IoT ecosystem.', 'sensors', '/uploads/categories/iot-products.jpg', 10, 5);

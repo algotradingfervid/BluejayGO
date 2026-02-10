@@ -1,0 +1,16 @@
+[Unit]
+Description=BlueJay CMS Website
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/bluejay-cms
+ExecStart=/var/www/bluejay-cms/bluejay-cms
+Restart=always
+RestartSec=5s
+Environment="ENVIRONMENT=production"
+Environment="DATABASE_PATH=/var/www/bluejay-cms/bluejay.db"
+
+[Install]
+WantedBy=multi-user.target

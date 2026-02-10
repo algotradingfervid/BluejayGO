@@ -1,0 +1,461 @@
+{{define "content"}}
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+<script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="mb-6">
+            <a href="/admin/blog/posts" class="text-sm font-bold uppercase text-blue-600 hover:text-blue-800 border-b-2 border-blue-600">&larr; Back to Blog Posts</a>
+            <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+        </div>
+
+        <form action="{{.FormAction}}" method="POST" id="blog-post-form">
+            <div class="flex flex-col lg:flex-row gap-6">
+
+                <!-- LEFT COLUMN (2/3) - Content -->
+                <div class="w-full lg:w-2/3 space-y-4">
+
+                    <!-- Section 1: Title & Slug -->
+                    <div class="bg-white border-2 border-black p-5 space-y-4" style="box-shadow: 4px 4px 0px #000;">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Title *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="The headline of your blog post. Make it engaging and descriptive.">ⓘ</span>
+                            </label>
+                            <input type="text" name="title" id="post-title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
+                                   class="w-full border-2 border-black px-4 py-3 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   placeholder="Your post title..."
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Slug *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="URL path for this post. Auto-generated from title. Only edit if you need a custom URL.">ⓘ</span>
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <input type="text" name="slug" id="post-slug" value="{{if .Item}}{{.Item.Slug}}{{end}}" required
+                                       class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
+                                       readonly
+                                       style="font-family: 'JetBrains Mono', monospace;">
+                                <button type="button" id="edit-slug-btn"
+                                        class="bg-white text-black px-3 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-gray-100 whitespace-nowrap"
+                                        style="box-shadow: 2px 2px 0px #000;">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Content -->
+                    <div class="bg-white border-2 border-black p-5 space-y-4" style="box-shadow: 4px 4px 0px #000;">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Excerpt
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="A brief summary shown on blog listing pages and in search results. Keep it compelling.">ⓘ</span>
+                            </label>
+                            <textarea name="excerpt" id="excerpt-input" rows="3" maxlength="300"
+                                      class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                      style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Excerpt}}{{end}}</textarea>
+                            <div class="mt-1 flex items-center gap-2">
+                                <div class="flex-1 h-1 bg-gray-200">
+                                    <div id="excerpt-bar" class="h-1 bg-green-500 transition-all" style="width: 0%;"></div>
+                                </div>
+                                <span id="excerpt-count" class="text-xs text-gray-500">0/300</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Body *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="The main content of your post. Use the toolbar for formatting, images, and links.">ⓘ</span>
+                            </label>
+                            <input id="body-input" type="hidden" name="body" value="{{if .Item}}{{.Item.Body}}{{end}}">
+                            <trix-editor input="body-input" class="trix-content border-2 border-black min-h-[400px] text-sm"></trix-editor>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN (1/3) - Sidebar Cards -->
+                <div class="w-full lg:w-1/3 space-y-4">
+
+                    <!-- Card 1: Publish -->
+                    <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                        <div class="px-4 py-3 bg-black text-white font-bold uppercase text-sm">Publish</div>
+                        <div class="p-4 space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">Status *</label>
+                                <select name="status" id="post-status" required
+                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        style="font-family: 'JetBrains Mono', monospace;">
+                                    <option value="draft" {{if and .Item (eq .Item.Status "draft")}}selected{{end}}>Draft</option>
+                                    <option value="published" {{if and .Item (eq .Item.Status "published")}}selected{{end}}>Published</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">
+                                    Published Date
+                                    <span class="inline-block ml-1 cursor-help text-gray-400" title="When this post goes live. Leave blank to publish immediately.">ⓘ</span>
+                                </label>
+                                <input type="datetime-local" name="published_at"
+                                       value="{{if .Item}}{{if .Item.PublishedAt.Valid}}{{.Item.PublishedAt.Time.Format "2006-01-02T15:04"}}{{end}}{{end}}"
+                                       class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       style="font-family: 'JetBrains Mono', monospace;">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">
+                                    Reading Time (min)
+                                    <span class="inline-block ml-1 cursor-help text-gray-400" title="Estimated reading time. Helps readers decide to read now or save for later.">ⓘ</span>
+                                </label>
+                                <input type="number" name="reading_time_minutes" min="1"
+                                       value="{{if .Item}}{{if .Item.ReadingTimeMinutes.Valid}}{{.Item.ReadingTimeMinutes.Int64}}{{end}}{{end}}"
+                                       class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       style="font-family: 'JetBrains Mono', monospace;">
+                            </div>
+                            <div class="flex gap-2 pt-2 border-t-2 border-black">
+                                <button type="submit" name="submit_action" value="draft"
+                                        class="flex-1 bg-white text-black px-4 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-gray-100"
+                                        style="box-shadow: 2px 2px 0px #000;">
+                                    Save Draft
+                                </button>
+                                <button type="submit" name="submit_action" value="publish"
+                                        class="flex-1 bg-blue-600 text-white px-4 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-blue-700"
+                                        style="box-shadow: 2px 2px 0px #000;">
+                                    Publish
+                                </button>
+                            </div>
+                            {{if .Item}}
+                            <div class="pt-2">
+                                <a href="/blog/{{.Item.Slug}}?preview=true" target="_blank"
+                                   title="Preview how this content will look on the public site."
+                                   class="w-full bg-gray-100 text-black px-4 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-gray-200 inline-flex items-center justify-center gap-2"
+                                   style="box-shadow: 2px 2px 0px #000; text-decoration: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    Preview
+                                </a>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Featured Image -->
+                    <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                        <div class="px-4 py-3 bg-black text-white font-bold uppercase text-sm">Featured Image</div>
+                        <div class="p-4 space-y-4">
+                            <div id="image-preview-area">
+                                {{if and .Item .Item.FeaturedImageUrl.Valid}}
+                                <div class="relative mb-3">
+                                    <img src="{{.Item.FeaturedImageUrl.String}}" alt="Preview" class="w-full border-2 border-black object-cover" style="aspect-ratio: 16/9;" id="preview-img">
+                                    <button type="button" onclick="clearFeaturedImage()"
+                                            class="absolute top-2 right-2 bg-red-600 text-white w-6 h-6 flex items-center justify-center text-xs font-bold border-2 border-black">&times;</button>
+                                </div>
+                                {{else}}
+                                <div class="border-2 border-dashed border-gray-400 p-6 text-center mb-3" id="upload-placeholder">
+                                    <span class="material-symbols-outlined text-3xl text-gray-400 block mb-2">add_photo_alternate</span>
+                                    <p class="text-xs text-gray-500 uppercase">Paste image URL below</p>
+                                </div>
+                                {{end}}
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">Image URL</label>
+                                <input type="url" name="featured_image_url" id="featured-image-url"
+                                       value="{{if .Item}}{{if .Item.FeaturedImageUrl.Valid}}{{.Item.FeaturedImageUrl.String}}{{end}}{{end}}"
+                                       placeholder="https://..."
+                                       class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       style="font-family: 'JetBrains Mono', monospace;">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">
+                                    Alt Text
+                                    <span class="inline-block ml-1 cursor-help text-gray-400" title="Describe the image for accessibility. Also used when image can't load.">ⓘ</span>
+                                </label>
+                                <input type="text" name="featured_image_alt"
+                                       value="{{if .Item}}{{if .Item.FeaturedImageAlt.Valid}}{{.Item.FeaturedImageAlt.String}}{{end}}{{end}}"
+                                       class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       style="font-family: 'JetBrains Mono', monospace;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Taxonomy -->
+                    <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                        <div class="px-4 py-3 bg-black text-white font-bold uppercase text-sm">Taxonomy</div>
+                        <div class="p-4 space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">
+                                    Category *
+                                    <span class="inline-block ml-1 cursor-help text-gray-400" title="The main category this post belongs to.">ⓘ</span>
+                                </label>
+                                <select name="category_id" required
+                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        style="font-family: 'JetBrains Mono', monospace;">
+                                    <option value="">Select Category</option>
+                                    {{range .Categories}}
+                                    <option value="{{.ID}}" {{if and $.Item (eq $.Item.CategoryID .ID)}}selected{{end}}>{{.Name}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">
+                                    Author *
+                                    <span class="inline-block ml-1 cursor-help text-gray-400" title="Who wrote this post. Shown on the post page with their bio.">ⓘ</span>
+                                </label>
+                                <select name="author_id" required
+                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        style="font-family: 'JetBrains Mono', monospace;">
+                                    <option value="">Select Author</option>
+                                    {{range .Authors}}
+                                    <option value="{{.ID}}" {{if and $.Item (eq $.Item.AuthorID .ID)}}selected{{end}}>{{.Name}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                            <!-- Tags -->
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">
+                                    Tags
+                                    <span class="inline-block ml-1 cursor-help text-gray-400" title="Tags help readers find related posts. Add up to 10 tags.">ⓘ</span>
+                                </label>
+                                <div id="selected-tags" class="flex flex-wrap gap-2 mb-2">
+                                    {{range .PostTags}}
+                                    <span class="inline-flex items-center gap-1 bg-blue-600 text-white px-2 py-1 text-xs font-bold border-2 border-black">
+                                        {{.Name}}
+                                        <input type="hidden" name="tag_ids" value="{{.ID}}">
+                                        <button type="button" class="ml-1 hover:text-blue-200" onclick="this.parentElement.remove()">&times;</button>
+                                    </span>
+                                    {{end}}
+                                </div>
+                                <div class="relative">
+                                    <input type="text" id="tag-search" placeholder="Search tags..."
+                                        autocomplete="off"
+                                        hx-get="/admin/blog/tags/search"
+                                        hx-trigger="input changed delay:200ms, focus"
+                                        hx-target="#tag-suggestions"
+                                        hx-swap="innerHTML"
+                                        name="_tag_search"
+                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        style="font-family: 'JetBrains Mono', monospace;">
+                                    <div id="tag-suggestions" class="absolute z-10 w-full bg-white border-2 border-black mt-[-2px] max-h-48 overflow-y-auto hidden" style="box-shadow: 4px 4px 0px #000;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: SEO (collapsible) -->
+                    <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                        <button type="button" onclick="toggleSeoSection(this)"
+                                class="w-full flex items-center justify-between px-4 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                            <span>SEO</span>
+                            <span class="material-symbols-outlined seo-chevron transition-transform" style="transform: rotate(-90deg);">expand_more</span>
+                        </button>
+                        <div id="seo-section" class="hidden">
+                            <div class="p-4 space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase mb-1">Meta Title</label>
+                                    <input type="text" name="meta_title" id="meta-title-input" maxlength="70"
+                                           value="{{if .Item}}{{.Item.MetaTitle}}{{end}}"
+                                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                           style="font-family: 'JetBrains Mono', monospace;">
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <div class="flex-1 h-1 bg-gray-200">
+                                            <div id="meta-title-bar" class="h-1 bg-green-500 transition-all" style="width: 0%;"></div>
+                                        </div>
+                                        <span id="meta-title-count" class="text-xs text-gray-500">0/70</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase mb-1">Meta Description</label>
+                                    <textarea name="meta_description" id="meta-desc-input" rows="3" maxlength="160"
+                                              class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                              style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{if .Item.MetaDescription.Valid}}{{.Item.MetaDescription.String}}{{end}}{{end}}</textarea>
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <div class="flex-1 h-1 bg-gray-200">
+                                            <div id="meta-desc-bar" class="h-1 bg-green-500 transition-all" style="width: 0%;"></div>
+                                        </div>
+                                        <span id="meta-desc-count" class="text-xs text-gray-500">0/160</span>
+                                    </div>
+                                </div>
+                                <!-- Google Preview -->
+                                <div class="border-2 border-gray-300 p-3 bg-gray-50">
+                                    <p class="text-xs font-bold uppercase mb-2 text-gray-400">Search Preview</p>
+                                    <div id="seo-preview-title" class="text-blue-700 text-sm font-medium truncate">{{if .Item}}{{.Item.Title}}{{end}}</div>
+                                    <div id="seo-preview-url" class="text-green-700 text-xs truncate">/blog/{{if .Item}}{{.Item.Slug}}{{end}}</div>
+                                    <div id="seo-preview-desc" class="text-gray-600 text-xs mt-1 line-clamp-2">{{if .Item}}{{if .Item.MetaDescription.Valid}}{{.Item.MetaDescription.String}}{{end}}{{end}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Related Products -->
+                    <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                        <div class="px-4 py-3 bg-black text-white font-bold uppercase text-sm">Related Products</div>
+                        <div class="p-4">
+                            <div id="selected-products" class="flex flex-wrap gap-2 mb-2">
+                                {{range .PostProducts}}
+                                <span class="inline-flex items-center gap-1 bg-green-600 text-white px-2 py-1 text-xs font-bold border-2 border-black">
+                                    {{.Name}}
+                                    <input type="hidden" name="product_ids" value="{{.ID}}">
+                                    <button type="button" class="ml-1 hover:text-green-200" onclick="this.parentElement.remove()">&times;</button>
+                                </span>
+                                {{end}}
+                            </div>
+                            <div class="relative">
+                                <input type="text" id="product-search" placeholder="Search products..."
+                                    autocomplete="off"
+                                    hx-get="/admin/blog/products/search"
+                                    hx-trigger="input changed delay:200ms, focus"
+                                    hx-target="#product-suggestions"
+                                    hx-swap="innerHTML"
+                                    name="_product_search"
+                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    style="font-family: 'JetBrains Mono', monospace;">
+                                <div id="product-suggestions" class="absolute z-10 w-full bg-white border-2 border-black mt-[-2px] max-h-48 overflow-y-auto hidden" style="box-shadow: 4px 4px 0px #000;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+(function() {
+    // Slug auto-generation and edit toggle
+    var titleInput = document.getElementById('post-title');
+    var slugInput = document.getElementById('post-slug');
+    var editSlugBtn = document.getElementById('edit-slug-btn');
+    var slugEditable = false;
+
+    if (editSlugBtn) {
+        editSlugBtn.addEventListener('click', function() {
+            slugEditable = !slugEditable;
+            slugInput.readOnly = !slugEditable;
+            slugInput.classList.toggle('bg-gray-100', !slugEditable);
+            editSlugBtn.textContent = slugEditable ? 'Lock' : 'Edit';
+        });
+    }
+
+    if (titleInput && slugInput) {
+        titleInput.addEventListener('input', function() {
+            if (!slugEditable || slugInput.value === '') {
+                slugInput.value = titleInput.value.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            }
+        });
+    }
+
+    // Character counter helper
+    function setupCounter(inputId, barId, countId, max) {
+        var input = document.getElementById(inputId);
+        var bar = document.getElementById(barId);
+        var count = document.getElementById(countId);
+        if (!input || !bar || !count) return;
+        function update() {
+            var len = input.value.length;
+            var pct = Math.min((len / max) * 100, 110);
+            count.textContent = len + '/' + max;
+            bar.style.width = Math.min(pct, 100) + '%';
+            if (len > max) {
+                bar.className = 'h-1 bg-red-500 transition-all';
+            } else if (pct >= 80) {
+                bar.className = 'h-1 bg-yellow-500 transition-all';
+            } else {
+                bar.className = 'h-1 bg-green-500 transition-all';
+            }
+        }
+        input.addEventListener('input', update);
+        update();
+    }
+
+    setupCounter('excerpt-input', 'excerpt-bar', 'excerpt-count', 300);
+    setupCounter('meta-title-input', 'meta-title-bar', 'meta-title-count', 70);
+    setupCounter('meta-desc-input', 'meta-desc-bar', 'meta-desc-count', 160);
+
+    // SEO preview live update
+    var metaTitleInput = document.getElementById('meta-title-input');
+    var metaDescInput = document.getElementById('meta-desc-input');
+    var previewTitle = document.getElementById('seo-preview-title');
+    var previewUrl = document.getElementById('seo-preview-url');
+    var previewDesc = document.getElementById('seo-preview-desc');
+
+    if (titleInput && previewTitle) {
+        titleInput.addEventListener('input', function() {
+            if (!metaTitleInput || metaTitleInput.value === '') {
+                previewTitle.textContent = titleInput.value || 'Page Title';
+            }
+        });
+    }
+    if (metaTitleInput && previewTitle) {
+        metaTitleInput.addEventListener('input', function() {
+            previewTitle.textContent = metaTitleInput.value || (titleInput ? titleInput.value : 'Page Title');
+        });
+    }
+    if (slugInput && previewUrl) {
+        slugInput.addEventListener('input', function() {
+            previewUrl.textContent = '/blog/' + slugInput.value;
+        });
+    }
+    if (metaDescInput && previewDesc) {
+        metaDescInput.addEventListener('input', function() {
+            previewDesc.textContent = metaDescInput.value;
+        });
+    }
+
+    // Tag suggestions visibility
+    var suggestions = document.getElementById('tag-suggestions');
+    var searchInput = document.getElementById('tag-search');
+    var productSuggestions = document.getElementById('product-suggestions');
+    var productSearchInput = document.getElementById('product-search');
+
+    document.body.addEventListener('htmx:afterSwap', function(e) {
+        if (suggestions && e.detail.target === suggestions) {
+            suggestions.classList.remove('hidden');
+        }
+        if (productSuggestions && e.detail.target === productSuggestions) {
+            productSuggestions.classList.remove('hidden');
+        }
+    });
+    document.addEventListener('click', function(e) {
+        if (suggestions && searchInput && !suggestions.contains(e.target) && e.target !== searchInput) {
+            suggestions.classList.add('hidden');
+        }
+        if (productSuggestions && productSearchInput && !productSuggestions.contains(e.target) && e.target !== productSearchInput) {
+            productSuggestions.classList.add('hidden');
+        }
+    });
+})();
+
+function toggleSeoSection(btn) {
+    var section = document.getElementById('seo-section');
+    var chevron = btn.querySelector('.seo-chevron');
+    section.classList.toggle('hidden');
+    chevron.style.transform = section.classList.contains('hidden') ? 'rotate(-90deg)' : 'rotate(0deg)';
+}
+
+function clearFeaturedImage() {
+    document.getElementById('featured-image-url').value = '';
+    var area = document.getElementById('image-preview-area');
+    area.innerHTML = '<div class="border-2 border-dashed border-gray-400 p-6 text-center mb-3" id="upload-placeholder"><span class="material-symbols-outlined text-3xl text-gray-400 block mb-2">add_photo_alternate</span><p class="text-xs text-gray-500 uppercase">Paste image URL below</p></div>';
+}
+
+function addProduct(id, name) {
+    var container = document.getElementById('selected-products');
+    var existing = container.querySelector('input[value="' + id + '"]');
+    if (existing) return;
+    var span = document.createElement('span');
+    span.className = 'inline-flex items-center gap-1 bg-green-600 text-white px-2 py-1 text-xs font-bold border-2 border-black';
+    span.innerHTML = name + '<input type="hidden" name="product_ids" value="' + id + '">' +
+        '<button type="button" class="ml-1 hover:text-green-200" onclick="this.parentElement.remove()">&times;</button>';
+    container.appendChild(span);
+}
+
+function addTag(id, name) {
+    var container = document.getElementById('selected-tags');
+    var existing = container.querySelector('input[value="' + id + '"]');
+    if (existing) return;
+    var span = document.createElement('span');
+    span.className = 'inline-flex items-center gap-1 bg-blue-600 text-white px-2 py-1 text-xs font-bold border-2 border-black';
+    span.innerHTML = name + '<input type="hidden" name="tag_ids" value="' + id + '">' +
+        '<button type="button" class="ml-1 hover:text-blue-200" onclick="this.parentElement.remove()">&times;</button>';
+    container.appendChild(span);
+}
+</script>
+{{end}}

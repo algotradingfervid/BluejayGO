@@ -1,0 +1,159 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold uppercase tracking-tight">{{.Title}}</h1>
+                <p class="text-sm text-gray-600 mt-1">Manage partner companies and relationships</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/admin/partners/testimonials"
+                   class="bg-white text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-block"
+                   style="box-shadow: 4px 4px 0px #000;">
+                    Testimonials
+                </a>
+                <a href="/admin/partners/new"
+                   class="bg-green-500 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-block"
+                   style="box-shadow: 4px 4px 0px #000;">
+                    + New Partner
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="bg-white border-2 border-black p-4 mb-6" style="box-shadow: 4px 4px 0px #000;">
+            <form method="GET" action="/admin/partners" class="flex flex-wrap items-end gap-4">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-xs font-bold uppercase mb-1">Search</label>
+                    <input type="text" name="search" value="{{.Search}}" placeholder="Search by name..."
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div class="min-w-[150px]">
+                    <label class="block text-xs font-bold uppercase mb-1">Tier</label>
+                    <select name="tier"
+                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                            style="font-family: 'JetBrains Mono', monospace;">
+                        <option value="">All Tiers</option>
+                        {{range .Tiers}}
+                        <option value="{{.ID}}" {{if eq $.TierFilter .ID}}selected{{end}}>{{.Name}}</option>
+                        {{end}}
+                    </select>
+                </div>
+                <div class="min-w-[150px]">
+                    <label class="block text-xs font-bold uppercase mb-1">Status</label>
+                    <select name="status"
+                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                            style="font-family: 'JetBrains Mono', monospace;">
+                        <option value="">All Statuses</option>
+                        <option value="active" {{if eq .Status "active"}}selected{{end}}>Active</option>
+                        <option value="inactive" {{if eq .Status "inactive"}}selected{{end}}>Inactive</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit"
+                            class="bg-black text-white px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-800">
+                        Filter
+                    </button>
+                    {{if .HasFilters}}
+                    <a href="/admin/partners"
+                       class="bg-white text-black px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100">
+                        Clear
+                    </a>
+                    {{end}}
+                </div>
+            </form>
+        </div>
+
+        {{if .Items}}
+        <!-- Partners Table -->
+        <div class="bg-white border-2 border-black mb-6" style="box-shadow: 4px 4px 0px #000;">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b-2 border-black bg-gray-100">
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Logo</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Tier</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Website</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Status</th>
+                        <th class="px-4 py-3 text-right text-xs font-bold uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Items}}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="px-4 py-3">
+                            {{if .LogoUrl.Valid}}
+                            <img src="{{.LogoUrl.String}}" alt="{{.Name}}" class="w-12 h-8 object-contain border-2 border-black bg-white" style="min-width: 48px;">
+                            {{else}}
+                            <div class="w-12 h-8 bg-gray-200 border-2 border-black flex items-center justify-center" style="min-width: 48px;">
+                                <span class="material-symbols-outlined text-gray-400 text-sm">business</span>
+                            </div>
+                            {{end}}
+                        </td>
+                        <td class="px-4 py-3 font-bold text-sm">{{.Name}}</td>
+                        <td class="px-4 py-3 text-sm">
+                            <span class="bg-green-300 text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black">{{.TierName}}</span>
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                            {{if .WebsiteUrl.Valid}}
+                            <a href="{{.WebsiteUrl.String}}" target="_blank" class="text-blue-600 hover:text-blue-800 underline text-xs">{{.WebsiteUrl.String}}</a>
+                            {{else}}
+                            <span class="text-gray-300">—</span>
+                            {{end}}
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                            {{if .IsActive}}
+                            <span class="bg-green-400 text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black">Active</span>
+                            {{else}}
+                            <span class="bg-gray-300 text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black">Inactive</span>
+                            {{end}}
+                        </td>
+                        <td class="px-4 py-3 text-right">
+                            <a href="/admin/partners/{{.ID}}/edit"
+                               class="inline-block bg-white text-black px-3 py-1 text-xs font-bold uppercase border-2 border-black hover:bg-blue-50 mr-1"
+                               style="box-shadow: 2px 2px 0px #000;">
+                                Edit
+                            </a>
+                            <button hx-delete="/admin/partners/{{.ID}}"
+                                    hx-confirm="Delete this partner?"
+                                    hx-target="closest tr"
+                                    hx-swap="outerHTML swap:0.3s"
+                                    class="inline-block bg-white text-red-600 px-3 py-1 text-xs font-bold uppercase border-2 border-red-600 hover:bg-red-50"
+                                    style="box-shadow: 2px 2px 0px #991b1b;">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+        {{else}}
+        <!-- Empty State -->
+        <div class="bg-white border-2 border-black p-12 text-center" style="box-shadow: 4px 4px 0px #000;">
+            <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">handshake</span>
+            {{if .HasFilters}}
+            <h2 class="text-xl font-bold uppercase mb-2">No Partners Match Your Filters</h2>
+            <p class="text-gray-600 text-sm mb-6">Try adjusting your search or filter criteria.</p>
+            <a href="/admin/partners"
+               class="bg-black text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black inline-block hover:bg-gray-800"
+               style="box-shadow: 4px 4px 0px #000;">
+                Clear Filters
+            </a>
+            {{else}}
+            <h2 class="text-xl font-bold uppercase mb-2">No Partners Yet</h2>
+            <p class="text-gray-600 text-sm mb-6">Add your first partner to get started.</p>
+            <a href="/admin/partners/new"
+               class="bg-green-500 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black inline-block hover:bg-green-600"
+               style="box-shadow: 4px 4px 0px #000;">
+                Add Your First Partner
+            </a>
+            {{end}}
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

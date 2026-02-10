@@ -1,0 +1,170 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Back + Navigation -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <a href="/admin/contact/submissions" class="text-sm font-bold uppercase hover:underline">&larr; Back to Submissions</a>
+                <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+            </div>
+            <div class="flex gap-2">
+                {{if gt .PrevID 0}}
+                <a href="/admin/contact/submissions/{{.PrevID}}"
+                   class="px-4 py-2 text-sm font-bold uppercase border-2 border-black bg-white hover:bg-gray-100"
+                   style="box-shadow: 3px 3px 0px #000;">
+                    &larr; Previous
+                </a>
+                {{end}}
+                {{if gt .NextID 0}}
+                <a href="/admin/contact/submissions/{{.NextID}}"
+                   class="px-4 py-2 text-sm font-bold uppercase border-2 border-black bg-white hover:bg-gray-100"
+                   style="box-shadow: 3px 3px 0px #000;">
+                    Next &rarr;
+                </a>
+                {{end}}
+            </div>
+        </div>
+
+        <div class="max-w-4xl space-y-6">
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap gap-3">
+                {{if eq .Submission.Status "new"}}
+                <form method="POST" action="/admin/contact/submissions/{{.Submission.ID}}/status" class="inline">
+                    <input type="hidden" name="status" value="read">
+                    <button type="submit"
+                        class="bg-gray-200 text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 3px 3px 0px #000;">
+                        Mark as Read
+                    </button>
+                </form>
+                {{else}}
+                <form method="POST" action="/admin/contact/submissions/{{.Submission.ID}}/status" class="inline">
+                    <input type="hidden" name="status" value="new">
+                    <button type="submit"
+                        class="bg-yellow-200 text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 3px 3px 0px #000;">
+                        Mark as Unread
+                    </button>
+                </form>
+                {{end}}
+                <a href="mailto:{{.Submission.Email}}?subject=Re: {{if .Submission.InquiryType.Valid}}{{.Submission.InquiryType.String}}{{else}}Your Inquiry{{end}}"
+                   class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-block"
+                   style="box-shadow: 3px 3px 0px #000;"
+                   title="Opens your email client with the sender's address pre-filled.">
+                    Reply via Email <span class="text-blue-200 cursor-help" title="Opens your email client with the sender's address pre-filled.">&#9432;</span>
+                </a>
+                <button hx-delete="/admin/contact/submissions/{{.Submission.ID}}" hx-confirm="Permanently delete this submission?"
+                        hx-on::after-request="if(event.detail.successful) window.location='/admin/contact/submissions'"
+                        class="bg-red-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 3px 3px 0px #000;">
+                    Delete
+                </button>
+            </div>
+
+            <!-- Contact Info Card -->
+            <div class="bg-white border-2 border-black p-6" style="box-shadow: 4px 4px 0px #000;">
+                <h2 class="text-sm font-bold uppercase tracking-wider mb-4 pb-2 border-b-2 border-black">Contact Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Name</label>
+                        <p class="text-sm">{{.Submission.Name}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Email</label>
+                        <p class="text-sm"><a href="mailto:{{.Submission.Email}}" class="hover:underline">{{.Submission.Email}}</a></p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Phone</label>
+                        <p class="text-sm">{{if .Submission.Phone}}{{.Submission.Phone}}{{else}}<span class="text-gray-400">—</span>{{end}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Company</label>
+                        <p class="text-sm">{{if .Submission.Company}}{{.Submission.Company}}{{else}}<span class="text-gray-400">—</span>{{end}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Card -->
+            <div class="bg-white border-2 border-black p-6" style="box-shadow: 4px 4px 0px #000;">
+                <h2 class="text-sm font-bold uppercase tracking-wider mb-4 pb-2 border-b-2 border-black">Message</h2>
+                {{if .Submission.InquiryType.Valid}}
+                <div class="mb-3">
+                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Subject / Inquiry Type</label>
+                    <p class="text-sm font-bold">{{.Submission.InquiryType.String}}</p>
+                </div>
+                {{end}}
+                <div class="bg-gray-50 border-2 border-gray-200 p-4 text-sm whitespace-pre-wrap">{{.Submission.Message}}</div>
+            </div>
+
+            <!-- Metadata Card -->
+            <div class="bg-white border-2 border-black p-6" style="box-shadow: 4px 4px 0px #000;">
+                <h2 class="text-sm font-bold uppercase tracking-wider mb-4 pb-2 border-b-2 border-black">Metadata</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Status</label>
+                        <p class="text-sm">
+                            {{if eq .Submission.Status "new"}}
+                            <span class="inline-block bg-yellow-300 text-black px-2 py-1 text-xs font-bold uppercase border border-black">New</span>
+                            {{else if eq .Submission.Status "read"}}
+                            <span class="inline-block bg-gray-200 text-gray-700 px-2 py-1 text-xs font-bold uppercase border border-gray-400">Read</span>
+                            {{else if eq .Submission.Status "replied"}}
+                            <span class="inline-block bg-green-300 text-black px-2 py-1 text-xs font-bold uppercase border border-black">Replied</span>
+                            {{else}}
+                            <span class="inline-block bg-gray-100 text-gray-600 px-2 py-1 text-xs font-bold uppercase border border-gray-400">{{.Submission.Status}}</span>
+                            {{end}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Type</label>
+                        <p class="text-sm uppercase">{{.Submission.SubmissionType}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Submitted</label>
+                        <p class="text-sm">{{.Submission.CreatedAt}}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">IP Address</label>
+                        <p class="text-sm">{{if .Submission.IpAddress.Valid}}{{.Submission.IpAddress.String}}{{else}}<span class="text-gray-400">—</span>{{end}}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">User Agent</label>
+                        <p class="text-sm break-all text-gray-600">{{if .Submission.UserAgent.Valid}}{{.Submission.UserAgent.String}}{{else}}<span class="text-gray-400">—</span>{{end}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Update Form -->
+            <div class="bg-white border-2 border-black p-6" style="box-shadow: 4px 4px 0px #000;">
+                <h2 class="text-sm font-bold uppercase tracking-wider mb-4 pb-2 border-b-2 border-black">Update Status</h2>
+                <form method="POST" action="/admin/contact/submissions/{{.Submission.ID}}/status" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Status</label>
+                        <select name="status"
+                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                style="font-family: 'JetBrains Mono', monospace;">
+                            <option value="new" {{if eq .Submission.Status "new"}}selected{{end}}>New</option>
+                            <option value="read" {{if eq .Submission.Status "read"}}selected{{end}}>Read</option>
+                            <option value="replied" {{if eq .Submission.Status "replied"}}selected{{end}}>Replied</option>
+                            <option value="closed" {{if eq .Submission.Status "closed"}}selected{{end}}>Closed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Notes</label>
+                        <textarea name="notes" rows="4"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Submission.Notes.Valid}}{{.Submission.Notes.String}}{{end}}</textarea>
+                    </div>
+                    <div>
+                        <button type="submit"
+                                class="bg-black text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                                style="box-shadow: 4px 4px 0px #000;">
+                            Update Status
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

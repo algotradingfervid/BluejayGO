@@ -1,0 +1,127 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <a href="/admin/whitepapers" class="text-sm font-bold uppercase hover:underline" style="font-family: 'JetBrains Mono', monospace;">&larr; Back to Whitepapers</a>
+                <h1 class="text-2xl font-bold mt-2 uppercase" style="font-family: 'JetBrains Mono', monospace;">{{.Title}}</h1>
+                <p class="text-sm text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">
+                    Total downloads: {{.TotalCount}}
+                    <span class="inline-block ml-1 cursor-help text-gray-400" title="Track who has downloaded your gated whitepapers.">ⓘ</span>
+                </p>
+            </div>
+            <div>
+                <a href="/admin/whitepapers/downloads/export?whitepaper={{.WhitepaperID}}&date_from={{.DateFrom}}&date_to={{.DateTo}}"
+                   class="bg-white text-black px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100 inline-block"
+                   style="box-shadow: 2px 2px 0px #000; font-family: 'JetBrains Mono', monospace;">
+                    Export CSV
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="bg-white border-2 border-black p-4 mb-6" style="box-shadow: 4px 4px 0px #000;">
+            <form method="GET" action="/admin/whitepapers/downloads" class="flex flex-wrap items-end gap-4">
+                <div class="min-w-[200px]">
+                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Whitepaper</label>
+                    <select name="whitepaper"
+                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            style="font-family: 'JetBrains Mono', monospace;">
+                        <option value="">All Whitepapers</option>
+                        {{range .Whitepapers}}
+                        <option value="{{.ID}}" {{if eq $.WhitepaperID .ID}}selected{{end}}>{{.Title}}</option>
+                        {{end}}
+                    </select>
+                </div>
+                <div class="min-w-[150px]">
+                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Date From</label>
+                    <input type="date" name="date_from" value="{{.DateFrom}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div class="min-w-[150px]">
+                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Date To</label>
+                    <input type="date" name="date_to" value="{{.DateTo}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit"
+                            class="bg-black text-white px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-800"
+                            style="font-family: 'JetBrains Mono', monospace;">
+                        Filter
+                    </button>
+                    {{if .HasFilters}}
+                    <a href="/admin/whitepapers/downloads"
+                       class="bg-white text-black px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100"
+                       style="font-family: 'JetBrains Mono', monospace;">
+                        Clear
+                    </a>
+                    {{end}}
+                </div>
+            </form>
+        </div>
+
+        <!-- Table -->
+        {{if .Downloads}}
+        <div class="bg-white border-2 border-black mb-6" style="box-shadow: 4px 4px 0px #000;">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b-2 border-black bg-gray-100">
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Whitepaper</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Email</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Company</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Consent</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Downloads}}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="px-4 py-3 font-bold text-sm" style="font-family: 'JetBrains Mono', monospace;">{{.WhitepaperTitle}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">{{.Email}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">{{.Name}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">{{.Company}}</td>
+                        <td class="px-4 py-3 text-sm">
+                            {{if eq .MarketingConsent 1}}
+                            <span class="bg-green-400 text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black" style="font-family: 'JetBrains Mono', monospace;">Yes</span>
+                            {{else}}
+                            <span class="bg-gray-300 text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black" style="font-family: 'JetBrains Mono', monospace;">No</span>
+                            {{end}}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">{{.CreatedAt.Format "2006-01-02 15:04"}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {{if gt .TotalPages 1}}
+        <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">Page {{.Page}} of {{.TotalPages}}</p>
+            <div class="flex gap-1">
+                {{range .Pages}}
+                {{if eq . $.Page}}
+                <span class="bg-black text-white px-3 py-1 text-sm font-bold border-2 border-black" style="font-family: 'JetBrains Mono', monospace;">{{.}}</span>
+                {{else}}
+                <a href="/admin/whitepapers/downloads?page={{.}}{{if $.WhitepaperID}}&whitepaper={{$.WhitepaperID}}{{end}}{{if $.DateFrom}}&date_from={{$.DateFrom}}{{end}}{{if $.DateTo}}&date_to={{$.DateTo}}{{end}}"
+                   class="bg-white text-black px-3 py-1 text-sm font-bold border-2 border-black hover:bg-gray-100"
+                   style="box-shadow: 2px 2px 0px #000; font-family: 'JetBrains Mono', monospace;">{{.}}</a>
+                {{end}}
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+
+        {{else}}
+        <div class="bg-white border-2 border-black p-8 text-center" style="box-shadow: 4px 4px 0px #000; font-family: 'JetBrains Mono', monospace;">
+            <p class="text-gray-500">No downloads recorded yet.</p>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

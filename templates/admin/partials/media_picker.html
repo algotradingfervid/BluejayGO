@@ -1,0 +1,40 @@
+{{define "base"}}
+<div class="p-4">
+    <div class="mb-4">
+        <input type="text" id="picker-search" placeholder="Search media files..."
+               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+               style="font-family: 'JetBrains Mono', monospace;"
+               value="{{.Search}}"
+               onkeyup="searchPicker(this.value)">
+    </div>
+    {{if .Files}}
+    <div class="grid grid-cols-3 md:grid-cols-4 gap-3 max-h-[400px] overflow-auto">
+        {{range .Files}}
+        <div class="border-2 border-black cursor-pointer hover:border-blue-600 group relative"
+             onclick="selectMediaFile('{{.FilePath}}', '{{.OriginalFilename}}')">
+            <div class="aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
+                {{if or (eq .MimeType "image/jpeg") (eq .MimeType "image/png") (eq .MimeType "image/gif") (eq .MimeType "image/webp")}}
+                <img src="{{.FilePath}}" alt="{{.AltText.String}}" class="w-full h-full object-cover">
+                {{else if eq .MimeType "image/svg+xml"}}
+                <img src="{{.FilePath}}" alt="{{.AltText.String}}" class="w-full h-full object-contain p-2">
+                {{else}}
+                <span class="material-symbols-outlined text-2xl text-gray-400">description</span>
+                {{end}}
+            </div>
+            <div class="p-1 border-t border-black">
+                <p class="text-[10px] truncate">{{.OriginalFilename}}</p>
+            </div>
+            <div class="absolute inset-0 bg-blue-600/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <span class="bg-blue-600 text-white px-2 py-1 text-[10px] font-bold uppercase border border-black">Select</span>
+            </div>
+        </div>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="text-center py-8 text-gray-500">
+        <span class="material-symbols-outlined text-3xl mb-2">perm_media</span>
+        <p class="text-sm">No media files found.</p>
+    </div>
+    {{end}}
+</div>
+{{end}}

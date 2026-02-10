@@ -1,0 +1,49 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-6xl">
+            <h1 class="text-2xl font-bold mb-2">Page Sections</h1>
+            <p class="text-gray-600 mb-8">Manage headings, descriptions, and button text across the site.</p>
+
+            {{range $pageKey, $sections := .GroupedSections}}
+            <div class="mb-8">
+                <h2 class="text-lg font-bold capitalize mb-4 border-b-2 border-black pb-2">{{$pageKey}}</h2>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="text-left p-3 font-medium text-gray-700">Section</th>
+                                <th class="text-left p-3 font-medium text-gray-700">Heading</th>
+                                <th class="text-left p-3 font-medium text-gray-700">Active</th>
+                                <th class="text-left p-3 font-medium text-gray-700">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range $sections}}
+                            <tr class="border-t border-gray-200 hover:bg-gray-50">
+                                <td class="p-3">
+                                    <span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{{.SectionKey}}</span>
+                                </td>
+                                <td class="p-3 font-medium">{{.Heading}}</td>
+                                <td class="p-3">
+                                    {{if .IsActive}}
+                                    <span class="text-green-600 font-bold">✓</span>
+                                    {{else}}
+                                    <span class="text-red-400">✗</span>
+                                    {{end}}
+                                </td>
+                                <td class="p-3">
+                                    <a href="/admin/page-sections/{{.ID}}/edit" class="text-blue-600 hover:text-blue-800 hover:underline font-medium">Edit</a>
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}

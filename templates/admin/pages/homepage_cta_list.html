@@ -1,0 +1,83 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold uppercase tracking-tight">Homepage CTAs</h1>
+                <p class="text-sm text-gray-600 mt-1">Call-to-action sections on your homepage</p>
+            </div>
+            <a href="/admin/homepage/cta/new"
+               class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-block"
+               style="box-shadow: 4px 4px 0px #000;">
+                + New CTA
+            </a>
+        </div>
+
+        {{if .Items}}
+        <!-- CTA Visual Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{range .Items}}
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <!-- CTA Preview -->
+                <div class="p-5 {{if eq .BackgroundStyle.String "dark"}}bg-gray-900 text-white{{else if eq .BackgroundStyle.String "primary"}}bg-blue-600 text-white{{else}}bg-gray-50 text-black{{end}} border-b-2 border-black">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-lg uppercase">{{.Headline}}</h3>
+                        {{if eq .IsActive 1}}
+                        <span class="bg-green-400 text-black px-2 py-0.5 text-xs font-bold uppercase border-2 border-black shrink-0 ml-2">Active</span>
+                        {{else}}
+                        <span class="bg-gray-300 text-black px-2 py-0.5 text-xs font-bold uppercase border-2 border-black shrink-0 ml-2">Inactive</span>
+                        {{end}}
+                    </div>
+                    {{if .Description.Valid}}
+                    <p class="text-sm opacity-80 mb-3">{{.Description.String}}</p>
+                    {{end}}
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="bg-white text-black px-3 py-1 text-xs font-bold uppercase border-2 border-black">{{.PrimaryCtaText}}</span>
+                        {{if .SecondaryCtaText.Valid}}
+                        <span class="bg-transparent px-3 py-1 text-xs font-bold uppercase border-2 {{if eq .BackgroundStyle.String "dark"}}border-white text-white{{else if eq .BackgroundStyle.String "primary"}}border-white text-white{{else}}border-black text-black{{end}}">{{.SecondaryCtaText.String}}</span>
+                        {{end}}
+                    </div>
+                </div>
+                <!-- Meta & Actions -->
+                <div class="p-4">
+                    <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
+                        <span>Style: <strong class="uppercase">{{if .BackgroundStyle.Valid}}{{.BackgroundStyle.String}}{{else}}light{{end}}</strong></span>
+                        <span>Links to: {{.PrimaryCtaUrl}}</span>
+                    </div>
+                    <div class="flex gap-2 pt-2 border-t-2 border-black">
+                        <a href="/admin/homepage/cta/{{.ID}}/edit"
+                           class="flex-1 bg-white text-black px-3 py-1 text-xs font-bold uppercase border-2 border-black text-center hover:bg-blue-50"
+                           style="box-shadow: 2px 2px 0px #000;">
+                            Edit
+                        </a>
+                        <button hx-delete="/admin/homepage/cta/{{.ID}}"
+                                hx-confirm="Delete this CTA?"
+                                hx-target="closest div.bg-white"
+                                hx-swap="outerHTML swap:0.3s"
+                                class="flex-1 bg-white text-red-600 px-3 py-1 text-xs font-bold uppercase border-2 border-red-600 text-center hover:bg-red-50"
+                                style="box-shadow: 2px 2px 0px #991b1b;">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <!-- Empty State -->
+        <div class="bg-white border-2 border-black p-12 text-center" style="box-shadow: 4px 4px 0px #000;">
+            <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">ads_click</span>
+            <h2 class="text-xl font-bold uppercase mb-2">No CTAs Yet</h2>
+            <p class="text-gray-600 text-sm mb-6">Create call-to-action sections for your homepage.</p>
+            <a href="/admin/homepage/cta/new"
+               class="bg-blue-600 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black inline-block hover:bg-blue-700"
+               style="box-shadow: 4px 4px 0px #000;">
+                Create Your First CTA
+            </a>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

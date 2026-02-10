@@ -1,0 +1,100 @@
+{{define "content"}}
+<main>
+    <!-- Breadcrumb -->
+    <div class="max-w-[1200px] mx-auto px-4 py-4">
+        <nav class="flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
+            <a class="hover:text-[#0066CC]" href="/">Home</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <span class="text-[#0066CC]">Products</span>
+        </nav>
+    </div>
+
+    <!-- Page Header -->
+    <section class="max-w-[1200px] mx-auto px-4 pb-12">
+        <div class="manual-border-thick p-8 md:p-12 bg-white manual-shadow-lg relative overflow-hidden">
+            <div class="absolute inset-0 grid-dotted pointer-events-none"></div>
+            <div class="relative z-10 text-center">
+                <div class="inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase mb-4">
+                    {{.PageHero.Label}}
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black font-mono leading-none uppercase mb-6">
+                    {{.PageHero.Heading}}
+                </h1>
+                <p class="text-lg font-mono opacity-80 max-w-2xl mx-auto mb-6">
+                    {{.PageHero.Description}}
+                </p>
+                <div class="max-w-md mx-auto">
+                    <input type="text" name="q" placeholder="Search products..."
+                        value="{{if .Query}}{{.Query}}{{end}}"
+                        hx-get="/products/search"
+                        hx-trigger="keyup changed delay:300ms"
+                        hx-target="#product-results"
+                        hx-include="this"
+                        class="w-full border-2 border-black rounded px-4 py-3 text-sm font-mono focus:ring-2 focus:ring-[#0066CC] focus:border-[#0066CC]">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Results (HTMX target) -->
+    <div id="product-results"></div>
+
+    <!-- Browse by Product Type -->
+    <section class="max-w-[1200px] mx-auto px-4 py-12">
+        <div class="flex items-center gap-4 mb-8">
+            <h2 class="font-mono font-black text-2xl uppercase">{{.CategoriesSection.Heading}}</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+        </div>
+
+        {{if .Categories}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {{range .Categories}}
+            <a href="/products/{{.Category.Slug}}" class="manual-border-thick bg-white p-6 manual-shadow-lg flex flex-col group hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer">
+                <div class="manual-border bg-gray-100 aspect-[4/3] mb-6 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[#0066CC]/5 mix-blend-multiply"></div>
+                    {{if .Category.ImageUrl.Valid}}
+                    <img alt="{{.Category.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="{{.Category.ImageUrl.String}}">
+                    {{else}}
+                    <div class="w-full h-full flex items-center justify-center">
+                        <span class="material-symbols-outlined text-6xl opacity-20">{{.Category.Icon}}</span>
+                    </div>
+                    {{end}}
+                </div>
+                <h3 class="text-2xl font-black uppercase mb-2">{{.Category.Name}}</h3>
+                <p class="text-xs opacity-60 group-hover:opacity-80 uppercase mb-4 flex-grow leading-relaxed">
+                    {{.Category.Description}}
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-[#0066CC] group-hover:text-white">{{.Count}} Products</span>
+                    <span class="manual-border bg-white text-black px-4 py-2 text-xs font-bold uppercase manual-shadow btn-press group-hover:bg-white group-hover:text-black transition-colors">
+                        View Products
+                    </span>
+                </div>
+            </a>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="manual-border bg-white p-12 text-center manual-shadow">
+            <span class="material-symbols-outlined text-6xl opacity-20 mb-4">inventory_2</span>
+            <p class="font-mono text-lg uppercase font-bold opacity-60">No product categories found</p>
+        </div>
+        {{end}}
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-[#0066CC] text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg relative overflow-hidden mb-20">
+        <div class="absolute inset-0 grid-dotted opacity-10 pointer-events-none"></div>
+        <div class="max-w-3xl mx-auto text-center relative z-10">
+            <h2 class="font-mono font-black text-3xl md:text-4xl uppercase mb-6">{{.PageCTA.Heading}}</h2>
+            <p class="font-mono text-lg opacity-90 mb-10 max-w-xl mx-auto">
+                {{.PageCTA.Description}}
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="{{.PageCTA.PrimaryButtonUrl}}" class="manual-border border-white bg-white text-[#0066CC] px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                    {{.PageCTA.PrimaryButtonText}}
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+{{end}}

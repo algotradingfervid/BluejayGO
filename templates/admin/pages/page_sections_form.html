@@ -1,0 +1,112 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-2xl">
+            <div class="mb-6">
+                <a href="/admin/page-sections" class="text-blue-600 hover:underline text-sm">← Back to Page Sections</a>
+            </div>
+
+            <h1 class="text-2xl font-bold mb-2">{{.Title}}</h1>
+            <p class="text-gray-600 mb-1">
+                <span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{{.Section.PageKey}}</span>
+                <span class="mx-2">›</span>
+                <span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{{.Section.SectionKey}}</span>
+            </p>
+            <p class="text-xs text-gray-500 mb-6">Last updated: {{formatDate .Section.UpdatedAt "Jan 2, 2006 3:04pm"}}</p>
+
+            {{if .Saved}}
+            <div class="bg-green-100 border-2 border-green-500 text-green-800 px-4 py-3 mb-6 font-bold rounded">
+                Section saved successfully.
+            </div>
+            {{end}}
+
+            <form method="POST" action="/admin/page-sections/{{.Section.ID}}" class="space-y-6">
+                <!-- Main Content -->
+                <div class="bg-white rounded-lg shadow p-6 space-y-4">
+                    <h2 class="text-lg font-bold border-b-2 border-black pb-2 mb-2">Main Content</h2>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Heading</label>
+                        <input type="text" name="heading" value="{{.Section.Heading}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Subheading</label>
+                        <input type="text" name="subheading" value="{{.Section.Subheading}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea name="description" rows="4" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{.Section.Description}}</textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Label</label>
+                        <input type="text" name="label" value="{{.Section.Label}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <p class="text-xs text-gray-500 mt-1">Optional badge or label text.</p>
+                    </div>
+                </div>
+
+                <!-- Primary Button -->
+                <div class="bg-white rounded-lg shadow p-6 space-y-4">
+                    <h2 class="text-lg font-bold border-b-2 border-black pb-2 mb-2">Primary Button</h2>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+                        <input type="text" name="primary_button_text" value="{{.Section.PrimaryButtonText}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Button URL</label>
+                        <input type="text" name="primary_button_url" value="{{.Section.PrimaryButtonUrl}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <!-- Secondary Button -->
+                <div class="bg-white rounded-lg shadow p-6 space-y-4">
+                    <h2 class="text-lg font-bold border-b-2 border-black pb-2 mb-2">Secondary Button</h2>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+                        <input type="text" name="secondary_button_text" value="{{.Section.SecondaryButtonText}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Button URL</label>
+                        <input type="text" name="secondary_button_url" value="{{.Section.SecondaryButtonUrl}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="bg-white rounded-lg shadow p-6 space-y-4">
+                    <h2 class="text-lg font-bold border-b-2 border-black pb-2 mb-2">Status</h2>
+
+                    <style>
+                        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+                        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+                        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; border-radius: 24px; transition: .2s; }
+                        .toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s; }
+                        .toggle-switch input:checked + .toggle-slider { background-color: #2563eb; }
+                        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+                    </style>
+
+                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <span class="text-sm font-medium text-gray-700">Active</span>
+                        <span class="toggle-switch">
+                            <input type="checkbox" name="is_active" {{if .Section.IsActive}}checked{{end}}>
+                            <span class="toggle-slider"></span>
+                        </span>
+                    </label>
+                    <p class="text-xs text-gray-500">When inactive, this section will not be displayed on the frontend.</p>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 pb-8">
+                    <a href="/admin/page-sections" class="bg-gray-200 text-gray-800 px-6 py-2 rounded hover:bg-gray-300 text-sm font-bold">Cancel</a>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 text-sm font-bold">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,121 @@
+{{define "content"}}
+
+<!-- Breadcrumb -->
+<nav class="bg-white manual-border-b">
+  <div class="container mx-auto px-4 py-3">
+    <ol class="flex items-center space-x-2 text-sm font-mono uppercase">
+      <li><a href="/" class="text-gray-600 hover:text-black">Home</a></li>
+      <li class="text-gray-400">/</li>
+      <li class="text-black font-bold">Partners</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Banner -->
+<section class="relative bg-black text-white manual-border-b-thick">
+  <div class="absolute inset-0 bg-gradient-to-r from-[#0066CC] via-[#0066CC]/60 to-black opacity-80"></div>
+  <div class="relative container mx-auto px-4 py-20 md:py-28">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-5xl md:text-7xl font-bold font-mono uppercase mb-6">Our Partners</h1>
+      <p class="text-xl font-mono opacity-90">BUILDING SUCCESS TOGETHER</p>
+    </div>
+  </div>
+</section>
+
+<!-- Partnership Introduction -->
+<section class="py-12 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="font-mono text-gray-700 leading-relaxed">
+        At BlueJay Innovative Labs, we believe in the power of collaboration. Our strategic partnerships enable us to deliver cutting-edge technology solutions to businesses across India.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Partners by Tier -->
+{{range .Tiers}}
+<section class="py-12 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold font-mono uppercase mb-8 text-center flex items-center justify-center gap-3">
+      <span class="material-symbols-outlined text-[#0066CC]">handshake</span>
+      {{.Name}}
+    </h2>
+    {{$tierName := .Name}}
+    {{$partners := index $.PartnersByTier $tierName}}
+    {{if $partners}}
+    <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6">
+      {{range $partners}}
+      <div class="bg-white manual-border manual-shadow p-6 text-center hover:-translate-y-1 transition-transform">
+        {{if .LogoUrl.Valid}}
+        <img src="{{.LogoUrl.String}}" alt="{{.Name}}" class="h-12 mx-auto mb-3 object-contain">
+        {{else if .Icon.Valid}}
+        <span class="material-symbols-outlined text-4xl text-[#0066CC] mb-3 block">{{.Icon.String}}</span>
+        {{end}}
+        <p class="font-mono text-sm font-bold uppercase">{{.Name}}</p>
+      </div>
+      {{end}}
+    </div>
+    {{else}}
+    <div class="max-w-2xl mx-auto bg-white manual-border manual-shadow p-8 text-center">
+      <p class="font-mono text-gray-600">No {{$tierName}} configured.</p>
+    </div>
+    {{end}}
+  </div>
+</section>
+{{end}}
+
+<!-- Testimonials -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold font-mono uppercase mb-12 text-center">What Our Partners Say</h2>
+    {{if .Testimonials}}
+    <div class="max-w-4xl mx-auto space-y-8">
+      {{range .Testimonials}}
+      <div class="bg-gray-50 manual-border manual-shadow p-8">
+        <div class="flex items-start gap-6">
+          <div class="flex-shrink-0">
+            {{if .PartnerIcon.Valid}}
+            <div class="w-16 h-16 bg-[#0066CC] manual-border flex items-center justify-center">
+              <span class="material-symbols-outlined text-2xl text-white">{{.PartnerIcon.String}}</span>
+            </div>
+            {{else if .PartnerLogoUrl.Valid}}
+            <img src="{{.PartnerLogoUrl.String}}" alt="{{.PartnerName}}" class="w-16 h-16 object-contain">
+            {{else}}
+            <div class="w-16 h-16 bg-gray-200 manual-border flex items-center justify-center">
+              <span class="material-symbols-outlined text-2xl text-gray-500">format_quote</span>
+            </div>
+            {{end}}
+          </div>
+          <div>
+            <blockquote class="font-mono text-gray-700 leading-relaxed mb-4 italic">"{{.Quote}}"</blockquote>
+            <p class="font-mono font-bold text-sm">{{.AuthorName}}</p>
+            <p class="font-mono text-gray-600 text-xs">{{.AuthorTitle}}, {{.PartnerName}}</p>
+          </div>
+        </div>
+      </div>
+      {{end}}
+    </div>
+    {{else}}
+    <div class="max-w-2xl mx-auto bg-gray-50 manual-border manual-shadow p-8 text-center">
+      <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">format_quote</span>
+      <p class="font-mono text-gray-600">No partner testimonials available.</p>
+    </div>
+    {{end}}
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 bg-black text-white">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold font-mono uppercase mb-6">Interested in Partnering With Us?</h2>
+    <a href="/contact" class="inline-block bg-[#0066CC] text-white px-8 py-4 manual-border manual-shadow hover:bg-[#004499] font-mono uppercase text-sm font-bold hover:-translate-y-1 transition-all btn-press">
+      <span class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">handshake</span>
+        Become a Partner
+      </span>
+    </a>
+  </div>
+</section>
+
+{{end}}

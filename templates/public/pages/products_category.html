@@ -1,0 +1,87 @@
+{{define "content"}}
+<main>
+    <!-- Breadcrumb -->
+    <div class="max-w-[1440px] mx-auto px-4 md:px-10 py-4">
+        <nav class="flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
+            <a class="hover:text-[#0066CC]" href="/">Home</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <a class="hover:text-[#0066CC]" href="/products">Products</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <span class="text-[#0066CC]">{{.Category.Name}}</span>
+        </nav>
+    </div>
+
+    <!-- Category Hero -->
+    <section class="max-w-[1440px] mx-auto px-4 md:px-10 pb-8">
+        <div class="manual-border-thick bg-white flex flex-col md:flex-row manual-shadow-lg overflow-hidden">
+            <div class="md:w-1/2 border-b-4 md:border-b-0 md:border-r-4 border-black bg-gray-100 relative overflow-hidden">
+                {{if .Category.ImageUrl.Valid}}
+                <img alt="{{.Category.Name}}" class="w-full h-full object-cover grayscale contrast-125 min-h-[300px]" src="{{.Category.ImageUrl.String}}">
+                {{else}}
+                <div class="w-full h-full min-h-[300px] flex items-center justify-center">
+                    <span class="material-symbols-outlined text-8xl opacity-20">{{.Category.Icon}}</span>
+                </div>
+                {{end}}
+            </div>
+            <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center space-y-6">
+                <div>
+                    <span class="text-xs font-bold text-[#0066CC] mb-2 block tracking-widest uppercase">{{.CategoryHero.Label}}</span>
+                    <h1 class="text-4xl md:text-5xl font-black leading-none uppercase tracking-tighter">{{.Category.Name}}</h1>
+                </div>
+                <p class="text-sm leading-relaxed border-l-4 border-[#0066CC] pl-4 opacity-80 uppercase">
+                    {{.Category.Description}}
+                </p>
+                <div class="flex gap-4 text-[10px] font-bold uppercase">
+                    <span class="px-2 py-1 bg-gray-200 manual-border">{{.TotalCount}} {{.CategoryHero.Heading}}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Grid -->
+    <section class="max-w-[1440px] mx-auto px-4 md:px-10 py-8">
+        {{if .Products}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {{range .Products}}
+            <a href="/products/{{$.Category.Slug}}/{{.Slug}}" class="manual-border bg-white p-4 manual-shadow group flex flex-col hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer">
+                <div class="manual-border bg-gray-100 aspect-square mb-4 overflow-hidden relative">
+                    {{if .PrimaryImage.Valid}}
+                    <img alt="{{.Name}}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" src="{{.PrimaryImage.String}}">
+                    {{else}}
+                    <div class="w-full h-full flex items-center justify-center">
+                        <span class="material-symbols-outlined text-6xl opacity-20">desktop_windows</span>
+                    </div>
+                    {{end}}
+                    {{if .IsFeatured}}
+                    <div class="absolute top-2 right-2 bg-[#0066CC] text-white text-[9px] font-bold px-2 py-0.5 uppercase">Featured</div>
+                    {{end}}
+                </div>
+                <div class="space-y-1 mb-4">
+                    <h3 class="font-bold text-lg leading-none uppercase">{{.Name}}</h3>
+                    {{if .Tagline.Valid}}
+                    <p class="text-[10px] font-bold text-[#0066CC] group-hover:text-white uppercase">{{.Tagline.String}}</p>
+                    {{end}}
+                </div>
+                <div class="mt-auto flex items-center justify-between pt-2">
+                    <span class="manual-border bg-black group-hover:bg-white group-hover:text-black text-white px-4 py-2 text-[10px] font-bold uppercase transition-colors">{{$.CategoryHero.PrimaryButtonText}}</span>
+                </div>
+            </a>
+            {{end}}
+        </div>
+
+        <!-- Pagination -->
+        {{if gt .TotalPages 1}}
+        <div class="mt-12 flex justify-center">
+            <span class="text-[10px] font-bold uppercase opacity-60">Page {{.CurrentPage}} of {{.TotalPages}}</span>
+        </div>
+        {{end}}
+        {{else}}
+        <div class="manual-border bg-white p-12 text-center manual-shadow">
+            <span class="material-symbols-outlined text-6xl opacity-20 mb-4">inventory_2</span>
+            <p class="font-mono text-lg uppercase font-bold opacity-60">{{.EmptyState.Heading}}</p>
+            <a href="{{.EmptyState.PrimaryButtonUrl}}" class="inline-block mt-4 text-[#0066CC] text-xs font-bold uppercase hover:underline">{{.EmptyState.PrimaryButtonText}}</a>
+        </div>
+        {{end}}
+    </section>
+</main>
+{{end}}

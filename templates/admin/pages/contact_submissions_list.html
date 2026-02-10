@@ -1,0 +1,155 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold uppercase tracking-tight">{{.Title}}</h1>
+                <p class="text-sm text-gray-600 mt-1">{{.TotalCount}} submissions found</p>
+            </div>
+            {{if gt .NewCount 0}}
+            <form method="POST" action="/admin/contact/submissions/bulk-mark-read">
+                <button type="submit"
+                    class="bg-gray-900 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-block"
+                    style="box-shadow: 4px 4px 0px #000;">
+                    Mark All as Read
+                </button>
+            </form>
+            {{end}}
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex gap-0 mb-6">
+            <a href="/admin/contact/submissions"
+               class="px-5 py-2 text-sm font-bold uppercase border-2 border-black {{if and (eq .Type "") (eq .Status "")}}bg-black text-white{{else}}bg-white text-black hover:bg-gray-100{{end}}"
+               style="border-right-width: 1px;">
+                All ({{.TotalAll}})
+            </a>
+            <a href="/admin/contact/submissions?type=contact"
+               class="px-5 py-2 text-sm font-bold uppercase border-2 border-black {{if eq .Type "contact"}}bg-black text-white{{else}}bg-white text-black hover:bg-gray-100{{end}}"
+               style="border-right-width: 1px; border-left-width: 1px;">
+                Contact Form ({{.TotalContact}})
+            </a>
+            <a href="/admin/contact/submissions?type=rfq"
+               class="px-5 py-2 text-sm font-bold uppercase border-2 border-black {{if eq .Type "rfq"}}bg-black text-white{{else}}bg-white text-black hover:bg-gray-100{{end}}"
+               style="border-left-width: 1px;">
+                Request for Quote ({{.TotalRFQ}})
+            </a>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="bg-white border-2 border-black p-4 mb-6" style="box-shadow: 4px 4px 0px #000;">
+            <form method="GET" action="/admin/contact/submissions" class="flex flex-wrap items-end gap-4">
+                {{if .Type}}<input type="hidden" name="type" value="{{.Type}}">{{end}}
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-xs font-bold uppercase mb-1">Search</label>
+                    <input type="text" name="search" value="{{.Search}}" placeholder="Search by name, email, company..."
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div class="min-w-[150px]">
+                    <label class="block text-xs font-bold uppercase mb-1" title="Filter submissions by their review status.">
+                        Status <span class="text-gray-400 cursor-help" title="Filter submissions by their review status.">&#9432;</span>
+                    </label>
+                    <select name="status"
+                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            style="font-family: 'JetBrains Mono', monospace;">
+                        <option value="">All Statuses</option>
+                        <option value="new" {{if eq .Status "new"}}selected{{end}}>New</option>
+                        <option value="read" {{if eq .Status "read"}}selected{{end}}>Read</option>
+                        <option value="replied" {{if eq .Status "replied"}}selected{{end}}>Replied</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit"
+                            class="bg-black text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                            style="box-shadow: 3px 3px 0px #000;">
+                        Filter
+                    </button>
+                    <a href="/admin/contact/submissions"
+                       class="bg-white text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100"
+                       style="box-shadow: 3px 3px 0px #000;">
+                        Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Table -->
+        {{if .Submissions}}
+        <div class="bg-white border-2 border-black overflow-hidden" style="box-shadow: 4px 4px 0px #000;">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="border-b-2 border-black bg-gray-100">
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Email</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Company</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Type</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Date</th>
+                        <th class="px-4 py-3 text-right text-xs font-bold uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Submissions}}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50 {{if eq .Status "new"}}bg-yellow-50{{end}}">
+                        <td class="px-4 py-3 text-sm font-bold">
+                            <a href="/admin/contact/submissions/{{.ID}}" class="hover:underline">{{.Name}}</a>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600">{{.Email}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">{{.Company}}</td>
+                        <td class="px-4 py-3 text-sm">
+                            {{if eq .Status "new"}}
+                            <span class="inline-block bg-yellow-300 text-black px-2 py-1 text-xs font-bold uppercase border border-black">New</span>
+                            {{else if eq .Status "read"}}
+                            <span class="inline-block bg-gray-200 text-gray-700 px-2 py-1 text-xs font-bold uppercase border border-gray-400">Read</span>
+                            {{else if eq .Status "replied"}}
+                            <span class="inline-block bg-green-300 text-black px-2 py-1 text-xs font-bold uppercase border border-black">Replied</span>
+                            {{else}}
+                            <span class="inline-block bg-gray-100 text-gray-600 px-2 py-1 text-xs font-bold uppercase border border-gray-400">{{.Status}}</span>
+                            {{end}}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600 uppercase">{{.SubmissionType}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">{{.CreatedAt}}</td>
+                        <td class="px-4 py-3 text-right text-sm">
+                            <a href="/admin/contact/submissions/{{.ID}}" class="text-black font-bold hover:underline mr-3">View</a>
+                            <button hx-delete="/admin/contact/submissions/{{.ID}}" hx-confirm="Delete this submission?" hx-target="closest tr" hx-swap="outerHTML swap:0.3s"
+                                    class="text-red-600 font-bold hover:underline">Delete</button>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {{if gt .TotalPages 1}}
+        <div class="flex justify-between items-center mt-6">
+            <div class="text-sm text-gray-600">Page {{.Page}} of {{.TotalPages}}</div>
+            <div class="flex gap-2">
+                {{if gt .Page 1}}
+                <a href="?page={{sub .Page 1}}{{if .Status}}&status={{.Status}}{{end}}{{if .Type}}&type={{.Type}}{{end}}{{if .Search}}&search={{.Search}}{{end}}"
+                   class="px-4 py-2 text-sm font-bold uppercase border-2 border-black bg-white hover:bg-gray-100"
+                   style="box-shadow: 3px 3px 0px #000;">
+                    &larr; Previous
+                </a>
+                {{end}}
+                {{if lt .Page .TotalPages}}
+                <a href="?page={{add .Page 1}}{{if .Status}}&status={{.Status}}{{end}}{{if .Type}}&type={{.Type}}{{end}}{{if .Search}}&search={{.Search}}{{end}}"
+                   class="px-4 py-2 text-sm font-bold uppercase border-2 border-black bg-white hover:bg-gray-100"
+                   style="box-shadow: 3px 3px 0px #000;">
+                    Next &rarr;
+                </a>
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+        {{else}}
+        <div class="bg-white border-2 border-black p-12 text-center" style="box-shadow: 4px 4px 0px #000;">
+            <p class="text-gray-500 uppercase text-sm font-bold">No submissions found.</p>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

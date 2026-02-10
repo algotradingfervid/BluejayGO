@@ -1,0 +1,12 @@
+{{define "base"}}
+{{if .Results}}
+<div class="absolute top-0 left-0 right-0 manual-border bg-white manual-shadow z-50 max-h-64 overflow-y-auto">
+    {{range .Results}}
+    <a href="{{.URL}}" class="block p-3 hover:bg-gray-50 border-b border-gray-100">
+        <span class="text-[10px] font-bold uppercase text-primary">{{.Type}}</span>
+        <div class="font-mono font-bold text-sm">{{.Title}}</div>
+    </a>
+    {{end}}
+</div>
+{{end}}
+{{end}}

@@ -1,0 +1,138 @@
+{{define "content"}}
+<div class="flex h-screen bg-gray-50">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-y-auto">
+        <header class="bg-white border-b-4 border-black sticky top-0 z-10">
+            <div class="flex items-center justify-between px-8 py-4">
+                <h1 class="text-2xl font-bold">Dashboard</h1>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <div class="font-bold text-sm">{{.DisplayName}}</div>
+                        <div class="text-xs text-gray-600">{{.Role}}</div>
+                    </div>
+                    <form method="POST" action="/admin/logout">
+                        <button type="submit" class="bg-red-500 text-white px-4 py-2 manual-border manual-shadow hover:bg-red-600 active:btn-press transition-colors text-sm font-bold">LOGOUT</button>
+                    </form>
+                </div>
+            </div>
+        </header>
+        <div class="p-8 space-y-8">
+
+            <!-- Section 1: Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Published Products -->
+                <div class="bg-white p-6 manual-border manual-shadow relative group" title="Shows the count of products currently published on your site.">
+                    <div class="flex items-start justify-between mb-3">
+                        <span class="material-symbols-outlined text-3xl text-[#0066CC]">inventory_2</span>
+                    </div>
+                    <div class="text-4xl font-bold text-black mb-1">{{.PublishedProducts}}</div>
+                    <div class="text-sm text-gray-600 font-medium">Published Products</div>
+                    <a href="/admin/products" class="text-xs font-bold text-[#0066CC] hover:underline mt-3 inline-block">View All →</a>
+                </div>
+
+                <!-- Published Blog Posts -->
+                <div class="bg-white p-6 manual-border manual-shadow relative group" title="Shows the count of blog posts currently published on your site.">
+                    <div class="flex items-start justify-between mb-3">
+                        <span class="material-symbols-outlined text-3xl text-[#E65100]">article</span>
+                    </div>
+                    <div class="text-4xl font-bold text-black mb-1">{{.PublishedBlogPosts}}</div>
+                    <div class="text-sm text-gray-600 font-medium">Published Blog Posts</div>
+                    <a href="/admin/blog/posts" class="text-xs font-bold text-[#E65100] hover:underline mt-3 inline-block">View All →</a>
+                </div>
+
+                <!-- Contact Submissions -->
+                <div class="bg-white p-6 manual-border manual-shadow relative group" title="Shows the count of contact submissions received.">
+                    <div class="flex items-start justify-between mb-3">
+                        <span class="material-symbols-outlined text-3xl text-[#2E7D32]">mail</span>
+                        {{if gt .NewContactSubmissions 0}}
+                        <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 manual-border">{{.NewContactSubmissions}} new</span>
+                        {{end}}
+                    </div>
+                    <div class="text-4xl font-bold text-black mb-1">{{.ContactSubmissions}}</div>
+                    <div class="text-sm text-gray-600 font-medium">Contact Submissions</div>
+                    <a href="/admin/contact/submissions" class="text-xs font-bold text-[#2E7D32] hover:underline mt-3 inline-block">View All →</a>
+                </div>
+
+                <!-- Total Partners -->
+                <div class="bg-white p-6 manual-border manual-shadow relative group" title="Shows the count of partners currently on your site.">
+                    <div class="flex items-start justify-between mb-3">
+                        <span class="material-symbols-outlined text-3xl text-[#6A1B9A]">handshake</span>
+                    </div>
+                    <div class="text-4xl font-bold text-black mb-1">{{.TotalPartners}}</div>
+                    <div class="text-sm text-gray-600 font-medium">Total Partners</div>
+                    <a href="/admin/partners" class="text-xs font-bold text-[#6A1B9A] hover:underline mt-3 inline-block">View All →</a>
+                </div>
+            </div>
+
+            <!-- Section 2: Quick Actions -->
+            <div>
+                <h2 class="text-lg font-bold mb-4 uppercase tracking-wide">Quick Actions</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="/admin/products/new" class="bg-black text-white p-4 manual-border manual-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-3 font-bold text-sm uppercase">
+                        <span class="material-symbols-outlined">add_box</span>
+                        New Product
+                    </a>
+                    <a href="/admin/blog/posts/new" class="bg-black text-white p-4 manual-border manual-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-3 font-bold text-sm uppercase">
+                        <span class="material-symbols-outlined">edit_note</span>
+                        New Blog Post
+                    </a>
+                    <a href="/admin/solutions/new" class="bg-black text-white p-4 manual-border manual-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-3 font-bold text-sm uppercase">
+                        <span class="material-symbols-outlined">lightbulb</span>
+                        New Solution
+                    </a>
+                    <a href="/admin/case-studies/new" class="bg-black text-white p-4 manual-border manual-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-3 font-bold text-sm uppercase">
+                        <span class="material-symbols-outlined">science</span>
+                        New Case Study
+                    </a>
+                </div>
+            </div>
+
+            <!-- Section 3: Recent Activity -->
+            <div>
+                <h2 class="text-lg font-bold mb-4 uppercase tracking-wide">Recent Activity</h2>
+                <div class="bg-white manual-border manual-shadow p-6">
+                    <div class="flex items-center gap-3 text-gray-500">
+                        <span class="material-symbols-outlined text-2xl">history</span>
+                        <p class="text-sm">Activity tracking coming soon.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Content Status Summary -->
+            <div>
+                <h2 class="text-lg font-bold mb-4 uppercase tracking-wide">Content Status</h2>
+                {{if or (gt .DraftProducts 0) (gt .DraftBlogPosts 0) (gt .NewContactSubmissions 0)}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {{if gt .DraftProducts 0}}
+                    <a href="/admin/products" class="bg-yellow-50 p-4 manual-border manual-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-3">
+                        <span class="material-symbols-outlined text-yellow-600">draft</span>
+                        <span class="font-bold text-sm">{{.DraftProducts}} Draft Product{{if gt .DraftProducts 1}}s{{end}}</span>
+                    </a>
+                    {{end}}
+                    {{if gt .DraftBlogPosts 0}}
+                    <a href="/admin/blog/posts" class="bg-yellow-50 p-4 manual-border manual-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-3">
+                        <span class="material-symbols-outlined text-yellow-600">draft</span>
+                        <span class="font-bold text-sm">{{.DraftBlogPosts}} Draft Blog Post{{if gt .DraftBlogPosts 1}}s{{end}}</span>
+                    </a>
+                    {{end}}
+                    {{if gt .NewContactSubmissions 0}}
+                    <a href="/admin/contact/submissions" class="bg-red-50 p-4 manual-border manual-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-3">
+                        <span class="material-symbols-outlined text-red-600">mark_email_unread</span>
+                        <span class="font-bold text-sm">{{.NewContactSubmissions}} Unread Contact Submission{{if gt .NewContactSubmissions 1}}s{{end}}</span>
+                    </a>
+                    {{end}}
+                </div>
+                {{else}}
+                <div class="bg-green-50 p-6 manual-border manual-shadow">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-green-600 text-2xl">check_circle</span>
+                        <p class="font-bold text-sm text-green-800">All content is published. Nice work!</p>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+
+        </div>
+    </div>
+</div>
+{{end}}

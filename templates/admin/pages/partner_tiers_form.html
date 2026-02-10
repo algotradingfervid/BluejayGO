@@ -1,0 +1,58 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="mb-6">
+            <a href="/admin/partner-tiers" class="text-sm font-bold uppercase text-purple-600 hover:text-purple-800 border-b-2 border-purple-600">&larr; Back to Tiers</a>
+            <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+        </div>
+
+        <form method="POST" action="{{.FormAction}}" class="max-w-2xl space-y-4">
+            <div class="bg-white border-2 border-black p-5 space-y-4" style="box-shadow: 4px 4px 0px #000;">
+                <p class="text-xs text-gray-500 mb-2">
+                    <span class="inline-block cursor-help" title="Tiers define partnership levels (e.g., Gold, Silver, Bronze). Partners are grouped by tier on the public page.">ⓘ</span>
+                    Tiers define partnership levels. Partners are grouped by tier on the public page.
+                </p>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Name *
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="The tier name, e.g. Gold, Silver, Bronze.">ⓘ</span>
+                    </label>
+                    <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Description
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="A short description of what this tier level means.">ⓘ</span>
+                    </label>
+                    <textarea name="description" rows="3"
+                              class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                              style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">
+                        Sort Order
+                        <span class="inline-block ml-1 cursor-help text-gray-400" title="Lower numbers appear first. Use this to rank tiers (e.g., Gold=1, Silver=2, Bronze=3).">ⓘ</span>
+                    </label>
+                    <input type="number" name="sort_order" min="0"
+                           value="{{if .Item}}{{.Item.SortOrder}}{{else}}0{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-2">
+                <button type="submit"
+                        class="bg-purple-600 text-white px-8 py-3 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 4px 4px 0px #000;">
+                    {{if .Item}}Update Tier{{else}}Create Tier{{end}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

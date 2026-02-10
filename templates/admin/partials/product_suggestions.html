@@ -1,0 +1,15 @@
+{{define "base"}}
+{{if .Products}}
+{{range .Products}}
+<button type="button"
+    class="w-full text-left px-3 py-2 text-sm hover:bg-green-50 flex items-center justify-between"
+    onclick="addProduct({{.ID}}, '{{.Name}}'); document.getElementById('product-suggestions').classList.add('hidden'); document.getElementById('product-search').value='';">
+    <span>{{.Name}}</span>
+    <span class="text-xs text-gray-400">{{.Slug}}</span>
+</button>
+{{end}}
+{{end}}
+{{if not .Products}}
+<div class="px-3 py-2 text-sm text-gray-400">{{if .Query}}No products found{{else}}Type to search...{{end}}</div>
+{{end}}
+{{end}}

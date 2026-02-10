@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Blog Feed - BlueJay CMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="../../components/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../components/tailwind.config.js"></script>
+</head>
+<body class="font-mono bg-background-light text-text-primary min-h-screen">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar-light fixed lg:sticky top-0 left-0 h-screen z-50 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <span class="sidebar-logo-text">BLUEJAY</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Content</div>
+                    <a href="../dashboard/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="../homepage/index.html" class="sidebar-item active">
+                        <span class="material-symbols-outlined sidebar-item-icon">home</span>
+                        Homepage
+                    </a>
+                    <a href="../about/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">info</span>
+                        About Us
+                    </a>
+                    <a href="../products/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">inventory_2</span>
+                        Products
+                    </a>
+                    <a href="../solutions/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">lightbulb</span>
+                        Solutions
+                    </a>
+                    <a href="../blog/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">article</span>
+                        Blog
+                    </a>
+                    <a href="../case-studies/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">cases</span>
+                        Case Studies
+                    </a>
+                    <a href="../whitepapers/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu_book</span>
+                        Whitepapers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Resources</div>
+                    <a href="../partners/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">handshake</span>
+                        Partners
+                    </a>
+                    <a href="../testimonials/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">format_quote</span>
+                        Testimonials
+                    </a>
+                    <a href="../certifications/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">verified</span>
+                        Certifications
+                    </a>
+                </div>                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Global Elements</div>
+                    <a href="../header/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">web_asset</span>
+                        Header
+                    </a>
+                    <a href="../footer/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">call_to_action</span>
+                        Footer
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="../media/library.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">perm_media</span>
+                        Media
+                    </a>
+                    <a href="../forms/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">mail</span>
+                        Forms
+                        <span class="sidebar-item-badge">3</span>
+                    </a>
+                    <a href="../navigation/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu</span>
+                        Navigation
+                    </a>
+                    <a href="../users/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">group</span>
+                        Users
+                    </a>
+                    <a href="../settings/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">JS</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">John Smith</div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 p-2 lg:hidden manual-border bg-white hover:bg-[var(--color-background-light)]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 min-h-screen">
+            <header class="h-16 bg-white manual-border-thick border-t-0 border-l-0 border-r-0 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 manual-border hover:bg-[var(--color-background-light)] lg:hidden">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="font-display font-extrabold uppercase lg:hidden">BLUEJAY</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-warning)] text-black text-[10px] font-bold flex items-center justify-center manual-border">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="p-4 md:p-6 lg:p-8 bg-grid-white">
+
+                <a href="index.html" class="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-primary mb-4 font-mono">
+                    <span class="material-symbols-outlined text-lg">arrow_back</span>
+                    Back to Homepage
+                </a>
+
+                <div class="page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div class="page-header-content">
+                        <div class="flex items-center gap-3">
+                            <h1 class="page-header-title text-2xl font-display font-bold text-text-primary">Edit Blog Feed</h1>
+                            <span class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase">Section 07</span>
+                        </div>
+                        <p class="text-sm text-text-secondary font-mono mt-1">Configure the latest news and insights section</p>
+                    </div>
+                    <div class="page-header-actions flex items-center gap-3">
+                        <button class="btn btn-secondary px-5 py-2.5 border-2 border-black bg-white font-bold hover:bg-background-light transition-colors text-sm">
+                            Save Draft
+                        </button>
+                        <button class="btn btn-primary px-5 py-2.5 bg-primary text-white font-bold manual-border manual-shadow btn-press hover:bg-primary-dark transition-colors text-sm">
+                            Publish
+                        </button>
+                    </div>
+                </div>
+
+                <div class="max-w-4xl space-y-6">
+
+                    <!-- Section Header -->
+                    <div class="content-card bg-white manual-border p-6">
+                        <h2 class="content-card-title text-lg font-display font-bold mb-6">Section Header</h2>
+
+                        <div class="space-y-5">
+                            <div class="form-field">
+                                <label class="form-label block text-sm font-mono font-bold mb-2">
+                                    Section Title <span class="text-error">*</span>
+                                </label>
+                                <input type="text" class="form-input w-full" placeholder="Enter section title" value="Latest News & Insights">
+                            </div>
+
+                            <div class="form-field">
+                                <label class="form-label block text-sm font-mono font-bold mb-2">
+                                    Section Subtitle
+                                </label>
+                                <input type="text" class="form-input w-full" placeholder="Enter section subtitle" value="Stay updated with industry trends">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Display Settings -->
+                    <div class="content-card bg-white manual-border p-6">
+                        <h2 class="content-card-title text-lg font-display font-bold mb-6">Display Settings</h2>
+
+                        <div class="space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-mono font-bold mb-2">
+                                        Number of Posts to Display
+                                    </label>
+                                    <input type="number" class="form-input w-full" value="3" min="1" max="6">
+                                    <p class="text-xs text-text-secondary mt-1 font-mono">Recommended: 3 posts for optimal layout</p>
+                                </div>
+
+                                <div class="form-field">
+                                    <label class="form-label block text-sm font-mono font-bold mb-2">
+                                        Category Filter (Optional)
+                                    </label>
+                                    <select class="form-select w-full">
+                                        <option value="">All Categories</option>
+                                        <option value="technology">Technology</option>
+                                        <option value="tips">Tips & Tricks</option>
+                                        <option value="case-study">Case Studies</option>
+                                        <option value="news">Company News</option>
+                                        <option value="industry">Industry Trends</option>
+                                    </select>
+                                    <p class="text-xs text-text-secondary mt-1 font-mono">Filter posts by category or show all</p>
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label class="form-label block text-sm font-mono font-bold mb-2">
+                                    Sort Order
+                                </label>
+                                <select class="form-select w-full max-w-xs">
+                                    <option value="newest" selected>Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="popular">Most Popular</option>
+                                    <option value="featured">Featured First</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- View All Link -->
+                    <div class="content-card bg-white manual-border p-6">
+                        <h2 class="content-card-title text-lg font-display font-bold mb-6">View All Link</h2>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-field">
+                                <label class="form-label block text-sm font-mono font-bold mb-2">Link Text</label>
+                                <input type="text" class="form-input w-full" placeholder="e.g., View All Articles" value="View All Articles">
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label block text-sm font-mono font-bold mb-2">Link URL</label>
+                                <input type="url" class="form-input w-full" placeholder="/insights" value="/insights">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="content-card bg-white manual-border p-6">
+                        <h2 class="content-card-title text-lg font-display font-bold mb-6">Preview</h2>
+
+                        <div class="bg-background-light p-6 manual-border">
+                            <div class="flex items-center gap-4 mb-4">
+                                <h3 class="font-mono font-black text-lg uppercase">Latest News & Insights</h3>
+                                <div class="flex-grow h-[2px] bg-black/20"></div>
+                            </div>
+                            <p class="text-center font-mono text-xs opacity-70 mb-6 uppercase">Stay updated with industry trends</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- Blog Card Preview 1 -->
+                                <div class="manual-border bg-white">
+                                    <div class="bg-gray-200 aspect-video flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-2xl text-gray-400">image</span>
+                                    </div>
+                                    <div class="p-3">
+                                        <span class="text-[8px] font-bold uppercase text-primary">Technology</span>
+                                        <h4 class="font-mono font-bold text-xs uppercase mt-1 line-clamp-2">The Future of Interactive Technology</h4>
+                                        <div class="flex items-center justify-between text-[8px] font-mono opacity-50 uppercase mt-2">
+                                            <span>Jan 25, 2026</span>
+                                            <span>5 min</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Blog Card Preview 2 -->
+                                <div class="manual-border bg-white">
+                                    <div class="bg-gray-200 aspect-video flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-2xl text-gray-400">image</span>
+                                    </div>
+                                    <div class="p-3">
+                                        <span class="text-[8px] font-bold uppercase text-primary">Tips & Tricks</span>
+                                        <h4 class="font-mono font-bold text-xs uppercase mt-1 line-clamp-2">5 Ways to Enhance Your Setup</h4>
+                                        <div class="flex items-center justify-between text-[8px] font-mono opacity-50 uppercase mt-2">
+                                            <span>Jan 20, 2026</span>
+                                            <span>3 min</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Blog Card Preview 3 -->
+                                <div class="manual-border bg-white">
+                                    <div class="bg-gray-200 aspect-video flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-2xl text-gray-400">image</span>
+                                    </div>
+                                    <div class="p-3">
+                                        <span class="text-[8px] font-bold uppercase text-primary">Case Study</span>
+                                        <h4 class="font-mono font-bold text-xs uppercase mt-1 line-clamp-2">University Deploys Smart Boards</h4>
+                                        <div class="flex items-center justify-between text-[8px] font-mono opacity-50 uppercase mt-2">
+                                            <span>Jan 15, 2026</span>
+                                            <span>8 min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <span class="font-mono text-xs font-bold text-primary">View All Articles →</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-text-secondary font-mono mt-2 text-center">Posts will be automatically pulled from your blog based on settings above.</p>
+                    </div>
+
+                    <!-- Bottom Actions -->
+                    <div class="flex items-center justify-between pt-6">
+                        <a href="index.html" class="btn btn-secondary px-5 py-2.5 border-2 border-black bg-white font-bold hover:bg-background-light transition-colors text-sm">
+                            Cancel
+                        </a>
+                        <div class="flex items-center gap-3">
+                            <button class="btn btn-secondary px-5 py-2.5 border-2 border-black bg-white font-bold hover:bg-background-light transition-colors text-sm">
+                                Save Draft
+                            </button>
+                            <button class="btn btn-primary px-5 py-2.5 bg-primary text-white font-bold manual-border manual-shadow btn-press hover:bg-primary-dark transition-colors text-sm">
+                                Publish
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>

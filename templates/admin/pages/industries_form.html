@@ -1,0 +1,32 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-2xl">
+            <h1 class="text-2xl font-bold mb-6">{{.Title}}</h1>
+            <form method="POST" action="{{.FormAction}}" class="bg-white rounded-lg shadow p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Icon (Material Symbol)</label>
+                    <input type="text" name="icon" value="{{if .Item}}{{.Item.Icon}}{{end}}" placeholder="business" class="w-full border border-gray-300 rounded px-3 py-2 text-sm" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="description" rows="3" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
+                    <input type="number" name="sort_order" value="{{if .Item}}{{.Item.SortOrder}}{{else}}0{{end}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                </div>
+                <div class="flex justify-end gap-3 pt-4">
+                    <a href="/admin/industries" class="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm">Cancel</a>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

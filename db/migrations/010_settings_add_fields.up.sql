@@ -1,0 +1,5 @@
+ALTER TABLE settings ADD COLUMN social_facebook TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN social_youtube TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN social_instagram TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN business_hours TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN about_text TEXT NOT NULL DEFAULT '';

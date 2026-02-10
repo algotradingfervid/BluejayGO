@@ -1,0 +1,90 @@
+{{define "product_certifications"}}
+<div id="certifications-section" class="font-mono">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <h3 class="text-lg font-bold uppercase tracking-wider">Certifications</h3>
+            <div class="relative group">
+                <span class="inline-flex items-center justify-center w-5 h-5 border-2 border-black text-xs font-bold cursor-help bg-yellow-300" style="box-shadow: 2px 2px 0px #000;">?</span>
+                <div class="hidden group-hover:block absolute left-0 top-7 z-50 w-80 p-3 bg-white border-2 border-black text-xs" style="box-shadow: 4px 4px 0px #000;">
+                    Industry certifications this product holds. Displayed with certification badges on the product page.
+                </div>
+            </div>
+        </div>
+        {{if .Certifications}}
+        <button hx-delete="/admin/products/{{.ProductID}}/certifications"
+                hx-target="#certifications-section"
+                hx-swap="outerHTML"
+                hx-confirm="Delete all certifications for this product?"
+                class="text-xs uppercase font-bold tracking-wider px-3 py-1 border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition-colors">Delete All</button>
+        {{end}}
+    </div>
+
+    {{if .Certifications}}
+    <div class="space-y-2 mb-6">
+        {{range .Certifications}}
+        <div class="flex items-center gap-4 border-2 border-black px-4 py-3 bg-white group" style="box-shadow: 2px 2px 0px #000;">
+            <div class="w-10 h-10 border-2 border-black bg-green-100 flex items-center justify-center flex-shrink-0">
+                <span class="text-green-700 font-bold text-sm">&#x2713;</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="text-sm font-bold">{{.CertificationName}}</div>
+                <div class="text-xs text-gray-500 flex gap-3">
+                    {{if .CertificationCode.Valid}}<span>Code: {{.CertificationCode.String}}</span>{{end}}
+                    {{if .IconType.Valid}}<span>Type: {{.IconType.String}}</span>{{end}}
+                </div>
+            </div>
+            <span class="text-xs text-gray-400 font-bold">#{{.DisplayOrder}}</span>
+            <button hx-delete="/admin/products/{{$.ProductID}}/certifications/{{.ID}}"
+                    hx-target="#certifications-section"
+                    hx-swap="outerHTML"
+                    hx-confirm="Delete this certification?"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase">&#x2715;</button>
+        </div>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="border-2 border-dashed border-gray-400 p-8 text-center mb-6">
+        <p class="text-gray-500 text-sm uppercase tracking-wider">No certifications added yet. Click 'Add Certification' to get started.</p>
+    </div>
+    {{end}}
+
+    <!-- Add Certification Form -->
+    <form hx-post="/admin/products/{{.ProductID}}/certifications"
+          hx-target="#certifications-section"
+          hx-swap="outerHTML"
+          class="border-2 border-black p-4 space-y-3 bg-gray-50" style="box-shadow: 4px 4px 0px #000;">
+        <h4 class="text-sm font-bold uppercase tracking-wider">Add Certification</h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Name *</label>
+                <input type="text" name="certification_name" placeholder="e.g. CE" required
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Code</label>
+                <input type="text" name="certification_code" placeholder="e.g. EN60950"
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Icon Type</label>
+                <input type="text" name="icon_type" placeholder="e.g. shield"
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
+                <input type="number" name="display_order" placeholder="0" value="0"
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-wider mb-1">Icon Path</label>
+            <input type="text" name="icon_path" placeholder="Optional path to icon file"
+                   class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+        </div>
+        <button type="submit" class="bg-black text-white px-6 py-2 text-sm font-bold uppercase tracking-wider border-2 border-black hover:bg-white hover:text-black transition-colors" style="box-shadow: 3px 3px 0px #000;">
+            + Add Certification
+        </button>
+    </form>
+</div>
+{{end}}

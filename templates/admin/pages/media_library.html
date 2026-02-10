@@ -1,0 +1,417 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold uppercase tracking-tight">{{.Title}}</h1>
+                <p class="text-sm text-gray-600 mt-1">{{.Total}} files</p>
+            </div>
+            <button onclick="openUploadModal()"
+                    class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-block cursor-pointer"
+                    style="box-shadow: 4px 4px 0px #000;">
+                + Upload Files
+            </button>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="bg-white border-2 border-black p-4 mb-6" style="box-shadow: 4px 4px 0px #000;">
+            <form method="GET" action="/admin/media" class="flex flex-wrap items-end gap-4">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-xs font-bold uppercase mb-1">Search</label>
+                    <input type="text" name="search" value="{{.Search}}" placeholder="Search media files by name..."
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           title="Search media files by name."
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div class="min-w-[160px]">
+                    <label class="block text-xs font-bold uppercase mb-1">Sort</label>
+                    <select name="sort"
+                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            style="font-family: 'JetBrains Mono', monospace;">
+                        <option value="newest" {{if eq .Sort "newest"}}selected{{end}}>Newest</option>
+                        <option value="oldest" {{if eq .Sort "oldest"}}selected{{end}}>Oldest</option>
+                        <option value="name" {{if eq .Sort "name"}}selected{{end}}>Name A-Z</option>
+                        <option value="largest" {{if eq .Sort "largest"}}selected{{end}}>Largest</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit"
+                            class="bg-black text-white px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-800">
+                        Filter
+                    </button>
+                    {{if .HasFilters}}
+                    <a href="/admin/media"
+                       class="bg-white text-black px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100">
+                        Clear
+                    </a>
+                    {{end}}
+                </div>
+                <div class="flex gap-1 ml-auto">
+                    <button type="button" onclick="setView('grid')" id="btn-grid"
+                            class="p-2 border-2 border-black bg-black text-white hover:bg-gray-800">
+                        <span class="material-symbols-outlined text-lg">grid_view</span>
+                    </button>
+                    <button type="button" onclick="setView('list')" id="btn-list"
+                            class="p-2 border-2 border-black bg-white text-black hover:bg-gray-100">
+                        <span class="material-symbols-outlined text-lg">view_list</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {{if .Files}}
+        <!-- Grid View -->
+        <div id="media-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+            {{range .Files}}
+            <div class="bg-white border-2 border-black group relative cursor-pointer" style="box-shadow: 3px 3px 0px #000;"
+                 onclick="openDetailModal({{.ID}})">
+                <div class="aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
+                    {{if or (eq .MimeType "image/jpeg") (eq .MimeType "image/png") (eq .MimeType "image/gif") (eq .MimeType "image/webp")}}
+                    <img src="{{.FilePath}}" alt="{{.AltText.String}}" class="w-full h-full object-cover">
+                    {{else if eq .MimeType "image/svg+xml"}}
+                    <img src="{{.FilePath}}" alt="{{.AltText.String}}" class="w-full h-full object-contain p-4">
+                    {{else}}
+                    <span class="material-symbols-outlined text-4xl text-gray-400">description</span>
+                    {{end}}
+                </div>
+                <div class="p-2 border-t-2 border-black">
+                    <p class="text-xs font-bold truncate" title="{{.OriginalFilename}}">{{.OriginalFilename}}</p>
+                    <p class="text-[10px] text-gray-500">{{formatFileSize .FileSize}}</p>
+                </div>
+                <!-- Hover Overlay -->
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
+                    <button onclick="event.stopPropagation(); openDetailModal({{.ID}})"
+                            class="bg-white text-black px-3 py-1 text-xs font-bold uppercase border-2 border-black">
+                        View
+                    </button>
+                    <button onclick="event.stopPropagation(); deleteMedia({{.ID}})"
+                            class="bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase border-2 border-black">
+                        Delete
+                    </button>
+                </div>
+            </div>
+            {{end}}
+        </div>
+
+        <!-- List View (hidden by default) -->
+        <div id="media-list" class="hidden mb-6">
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b-2 border-black bg-gray-100">
+                            <th class="text-left text-xs font-bold uppercase p-3 w-16">Preview</th>
+                            <th class="text-left text-xs font-bold uppercase p-3">Filename</th>
+                            <th class="text-left text-xs font-bold uppercase p-3 w-24">Type</th>
+                            <th class="text-left text-xs font-bold uppercase p-3 w-24">Size</th>
+                            <th class="text-left text-xs font-bold uppercase p-3 w-28">Dimensions</th>
+                            <th class="text-left text-xs font-bold uppercase p-3 w-32">Uploaded</th>
+                            <th class="text-left text-xs font-bold uppercase p-3 w-24">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Files}}
+                        <tr class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer" onclick="openDetailModal({{.ID}})">
+                            <td class="p-3">
+                                <div class="w-12 h-12 bg-gray-100 border border-black overflow-hidden flex items-center justify-center">
+                                    {{if or (eq .MimeType "image/jpeg") (eq .MimeType "image/png") (eq .MimeType "image/gif") (eq .MimeType "image/webp")}}
+                                    <img src="{{.FilePath}}" alt="" class="w-full h-full object-cover">
+                                    {{else if eq .MimeType "image/svg+xml"}}
+                                    <img src="{{.FilePath}}" alt="" class="w-full h-full object-contain p-1">
+                                    {{else}}
+                                    <span class="material-symbols-outlined text-lg text-gray-400">description</span>
+                                    {{end}}
+                                </div>
+                            </td>
+                            <td class="p-3 text-sm font-medium">{{.OriginalFilename}}</td>
+                            <td class="p-3 text-xs text-gray-600 uppercase">{{.MimeType}}</td>
+                            <td class="p-3 text-xs text-gray-600">{{formatFileSize .FileSize}}</td>
+                            <td class="p-3 text-xs text-gray-600">
+                                {{if and .Width.Valid .Height.Valid}}{{.Width.Int64}} × {{.Height.Int64}}{{else}}—{{end}}
+                            </td>
+                            <td class="p-3 text-xs text-gray-600">
+                                {{if .CreatedAt.Valid}}{{formatDate .CreatedAt.Time "Jan 2, 2006"}}{{end}}
+                            </td>
+                            <td class="p-3">
+                                <button onclick="event.stopPropagation(); deleteMedia({{.ID}})"
+                                        class="text-red-600 hover:text-red-800 text-xs font-bold uppercase">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {{if gt .TotalPages 1}}
+        <div class="flex justify-center gap-2 mb-6">
+            {{if gt .Page 1}}
+            <a href="/admin/media?page={{sub .Page 1}}&search={{.Search}}&sort={{.Sort}}"
+               class="bg-white text-black px-3 py-2 text-sm font-bold border-2 border-black hover:bg-gray-100">
+                ← Prev
+            </a>
+            {{end}}
+            <span class="px-3 py-2 text-sm font-bold">Page {{.Page}} of {{.TotalPages}}</span>
+            {{if lt (int64 .Page) .TotalPages}}
+            <a href="/admin/media?page={{add .Page 1}}&search={{.Search}}&sort={{.Sort}}"
+               class="bg-white text-black px-3 py-2 text-sm font-bold border-2 border-black hover:bg-gray-100">
+                Next →
+            </a>
+            {{end}}
+        </div>
+        {{end}}
+
+        {{else}}
+        <div class="bg-white border-2 border-black p-12 text-center" style="box-shadow: 4px 4px 0px #000;">
+            <span class="material-symbols-outlined text-5xl text-gray-300 mb-4">perm_media</span>
+            <p class="text-lg font-bold uppercase mb-2">No Media Files</p>
+            <p class="text-sm text-gray-600 mb-4">Upload your first files to get started.</p>
+            <button onclick="openUploadModal()"
+                    class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] cursor-pointer"
+                    style="box-shadow: 4px 4px 0px #000;">
+                + Upload Files
+            </button>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+<!-- Upload Modal -->
+<div id="upload-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-black w-full max-w-lg" style="box-shadow: 6px 6px 0px #000;">
+        <div class="flex items-center justify-between p-4 border-b-2 border-black bg-gray-100">
+            <h2 class="text-lg font-bold uppercase">Upload Files</h2>
+            <button onclick="closeUploadModal()" class="hover:bg-gray-200 p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6">
+            <div id="drop-zone"
+                 class="border-2 border-dashed border-black p-8 text-center cursor-pointer hover:bg-gray-50 mb-4"
+                 onclick="document.getElementById('file-input').click()"
+                 ondragover="event.preventDefault(); this.classList.add('bg-blue-50')"
+                 ondragleave="this.classList.remove('bg-blue-50')"
+                 ondrop="handleDrop(event)">
+                <span class="material-symbols-outlined text-4xl text-gray-400 mb-2">cloud_upload</span>
+                <p class="text-sm font-bold uppercase mb-1">Drop files here or click to browse</p>
+                <p class="text-xs text-gray-500">JPG, PNG, SVG, GIF, PDF, WebP — Max 10MB per file</p>
+            </div>
+            <input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.svg,.pdf,.webp" class="hidden"
+                   onchange="handleFiles(this.files)">
+            <div id="upload-progress" class="space-y-2"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-black w-full max-w-2xl max-h-[90vh] overflow-auto" style="box-shadow: 6px 6px 0px #000;">
+        <div class="flex items-center justify-between p-4 border-b-2 border-black bg-gray-100">
+            <h2 class="text-lg font-bold uppercase">File Details</h2>
+            <button onclick="closeDetailModal()" class="hover:bg-gray-200 p-1">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6">
+            <div id="detail-preview" class="bg-gray-100 border-2 border-black mb-4 flex items-center justify-center" style="min-height: 200px;"></div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Filename</label>
+                    <p id="detail-filename" class="text-sm border-2 border-black px-3 py-2 bg-gray-50"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">File Size</label>
+                    <p id="detail-size" class="text-sm border-2 border-black px-3 py-2 bg-gray-50"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Dimensions</label>
+                    <p id="detail-dimensions" class="text-sm border-2 border-black px-3 py-2 bg-gray-50"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Format</label>
+                    <p id="detail-format" class="text-sm border-2 border-black px-3 py-2 bg-gray-50"></p>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-xs font-bold uppercase mb-1">
+                    Alt Text
+                    <span class="text-gray-400 normal-case font-normal ml-1" title="Accessibility text for this image. Describe what the image shows.">ⓘ</span>
+                </label>
+                <input type="text" id="detail-alt-text" placeholder="Describe what the image shows..."
+                       class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       style="font-family: 'JetBrains Mono', monospace;"
+                       onchange="updateAltText()">
+            </div>
+            <div class="mb-4">
+                <label class="block text-xs font-bold uppercase mb-1">File URL</label>
+                <div class="flex gap-2">
+                    <input type="text" id="detail-url" readonly
+                           class="flex-1 border-2 border-black px-3 py-2 text-sm bg-gray-50"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                    <button onclick="copyUrl()"
+                            class="bg-black text-white px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-800">
+                        Copy
+                    </button>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button onclick="deleteCurrentMedia()"
+                        class="bg-red-600 text-white px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-red-700">
+                    Delete File
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentView = 'grid';
+let currentMediaId = null;
+
+function setView(view) {
+    currentView = view;
+    const grid = document.getElementById('media-grid');
+    const list = document.getElementById('media-list');
+    const btnGrid = document.getElementById('btn-grid');
+    const btnList = document.getElementById('btn-list');
+    if (view === 'grid') {
+        if (grid) grid.classList.remove('hidden');
+        if (list) list.classList.add('hidden');
+        btnGrid.classList.add('bg-black', 'text-white');
+        btnGrid.classList.remove('bg-white', 'text-black');
+        btnList.classList.add('bg-white', 'text-black');
+        btnList.classList.remove('bg-black', 'text-white');
+    } else {
+        if (grid) grid.classList.add('hidden');
+        if (list) list.classList.remove('hidden');
+        btnList.classList.add('bg-black', 'text-white');
+        btnList.classList.remove('bg-white', 'text-black');
+        btnGrid.classList.add('bg-white', 'text-black');
+        btnGrid.classList.remove('bg-black', 'text-white');
+    }
+}
+
+function openUploadModal() {
+    document.getElementById('upload-modal').classList.remove('hidden');
+    document.getElementById('upload-progress').innerHTML = '';
+}
+
+function closeUploadModal() {
+    document.getElementById('upload-modal').classList.add('hidden');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('bg-blue-50');
+    handleFiles(e.dataTransfer.files);
+}
+
+function handleFiles(files) {
+    const formData = new FormData();
+    const progressContainer = document.getElementById('upload-progress');
+    progressContainer.innerHTML = '';
+
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+        const bar = document.createElement('div');
+        bar.innerHTML = `
+            <div class="flex items-center gap-2 text-xs">
+                <span class="truncate flex-1">${files[i].name}</span>
+                <span class="upload-status text-gray-500">Uploading...</span>
+            </div>
+            <div class="w-full bg-gray-200 border border-black mt-1" style="height: 6px;">
+                <div class="bg-blue-600 h-full transition-all" style="width: 0%"></div>
+            </div>`;
+        progressContainer.appendChild(bar);
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/admin/media/upload');
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            const pct = (e.loaded / e.total) * 100;
+            progressContainer.querySelectorAll('.bg-blue-600').forEach(b => b.style.width = pct + '%');
+        }
+    };
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            progressContainer.querySelectorAll('.upload-status').forEach(s => {
+                s.textContent = 'Done!';
+                s.classList.remove('text-gray-500');
+                s.classList.add('text-green-600');
+            });
+            setTimeout(() => { window.location.reload(); }, 800);
+        } else {
+            progressContainer.querySelectorAll('.upload-status').forEach(s => {
+                s.textContent = 'Error';
+                s.classList.add('text-red-600');
+            });
+        }
+    };
+    xhr.send(formData);
+}
+
+function openDetailModal(id) {
+    currentMediaId = id;
+    fetch('/admin/media/' + id)
+        .then(r => r.json())
+        .then(file => {
+            const preview = document.getElementById('detail-preview');
+            if (file.mime_type && file.mime_type.startsWith('image/')) {
+                preview.innerHTML = `<img src="${file.file_path}" alt="" class="max-h-64 object-contain">`;
+            } else {
+                preview.innerHTML = `<span class="material-symbols-outlined text-5xl text-gray-400">description</span>`;
+            }
+            document.getElementById('detail-filename').textContent = file.original_filename;
+            document.getElementById('detail-size').textContent = formatFileSize(file.file_size);
+            const w = file.width && file.width.Valid ? file.width.Int64 : 0;
+            const h = file.height && file.height.Valid ? file.height.Int64 : 0;
+            document.getElementById('detail-dimensions').textContent = (w > 0 && h > 0) ? w + ' × ' + h : '—';
+            document.getElementById('detail-format').textContent = file.mime_type;
+            document.getElementById('detail-alt-text').value = (file.alt_text && file.alt_text.Valid) ? file.alt_text.String : '';
+            document.getElementById('detail-url').value = file.file_path;
+            document.getElementById('detail-modal').classList.remove('hidden');
+        });
+}
+
+function closeDetailModal() {
+    document.getElementById('detail-modal').classList.add('hidden');
+    currentMediaId = null;
+}
+
+function updateAltText() {
+    if (!currentMediaId) return;
+    fetch('/admin/media/' + currentMediaId, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({alt_text: document.getElementById('detail-alt-text').value})
+    });
+}
+
+function copyUrl() {
+    const input = document.getElementById('detail-url');
+    input.select();
+    document.execCommand('copy');
+}
+
+function deleteMedia(id) {
+    if (!confirm('Are you sure you want to delete this file?')) return;
+    fetch('/admin/media/' + id, {method: 'DELETE'})
+        .then(r => { if (r.ok) window.location.reload(); });
+}
+
+function deleteCurrentMedia() {
+    if (currentMediaId) deleteMedia(currentMediaId);
+}
+
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+</script>
+{{end}}

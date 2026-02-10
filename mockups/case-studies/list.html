@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Studies - BluejayPOS CMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="../../components/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../components/tailwind.config.js"></script>
+</head>
+<body class="font-mono bg-background-light text-text-primary min-h-screen">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar-light fixed lg:sticky top-0 left-0 h-screen z-50 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <span class="sidebar-logo-text">BLUEJAY</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Content</div>
+                    <a href="../dashboard/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="../homepage/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">home</span>
+                        Homepage
+                    </a>
+                    <a href="../about/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">info</span>
+                        About Us
+                    </a>
+                    <a href="../products/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">inventory_2</span>
+                        Products
+                    </a>
+                    <a href="../solutions/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">lightbulb</span>
+                        Solutions
+                    </a>
+                    <a href="../blog/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">article</span>
+                        Blog
+                    </a>
+                    <a href="../case-studies/list.html" class="sidebar-item active">
+                        <span class="material-symbols-outlined sidebar-item-icon">cases</span>
+                        Case Studies
+                    </a>
+                    <a href="../whitepapers/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu_book</span>
+                        Whitepapers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Resources</div>
+                    <a href="../partners/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">handshake</span>
+                        Partners
+                    </a>
+                    <a href="../testimonials/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">format_quote</span>
+                        Testimonials
+                    </a>
+                    <a href="../certifications/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">verified</span>
+                        Certifications
+                    </a>
+                </div>                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Global Elements</div>
+                    <a href="../header/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">web_asset</span>
+                        Header
+                    </a>
+                    <a href="../footer/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">call_to_action</span>
+                        Footer
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="../media/library.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">perm_media</span>
+                        Media
+                    </a>
+                    <a href="../forms/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">mail</span>
+                        Forms
+                        <span class="sidebar-item-badge">3</span>
+                    </a>
+                    <a href="../navigation/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu</span>
+                        Navigation
+                    </a>
+                    <a href="../users/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">group</span>
+                        Users
+                    </a>
+                    <a href="../settings/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User Footer -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">JS</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">John Smith</div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button (Mobile) -->
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 p-2 lg:hidden manual-border bg-white hover:bg-[var(--color-background-light)]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-h-screen">
+            <!-- Top Navigation Bar -->
+            <header class="h-16 bg-white manual-border-thick border-t-0 border-l-0 border-r-0 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+                <!-- Left side - Hamburger (mobile) -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 manual-border hover:bg-[var(--color-background-light)] lg:hidden">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="font-display font-extrabold uppercase lg:hidden">BLUEJAY</span>
+                </div>
+
+                <!-- Right side - Actions -->
+                <div class="flex items-center gap-2">
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-warning)] text-black text-[10px] font-bold flex items-center justify-center manual-border">3</span>
+                    </button>
+                </div>
+            </header>
+
+    <!-- ============================================
+         MAIN CONTENT
+         ============================================ -->
+    <main class="flex-1 p-6 bg-grid-white">
+
+        <!-- Page Header -->
+        <div class="page-header flex items-center justify-between mb-6">
+            <div class="page-header-content">
+                <h1 class="page-header-title text-2xl font-display font-bold text-text-primary">Case Studies</h1>
+                <p class="text-sm text-text-secondary mt-1 font-mono">Manage client success stories and case studies</p>
+            </div>
+            <div class="page-header-actions">
+                <a href="edit.html" class="btn btn-primary inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 font-bold manual-border manual-shadow btn-press hover:bg-primary-dark transition-colors">
+                    <span class="material-symbols-outlined text-xl">add</span>
+                    New Case Study
+                </a>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="content-card bg-white manual-border p-4 mb-4">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <!-- Search -->
+                <div class="flex-1 max-w-md">
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">search</span>
+                        <input type="text" placeholder="Search case studies..." class="form-input w-full pl-10 text-sm">
+                    </div>
+                </div>
+
+                <!-- Dropdowns -->
+                <div class="flex items-center gap-3">
+                    <select class="form-select text-sm min-w-[140px]">
+                        <option>Status: All</option>
+                        <option>Live</option>
+                        <option>Draft</option>
+                        <option>In Review</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Featured Checkbox -->
+            <div class="mt-4 pt-4 border-t-2 border-gray-200">
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" class="w-4 h-4 border-2 border-black text-primary accent-primary cursor-pointer">
+                    <span class="text-sm font-mono">Show Featured Only</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="content-card bg-white manual-border overflow-hidden">
+            <table class="data-table-brutalist w-full">
+                <thead class="bg-background-light border-b-2 border-black">
+                    <tr>
+                        <th class="w-12 px-4 py-3 text-left">
+                            <input type="checkbox" id="selectAll" class="w-4 h-4 border-2 border-black cursor-pointer accent-primary">
+                        </th>
+                        <th class="w-16 px-4 py-3 text-left text-xs font-mono font-bold text-text-secondary uppercase tracking-wide">Thumb</th>
+                        <th class="px-4 py-3 text-left text-xs font-mono font-bold text-text-secondary uppercase tracking-wide">Title</th>
+                        <th class="px-4 py-3 text-left text-xs font-mono font-bold text-text-secondary uppercase tracking-wide">Client</th>
+                        <th class="w-20 px-4 py-3 text-center text-xs font-mono font-bold text-text-secondary uppercase tracking-wide">Prods</th>
+                        <th class="w-24 px-4 py-3 text-center text-xs font-mono font-bold text-text-secondary uppercase tracking-wide">Status</th>
+                        <th class="w-16 px-4 py-3 text-center text-xs font-mono font-bold text-text-secondary uppercase tracking-wide">Feat</th>
+                        <th class="w-12 px-4 py-3"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Row 1 -->
+                    <tr class="border-b border-gray-200 hover:bg-background-light transition-colors">
+                        <td class="px-4 py-4">
+                            <input type="checkbox" class="row-checkbox w-4 h-4 border-2 border-black cursor-pointer accent-primary">
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="w-12 h-12 bg-gray-200 manual-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-text-muted">image</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4">
+                            <a href="edit.html" class="text-primary font-bold hover:underline font-mono">Retail POS Transformation</a>
+                            <div class="text-xs text-text-muted mt-0.5 font-mono">Success Story</div>
+                        </td>
+                        <td class="px-4 py-4 text-sm font-mono">Metro Supermarket</td>
+                        <td class="px-4 py-4 text-center text-sm font-mono">3</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="status-badge status-badge-published">Live</span>
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <button class="text-warning hover:opacity-80">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+                            </button>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="dropdown relative">
+                                <button class="p-1 hover:bg-background-light border-2 border-transparent hover:border-black">
+                                    <span class="material-symbols-outlined text-text-secondary">more_vert</span>
+                                </button>
+                                <div class="dropdown-menu hidden absolute right-0 top-full mt-1 min-w-[140px] bg-white manual-border z-50">
+                                    <a href="edit.html" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">edit</span> Edit
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">visibility</span> View
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">content_copy</span> Duplicate
+                                    </a>
+                                    <div class="border-t-2 border-black my-1"></div>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-error/10 text-sm text-error font-mono">
+                                        <span class="material-symbols-outlined text-lg">delete</span> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Row 2 -->
+                    <tr class="border-b border-gray-200 hover:bg-background-light transition-colors">
+                        <td class="px-4 py-4">
+                            <input type="checkbox" class="row-checkbox w-4 h-4 border-2 border-black cursor-pointer accent-primary">
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="w-12 h-12 bg-gray-200 manual-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-text-muted">image</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4">
+                            <a href="edit.html" class="text-primary font-bold hover:underline font-mono">Restaurant Chain</a>
+                            <div class="text-xs text-text-muted mt-0.5 font-mono">Success Story</div>
+                        </td>
+                        <td class="px-4 py-4 text-sm font-mono">Dine Corp</td>
+                        <td class="px-4 py-4 text-center text-sm font-mono">2</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="status-badge status-badge-published">Live</span>
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <button class="text-warning hover:opacity-80">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+                            </button>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="dropdown relative">
+                                <button class="p-1 hover:bg-background-light border-2 border-transparent hover:border-black">
+                                    <span class="material-symbols-outlined text-text-secondary">more_vert</span>
+                                </button>
+                                <div class="dropdown-menu hidden absolute right-0 top-full mt-1 min-w-[140px] bg-white manual-border z-50">
+                                    <a href="edit.html" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">edit</span> Edit
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">visibility</span> View
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">content_copy</span> Duplicate
+                                    </a>
+                                    <div class="border-t-2 border-black my-1"></div>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-error/10 text-sm text-error font-mono">
+                                        <span class="material-symbols-outlined text-lg">delete</span> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Row 3 - Draft -->
+                    <tr class="border-b border-gray-200 hover:bg-background-light transition-colors">
+                        <td class="px-4 py-4">
+                            <input type="checkbox" class="row-checkbox w-4 h-4 border-2 border-black cursor-pointer accent-primary">
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="w-12 h-12 bg-gray-200 manual-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-text-muted">image</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4">
+                            <a href="edit.html" class="text-primary font-bold hover:underline font-mono">Healthcare Billing Solution</a>
+                            <div class="text-xs text-text-muted mt-0.5 font-mono">MedPlus Integration</div>
+                        </td>
+                        <td class="px-4 py-4 text-sm font-mono">MedPlus Clinics</td>
+                        <td class="px-4 py-4 text-center text-sm font-mono">4</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="status-badge status-badge-draft">Draft</span>
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <button class="text-gray-300 hover:text-warning hover:opacity-80">
+                                <span class="material-symbols-outlined">star</span>
+                            </button>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="dropdown relative">
+                                <button class="p-1 hover:bg-background-light border-2 border-transparent hover:border-black">
+                                    <span class="material-symbols-outlined text-text-secondary">more_vert</span>
+                                </button>
+                                <div class="dropdown-menu hidden absolute right-0 top-full mt-1 min-w-[140px] bg-white manual-border z-50">
+                                    <a href="edit.html" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">edit</span> Edit
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">visibility</span> View
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">content_copy</span> Duplicate
+                                    </a>
+                                    <div class="border-t-2 border-black my-1"></div>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-error/10 text-sm text-error font-mono">
+                                        <span class="material-symbols-outlined text-lg">delete</span> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Row 4 -->
+                    <tr class="border-b border-gray-200 hover:bg-background-light transition-colors">
+                        <td class="px-4 py-4">
+                            <input type="checkbox" class="row-checkbox w-4 h-4 border-2 border-black cursor-pointer accent-primary">
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="w-12 h-12 bg-gray-200 manual-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-text-muted">image</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4">
+                            <a href="edit.html" class="text-primary font-bold hover:underline font-mono">Multi-location Inventory Mgmt</a>
+                            <div class="text-xs text-text-muted mt-0.5 font-mono">Enterprise Solution</div>
+                        </td>
+                        <td class="px-4 py-4 text-sm font-mono">FashionHub Stores</td>
+                        <td class="px-4 py-4 text-center text-sm font-mono">5</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="status-badge status-badge-published">Live</span>
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <button class="text-warning hover:opacity-80">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+                            </button>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="dropdown relative">
+                                <button class="p-1 hover:bg-background-light border-2 border-transparent hover:border-black">
+                                    <span class="material-symbols-outlined text-text-secondary">more_vert</span>
+                                </button>
+                                <div class="dropdown-menu hidden absolute right-0 top-full mt-1 min-w-[140px] bg-white manual-border z-50">
+                                    <a href="edit.html" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">edit</span> Edit
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">visibility</span> View
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">content_copy</span> Duplicate
+                                    </a>
+                                    <div class="border-t-2 border-black my-1"></div>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-error/10 text-sm text-error font-mono">
+                                        <span class="material-symbols-outlined text-lg">delete</span> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Row 5 - In Review -->
+                    <tr class="border-b border-gray-200 hover:bg-background-light transition-colors">
+                        <td class="px-4 py-4">
+                            <input type="checkbox" class="row-checkbox w-4 h-4 border-2 border-black cursor-pointer accent-primary">
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="w-12 h-12 bg-gray-200 manual-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-text-muted">image</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4">
+                            <a href="edit.html" class="text-primary font-bold hover:underline font-mono">Quick Service POS Integration</a>
+                            <div class="text-xs text-text-muted mt-0.5 font-mono">Fast Food Chain</div>
+                        </td>
+                        <td class="px-4 py-4 text-sm font-mono">BurgerBite Chain</td>
+                        <td class="px-4 py-4 text-center text-sm font-mono">2</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="status-badge status-badge-pending">In Review</span>
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <button class="text-gray-300 hover:text-warning hover:opacity-80">
+                                <span class="material-symbols-outlined">star</span>
+                            </button>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="dropdown relative">
+                                <button class="p-1 hover:bg-background-light border-2 border-transparent hover:border-black">
+                                    <span class="material-symbols-outlined text-text-secondary">more_vert</span>
+                                </button>
+                                <div class="dropdown-menu hidden absolute right-0 top-full mt-1 min-w-[140px] bg-white manual-border z-50">
+                                    <a href="edit.html" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">edit</span> Edit
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">visibility</span> View
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background-light text-sm font-mono">
+                                        <span class="material-symbols-outlined text-lg">content_copy</span> Duplicate
+                                    </a>
+                                    <div class="border-t-2 border-black my-1"></div>
+                                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-error/10 text-sm text-error font-mono">
+                                        <span class="material-symbols-outlined text-lg">delete</span> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="flex items-center justify-between px-4 py-3 bg-background-light border-t-2 border-black">
+                <div class="text-sm text-text-secondary font-mono">
+                    Showing 1-5 of 12 case studies
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="p-2 border-2 border-black bg-white hover:bg-background-light disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <span class="material-symbols-outlined text-lg">chevron_left</span>
+                    </button>
+                    <button class="px-3 py-1 border-2 border-primary bg-primary text-white text-sm font-bold">1</button>
+                    <button class="px-3 py-1 border-2 border-black bg-white hover:bg-background-light text-sm font-mono">2</button>
+                    <button class="px-3 py-1 border-2 border-black bg-white hover:bg-background-light text-sm font-mono">3</button>
+                    <button class="p-2 border-2 border-black bg-white hover:bg-background-light">
+                        <span class="material-symbols-outlined text-lg">chevron_right</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 text-sm font-mono">
+                    <span class="text-text-secondary">Items:</span>
+                    <select class="form-select px-2 py-1 bg-white">
+                        <option>10</option>
+                        <option>25</option>
+                        <option>50</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="px-4 py-3 border-t-2 border-gray-200 bg-background-light flex items-center gap-3">
+                <span class="text-sm font-bold font-mono">With selected:</span>
+                <button class="btn btn-secondary px-3 py-1.5 border-2 border-black bg-white text-sm hover:bg-background-light font-mono">Delete</button>
+                <button class="btn btn-secondary px-3 py-1.5 border-2 border-black bg-white text-sm hover:bg-background-light font-mono">Set Featured</button>
+                <button class="btn btn-secondary px-3 py-1.5 border-2 border-black bg-white text-sm hover:bg-background-light font-mono">Publish</button>
+            </div>
+        </div>
+    </main>
+        </div>
+    </div>
+
+    <!-- ============================================
+         BULK ACTIONS BAR
+         ============================================ -->
+    <div class="fixed bottom-0 left-0 lg:left-64 right-0 bg-black text-white px-6 py-3 hidden items-center justify-between z-40" id="bulkActionsBar">
+        <div class="flex items-center gap-4">
+            <button class="text-white/80 hover:text-white" onclick="clearSelection()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <span class="text-sm font-mono"><span id="selectedCount">0</span> items selected</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="btn btn-primary px-4 py-2 bg-success text-white text-sm font-bold manual-border hover:bg-success/90 transition-colors">
+                Publish
+            </button>
+            <button class="btn btn-secondary px-4 py-2 bg-white/20 text-white text-sm font-bold hover:bg-white/30 transition-colors border-2 border-white">
+                Set Featured
+            </button>
+            <button class="btn px-4 py-2 bg-error text-white text-sm font-bold manual-border hover:bg-error/90 transition-colors">
+                Delete
+            </button>
+        </div>
+        <button class="text-sm text-white/80 hover:text-white underline font-mono" onclick="clearSelection()">
+            Clear Selection
+        </button>
+    </div>
+
+    <script>
+        // Toggle dropdowns
+        document.querySelectorAll('.dropdown').forEach(dropdown => {
+            dropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.querySelectorAll('.dropdown').forEach(d => {
+                    if (d !== this) d.querySelector('.dropdown-menu')?.classList.add('hidden');
+                });
+                this.querySelector('.dropdown-menu')?.classList.toggle('hidden');
+            });
+        });
+
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.add('hidden'));
+        });
+
+        // Select all checkbox
+        const selectAll = document.getElementById('selectAll');
+        const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+        const bulkActionsBar = document.getElementById('bulkActionsBar');
+        const selectedCount = document.getElementById('selectedCount');
+
+        selectAll.addEventListener('change', function() {
+            rowCheckboxes.forEach(cb => cb.checked = this.checked);
+            updateBulkActions();
+        });
+
+        rowCheckboxes.forEach(cb => {
+            cb.addEventListener('change', updateBulkActions);
+        });
+
+        function updateBulkActions() {
+            const checked = document.querySelectorAll('.row-checkbox:checked').length;
+            selectedCount.textContent = checked;
+            if (checked > 0) {
+                bulkActionsBar.classList.remove('hidden');
+                bulkActionsBar.classList.add('flex');
+            } else {
+                bulkActionsBar.classList.add('hidden');
+                bulkActionsBar.classList.remove('flex');
+            }
+        }
+
+        function clearSelection() {
+            selectAll.checked = false;
+            rowCheckboxes.forEach(cb => cb.checked = false);
+            updateBulkActions();
+        }
+    </script>
+
+</body>
+</html>

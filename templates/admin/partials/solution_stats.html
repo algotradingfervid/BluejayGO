@@ -1,0 +1,61 @@
+<div class="mb-3">
+    <p class="text-xs text-gray-500 mb-3" title="Key metrics that demonstrate the solution's impact (e.g., '40% cost reduction').">
+        <span class="inline-block cursor-help text-gray-400 mr-1">ⓘ</span>
+        Key metrics that demonstrate the solution's impact (e.g., "40% cost reduction").
+    </p>
+</div>
+<div id="stats-list">
+{{range .Stats}}
+<div class="flex items-center gap-4 mb-3 p-3 border-2 border-black bg-white" style="box-shadow: 2px 2px 0px #000;">
+    <div class="bg-blue-100 border-2 border-black px-3 py-2 shrink-0 text-center min-w-[70px]">
+        <span class="text-blue-600 font-bold text-lg">{{.Value}}</span>
+    </div>
+    <div class="flex-grow min-w-0">
+        <div class="font-bold text-sm uppercase">{{.Label}}</div>
+    </div>
+    <button hx-delete="/admin/solutions/{{.SolutionID}}/stats/{{.ID}}"
+            hx-target="closest div"
+            hx-swap="outerHTML swap:0.3s"
+            hx-confirm="Delete this stat?"
+            class="bg-white text-red-600 px-2 py-1 text-xs font-bold uppercase border-2 border-red-600 hover:bg-red-50 shrink-0"
+            style="box-shadow: 2px 2px 0px #991b1b;">
+        Remove
+    </button>
+</div>
+{{end}}
+{{if not .Stats}}
+<div class="py-8 text-center border-2 border-dashed border-gray-300 mb-3">
+    <span class="material-symbols-outlined text-4xl text-gray-300 block mb-2">bar_chart</span>
+    <p class="text-sm text-gray-500">No statistics added yet.</p>
+</div>
+{{end}}
+</div>
+<form hx-post="/admin/solutions/{{.SolutionID}}/stats" hx-target="#stats-list" hx-swap="innerHTML" class="mt-4 border-t-2 border-black pt-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Value</label>
+            <input type="text" name="value" required placeholder="e.g. 500+"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Label</label>
+            <input type="text" name="label" required placeholder="e.g. Schools Served"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Order</label>
+            <input type="number" name="display_order" value="0"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+    </div>
+    <div class="mt-3">
+        <button type="submit"
+                class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                style="box-shadow: 4px 4px 0px #000;">
+            + Add Stat
+        </button>
+    </div>
+</form>

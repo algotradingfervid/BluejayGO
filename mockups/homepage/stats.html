@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Statistics - BlueJay CMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="../../components/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../components/tailwind.config.js"></script>
+</head>
+<body class="font-mono bg-background-light text-text-primary min-h-screen">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar-light fixed lg:sticky top-0 left-0 h-screen z-50 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <span class="sidebar-logo-text">BLUEJAY</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Content</div>
+                    <a href="../dashboard/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="../homepage/index.html" class="sidebar-item active">
+                        <span class="material-symbols-outlined sidebar-item-icon">home</span>
+                        Homepage
+                    </a>
+                    <a href="../about/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">info</span>
+                        About Us
+                    </a>
+                    <a href="../products/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">inventory_2</span>
+                        Products
+                    </a>
+                    <a href="../solutions/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">lightbulb</span>
+                        Solutions
+                    </a>
+                    <a href="../blog/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">article</span>
+                        Blog
+                    </a>
+                    <a href="../case-studies/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">cases</span>
+                        Case Studies
+                    </a>
+                    <a href="../whitepapers/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu_book</span>
+                        Whitepapers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Resources</div>
+                    <a href="../partners/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">handshake</span>
+                        Partners
+                    </a>
+                    <a href="../testimonials/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">format_quote</span>
+                        Testimonials
+                    </a>
+                    <a href="../certifications/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">verified</span>
+                        Certifications
+                    </a>
+                </div>                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Global Elements</div>
+                    <a href="../header/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">web_asset</span>
+                        Header
+                    </a>
+                    <a href="../footer/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">call_to_action</span>
+                        Footer
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="../media/library.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">perm_media</span>
+                        Media
+                    </a>
+                    <a href="../forms/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">mail</span>
+                        Forms
+                        <span class="sidebar-item-badge">3</span>
+                    </a>
+                    <a href="../navigation/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu</span>
+                        Navigation
+                    </a>
+                    <a href="../users/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">group</span>
+                        Users
+                    </a>
+                    <a href="../settings/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">JS</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">John Smith</div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 p-2 lg:hidden manual-border bg-white hover:bg-[var(--color-background-light)]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 min-h-screen">
+            <header class="h-16 bg-white manual-border-thick border-t-0 border-l-0 border-r-0 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 manual-border hover:bg-[var(--color-background-light)] lg:hidden">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="font-display font-extrabold uppercase lg:hidden">BLUEJAY</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-warning)] text-black text-[10px] font-bold flex items-center justify-center manual-border">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="p-4 md:p-6 lg:p-8 bg-grid-white">
+
+                <a href="index.html" class="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-primary mb-4 font-mono">
+                    <span class="material-symbols-outlined text-lg">arrow_back</span>
+                    Back to Homepage
+                </a>
+
+                <div class="page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div class="page-header-content">
+                        <div class="flex items-center gap-3">
+                            <h1 class="page-header-title text-2xl font-display font-bold text-text-primary">Edit Statistics</h1>
+                            <span class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase">Section 04</span>
+                        </div>
+                        <p class="text-sm text-text-secondary font-mono mt-1">Configure the statistics counters section</p>
+                    </div>
+                    <div class="page-header-actions flex items-center gap-3">
+                        <button class="btn btn-secondary px-5 py-2.5 border-2 border-black bg-white font-bold hover:bg-background-light transition-colors text-sm">
+                            Save Draft
+                        </button>
+                        <button class="btn btn-primary px-5 py-2.5 bg-primary text-white font-bold manual-border manual-shadow btn-press hover:bg-primary-dark transition-colors text-sm">
+                            Publish
+                        </button>
+                    </div>
+                </div>
+
+                <div class="max-w-4xl space-y-6">
+
+                    <!-- Section Header -->
+                    <div class="content-card bg-white manual-border p-6">
+                        <h2 class="content-card-title text-lg font-display font-bold mb-6">Section Header</h2>
+
+                        <div class="space-y-5">
+                            <div class="form-field">
+                                <label class="form-label block text-sm font-mono font-bold mb-2">
+                                    Section Title <span class="text-error">*</span>
+                                </label>
+                                <input type="text" class="form-input w-full" placeholder="Enter section title" value="BlueJay By The Numbers">
+                            </div>
+
+                            <div class="form-field">
+                                <label class="form-label block text-sm font-mono font-bold mb-2">
+                                    Background Style
+                                </label>
+                                <select class="form-select w-full">
+                                    <option value="dark" selected>Dark (Black Background)</option>
+                                    <option value="light">Light (White Background)</option>
+                                    <option value="gradient">Gradient (Primary to Dark)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="content-card bg-white manual-border p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="content-card-title text-lg font-display font-bold">Statistics</h2>
+                                <p class="text-sm text-text-secondary mt-1 font-mono">Configure exactly 4 statistics (drag to reorder)</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4" id="statsList">
+                            <!-- Stat 1 -->
+                            <div class="repeater-item manual-border">
+                                <div class="flex items-center justify-between p-4 bg-background-light border-b-2 border-black">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                                        <span class="font-mono font-bold text-sm">STAT 1</span>
+                                    </div>
+                                </div>
+                                <div class="p-4 space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="form-field">
+                                            <label class="form-label block text-sm font-mono font-bold mb-2">Value <span class="text-error">*</span></label>
+                                            <input type="text" class="form-input w-full" placeholder="e.g., 15+, 5,000+" value="15+">
+                                            <p class="text-xs text-text-secondary mt-1 font-mono">Include symbols like +, %, etc.</p>
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="form-label block text-sm font-mono font-bold mb-2">Label <span class="text-error">*</span></label>
+                                            <input type="text" class="form-input w-full" placeholder="e.g., Years of Experience" value="Years of Experience">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Stat 2 -->
+                            <div class="repeater-item manual-border">
+                                <div class="flex items-center justify-between p-4 bg-background-light border-b-2 border-black">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                                        <span class="font-mono font-bold text-sm">STAT 2</span>
+                                    </div>
+                                </div>
+                                <div class="p-4 space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="form-field">
+                                            <label class="form-label block text-sm font-mono font-bold mb-2">Value <span class="text-error">*</span></label>
+                                            <input type="text" class="form-input w-full" placeholder="e.g., 15+, 5,000+" value="5,000+">
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="form-label block text-sm font-mono font-bold mb-2">Label <span class="text-error">*</span></label>
+                                            <input type="text" class="form-input w-full" placeholder="e.g., Products Deployed" value="Products Deployed">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Stat 3 -->
+                            <div class="repeater-item manual-border">
+                                <div class="flex items-center justify-between p-4 bg-background-light border-b-2 border-black">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                                        <span class="font-mono font-bold text-sm">STAT 3</span>
+                                    </div>
+                                </div>
+                                <div class="p-4 space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="form-field">
+                                            <label class="form-label block text-sm font-mono font-bold mb-2">Value <span class="text-error">*</span></label>
+                                            <input type="text" class="form-input w-full" placeholder="e.g., 50+" value="50+">
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="form-label block text-sm font-mono font-bold mb-2">Label <span class="text-error">*</span></label>
+                                            <input type="text" class="form-input w-full" placeholder="e.g., Countries Served" value="Countries Served">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Stat 4 -->
+                            <div class="repeater-item manual-border">
+                                <div class="flex items-center justify-between p-4 bg-background-light border-b-2 border-black">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined cursor-grab text-text-muted hover:text-text-primary">drag_indicator</span>
+                                        <span class="font-mono font-bold text-sm">STAT 4</span>
+                                    </div>
+                                </div>
+                                <div class="p-4 space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="form-field">
+                                            <label class="form-label block text-sm font-mono font-bold mb-2">Value <span class="text-error">*</span></label>
+                                            <input type="text" class="form-input w-full" placeholder="e.g., 98%" value="98%">
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="form-label block text-sm font-mono font-bold mb-2">Label <span class="text-error">*</span></label>
+                                            <input type="text" class="form-input w-full" placeholder="e.g., Customer Satisfaction" value="Customer Satisfaction">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="content-card bg-white manual-border p-6">
+                        <h2 class="content-card-title text-lg font-display font-bold mb-6">Preview</h2>
+
+                        <div class="bg-black text-white p-8 manual-border">
+                            <h3 class="font-mono font-black text-xl uppercase mb-6 text-center tracking-widest">BlueJay By The Numbers</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="border-2 border-white/30 p-4 flex flex-col items-center text-center">
+                                    <div class="text-3xl font-mono font-black mb-1">15+</div>
+                                    <div class="text-[9px] font-mono uppercase tracking-tighter opacity-70">Years of Experience</div>
+                                </div>
+                                <div class="border-2 border-white/30 p-4 flex flex-col items-center text-center">
+                                    <div class="text-3xl font-mono font-black mb-1">5,000+</div>
+                                    <div class="text-[9px] font-mono uppercase tracking-tighter opacity-70">Products Deployed</div>
+                                </div>
+                                <div class="border-2 border-white/30 p-4 flex flex-col items-center text-center">
+                                    <div class="text-3xl font-mono font-black mb-1">50+</div>
+                                    <div class="text-[9px] font-mono uppercase tracking-tighter opacity-70">Countries Served</div>
+                                </div>
+                                <div class="border-2 border-white/30 p-4 flex flex-col items-center text-center">
+                                    <div class="text-3xl font-mono font-black mb-1">98%</div>
+                                    <div class="text-[9px] font-mono uppercase tracking-tighter opacity-70">Customer Satisfaction</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-text-secondary font-mono mt-2 text-center">This is a simplified preview. Actual appearance may vary.</p>
+                    </div>
+
+                    <!-- Bottom Actions -->
+                    <div class="flex items-center justify-between pt-6">
+                        <a href="index.html" class="btn btn-secondary px-5 py-2.5 border-2 border-black bg-white font-bold hover:bg-background-light transition-colors text-sm">
+                            Cancel
+                        </a>
+                        <div class="flex items-center gap-3">
+                            <button class="btn btn-secondary px-5 py-2.5 border-2 border-black bg-white font-bold hover:bg-background-light transition-colors text-sm">
+                                Save Draft
+                            </button>
+                            <button class="btn btn-primary px-5 py-2.5 bg-primary text-white font-bold manual-border manual-shadow btn-press hover:bg-primary-dark transition-colors text-sm">
+                                Publish
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>

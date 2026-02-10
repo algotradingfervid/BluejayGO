@@ -1,0 +1,411 @@
+{{define "content"}}
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+<script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="mb-6">
+            <a href="/admin/case-studies" class="text-sm font-bold uppercase text-blue-600 hover:text-blue-800 border-b-2 border-blue-600">&larr; Back to Case Studies</a>
+            <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+        </div>
+
+        {{if not .IsNew}}
+        <!-- Sub-tabs for edit mode -->
+        <div class="flex gap-0 mb-6">
+            <button type="button" id="tab-details" onclick="switchTab('details')"
+                    class="bg-black text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black"
+                    style="box-shadow: 2px 2px 0px #000;">
+                Details
+            </button>
+            <button type="button" id="tab-products" onclick="switchTab('products')"
+                    class="bg-white text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black border-l-0 hover:bg-gray-100">
+                Products
+            </button>
+            <button type="button" id="tab-metrics" onclick="switchTab('metrics')"
+                    class="bg-white text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black border-l-0 hover:bg-gray-100">
+                Metrics
+            </button>
+        </div>
+        {{end}}
+
+        <!-- Details Tab -->
+        <div id="panel-details">
+        <form method="POST" action="{{.FormAction}}" class="space-y-4">
+            <!-- Section 1: Basic Info (open) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <button type="button" onclick="toggleSection('basic-info', this)"
+                        class="w-full flex items-center justify-between px-4 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>Basic Information</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform">expand_more</span>
+                </button>
+                <div id="basic-info" class="p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Title *
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Case study title. Include the client name or project for clarity.">ⓘ</span>
+                        </label>
+                        <input type="text" name="title" id="cs-title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
+                               class="w-full border-2 border-black px-4 py-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Case study title..."
+                               style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Slug *
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="URL path for this case study. Auto-generated from title.">ⓘ</span>
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input type="text" name="slug" id="cs-slug" value="{{if .Item}}{{.Item.Slug}}{{end}}" required
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
+                                   readonly
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                            <button type="button" id="edit-slug-btn"
+                                    class="bg-white text-black px-3 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-gray-100 whitespace-nowrap"
+                                    style="box-shadow: 2px 2px 0px #000;">
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Client Name *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="The company or organization featured in this case study.">ⓘ</span>
+                            </label>
+                            <input type="text" name="client_name" value="{{if .Item}}{{.Item.ClientName}}{{end}}" required
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Industry *</label>
+                            <select name="industry_id" required
+                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    style="font-family: 'JetBrains Mono', monospace;">
+                                <option value="">Select Industry</option>
+                                {{range .Industries}}
+                                <option value="{{.ID}}" {{if $.Item}}{{if eq $.Item.IndustryID .ID}}selected{{end}}{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Status</label>
+                            <select name="is_published"
+                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    style="font-family: 'JetBrains Mono', monospace;">
+                                <option value="0" {{if .Item}}{{if eq .Item.IsPublished 0}}selected{{end}}{{end}}>Draft</option>
+                                <option value="1" {{if .Item}}{{if eq .Item.IsPublished 1}}selected{{end}}{{end}}>Published</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Display Order</label>
+                            <input type="number" name="display_order" value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Story (open) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <button type="button" onclick="toggleSection('story-section', this)"
+                        class="w-full flex items-center justify-between px-4 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>Story</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform">expand_more</span>
+                </button>
+                <div id="story-section" class="p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Summary</label>
+                        <textarea name="summary" rows="3"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Summary}}{{end}}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Challenge
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="What problem did the client face? Sets the stage for the solution.">ⓘ</span>
+                        </label>
+                        <input type="text" name="challenge_title" value="{{if .Item}}{{.Item.ChallengeTitle}}{{end}}"
+                               placeholder="The Challenge"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                        <input id="challenge_content" type="hidden" name="challenge_content" value="{{if .Item}}{{.Item.ChallengeContent}}{{end}}">
+                        <trix-editor input="challenge_content" class="trix-content border-2 border-black min-h-[150px] text-sm"></trix-editor>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Challenge Bullets (one per line)</label>
+                        <textarea name="challenge_bullets" rows="3"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.ChallengeBullets.String}}{{end}}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Solution
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="How your products/services solved the client's challenge.">ⓘ</span>
+                        </label>
+                        <input type="text" name="solution_title" value="{{if .Item}}{{.Item.SolutionTitle}}{{end}}"
+                               placeholder="Our Solution"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                        <input id="solution_content" type="hidden" name="solution_content" value="{{if .Item}}{{.Item.SolutionContent}}{{end}}">
+                        <trix-editor input="solution_content" class="trix-content border-2 border-black min-h-[150px] text-sm"></trix-editor>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Results
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Key outcomes and benefits the client achieved.">ⓘ</span>
+                        </label>
+                        <input type="text" name="outcome_title" value="{{if .Item}}{{.Item.OutcomeTitle}}{{end}}"
+                               placeholder="The Outcome"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                        <input id="outcome_content" type="hidden" name="outcome_content" value="{{if .Item}}{{.Item.OutcomeContent}}{{end}}">
+                        <trix-editor input="outcome_content" class="trix-content border-2 border-black min-h-[150px] text-sm"></trix-editor>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Media (collapsed) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <button type="button" onclick="toggleSection('media-section', this)"
+                        class="w-full flex items-center justify-between px-4 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>Media</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform" style="transform: rotate(-90deg);">expand_more</span>
+                </button>
+                <div id="media-section" class="hidden p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Featured Image URL
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Hero image for the case study. Client facility or product in use recommended.">ⓘ</span>
+                        </label>
+                        <input type="url" name="hero_image_url" id="hero-image-url"
+                               value="{{if .Item}}{{.Item.HeroImageUrl.String}}{{end}}"
+                               placeholder="https://..."
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                        <div id="hero-preview" class="mt-2">
+                            {{if and .Item .Item.HeroImageUrl.Valid}}
+                            <img src="{{.Item.HeroImageUrl.String}}" alt="Preview" class="w-full max-w-xs border-2 border-black object-cover" style="aspect-ratio: 16/9;">
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: SEO (collapsed) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <button type="button" onclick="toggleSection('seo-section', this)"
+                        class="w-full flex items-center justify-between px-4 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>SEO</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform" style="transform: rotate(-90deg);">expand_more</span>
+                </button>
+                <div id="seo-section" class="hidden p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Meta Title</label>
+                        <input type="text" name="meta_title" maxlength="70"
+                               value="{{if .Item}}{{.Item.MetaTitle.String}}{{end}}"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Meta Description</label>
+                        <textarea name="meta_description" rows="3" maxlength="160"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.MetaDescription.String}}{{end}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Buttons -->
+            <div class="flex gap-3 items-center">
+                <button type="submit"
+                        class="bg-blue-600 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-blue-700"
+                        style="box-shadow: 4px 4px 0px #000;">
+                    Save Case Study
+                </button>
+                {{if .Item}}
+                <a href="/case-studies/{{.Item.Slug}}?preview=true" target="_blank"
+                   title="Preview how this content will look on the public site."
+                   class="bg-white text-black px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-blue-50 inline-flex items-center gap-2"
+                   style="box-shadow: 4px 4px 0px #000; text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    Preview
+                </a>
+                {{end}}
+                <a href="/admin/case-studies"
+                   class="bg-white text-black px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100"
+                   style="box-shadow: 4px 4px 0px #000;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+        </div>
+
+        {{if not .IsNew}}
+        <!-- Products Tab -->
+        <div id="panel-products" class="hidden">
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <div class="px-4 py-3 bg-black text-white font-bold uppercase text-sm">Linked Products</div>
+                <div class="p-5">
+                    <div id="products-list" class="mb-4">
+                        {{range .Products}}
+                        <div class="flex items-center justify-between p-3 border-2 border-black mb-2 hover:bg-gray-50">
+                            <span class="text-sm font-bold">{{.ProductName}}</span>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-gray-500 uppercase">Order: {{.DisplayOrder}}</span>
+                                <button hx-delete="/admin/case-studies/{{$.Item.ID}}/products/{{.ProductID}}"
+                                        hx-target="closest div"
+                                        hx-swap="outerHTML"
+                                        hx-confirm="Remove this product?"
+                                        class="bg-white text-red-600 px-2 py-1 text-xs font-bold uppercase border-2 border-red-600 hover:bg-red-50"
+                                        style="box-shadow: 2px 2px 0px #991b1b;">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                    <form hx-post="/admin/case-studies/{{.Item.ID}}/products" hx-target="#products-list" hx-swap="innerHTML" class="flex gap-2 pt-3 border-t-2 border-black">
+                        <select name="product_id" required
+                                class="flex-grow border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                style="font-family: 'JetBrains Mono', monospace;">
+                            <option value="">Select Product</option>
+                            {{range .AllProducts}}
+                            <option value="{{.ID}}">{{.Name}}</option>
+                            {{end}}
+                        </select>
+                        <input type="number" name="display_order" value="0" placeholder="Order"
+                               class="w-24 border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                        <button type="submit"
+                                class="bg-blue-600 text-white px-4 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-blue-700"
+                                style="box-shadow: 2px 2px 0px #000;">
+                            Add
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Tab -->
+        <div id="panel-metrics" class="hidden">
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <div class="px-4 py-3 bg-black text-white font-bold uppercase text-sm flex items-center gap-2">
+                    Metrics
+                    <span class="inline-block cursor-help text-gray-400 font-normal normal-case text-xs" title="Quantifiable results to highlight. Use specific numbers for impact.">ⓘ</span>
+                </div>
+                <div class="p-5">
+                    <div id="metrics-list" class="mb-4">
+                        {{range .Metrics}}
+                        <div class="flex items-center justify-between p-3 border-2 border-black mb-2 hover:bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <span class="text-lg font-bold text-blue-600">{{.MetricValue}}</span>
+                                <span class="text-sm">{{.MetricLabel}}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-gray-500 uppercase">Order: {{.DisplayOrder}}</span>
+                                <button hx-delete="/admin/case-studies/{{$.Item.ID}}/metrics/{{.ID}}"
+                                        hx-target="closest div"
+                                        hx-swap="outerHTML"
+                                        hx-confirm="Delete this metric?"
+                                        class="bg-white text-red-600 px-2 py-1 text-xs font-bold uppercase border-2 border-red-600 hover:bg-red-50"
+                                        style="box-shadow: 2px 2px 0px #991b1b;">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                    <form hx-post="/admin/case-studies/{{.Item.ID}}/metrics" hx-target="#metrics-list" hx-swap="innerHTML" class="flex gap-2 pt-3 border-t-2 border-black">
+                        <input type="text" name="metric_value" placeholder="Value (e.g., 45%)" required
+                               class="w-32 border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                        <input type="text" name="metric_label" placeholder="Label (e.g., increase in efficiency)" required
+                               class="flex-grow border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                        <input type="number" name="display_order" value="0" placeholder="Order"
+                               class="w-24 border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                        <button type="submit"
+                                class="bg-blue-600 text-white px-4 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-blue-700"
+                                style="box-shadow: 2px 2px 0px #000;">
+                            Add
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="mt-6 bg-white border-2 border-red-600 p-5" style="box-shadow: 4px 4px 0px #991b1b;">
+            <h2 class="text-sm font-bold uppercase text-red-600 mb-2">Danger Zone</h2>
+            <p class="text-xs text-gray-600 mb-4">Once you delete this case study, there is no going back.</p>
+            <button hx-delete="/admin/case-studies/{{.Item.ID}}"
+                    hx-confirm="Are you sure you want to delete this case study? This action cannot be undone."
+                    hx-target="body"
+                    class="bg-red-600 text-white px-4 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-red-700"
+                    style="box-shadow: 2px 2px 0px #000;">
+                Delete Case Study
+            </button>
+        </div>
+        {{end}}
+    </div>
+</div>
+<script>
+(function() {
+    // Slug auto-generation
+    var titleInput = document.getElementById('cs-title');
+    var slugInput = document.getElementById('cs-slug');
+    var editSlugBtn = document.getElementById('edit-slug-btn');
+    var slugEditable = false;
+
+    if (editSlugBtn) {
+        editSlugBtn.addEventListener('click', function() {
+            slugEditable = !slugEditable;
+            slugInput.readOnly = !slugEditable;
+            slugInput.classList.toggle('bg-gray-100', !slugEditable);
+            editSlugBtn.textContent = slugEditable ? 'Lock' : 'Edit';
+        });
+    }
+
+    if (titleInput && slugInput) {
+        titleInput.addEventListener('input', function() {
+            if (!slugEditable || slugInput.value === '') {
+                slugInput.value = titleInput.value.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            }
+        });
+    }
+})();
+
+function toggleSection(id, btn) {
+    var section = document.getElementById(id);
+    var chevron = btn.querySelector('.section-chevron');
+    section.classList.toggle('hidden');
+    chevron.style.transform = section.classList.contains('hidden') ? 'rotate(-90deg)' : 'rotate(0deg)';
+}
+
+function switchTab(name) {
+    var tabs = ['details', 'products', 'metrics'];
+    tabs.forEach(function(t) {
+        var panel = document.getElementById('panel-' + t);
+        var tab = document.getElementById('tab-' + t);
+        if (panel && tab) {
+            if (t === name) {
+                panel.classList.remove('hidden');
+                tab.classList.add('bg-black', 'text-white');
+                tab.classList.remove('bg-white', 'text-black', 'hover:bg-gray-100');
+                tab.style.boxShadow = '2px 2px 0px #000';
+            } else {
+                panel.classList.add('hidden');
+                tab.classList.remove('bg-black', 'text-white');
+                tab.classList.add('bg-white', 'text-black', 'hover:bg-gray-100');
+                tab.style.boxShadow = 'none';
+            }
+        }
+    });
+}
+</script>
+{{end}}

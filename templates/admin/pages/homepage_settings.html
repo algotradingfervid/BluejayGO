@@ -1,0 +1,139 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-3xl">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold uppercase tracking-tight" style="font-family: 'JetBrains Mono', monospace;">Homepage Settings</h1>
+                <p class="text-sm text-gray-600 mt-1" style="font-family: 'JetBrains Mono', monospace;">Control which sections appear on the public homepage and how they display.</p>
+            </div>
+
+            {{if .Saved}}
+            <div class="bg-green-100 border-2 border-black text-green-900 px-4 py-3 mb-6 font-bold uppercase text-sm" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                ✓ Homepage settings saved successfully.
+            </div>
+            {{end}}
+
+            <form method="POST" action="/admin/homepage/settings" class="space-y-6">
+
+                <!-- Section Visibility -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Section Visibility</h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">Toggle which sections are visible on the public homepage.</p>
+
+                    <div class="space-y-4">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="homepage_show_heroes" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.HomepageShowHeroes}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Hero Banner</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="The rotating hero banner at the top of the homepage. Disable to hide it entirely.">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="homepage_show_stats" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.HomepageShowStats}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Stats Bar</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="The row of statistics/numbers shown on the homepage (e.g. '500+ Customers').">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="homepage_show_testimonials" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.HomepageShowTestimonials}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Testimonials</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Customer testimonials/quotes section on the homepage.">info</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="homepage_show_cta" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.HomepageShowCta}}checked{{end}}>
+                            <div>
+                                <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Call-to-Action</span>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="The CTA block near the bottom of the homepage (e.g. 'Ready to get started?').">info</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Display Limits -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Display Limits</h2>
+                    <p class="text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">Maximum number of items shown in each section on the public homepage.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Max Heroes</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Maximum number of hero slides in the banner rotation.">info</span>
+                            </div>
+                            <input type="number" name="homepage_max_heroes" value="{{.Settings.HomepageMaxHeroes}}" min="1" max="20"
+                                class="w-full px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                                style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Max Stats</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Maximum number of stat items displayed in the stats bar.">info</span>
+                            </div>
+                            <input type="number" name="homepage_max_stats" value="{{.Settings.HomepageMaxStats}}" min="1" max="12"
+                                class="w-full px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                                style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Max Testimonials</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Maximum number of testimonials shown on the homepage.">info</span>
+                            </div>
+                            <input type="number" name="homepage_max_testimonials" value="{{.Settings.HomepageMaxTestimonials}}" min="1" max="12"
+                                class="w-full px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                                style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Autoplay -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Hero Slideshow</h2>
+
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="homepage_hero_autoplay" class="w-5 h-5 border-2 border-black accent-black" {{if .Settings.HomepageHeroAutoplay}}checked{{end}}>
+                        <div>
+                            <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Auto-rotate Heroes</span>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help ml-1" style="font-size: 14px;" title="Automatically cycle through hero banners. Disable for manual-only navigation.">info</span>
+                        </div>
+                    </label>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Rotation Interval (seconds)</label>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="How many seconds each hero slide displays before advancing. Only applies when auto-rotate is enabled.">info</span>
+                        </div>
+                        <input type="number" name="homepage_hero_interval" value="{{.Settings.HomepageHeroInterval}}" min="2" max="30"
+                            class="w-32 px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                            style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex gap-3">
+                    <button type="submit"
+                        class="px-6 py-3 bg-black text-white font-bold uppercase text-sm border-2 border-black hover:bg-gray-800 active:translate-x-[2px] active:translate-y-[2px]"
+                        style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                        Save Settings
+                    </button>
+                    <a href="/admin/homepage/heroes"
+                        class="px-6 py-3 bg-white text-black font-bold uppercase text-sm border-2 border-black hover:bg-gray-100"
+                        style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

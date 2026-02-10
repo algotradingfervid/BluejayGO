@@ -1,0 +1,177 @@
+{{define "content"}}
+
+<!-- Breadcrumb -->
+<nav class="bg-white manual-border-b">
+  <div class="container mx-auto px-4 py-3">
+    <ol class="flex items-center space-x-2 text-sm font-mono uppercase">
+      <li><a href="/" class="text-gray-600 hover:text-black">Home</a></li>
+      <li class="text-gray-400">/</li>
+      <li class="text-black font-bold">About Us</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Banner -->
+<section class="relative bg-black text-white manual-border-b-thick">
+  <div class="absolute inset-0 bg-gradient-to-r from-[#0066CC] via-[#0066CC]/60 to-black opacity-80"></div>
+  <div class="relative container mx-auto px-4 py-20 md:py-28">
+    <div class="max-w-4xl mx-auto text-center">
+      {{if .Overview}}
+      <h1 class="text-5xl md:text-7xl font-bold font-mono uppercase mb-6">{{.Overview.Headline}}</h1>
+      <p class="text-xl font-mono opacity-90">{{.Overview.Tagline}}</p>
+      {{else}}
+      <h1 class="text-5xl md:text-7xl font-bold font-mono uppercase mb-6">About BlueJay</h1>
+      <p class="text-xl font-mono opacity-90">INNOVATIVE SOLUTIONS WITH UNMATCHED SUPPORT</p>
+      {{end}}
+    </div>
+  </div>
+</section>
+
+<!-- Company Overview -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold font-mono uppercase mb-8 flex items-center gap-3">
+        <span class="material-symbols-outlined text-[#0066CC]">business</span>
+        Who We Are
+      </h2>
+      {{if .Overview}}
+      <div class="space-y-4">
+        <p class="font-mono text-gray-700 leading-relaxed">{{.Overview.DescriptionMain}}</p>
+        {{if .Overview.DescriptionSecondary.Valid}}<p class="font-mono text-gray-700 leading-relaxed">{{.Overview.DescriptionSecondary.String}}</p>{{end}}
+        {{if .Overview.DescriptionTertiary.Valid}}<p class="font-mono text-gray-700 leading-relaxed">{{.Overview.DescriptionTertiary.String}}</p>{{end}}
+      </div>
+      {{else}}
+      <div class="bg-gray-50 manual-border manual-shadow p-8 text-center">
+        <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">info</span>
+        <p class="font-mono text-gray-600">Company overview not configured.</p>
+      </div>
+      {{end}}
+    </div>
+  </div>
+</section>
+
+<!-- Mission, Vision, Values -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold font-mono uppercase mb-12 text-center">Our Foundation</h2>
+    {{if .MVV}}
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white manual-border manual-shadow p-8 text-center">
+        <span class="material-symbols-outlined text-4xl text-[#0066CC] mb-4 block">{{.MVV.MissionIcon}}</span>
+        <h3 class="text-xl font-bold font-mono uppercase mb-4">Our Mission</h3>
+        <p class="font-mono text-gray-700 text-sm leading-relaxed">{{.MVV.Mission}}</p>
+      </div>
+      <div class="bg-white manual-border manual-shadow p-8 text-center">
+        <span class="material-symbols-outlined text-4xl text-[#0066CC] mb-4 block">{{.MVV.VisionIcon}}</span>
+        <h3 class="text-xl font-bold font-mono uppercase mb-4">Our Vision</h3>
+        <p class="font-mono text-gray-700 text-sm leading-relaxed">{{.MVV.Vision}}</p>
+      </div>
+      <div class="bg-white manual-border manual-shadow p-8 text-center">
+        <span class="material-symbols-outlined text-4xl text-[#0066CC] mb-4 block">{{.MVV.ValuesIcon}}</span>
+        <h3 class="text-xl font-bold font-mono uppercase mb-4">Our Values</h3>
+        {{if .MVV.ValuesSummary.Valid}}
+        <p class="font-mono text-gray-700 text-sm leading-relaxed">{{.MVV.ValuesSummary.String}}</p>
+        {{end}}
+      </div>
+    </div>
+    {{else}}
+    <div class="max-w-2xl mx-auto bg-white manual-border manual-shadow p-8 text-center">
+      <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">foundation</span>
+      <p class="font-mono text-gray-600">Mission, Vision, and Values not configured.</p>
+    </div>
+    {{end}}
+  </div>
+</section>
+
+<!-- Core Values -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold font-mono uppercase mb-12 text-center">Our Core Values</h2>
+    {{if .CoreValues}}
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+      {{range .CoreValues}}
+      <div class="bg-gray-50 manual-border manual-shadow p-6 hover:-translate-y-1 transition-transform">
+        <span class="material-symbols-outlined text-3xl text-[#0066CC] mb-3 block">{{.Icon}}</span>
+        <h3 class="text-lg font-bold font-mono uppercase mb-2">{{.Title}}</h3>
+        <p class="font-mono text-gray-700 text-sm leading-relaxed">{{.Description}}</p>
+      </div>
+      {{end}}
+    </div>
+    {{else}}
+    <div class="max-w-2xl mx-auto bg-gray-50 manual-border manual-shadow p-8 text-center">
+      <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">star</span>
+      <p class="font-mono text-gray-600">No core values configured.</p>
+    </div>
+    {{end}}
+  </div>
+</section>
+
+<!-- Timeline -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold font-mono uppercase mb-12 text-center">Our Journey</h2>
+    {{if .Milestones}}
+    <div class="max-w-4xl mx-auto relative">
+      <div class="absolute left-8 top-0 bottom-0 w-1 bg-black"></div>
+      {{range .Milestones}}
+      <div class="relative pl-20 mb-10">
+        <div class="absolute left-6 w-5 h-5 {{if .IsCurrent}}bg-[#0066CC]{{else}}bg-black{{end}} manual-border rounded-full"></div>
+        <div class="bg-white manual-border manual-shadow p-6 {{if .IsCurrent}}border-[#0066CC] border-2{{end}}">
+          <span class="text-2xl font-bold font-mono text-[#0066CC]">{{.Year}}</span>
+          <h4 class="text-lg font-bold font-mono uppercase mt-2 mb-2">{{.Title}}</h4>
+          <p class="font-mono text-gray-700 text-sm">{{.Description}}</p>
+        </div>
+      </div>
+      {{end}}
+    </div>
+    {{else}}
+    <div class="max-w-2xl mx-auto bg-white manual-border manual-shadow p-8 text-center">
+      <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">timeline</span>
+      <p class="font-mono text-gray-600">No milestones configured.</p>
+    </div>
+    {{end}}
+  </div>
+</section>
+
+<!-- Certifications -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold font-mono uppercase mb-12 text-center">Certifications &amp; Compliance</h2>
+    {{if .Certs}}
+    <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+      {{range .Certs}}
+      <div class="bg-gray-50 manual-border manual-shadow p-6 text-center hover:-translate-y-1 transition-transform">
+        {{if .Icon.Valid}}
+        <span class="material-symbols-outlined text-3xl text-[#0066CC] mb-3 block">{{.Icon.String}}</span>
+        {{else}}
+        <span class="text-2xl font-bold font-mono text-[#0066CC] mb-3 block">{{.Abbreviation}}</span>
+        {{end}}
+        <h4 class="text-sm font-bold font-mono uppercase mb-1">{{.Name}}</h4>
+        {{if .Description.Valid}}<p class="font-mono text-gray-600 text-xs">{{.Description.String}}</p>{{end}}
+      </div>
+      {{end}}
+    </div>
+    {{else}}
+    <div class="max-w-2xl mx-auto bg-gray-50 manual-border manual-shadow p-8 text-center">
+      <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">verified</span>
+      <p class="font-mono text-gray-600">No certifications configured.</p>
+    </div>
+    {{end}}
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 bg-black text-white">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold font-mono uppercase mb-6">Ready to Partner with BlueJay?</h2>
+    <a href="/contact" class="inline-block bg-[#0066CC] text-white px-8 py-4 manual-border manual-shadow hover:bg-[#004499] font-mono uppercase text-sm font-bold hover:-translate-y-1 transition-all btn-press">
+      <span class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">mail</span>
+        Contact Us
+      </span>
+    </a>
+  </div>
+</section>
+
+{{end}}

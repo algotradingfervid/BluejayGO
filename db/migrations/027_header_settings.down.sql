@@ -1,0 +1,2 @@
+-- SQLite does not support DROP COLUMN in older versions.
+-- These columns will remain if downgrade is needed.

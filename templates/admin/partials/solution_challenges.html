@@ -1,0 +1,66 @@
+<div class="mb-3">
+    <p class="text-xs text-gray-500 mb-3" title="Problems this solution addresses. Shown as pain points on the page.">
+        <span class="inline-block cursor-help text-gray-400 mr-1">ⓘ</span>
+        Problems this solution addresses. Shown as pain points on the page.
+    </p>
+</div>
+<div id="challenges-list">
+{{range .Challenges}}
+<div class="flex items-center gap-4 mb-3 p-3 border-2 border-black bg-white" style="box-shadow: 2px 2px 0px #000;">
+    <div class="w-10 h-10 bg-blue-100 border-2 border-black flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-blue-600 text-lg">{{.Icon}}</span>
+    </div>
+    <div class="flex-grow min-w-0">
+        <div class="font-bold text-sm uppercase">{{.Title}}</div>
+        <div class="text-xs text-gray-600 truncate">{{.Description}}</div>
+    </div>
+    <button hx-delete="/admin/solutions/{{.SolutionID}}/challenges/{{.ID}}"
+            hx-target="closest div"
+            hx-swap="outerHTML swap:0.3s"
+            hx-confirm="Delete this challenge?"
+            class="bg-white text-red-600 px-2 py-1 text-xs font-bold uppercase border-2 border-red-600 hover:bg-red-50 shrink-0"
+            style="box-shadow: 2px 2px 0px #991b1b;">
+        Remove
+    </button>
+</div>
+{{end}}
+{{if not .Challenges}}
+<div class="py-8 text-center border-2 border-dashed border-gray-300 mb-3">
+    <span class="material-symbols-outlined text-4xl text-gray-300 block mb-2">warning</span>
+    <p class="text-sm text-gray-500">No challenges added yet.</p>
+</div>
+{{end}}
+</div>
+<form hx-post="/admin/solutions/{{.SolutionID}}/challenges" hx-target="#challenges-list" hx-swap="innerHTML" class="mt-4 space-y-3 border-t-2 border-black pt-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Icon</label>
+            <input type="text" name="icon" required placeholder="e.g. target"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Title</label>
+            <input type="text" name="title" required
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Order</label>
+            <input type="number" name="display_order" value="0"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+    </div>
+    <div>
+        <label class="block text-xs font-bold uppercase mb-1">Description</label>
+        <textarea name="description" required rows="2"
+                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style="font-family: 'JetBrains Mono', monospace;"></textarea>
+    </div>
+    <button type="submit"
+            class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+            style="box-shadow: 4px 4px 0px #000;">
+        + Add Challenge
+    </button>
+</form>

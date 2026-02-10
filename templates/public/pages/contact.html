@@ -1,0 +1,152 @@
+{{define "content"}}
+
+<!-- Breadcrumb -->
+<nav class="bg-white manual-border-b">
+  <div class="container mx-auto px-4 py-3">
+    <ol class="flex items-center space-x-2 text-sm font-mono uppercase">
+      <li><a href="/" class="text-gray-600 hover:text-black">Home</a></li>
+      <li class="text-gray-400">/</li>
+      <li class="text-black font-bold">Contact Us</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Banner -->
+<section class="relative bg-black text-white manual-border-b-thick">
+  <div class="absolute inset-0 bg-gradient-to-r from-[#0066CC] via-[#0066CC]/60 to-black opacity-80"></div>
+  <div class="relative container mx-auto px-4 py-20 md:py-28">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-5xl md:text-7xl font-bold font-mono uppercase mb-6">Contact Us</h1>
+      <p class="text-xl font-mono opacity-90">
+        WE'D LOVE TO HEAR FROM YOU. GET IN TOUCH AND LET'S START A CONVERSATION.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+      <!-- Left Column: Office Locations -->
+      <div>
+        <h2 class="text-3xl font-bold font-mono uppercase mb-8 flex items-center gap-3">
+          <span class="material-symbols-outlined text-[#0066CC]">apartment</span>
+          Our Offices
+        </h2>
+
+        {{if .Offices}}
+        <div class="space-y-6">
+          {{range .Offices}}
+          <div class="bg-white manual-border manual-shadow p-6">
+            <div class="flex items-start gap-4">
+              <span class="material-symbols-outlined text-2xl text-[#0066CC] mt-1">location_on</span>
+              <div>
+                <h3 class="text-xl font-bold font-mono uppercase mb-3">{{.City}}</h3>
+                <p class="font-mono text-gray-700 mb-1">{{.AddressLine1}}</p>
+                {{if .AddressLine2.Valid}}<p class="font-mono text-gray-700 mb-1">{{.AddressLine2.String}}</p>{{end}}
+                <p class="font-mono text-gray-700 mb-4">{{.City}}, {{.State}} {{.PostalCode}}</p>
+
+                {{if .Phone.Valid}}
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="material-symbols-outlined text-sm text-gray-500">phone</span>
+                  <a href="tel:{{.Phone.String}}" class="font-mono text-sm text-gray-700 hover:text-[#0066CC]">{{.Phone.String}}</a>
+                </div>
+                {{end}}
+
+                {{if .Email.Valid}}
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-sm text-gray-500">mail</span>
+                  <a href="mailto:{{.Email.String}}" class="font-mono text-sm text-gray-700 hover:text-[#0066CC]">{{.Email.String}}</a>
+                </div>
+                {{end}}
+              </div>
+            </div>
+          </div>
+          {{end}}
+        </div>
+        {{else}}
+        <div class="bg-white manual-border manual-shadow p-8 text-center">
+          <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">location_off</span>
+          <p class="font-mono text-gray-600">Office locations coming soon.</p>
+        </div>
+        {{end}}
+      </div>
+
+      <!-- Right Column: Contact Form -->
+      <div>
+        <div class="bg-white manual-border manual-shadow-lg p-8">
+          <div id="contactFormContainer">
+            <h2 class="text-2xl font-bold font-mono uppercase mb-2">Send Us A Message</h2>
+            <p class="text-gray-600 font-mono text-sm mb-8">FILL OUT THE FORM AND WE'LL GET BACK TO YOU WITHIN 24 HOURS.</p>
+
+            <form hx-post="/contact/submit" hx-target="#contactFormContainer" hx-swap="innerHTML">
+              <!-- Name -->
+              <div class="mb-6">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Name *</label>
+                <input type="text" name="name" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="Your full name">
+              </div>
+
+              <!-- Email -->
+              <div class="mb-6">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Email *</label>
+                <input type="email" name="email" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="your@email.com">
+              </div>
+
+              <!-- Phone -->
+              <div class="mb-6">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Phone *</label>
+                <input type="tel" name="phone" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="+1 (555) 000-0000">
+              </div>
+
+              <!-- Company -->
+              <div class="mb-6">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Company *</label>
+                <input type="text" name="company" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="Company name">
+              </div>
+
+              <!-- Inquiry Type -->
+              <div class="mb-6">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Inquiry Type</label>
+                <select name="inquiry_type" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow">
+                  <option value="">Select an option</option>
+                  <option value="sales">Sales Inquiry</option>
+                  <option value="support">Technical Support</option>
+                  <option value="partnership">Partnership Opportunity</option>
+                  <option value="demo">Request a Demo</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <!-- Message -->
+              <div class="mb-8">
+                <label class="block text-sm font-mono uppercase font-bold mb-2">Message *</label>
+                <textarea name="message" required rows="5" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow resize-none" placeholder="How can we help you?"></textarea>
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" class="w-full bg-black text-white px-6 py-4 manual-border manual-shadow hover:manual-shadow-lg font-mono uppercase text-sm font-bold hover:-translate-y-1 transition-all btn-press flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-sm">send</span>
+                <span>Send Message</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Map Placeholder -->
+<section class="manual-border-t">
+  <div class="bg-gray-200 h-96 flex items-center justify-center">
+    <div class="text-center">
+      <span class="material-symbols-outlined text-8xl text-gray-400 mb-4 block">map</span>
+      <p class="font-mono uppercase text-gray-500 font-bold">Map Integration</p>
+    </div>
+  </div>
+</section>
+
+{{end}}

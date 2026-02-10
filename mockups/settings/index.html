@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Settings - Bluejay CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="../../components/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../components/tailwind.config.js"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+        <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar-light fixed lg:sticky top-0 left-0 h-screen z-50 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <span class="sidebar-logo-text">BLUEJAY</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Content</div>
+                    <a href="../dashboard/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="../homepage/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">home</span>
+                        Homepage
+                    </a>
+                    <a href="../about/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">info</span>
+                        About Us
+                    </a>
+                    <a href="../products/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">inventory_2</span>
+                        Products
+                    </a>
+                    <a href="../solutions/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">lightbulb</span>
+                        Solutions
+                    </a>
+                    <a href="../blog/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">article</span>
+                        Blog
+                    </a>
+                    <a href="../case-studies/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">cases</span>
+                        Case Studies
+                    </a>
+                    <a href="../whitepapers/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu_book</span>
+                        Whitepapers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Resources</div>
+                    <a href="../partners/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">handshake</span>
+                        Partners
+                    </a>
+                    <a href="../testimonials/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">format_quote</span>
+                        Testimonials
+                    </a>
+                    <a href="../certifications/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">verified</span>
+                        Certifications
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Global Elements</div>
+                    <a href="../header/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">web_asset</span>
+                        Header
+                    </a>
+                    <a href="../footer/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">call_to_action</span>
+                        Footer
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="../media/library.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">perm_media</span>
+                        Media
+                    </a>
+                    <a href="../forms/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">mail</span>
+                        Forms
+                        <span class="sidebar-item-badge">3</span>
+                    </a>
+                    <a href="../navigation/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu</span>
+                        Navigation
+                    </a>
+                    <a href="../users/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">group</span>
+                        Users
+                    </a>
+                    <a href="../settings/index.html" class="sidebar-item active">
+                        <span class="material-symbols-outlined sidebar-item-icon">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User Footer -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">JS</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">John Smith</div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button (Mobile) -->
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 p-2 lg:hidden manual-border bg-white hover:bg-[var(--color-background-light)]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1">
+            <!-- Top Navigation Bar -->
+            <header class="h-16 bg-white manual-border-thick border-t-0 border-l-0 border-r-0 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+                <!-- Left side - Hamburger (mobile) -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 manual-border hover:bg-[var(--color-background-light)] lg:hidden">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="font-display font-extrabold uppercase lg:hidden">BLUEJAY</span>
+                </div>
+
+                <!-- Right side - Actions -->
+                <div class="flex items-center gap-2">
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-warning)] text-black text-[10px] font-bold flex items-center justify-center manual-border">3</span>
+                    </button>
+                </div>
+            </header>
+
+        <!-- Main Content -->
+        <main class="p-4 md:p-6 lg:p-8">
+            <!-- Breadcrumb -->
+            <div class="mb-4">
+                <span class="text-sm text-text-secondary">Settings</span>
+            </div>
+
+            <!-- Page Header -->
+            <div class="bg-white border-2 border-black shadow-manual p-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-semibold text-text-primary">Site Settings</h1>
+                        <!-- Unsaved Changes Indicator -->
+                        <span id="unsavedIndicator" class="hidden bg-warning text-text-primary text-xs font-medium px-2.5 py-1 border-2 border-black flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">edit</span>
+                            Unsaved changes
+                        </span>
+                    </div>
+                    <button onclick="saveAllSettings()" class="bg-primary hover:bg-primary-dark text-white font-medium px-5 py-2.5 border-2 border-black shadow-manual transition-colors flex items-center gap-2 btn-press">
+                        <span class="material-symbols-outlined text-lg">save</span>
+                        Save All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="bg-white border-2 border-b-0 border-black">
+                <!-- Desktop Tabs -->
+                <div class="hidden md:flex border-b-2 border-black">
+                    <button onclick="switchTab('general')" id="tab-general" class="tab-button px-6 py-4 text-sm font-medium text-primary border-b-4 border-primary bg-primary-light">
+                        General
+                    </button>
+                    <button onclick="switchTab('contact')" id="tab-contact" class="tab-button px-6 py-4 text-sm font-medium text-text-secondary hover:bg-gray-50 border-b-4 border-transparent">
+                        Contact Info
+                    </button>
+                    <button onclick="switchTab('social')" id="tab-social" class="tab-button px-6 py-4 text-sm font-medium text-text-secondary hover:bg-gray-50 border-b-4 border-transparent">
+                        Social Media
+                    </button>
+                    <button onclick="switchTab('seo')" id="tab-seo" class="tab-button px-6 py-4 text-sm font-medium text-text-secondary hover:bg-gray-50 border-b-4 border-transparent">
+                        SEO Defaults
+                    </button>
+                </div>
+
+                <!-- Mobile Tab Dropdown -->
+                <div class="md:hidden p-4 border-b-2 border-black">
+                    <select id="mobileTabSelect" onchange="switchTab(this.value)" class="w-full px-4 py-3 border-2 border-black text-text-primary bg-white">
+                        <option value="general">General Settings</option>
+                        <option value="contact">Contact Information</option>
+                        <option value="social">Social Media</option>
+                        <option value="seo">SEO Defaults</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tab Content Container -->
+            <div class="bg-white border-2 border-t-0 border-black shadow-manual">
+
+                <!-- General Tab Content -->
+                <div id="content-general" class="tab-content p-6">
+                    <div class="mb-6">
+                        <h2 class="text-lg font-semibold text-text-primary mb-1">General Settings</h2>
+                        <p class="text-sm text-text-secondary">Configure your site's basic information and branding</p>
+                    </div>
+
+                    <!-- Site Identity Section -->
+                    <div class="border-2 border-black p-6 mb-6">
+                        <h3 class="text-base font-semibold text-text-primary mb-1">Site Identity</h3>
+                        <div class="w-full h-0.5 bg-black my-4"></div>
+
+                        <div class="space-y-5">
+                            <!-- Site Name -->
+                            <div class="form-field">
+                                <label class="block text-sm font-medium text-text-primary mb-2">
+                                    Site Name <span class="text-error">*</span>
+                                </label>
+                                <input type="text" value="BlueJay Innovative Labs"
+                                    class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary focus:border-primary focus:ring-0"
+                                    oninput="markUnsaved()">
+                                <p class="text-xs text-text-muted mt-1">The name of your website, displayed in browser tabs</p>
+                            </div>
+
+                            <!-- Tagline -->
+                            <div class="form-field">
+                                <label class="block text-sm font-medium text-text-primary mb-2">
+                                    Tagline
+                                </label>
+                                <input type="text" value="Innovative Solutions with Unmatched Support"
+                                    class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary focus:border-primary focus:ring-0"
+                                    oninput="markUnsaved()">
+                                <p class="text-xs text-text-muted mt-1">A short description of your site</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branding Section -->
+                    <div class="border-2 border-black p-6">
+                        <h3 class="text-base font-semibold text-text-primary mb-1">Branding</h3>
+                        <div class="w-full h-0.5 bg-black my-4"></div>
+
+                        <!-- Logo uploads grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                            <!-- Logo (Light Background) -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-3">
+                                    Logo (Light Background)
+                                </label>
+                                <div class="border-2 border-black p-4 bg-white">
+                                    <div class="flex items-center justify-center h-24 mb-3 bg-gray-50 border-2 border-dashed border-black">
+                                        <div class="text-center">
+                                            <div class="flex items-center justify-center gap-2 text-primary font-semibold">
+                                                <span class="material-symbols-outlined">flutter_dash</span>
+                                                BlueJay
+                                            </div>
+                                            <span class="text-xs text-text-muted">240 x 60</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button onclick="openLogoPickerModal('light')" class="flex-1 px-3 py-2 border-2 border-primary text-primary text-sm font-medium hover:bg-primary-light transition-colors btn-press">
+                                            Change Logo
+                                        </button>
+                                        <button class="px-3 py-2 border-2 border-black text-text-secondary text-sm font-medium hover:bg-gray-50 transition-colors btn-press">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-text-muted mt-2">Recommended: 240x60px, PNG or SVG with transparent background</p>
+                            </div>
+
+                            <!-- Logo (Dark Background) -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-3">
+                                    Logo (Dark Background)
+                                </label>
+                                <div class="border-2 border-black p-4 bg-white">
+                                    <div class="flex items-center justify-center h-24 mb-3 bg-gray-800 border-2 border-black">
+                                        <div class="text-center">
+                                            <div class="flex items-center justify-center gap-2 text-white font-semibold">
+                                                <span class="material-symbols-outlined">flutter_dash</span>
+                                                BlueJay
+                                            </div>
+                                            <span class="text-xs text-gray-400">240 x 60</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button onclick="openLogoPickerModal('dark')" class="flex-1 px-3 py-2 border-2 border-primary text-primary text-sm font-medium hover:bg-primary-light transition-colors btn-press">
+                                            Change Logo
+                                        </button>
+                                        <button class="px-3 py-2 border-2 border-black text-text-secondary text-sm font-medium hover:bg-gray-50 transition-colors btn-press">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-text-muted mt-2">Recommended: 240x60px, PNG or SVG with transparent background</p>
+                            </div>
+                        </div>
+
+                        <!-- Favicon -->
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-3">
+                                Favicon
+                            </label>
+                            <div class="border-2 border-black p-4 bg-white inline-block">
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-3">
+                                        <!-- 16x16 Preview -->
+                                        <div class="text-center">
+                                            <div class="w-6 h-6 bg-primary border-2 border-black flex items-center justify-center mb-1">
+                                                <span class="material-symbols-outlined text-white text-xs">flutter_dash</span>
+                                            </div>
+                                            <span class="text-xs text-text-muted">16x16</span>
+                                        </div>
+                                        <!-- 32x32 Preview -->
+                                        <div class="text-center">
+                                            <div class="w-8 h-8 bg-primary border-2 border-black flex items-center justify-center mb-1">
+                                                <span class="material-symbols-outlined text-white text-sm">flutter_dash</span>
+                                            </div>
+                                            <span class="text-xs text-text-muted">32x32</span>
+                                        </div>
+                                    </div>
+                                    <div class="border-l-2 border-black pl-4">
+                                        <p class="text-sm text-text-primary font-medium">bluejay-favicon.ico</p>
+                                        <div class="flex gap-2 mt-2">
+                                            <button class="px-3 py-1.5 border-2 border-primary text-primary text-xs font-medium hover:bg-primary-light transition-colors btn-press">
+                                                Change
+                                            </button>
+                                            <button class="px-3 py-1.5 border-2 border-black text-text-secondary text-xs font-medium hover:bg-gray-50 transition-colors btn-press">
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-text-muted mt-2">Upload a square image. We'll generate 16x16 and 32x32 sizes. Supported: ICO, PNG (recommended 512x512)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Info Tab Content -->
+                <div id="content-contact" class="tab-content hidden p-6">
+                    <div class="mb-6">
+                        <h2 class="text-lg font-semibold text-text-primary mb-1">Contact Information</h2>
+                        <p class="text-sm text-text-secondary">Your business contact details displayed on the website</p>
+                    </div>
+
+                    <!-- Address Section -->
+                    <div class="border-2 border-black p-6 mb-6">
+                        <h3 class="text-base font-semibold text-text-primary mb-1">Address</h3>
+                        <div class="w-full h-0.5 bg-black my-4"></div>
+
+                        <div class="space-y-5">
+                            <!-- Address Line 1 -->
+                            <div class="form-field">
+                                <label class="block text-sm font-medium text-text-primary mb-2">
+                                    Address Line 1 <span class="text-error">*</span>
+                                </label>
+                                <input type="text" value="123 Innovation Drive"
+                                    class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary focus:border-primary focus:ring-0"
+                                    oninput="markUnsaved()">
+                            </div>
+
+                            <!-- Address Line 2 -->
+                            <div class="form-field">
+                                <label class="block text-sm font-medium text-text-primary mb-2">
+                                    Address Line 2
+                                </label>
+                                <input type="text" value="Suite 400"
+                                    class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary focus:border-primary focus:ring-0"
+                                    oninput="markUnsaved()">
+                            </div>
+
+                            <!-- City + State Row -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-field">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">
+                                        City <span class="text-error">*</span>
+                                    </label>
+                                    <input type="text" value="San Francisco"
+                                        class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary focus:border-primary focus:ring-0"
+                                        oninput="markUnsaved()">
+                                </div>
+                                <div class="form-field">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">
+                                        State/Province <span class="text-error">*</span>
+                                    </label>
+                                    <select class="form-select w-full px-4 py-2.5 border-2 border-black text-text-primary bg-white focus:border-primary focus:ring-0" onchange="markUnsaved()">
+                                        <option value="CA" selected>California</option>
+                                        <option value="NY">New York</option>
+                                        <option value="TX">Texas</option>
+                                        <option value="WA">Washington</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Postal Code + Country Row -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-field">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">
+                                        Postal Code <span class="text-error">*</span>
+                                    </label>
+                                    <input type="text" value="94105"
+                                        class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary focus:border-primary focus:ring-0"
+                                        oninput="markUnsaved()">
+                                </div>
+                                <div class="form-field">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">
+                                        Country <span class="text-error">*</span>
+                                    </label>
+                                    <select class="form-select w-full px-4 py-2.5 border-2 border-black text-text-primary bg-white focus:border-primary focus:ring-0" onchange="markUnsaved()">
+                                        <option value="US" selected>United States</option>
+                                        <option value="CA">Canada</option>
+                                        <option value="UK">United Kingdom</option>
+                                        <option value="AU">Australia</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Details Section -->
+                    <div class="border-2 border-black p-6 mb-6">
+                        <h3 class="text-base font-semibold text-text-primary mb-1">Contact Details</h3>
+                        <div class="w-full h-0.5 bg-black my-4"></div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Phone Number -->
+                            <div class="form-field">
+                                <label class="block text-sm font-medium text-text-primary mb-2">
+                                    Phone Number <span class="text-error">*</span>
+                                </label>
+                                <input type="tel" value="+1 (415) 555-0123"
+                                    class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary focus:border-primary focus:ring-0"
+                                    oninput="markUnsaved()">
+                                <p class="text-xs text-text-muted mt-1">Format: +1 (XXX) XXX-XXXX</p>
+                            </div>
+
+                            <!-- Email Address -->
+                            <div class="form-field">
+                                <label class="block text-sm font-medium text-text-primary mb-2">
+                                    Email Address <span class="text-error">*</span>
+                                </label>
+                                <input type="email" value="info@bluejaylabs.com"
+                                    class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary focus:border-primary focus:ring-0"
+                                    oninput="markUnsaved()">
+                                <p class="text-xs text-text-muted mt-1">Must be a valid email</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Business Hours Section -->
+                    <div class="border-2 border-black p-6">
+                        <h3 class="text-base font-semibold text-text-primary mb-1">Business Hours</h3>
+                        <div class="w-full h-0.5 bg-black my-4"></div>
+
+                        <div class="form-field">
+                            <label class="block text-sm font-medium text-text-primary mb-2">
+                                Business Hours
+                            </label>
+                            <textarea rows="6"
+                                class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary resize-none focus:border-primary focus:ring-0"
+                                oninput="markUnsaved()">Monday - Friday: 9:00 AM - 6:00 PM PST
+Saturday: 10:00 AM - 4:00 PM PST
+Sunday: Closed
+
+Holiday Hours:
+Please check our website for holiday schedules</textarea>
+                            <p class="text-xs text-text-muted mt-1">Free-form text field for flexible formatting</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media Tab Content -->
+                <div id="content-social" class="tab-content hidden p-6">
+                    <div class="mb-6">
+                        <h2 class="text-lg font-semibold text-text-primary mb-1">Social Media Links</h2>
+                        <p class="text-sm text-text-secondary">Connect your social media profiles to display on your website</p>
+                    </div>
+
+                    <!-- Social Media URLs Grid -->
+                    <div class="border-2 border-black p-6 mb-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Facebook -->
+                            <div class="form-field">
+                                <label class="flex items-center gap-2 text-sm font-medium text-text-primary mb-2">
+                                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                    Facebook
+                                </label>
+                                <div class="relative">
+                                    <input type="url" id="facebook-url" value="https://facebook.com/bluejaylabs"
+                                        class="form-input w-full px-4 py-2.5 border-2 border-success text-text-primary pr-10 focus:border-primary focus:ring-0"
+                                        oninput="validateSocialUrl(this, 'facebook')">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-success">
+                                        <span class="material-symbols-outlined">check_circle</span>
+                                    </span>
+                                </div>
+                                <p id="facebook-status" class="text-xs text-success mt-1 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">check</span> Valid URL
+                                </p>
+                            </div>
+
+                            <!-- LinkedIn -->
+                            <div class="form-field">
+                                <label class="flex items-center gap-2 text-sm font-medium text-text-primary mb-2">
+                                    <svg class="w-5 h-5 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                    </svg>
+                                    LinkedIn
+                                </label>
+                                <div class="relative">
+                                    <input type="url" id="linkedin-url" value="https://linkedin.com/company/bluejaylabs"
+                                        class="form-input w-full px-4 py-2.5 border-2 border-success text-text-primary pr-10 focus:border-primary focus:ring-0"
+                                        oninput="validateSocialUrl(this, 'linkedin')">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-success">
+                                        <span class="material-symbols-outlined">check_circle</span>
+                                    </span>
+                                </div>
+                                <p id="linkedin-status" class="text-xs text-success mt-1 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">check</span> Valid URL
+                                </p>
+                            </div>
+
+                            <!-- Twitter/X -->
+                            <div class="form-field">
+                                <label class="flex items-center gap-2 text-sm font-medium text-text-primary mb-2">
+                                    <svg class="w-5 h-5 text-text-primary" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                    Twitter / X
+                                </label>
+                                <div class="relative">
+                                    <input type="url" id="twitter-url" value="https://x.com/bluejaylabs"
+                                        class="form-input w-full px-4 py-2.5 border-2 border-success text-text-primary pr-10 focus:border-primary focus:ring-0"
+                                        oninput="validateSocialUrl(this, 'twitter')">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-success">
+                                        <span class="material-symbols-outlined">check_circle</span>
+                                    </span>
+                                </div>
+                                <p id="twitter-status" class="text-xs text-success mt-1 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">check</span> Valid URL
+                                </p>
+                            </div>
+
+                            <!-- YouTube -->
+                            <div class="form-field">
+                                <label class="flex items-center gap-2 text-sm font-medium text-text-primary mb-2">
+                                    <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                    </svg>
+                                    YouTube
+                                </label>
+                                <div class="relative">
+                                    <input type="url" id="youtube-url" value="https://youtube.com/@bluejaylabs"
+                                        class="form-input w-full px-4 py-2.5 border-2 border-success text-text-primary pr-10 focus:border-primary focus:ring-0"
+                                        oninput="validateSocialUrl(this, 'youtube')">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-success">
+                                        <span class="material-symbols-outlined">check_circle</span>
+                                    </span>
+                                </div>
+                                <p id="youtube-status" class="text-xs text-success mt-1 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">check</span> Valid URL
+                                </p>
+                            </div>
+
+                            <!-- Instagram -->
+                            <div class="form-field">
+                                <label class="flex items-center gap-2 text-sm font-medium text-text-primary mb-2">
+                                    <svg class="w-5 h-5 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                                    </svg>
+                                    Instagram
+                                </label>
+                                <div class="relative">
+                                    <input type="url" id="instagram-url" value="https://instagram.com/bluejaylabs"
+                                        class="form-input w-full px-4 py-2.5 border-2 border-success text-text-primary pr-10 focus:border-primary focus:ring-0"
+                                        oninput="validateSocialUrl(this, 'instagram')">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-success">
+                                        <span class="material-symbols-outlined">check_circle</span>
+                                    </span>
+                                </div>
+                                <p id="instagram-status" class="text-xs text-success mt-1 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">check</span> Valid URL
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preview Section -->
+                    <div class="border-2 border-black p-6">
+                        <h3 class="text-base font-semibold text-text-primary mb-1">Preview</h3>
+                        <p class="text-sm text-text-secondary mb-4">How your social icons will appear on the website</p>
+                        <div class="w-full h-0.5 bg-black mb-4"></div>
+
+                        <div class="bg-gray-50 border-2 border-black p-6 flex items-center justify-center">
+                            <div class="flex items-center gap-6">
+                                <!-- Facebook -->
+                                <a href="#" class="text-text-secondary hover:text-blue-600 transition-colors">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                </a>
+                                <!-- LinkedIn -->
+                                <a href="#" class="text-text-secondary hover:text-blue-700 transition-colors">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                    </svg>
+                                </a>
+                                <!-- Twitter/X -->
+                                <a href="#" class="text-text-secondary hover:text-text-primary transition-colors">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                </a>
+                                <!-- YouTube -->
+                                <a href="#" class="text-text-secondary hover:text-red-600 transition-colors">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                    </svg>
+                                </a>
+                                <!-- Instagram -->
+                                <a href="#" class="text-text-secondary hover:text-pink-600 transition-colors">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="text-xs text-text-muted text-center mt-3">Social icons with hover states (Icons turn #0066CC on hover)</p>
+                    </div>
+                </div>
+
+                <!-- SEO Defaults Tab Content -->
+                <div id="content-seo" class="tab-content hidden p-6">
+                    <div class="mb-6">
+                        <h2 class="text-lg font-semibold text-text-primary mb-1">SEO Default Settings</h2>
+                        <p class="text-sm text-text-secondary">Configure default meta tags and analytics for your website</p>
+                    </div>
+
+                    <!-- Meta Tags Section -->
+                    <div class="border-2 border-black p-6 mb-6">
+                        <h3 class="text-base font-semibold text-text-primary mb-1">Meta Tags</h3>
+                        <div class="w-full h-0.5 bg-black my-4"></div>
+
+                        <div class="space-y-5">
+                            <!-- Default Meta Title -->
+                            <div class="form-field">
+                                <label class="block text-sm font-medium text-text-primary mb-2">
+                                    Default Meta Title <span class="text-error">*</span>
+                                </label>
+                                <input type="text" id="metaTitle" value="BlueJay Innovative Labs"
+                                    class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary focus:border-primary focus:ring-0"
+                                    oninput="updateCharCounter('metaTitle', 60); markUnsaved()" maxlength="70">
+                                <div class="flex items-center justify-between mt-1">
+                                    <p class="text-xs text-text-muted">Used when pages don't have a custom meta title</p>
+                                    <span id="metaTitleCounter" class="text-xs text-success">24/60</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-gray-200 mt-2">
+                                    <div id="metaTitleProgress" class="h-full bg-success transition-all" style="width: 40%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Default Meta Description -->
+                            <div class="form-field">
+                                <label class="block text-sm font-medium text-text-primary mb-2">
+                                    Default Meta Description <span class="text-error">*</span>
+                                </label>
+                                <textarea id="metaDescription" rows="3"
+                                    class="form-input w-full px-4 py-2.5 border-2 border-black text-text-primary resize-none focus:border-primary focus:ring-0"
+                                    oninput="updateCharCounter('metaDescription', 160); markUnsaved()" maxlength="200">BlueJay Innovative Labs provides cutting-edge technology solutions with unmatched customer support.</textarea>
+                                <div class="flex items-center justify-between mt-1">
+                                    <p class="text-xs text-text-muted">Recommended: 150-160 characters for optimal display</p>
+                                    <span id="metaDescriptionCounter" class="text-xs text-success">98/160</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-gray-200 mt-2">
+                                    <div id="metaDescriptionProgress" class="h-full bg-success transition-all" style="width: 61%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Sharing Image Section -->
+                    <div class="border-2 border-black p-6 mb-6">
+                        <h3 class="text-base font-semibold text-text-primary mb-1">Social Sharing Image</h3>
+                        <p class="text-sm text-text-secondary mb-4">Used when shared on social media (Facebook, LinkedIn, etc)</p>
+                        <div class="w-full h-0.5 bg-black mb-4"></div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-3">
+                                Default OG Image
+                            </label>
+
+                            <!-- OG Image Preview Card -->
+                            <div class="bg-gray-50 border-2 border-black p-6 mb-4">
+                                <div class="max-w-md mx-auto">
+                                    <!-- Social Card Preview -->
+                                    <div class="bg-white border-2 border-black overflow-hidden shadow-manual">
+                                        <!-- Image Preview -->
+                                        <div class="aspect-[1200/630] bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                                            <div class="text-center">
+                                                <div class="flex items-center justify-center gap-2 text-primary text-2xl font-bold mb-2">
+                                                    <span class="material-symbols-outlined text-3xl">flutter_dash</span>
+                                                    BlueJay
+                                                </div>
+                                                <p class="text-sm text-text-muted">1200 x 630 px</p>
+                                            </div>
+                                        </div>
+                                        <!-- Card Content -->
+                                        <div class="p-4 border-t-2 border-black">
+                                            <p class="text-xs text-text-muted uppercase mb-1">bluejaylabs.com</p>
+                                            <h4 class="font-semibold text-text-primary mb-1">BlueJay Innovative Labs</h4>
+                                            <p class="text-sm text-text-secondary line-clamp-2">Innovative Solutions with Unmatched Support...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button class="px-4 py-2 border-2 border-primary text-primary text-sm font-medium hover:bg-primary-light transition-colors btn-press">
+                                    Change Image
+                                </button>
+                                <button class="px-4 py-2 border-2 border-black text-text-secondary text-sm font-medium hover:bg-gray-50 transition-colors btn-press">
+                                    Remove
+                                </button>
+                            </div>
+                            <p class="text-xs text-text-muted mt-2">Recommended: 1200x630 pixels, PNG or JPG</p>
+                        </div>
+                    </div>
+
+                    <!-- Google Search Preview -->
+                    <div class="border-2 border-black p-6">
+                        <h3 class="text-base font-semibold text-text-primary mb-1">Google Search Preview</h3>
+                        <p class="text-sm text-text-secondary mb-4">How your site may appear in search results</p>
+                        <div class="w-full h-0.5 bg-black mb-4"></div>
+
+                        <div class="bg-white border-2 border-black p-6">
+                            <div class="max-w-xl">
+                                <p class="text-sm text-text-secondary mb-1">https://bluejaylabs.com</p>
+                                <h4 class="text-xl text-blue-700 hover:underline cursor-pointer mb-1">BlueJay Innovative Labs</h4>
+                                <p class="text-sm text-text-secondary">BlueJay Innovative Labs provides cutting-edge technology solutions with unmatched customer support.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    </div>
+
+    <!-- Logo Picker Modal -->
+    <div id="logoPickerModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="fixed inset-0 bg-black bg-opacity-50" onclick="closeLogoPickerModal()"></div>
+        <div class="relative bg-white border-2 border-black shadow-manual-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b-2 border-black">
+                <h3 class="text-lg font-semibold text-text-primary">Select Logo</h3>
+                <button onclick="closeLogoPickerModal()" class="p-2 hover:bg-gray-100 border-2 border-black btn-press">
+                    <span class="material-symbols-outlined text-text-secondary">close</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6">
+                <!-- Upload New -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-text-primary mb-3">Upload New</h4>
+                    <div class="upload-dropzone border-2 border-dashed border-black p-8 text-center cursor-pointer hover:border-primary hover:bg-primary-light transition-colors">
+                        <span class="material-symbols-outlined text-4xl text-text-muted mb-2">cloud_upload</span>
+                        <p class="text-sm text-text-primary mb-1">Drag & drop your logo</p>
+                        <p class="text-sm text-text-secondary mb-3">or browse</p>
+                        <button class="px-4 py-2 bg-primary text-white text-sm font-medium border-2 border-black shadow-manual hover:bg-primary-dark transition-colors btn-press">
+                            Browse Files
+                        </button>
+                        <p class="text-xs text-text-muted mt-4">Accepted formats: PNG, SVG, JPG | Max size: 2MB</p>
+                    </div>
+                </div>
+
+                <!-- Or Select from Media Library -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-text-primary mb-3">Or Select from Media Library</h4>
+                    <div class="grid grid-cols-4 gap-3">
+                        <div class="border-2 border-black p-2 cursor-pointer hover:border-primary transition-colors">
+                            <div class="aspect-[4/1] bg-gray-100 flex items-center justify-center mb-2">
+                                <span class="text-xs text-text-muted">logo-v1.png</span>
+                            </div>
+                            <p class="text-xs text-text-secondary truncate">logo-v1.png</p>
+                        </div>
+                        <div class="border-2 border-primary p-2 cursor-pointer bg-primary-light relative">
+                            <div class="absolute top-1 right-1 w-5 h-5 bg-primary border-2 border-black flex items-center justify-center">
+                                <span class="material-symbols-outlined text-white text-sm">check</span>
+                            </div>
+                            <div class="aspect-[4/1] bg-gray-100 flex items-center justify-center mb-2">
+                                <span class="text-xs text-text-muted">logo-v2.png</span>
+                            </div>
+                            <p class="text-xs text-primary truncate font-medium">logo-v2.png</p>
+                        </div>
+                        <div class="border-2 border-black p-2 cursor-pointer hover:border-primary transition-colors">
+                            <div class="aspect-[4/1] bg-gray-100 flex items-center justify-center mb-2">
+                                <span class="text-xs text-text-muted">logo-old.png</span>
+                            </div>
+                            <p class="text-xs text-text-secondary truncate">logo-old.png</p>
+                        </div>
+                        <div class="border-2 border-black p-2 cursor-pointer hover:border-primary transition-colors">
+                            <div class="aspect-[4/1] bg-gray-100 flex items-center justify-center mb-2">
+                                <span class="text-xs text-text-muted">icon-full.png</span>
+                            </div>
+                            <p class="text-xs text-text-secondary truncate">icon-full.png</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div>
+                    <h4 class="text-sm font-medium text-text-primary mb-3">Preview</h4>
+                    <div class="bg-gray-50 border-2 border-black p-4">
+                        <p class="text-xs text-text-muted mb-2">Header Preview</p>
+                        <div class="bg-white border-2 border-black p-3 flex items-center gap-4">
+                            <div class="flex items-center gap-2 text-primary font-semibold">
+                                <span class="material-symbols-outlined">flutter_dash</span>
+                                BlueJay
+                            </div>
+                            <nav class="flex items-center gap-4 text-sm text-text-secondary">
+                                <span>Home</span>
+                                <span>Products</span>
+                                <span>Solutions</span>
+                                <span>Blog</span>
+                                <span>Contact</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex items-center justify-end gap-3 p-6 border-t-2 border-black">
+                <button onclick="closeLogoPickerModal()" class="px-5 py-2.5 border-2 border-black text-text-secondary font-medium hover:bg-gray-50 transition-colors btn-press">
+                    Cancel
+                </button>
+                <button onclick="selectLogo()" class="px-5 py-2.5 bg-primary text-white font-medium border-2 border-black shadow-manual hover:bg-primary-dark transition-colors btn-press">
+                    Select Logo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed bottom-6 right-6 bg-success text-white px-6 py-4 border-2 border-black shadow-manual flex items-center gap-3 z-50">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span id="toastMessage">Settings saved successfully!</span>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('text-primary', 'border-primary', 'bg-primary-light');
+                tab.classList.add('text-text-secondary', 'border-transparent');
+            });
+
+            // Show selected tab content
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+
+            // Add active class to selected tab
+            const activeTab = document.getElementById(`tab-${tabName}`);
+            activeTab.classList.remove('text-text-secondary', 'border-transparent');
+            activeTab.classList.add('text-primary', 'border-primary', 'bg-primary-light');
+
+            // Update mobile dropdown
+            document.getElementById('mobileTabSelect').value = tabName;
+        }
+
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        // Mark form as having unsaved changes
+        let hasUnsavedChanges = false;
+        function markUnsaved() {
+            if (!hasUnsavedChanges) {
+                hasUnsavedChanges = true;
+                document.getElementById('unsavedIndicator').classList.remove('hidden');
+            }
+        }
+
+        // Save all settings
+        function saveAllSettings() {
+            // Simulate saving
+            showToast('Settings saved successfully!');
+            hasUnsavedChanges = false;
+            document.getElementById('unsavedIndicator').classList.add('hidden');
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('hidden');
+
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Character counter for SEO fields
+        function updateCharCounter(fieldId, maxChars) {
+            const field = document.getElementById(fieldId);
+            const counter = document.getElementById(`${fieldId}Counter`);
+            const progress = document.getElementById(`${fieldId}Progress`);
+            const currentLength = field.value.length;
+            const percentage = (currentLength / maxChars) * 100;
+
+            counter.textContent = `${currentLength}/${maxChars}`;
+            progress.style.width = `${Math.min(percentage, 100)}%`;
+
+            // Update colors based on length
+            if (percentage <= 100) {
+                counter.classList.remove('text-warning', 'text-error');
+                counter.classList.add('text-success');
+                progress.classList.remove('bg-warning', 'bg-error');
+                progress.classList.add('bg-success');
+            } else if (percentage <= 115) {
+                counter.classList.remove('text-success', 'text-error');
+                counter.classList.add('text-warning');
+                progress.classList.remove('bg-success', 'bg-error');
+                progress.classList.add('bg-warning');
+            } else {
+                counter.classList.remove('text-success', 'text-warning');
+                counter.classList.add('text-error');
+                progress.classList.remove('bg-success', 'bg-warning');
+                progress.classList.add('bg-error');
+            }
+        }
+
+        // Validate social media URLs
+        function validateSocialUrl(input, platform) {
+            const url = input.value;
+            const statusEl = document.getElementById(`${platform}-status`);
+            const isValidUrl = url === '' || isValidHttpUrl(url);
+
+            if (url === '') {
+                // Empty state
+                input.classList.remove('border-success', 'border-error');
+                input.classList.add('border-black');
+                input.nextElementSibling.innerHTML = '';
+                statusEl.innerHTML = '<span class="text-text-muted">Optional</span>';
+                statusEl.className = 'text-xs text-text-muted mt-1';
+            } else if (isValidUrl) {
+                // Valid URL
+                input.classList.remove('border-black', 'border-error');
+                input.classList.add('border-success');
+                input.nextElementSibling.innerHTML = '<span class="material-symbols-outlined text-success">check_circle</span>';
+                statusEl.innerHTML = '<span class="material-symbols-outlined text-sm">check</span> Valid URL';
+                statusEl.className = 'text-xs text-success mt-1 flex items-center gap-1';
+            } else {
+                // Invalid URL
+                input.classList.remove('border-black', 'border-success');
+                input.classList.add('border-error');
+                input.nextElementSibling.innerHTML = '<span class="material-symbols-outlined text-error">error</span>';
+                statusEl.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Enter a valid URL (include https://)';
+                statusEl.className = 'text-xs text-error mt-1 flex items-center gap-1';
+            }
+
+            markUnsaved();
+        }
+
+        function isValidHttpUrl(string) {
+            try {
+                const url = new URL(string);
+                return url.protocol === 'http:' || url.protocol === 'https:';
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // Logo Picker Modal
+        function openLogoPickerModal(type) {
+            document.getElementById('logoPickerModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLogoPickerModal() {
+            document.getElementById('logoPickerModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function selectLogo() {
+            closeLogoPickerModal();
+            markUnsaved();
+            showToast('Logo selected successfully!');
+        }
+
+        // Initialize character counters on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize meta title counter
+            const metaTitle = document.getElementById('metaTitle');
+            if (metaTitle) {
+                updateCharCounter('metaTitle', 60);
+            }
+
+            // Initialize meta description counter
+            const metaDescription = document.getElementById('metaDescription');
+            if (metaDescription) {
+                updateCharCounter('metaDescription', 160);
+            }
+        });
+
+        // Warn before leaving with unsaved changes
+        window.addEventListener('beforeunload', function(e) {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>

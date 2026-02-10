@@ -1,0 +1,66 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold uppercase tracking-tight">Certifications</h1>
+            <a href="/admin/about/certifications/new"
+               class="bg-blue-600 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+               style="box-shadow: 3px 3px 0px #000;">
+                + New Certification
+            </a>
+        </div>
+
+        {{if .Items}}
+        <!-- Certification Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl">
+            {{range .Items}}
+            <div class="bg-white border-2 border-black p-5" style="box-shadow: 4px 4px 0px #000;">
+                <!-- Icon/Logo -->
+                <div class="w-14 h-14 bg-yellow-50 border-2 border-black flex items-center justify-center mb-3">
+                    {{if .Icon.Valid}}
+                    <span class="material-symbols-outlined text-2xl text-yellow-700">{{.Icon.String}}</span>
+                    {{else}}
+                    <span class="material-symbols-outlined text-2xl text-yellow-700">verified</span>
+                    {{end}}
+                </div>
+
+                <!-- Abbreviation -->
+                <div class="text-xs font-bold uppercase text-gray-500 mb-1">{{.Abbreviation}}</div>
+
+                <!-- Name -->
+                <h3 class="font-bold text-sm mb-2">{{.Name}}</h3>
+
+                <!-- Description -->
+                {{if .Description.Valid}}
+                <p class="text-xs text-gray-600 mb-3 line-clamp-2">{{.Description.String}}</p>
+                {{end}}
+
+                <!-- Actions -->
+                <div class="flex items-center gap-3 pt-3 border-t-2 border-black">
+                    <a href="/admin/about/certifications/{{.ID}}/edit"
+                       class="text-xs font-bold uppercase text-blue-600 hover:text-blue-800 border-b-2 border-blue-600">Edit</a>
+                    <button hx-delete="/admin/about/certifications/{{.ID}}"
+                            hx-confirm="Delete this certification?"
+                            hx-target="closest div[style]"
+                            hx-swap="outerHTML swap:0.3s"
+                            class="text-xs font-bold uppercase text-red-600 hover:text-red-800 border-b-2 border-red-600">Delete</button>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="bg-white border-2 border-black p-8 text-center max-w-2xl" style="box-shadow: 4px 4px 0px #000;">
+            <span class="material-symbols-outlined text-4xl text-gray-400 mb-2">verified</span>
+            <p class="text-sm text-gray-500 mb-4">No certifications found.</p>
+            <a href="/admin/about/certifications/new"
+               class="inline-block bg-blue-600 text-white px-6 py-2 text-xs font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+               style="box-shadow: 3px 3px 0px #000;">
+                Create First Certification
+            </a>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

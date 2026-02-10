@@ -1,0 +1,248 @@
+{{define "content"}}
+{{template "header" .}}
+
+<!-- Breadcrumb -->
+<nav class="bg-white manual-border-b">
+  <div class="container mx-auto px-4 py-3">
+    <ol class="flex items-center space-x-2 text-sm font-mono uppercase">
+      <li><a href="/" class="text-gray-600 hover:text-black">Home</a></li>
+      <li class="text-gray-400">/</li>
+      <li><a href="/case-studies" class="text-gray-600 hover:text-black">Case Studies</a></li>
+      <li class="text-gray-400">/</li>
+      <li class="text-black font-bold truncate">{{.CaseStudy.Title}}</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="relative bg-black text-white manual-border-b-thick">
+  {{if .CaseStudy.HeroImageUrl.Valid}}
+  <div class="absolute inset-0">
+    <img src="{{.CaseStudy.HeroImageUrl.String}}" alt="{{.CaseStudy.Title}}" class="w-full h-full object-cover opacity-40">
+    <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+  </div>
+  {{end}}
+
+  <div class="relative container mx-auto px-4 py-20 md:py-32">
+    <div class="max-w-4xl">
+      <!-- Industry Tag -->
+      {{if .CaseStudy.IndustryName}}
+      <div class="mb-6">
+        <span class="inline-block tag-{{.CaseStudy.IndustrySlug}} px-4 py-2 manual-border manual-shadow text-sm font-mono uppercase font-bold">
+          {{.CaseStudy.IndustryName}}
+        </span>
+      </div>
+      {{end}}
+
+      <!-- Title -->
+      <h1 class="text-5xl md:text-7xl font-bold font-mono uppercase mb-6">
+        {{.CaseStudy.Title}}
+      </h1>
+
+      <!-- Client Name -->
+      {{if .CaseStudy.ClientName}}
+      <p class="text-xl font-mono uppercase mb-6 opacity-90">
+        Client: <span class="font-bold">{{.CaseStudy.ClientName}}</span>
+      </p>
+      {{end}}
+
+      <!-- Summary -->
+      <p class="text-2xl font-mono leading-relaxed opacity-90">
+        {{.CaseStudy.Summary}}
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Challenge Section -->
+<section class="py-16 bg-white manual-border-b">
+  <div class="container mx-auto px-4">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- Section Header -->
+      <div class="flex items-start gap-4 mb-8">
+        <div class="bg-orange-500 text-white p-4 manual-border manual-shadow flex-shrink-0">
+          <span class="material-symbols-outlined text-4xl">warning</span>
+        </div>
+        <div>
+          <h2 class="text-4xl md:text-5xl font-bold font-mono uppercase mb-2">
+            {{if .CaseStudy.ChallengeTitle}}{{.CaseStudy.ChallengeTitle}}{{else}}The Challenge{{end}}
+          </h2>
+          <div class="h-2 w-24 bg-orange-500 manual-border"></div>
+        </div>
+      </div>
+
+      <!-- Challenge Content -->
+      <div class="bg-orange-50 manual-border manual-shadow-lg p-8">
+        {{if .CaseStudy.ChallengeContent}}
+        <div class="prose prose-lg max-w-none font-mono mb-6">
+          {{.CaseStudy.ChallengeContent | safeHTML}}
+        </div>
+        {{end}}
+
+        <!-- Challenge Bullets -->
+        {{if .ChallengeBullets}}
+        <ul class="space-y-3 mt-6">
+          {{range .ChallengeBullets}}
+          <li class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-orange-500 flex-shrink-0 mt-1">cancel</span>
+            <span class="font-mono">{{.}}</span>
+          </li>
+          {{end}}
+        </ul>
+        {{end}}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Solution Section -->
+<section class="py-16 bg-green-50 manual-border-b">
+  <div class="container mx-auto px-4">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- Section Header -->
+      <div class="flex items-start gap-4 mb-8">
+        <div class="bg-green-500 text-white p-4 manual-border manual-shadow flex-shrink-0">
+          <span class="material-symbols-outlined text-4xl">lightbulb</span>
+        </div>
+        <div>
+          <h2 class="text-4xl md:text-5xl font-bold font-mono uppercase mb-2">
+            {{if .CaseStudy.SolutionTitle}}{{.CaseStudy.SolutionTitle}}{{else}}The Solution{{end}}
+          </h2>
+          <div class="h-2 w-24 bg-green-500 manual-border"></div>
+        </div>
+      </div>
+
+      <!-- Solution Content -->
+      <div class="bg-white manual-border manual-shadow-lg p-8 mb-12">
+        {{if .CaseStudy.SolutionContent}}
+        <div class="prose prose-lg max-w-none font-mono">
+          {{.CaseStudy.SolutionContent | safeHTML}}
+        </div>
+        {{end}}
+      </div>
+
+      <!-- Products Deployed -->
+      {{if .Products}}
+      <div class="mb-8">
+        <h3 class="text-2xl font-bold font-mono uppercase mb-6 flex items-center gap-3">
+          <span class="material-symbols-outlined text-green-500">inventory_2</span>
+          Products Deployed
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {{range .Products}}
+          <a href="/products/{{.Slug}}" class="group bg-white manual-border manual-shadow hover:manual-shadow-lg transition-all hover:-translate-y-1">
+            {{if .PrimaryImage.Valid}}
+            <div class="aspect-video overflow-hidden manual-border-b">
+              <img src="{{.PrimaryImage.String}}" alt="{{.Name}}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+            </div>
+            {{else}}
+            <div class="aspect-video bg-gray-200 manual-border-b flex items-center justify-center">
+              <span class="material-symbols-outlined text-4xl text-gray-400">shopping_bag</span>
+            </div>
+            {{end}}
+
+            <div class="p-4">
+              {{if .CategoryName}}
+              <p class="text-xs font-mono uppercase text-gray-500 mb-2">{{.CategoryName}}</p>
+              {{end}}
+
+              <h4 class="font-bold font-mono uppercase mb-2 group-hover:text-green-500 transition-colors">
+                {{.Name}}
+              </h4>
+
+              {{if .Tagline.Valid}}
+              <p class="text-sm font-mono text-gray-600">{{.Tagline.String}}</p>
+              {{end}}
+            </div>
+          </a>
+          {{end}}
+        </div>
+      </div>
+      {{end}}
+
+    </div>
+  </div>
+</section>
+
+<!-- Outcome Section -->
+<section class="py-16 bg-white manual-border-b">
+  <div class="container mx-auto px-4">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- Section Header -->
+      <div class="flex items-start gap-4 mb-8">
+        <div class="bg-[#0066CC] text-white p-4 manual-border manual-shadow flex-shrink-0">
+          <span class="material-symbols-outlined text-4xl">emoji_events</span>
+        </div>
+        <div>
+          <h2 class="text-4xl md:text-5xl font-bold font-mono uppercase mb-2">
+            {{if .CaseStudy.OutcomeTitle}}{{.CaseStudy.OutcomeTitle}}{{else}}The Outcome{{end}}
+          </h2>
+          <div class="h-2 w-24 bg-[#0066CC] manual-border"></div>
+        </div>
+      </div>
+
+      <!-- Outcome Content -->
+      <div class="bg-blue-50 manual-border manual-shadow-lg p-8 mb-12">
+        {{if .CaseStudy.OutcomeContent}}
+        <div class="prose prose-lg max-w-none font-mono">
+          {{.CaseStudy.OutcomeContent | safeHTML}}
+        </div>
+        {{end}}
+      </div>
+
+      <!-- Key Metrics -->
+      {{if .Metrics}}
+      <div>
+        <h3 class="text-2xl font-bold font-mono uppercase mb-6 flex items-center gap-3">
+          <span class="material-symbols-outlined text-[#0066CC]">analytics</span>
+          Key Metrics
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {{range .Metrics}}
+          <div class="bg-white manual-border manual-shadow-lg p-6 text-center hover:-translate-y-1 transition-all">
+            <div class="text-4xl md:text-5xl font-bold font-mono text-[#0066CC] mb-2">
+              {{.MetricValue}}
+            </div>
+            <div class="text-sm font-mono uppercase text-gray-600">
+              {{.MetricLabel}}
+            </div>
+          </div>
+          {{end}}
+        </div>
+      </div>
+      {{end}}
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-[#0066CC] py-16 manual-border-t-thick">
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto text-center text-white">
+      <h2 class="text-4xl md:text-5xl font-bold font-mono uppercase mb-6">
+        Want Similar Results For Your Business?
+      </h2>
+      <p class="text-xl font-mono mb-8 opacity-90">
+        LET'S DISCUSS HOW WE CAN HELP YOU OVERCOME YOUR CHALLENGES AND ACHIEVE YOUR GOALS.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/contact" class="inline-block bg-white text-[#0066CC] px-8 py-4 manual-border manual-shadow-lg hover:manual-shadow font-mono uppercase text-lg font-bold hover:-translate-y-1 transition-all btn-press">
+          Get In Touch
+        </a>
+        <a href="/case-studies" class="inline-block bg-transparent text-white px-8 py-4 manual-border border-white manual-shadow-lg hover:manual-shadow hover:bg-white hover:text-[#0066CC] font-mono uppercase text-lg font-bold hover:-translate-y-1 transition-all btn-press">
+          More Case Studies
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{template "footer" .}}
+{{end}}

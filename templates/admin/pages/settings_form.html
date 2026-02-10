@@ -1,0 +1,315 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-3xl">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold uppercase tracking-tight" style="font-family: 'JetBrains Mono', monospace;">Global Settings</h1>
+                <p class="text-sm text-gray-600 mt-1" style="font-family: 'JetBrains Mono', monospace;">Site-wide configuration that applies to your entire website.</p>
+            </div>
+
+            {{if .Saved}}
+            <div class="bg-green-100 border-2 border-black text-green-900 px-4 py-3 mb-6 font-bold uppercase text-sm" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                ✓ Settings saved successfully.
+            </div>
+            {{end}}
+
+            <!-- Unsaved Changes Banner (hidden by default, shown via JS) -->
+            <div id="unsaved-banner" class="hidden bg-yellow-100 border-2 border-black px-4 py-3 mb-6 items-center justify-between" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-yellow-700" style="font-size: 20px;">warning</span>
+                    <span class="text-sm font-bold text-yellow-800 uppercase">You have unsaved changes</span>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="discardChanges()" class="px-3 py-1 border-2 border-black bg-white text-black text-xs font-bold uppercase hover:bg-gray-100" style="font-family: 'JetBrains Mono', monospace;">Discard</button>
+                    <button type="button" onclick="document.getElementById('settings-form').submit()" class="px-3 py-1 border-2 border-black bg-black text-white text-xs font-bold uppercase hover:bg-gray-800" style="font-family: 'JetBrains Mono', monospace;">Save</button>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="border-b-2 border-black mb-6">
+                <nav class="flex gap-0 -mb-[2px]" id="tab-nav" style="font-family: 'JetBrains Mono', monospace;">
+                    <button type="button" onclick="switchTab('general')" data-tab="general"
+                        class="tab-btn px-5 py-3 text-sm font-bold uppercase border-2 border-black border-b-0 bg-white hover:bg-gray-50 transition-colors {{if eq .ActiveTab "general"}}border-b-[3px] border-b-blue-600 text-blue-600 bg-blue-50{{else}}text-gray-500 border-b-2 border-b-black{{end}}">
+                        General
+                    </button>
+                    <button type="button" onclick="switchTab('contact')" data-tab="contact"
+                        class="tab-btn px-5 py-3 text-sm font-bold uppercase border-2 border-black border-b-0 border-l-0 bg-white hover:bg-gray-50 transition-colors {{if eq .ActiveTab "contact"}}border-b-[3px] border-b-blue-600 text-blue-600 bg-blue-50{{else}}text-gray-500 border-b-2 border-b-black{{end}}">
+                        Contact Info
+                    </button>
+                    <button type="button" onclick="switchTab('social')" data-tab="social"
+                        class="tab-btn px-5 py-3 text-sm font-bold uppercase border-2 border-black border-b-0 border-l-0 bg-white hover:bg-gray-50 transition-colors {{if eq .ActiveTab "social"}}border-b-[3px] border-b-blue-600 text-blue-600 bg-blue-50{{else}}text-gray-500 border-b-2 border-b-black{{end}}">
+                        Social Media
+                    </button>
+                    <button type="button" onclick="switchTab('seo')" data-tab="seo"
+                        class="tab-btn px-5 py-3 text-sm font-bold uppercase border-2 border-black border-b-0 border-l-0 bg-white hover:bg-gray-50 transition-colors {{if eq .ActiveTab "seo"}}border-b-[3px] border-b-blue-600 text-blue-600 bg-blue-50{{else}}text-gray-500 border-b-2 border-b-black{{end}}">
+                        SEO Defaults
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Form -->
+            <form id="settings-form" method="POST" action="/admin/settings" class="space-y-6" onchange="showUnsavedBanner()">
+                <input type="hidden" name="active_tab" id="active-tab-input" value="{{.ActiveTab}}">
+
+                <!-- Tab 1: General -->
+                <div id="tab-general" class="tab-content {{if ne .ActiveTab "general"}}hidden{{end}}">
+                    <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                        <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">General</h2>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Site Name</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Your company name. Appears in browser tab and site header.">info</span>
+                            </div>
+                            <input type="text" name="site_name" value="{{.Settings.SiteName}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Site Tagline</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="A short phrase describing your business. Used in SEO and header.">info</span>
+                            </div>
+                            <input type="text" name="site_tagline" value="{{.Settings.SiteTagline}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+
+                        <!-- Branding Section -->
+                        <div class="border-t-2 border-black pt-5 mt-5">
+                            <h3 class="text-sm font-bold uppercase mb-4" style="font-family: 'JetBrains Mono', monospace;">Branding</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="border-2 border-black p-4" style="box-shadow: 2px 2px 0px #000;">
+                                    <label class="block text-xs font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Logo (Light BG)</label>
+                                    <div class="w-full h-20 border-2 border-dashed border-gray-400 flex items-center justify-center bg-gray-50 mb-2">
+                                        <span class="material-symbols-outlined text-gray-400" style="font-size: 32px;">image</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">Recommended: 240×60px</p>
+                                </div>
+                                <div class="border-2 border-black p-4" style="box-shadow: 2px 2px 0px #000;">
+                                    <label class="block text-xs font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Logo (Dark BG)</label>
+                                    <div class="w-full h-20 border-2 border-dashed border-gray-400 flex items-center justify-center bg-gray-800 mb-2">
+                                        <span class="material-symbols-outlined text-gray-500" style="font-size: 32px;">image</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">For dark backgrounds</p>
+                                </div>
+                                <div class="border-2 border-black p-4" style="box-shadow: 2px 2px 0px #000;">
+                                    <label class="block text-xs font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Favicon</label>
+                                    <div class="w-16 h-16 border-2 border-dashed border-gray-400 flex items-center justify-center bg-gray-50 mb-2 mx-auto">
+                                        <span class="material-symbols-outlined text-gray-400" style="font-size: 24px;">star</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 text-center" style="font-family: 'JetBrains Mono', monospace;">Recommended: 32×32px</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Contact Info -->
+                <div id="tab-contact" class="tab-content {{if ne .ActiveTab "contact"}}hidden{{end}}">
+                    <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                        <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Contact Information</h2>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Email</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Primary contact email displayed on the site and used for form notifications.">info</span>
+                            </div>
+                            <input type="email" name="contact_email" value="{{.Settings.ContactEmail}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Phone</label>
+                            <input type="text" name="contact_phone" value="{{.Settings.ContactPhone}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Address</label>
+                            <textarea name="address" rows="3" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">{{.Settings.Address}}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Business Hours</label>
+                            <textarea name="business_hours" rows="2" placeholder="MON-FRI: 8AM-6PM PST" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">{{.Settings.BusinessHours}}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Social Media -->
+                <div id="tab-social" class="tab-content {{if ne .ActiveTab "social"}}hidden{{end}}">
+                    <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                        <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Social Media</h2>
+
+                        {{range $platform := slice "Facebook" "Twitter" "LinkedIn" "Instagram" "YouTube"}}
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">{{$platform}} URL</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Full URL to your {{$platform}} profile page.">info</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                {{if eq $platform "Facebook"}}
+                                <input type="url" name="social_facebook" value="{{$.Settings.SocialFacebook}}" placeholder="https://facebook.com/yourpage" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
+                                {{else if eq $platform "Twitter"}}
+                                <input type="url" name="social_twitter" value="{{$.Settings.SocialTwitter}}" placeholder="https://x.com/yourhandle" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
+                                {{else if eq $platform "LinkedIn"}}
+                                <input type="url" name="social_linkedin" value="{{$.Settings.SocialLinkedin}}" placeholder="https://linkedin.com/company/yourco" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
+                                {{else if eq $platform "Instagram"}}
+                                <input type="url" name="social_instagram" value="{{$.Settings.SocialInstagram}}" placeholder="https://instagram.com/yourhandle" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
+                                {{else if eq $platform "YouTube"}}
+                                <input type="url" name="social_youtube" value="{{$.Settings.SocialYoutube}}" placeholder="https://youtube.com/@yourchannel" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
+                                {{end}}
+                                <span class="url-status text-lg" style="min-width: 24px;"></span>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+
+                <!-- Tab 4: SEO Defaults -->
+                <div id="tab-seo" class="tab-content {{if ne .ActiveTab "seo"}}hidden{{end}}">
+                    <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                        <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">SEO Defaults</h2>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Default Meta Title</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Fallback title for pages that don't have their own. Appears in search results.">info</span>
+                            </div>
+                            <input type="text" name="meta_keywords" value="{{.Settings.MetaKeywords}}" maxlength="100" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="updateCounter(this, 70)">
+                            <div class="flex justify-end mt-1">
+                                <span class="char-counter text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;" data-limit="70">0 / 70</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Default Meta Description</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Fallback description for pages without their own. Appears in Google snippets.">info</span>
+                            </div>
+                            <textarea name="meta_description" rows="3" maxlength="250" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="updateCounter(this, 160)">{{.Settings.MetaDescription}}</textarea>
+                            <div class="flex justify-end mt-1">
+                                <span class="char-counter text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;" data-limit="160">0 / 160</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Google Analytics ID</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Your GA tracking ID (e.g., G-XXXXXXXXXX). Leave blank to disable tracking.">info</span>
+                            </div>
+                            <input type="text" name="google_analytics_id" value="{{.Settings.GoogleAnalyticsID}}" placeholder="G-XXXXXXXXXX" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+
+                        <div class="border-t-2 border-black pt-5 mt-5">
+                            <label class="block text-sm font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Default OG Image</label>
+                            <div class="border-2 border-dashed border-gray-400 p-6 flex flex-col items-center justify-center bg-gray-50">
+                                <span class="material-symbols-outlined text-gray-400 mb-2" style="font-size: 40px;">image</span>
+                                <p class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">Recommended: 1200×630px</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex justify-end gap-3 pt-4 pb-8">
+                    <button type="submit" class="px-6 py-3 border-2 border-black bg-black text-white text-sm font-bold uppercase hover:translate-x-[2px] hover:translate-y-[2px] transition-transform" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;" onmouseenter="this.style.boxShadow='2px 2px 0px #000'" onmouseleave="this.style.boxShadow='4px 4px 0px #000'">
+                        Save Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Tab switching
+function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById('tab-' + tab).classList.remove('hidden');
+    document.getElementById('active-tab-input').value = tab;
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        const isActive = btn.dataset.tab === tab;
+        btn.classList.toggle('border-b-[3px]', isActive);
+        btn.classList.toggle('border-b-blue-600', isActive);
+        btn.classList.toggle('text-blue-600', isActive);
+        btn.classList.toggle('bg-blue-50', isActive);
+        btn.classList.toggle('text-gray-500', !isActive);
+        btn.classList.toggle('border-b-2', !isActive);
+        btn.classList.toggle('border-b-black', !isActive);
+    });
+}
+
+// Unsaved changes detection
+let formDirty = false;
+let originalFormData = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('settings-form');
+    originalFormData = new FormData(form);
+
+    // Initialize char counters
+    document.querySelectorAll('[oninput*="updateCounter"]').forEach(el => {
+        const limit = parseInt(el.getAttribute('oninput').match(/\d+/)?.[0] || 70);
+        const counter = el.parentElement.querySelector('.char-counter') || el.closest('div').querySelector('.char-counter');
+        if (counter) updateCounterDisplay(el, limit, counter);
+    });
+
+    // Initialize URL validation icons
+    document.querySelectorAll('[oninput*="validateUrl"]').forEach(el => {
+        validateUrl(el);
+    });
+});
+
+function showUnsavedBanner() {
+    if (!formDirty) {
+        formDirty = true;
+        const banner = document.getElementById('unsaved-banner');
+        banner.classList.remove('hidden');
+        banner.classList.add('flex');
+    }
+}
+
+function discardChanges() {
+    window.location.reload();
+}
+
+// Character counter
+function updateCounter(input, limit) {
+    const counter = input.closest('div').parentElement.querySelector('.char-counter') || input.parentElement.querySelector('.char-counter');
+    if (counter) updateCounterDisplay(input, limit, counter);
+    showUnsavedBanner();
+}
+
+function updateCounterDisplay(input, limit, counter) {
+    const len = input.value.length;
+    counter.textContent = len + ' / ' + limit;
+    if (len > limit) {
+        counter.className = 'char-counter text-xs font-bold text-red-600';
+    } else if (len > limit * 0.85) {
+        counter.className = 'char-counter text-xs font-bold text-yellow-600';
+    } else {
+        counter.className = 'char-counter text-xs font-bold text-green-600';
+    }
+}
+
+// URL validation
+function validateUrl(input) {
+    const status = input.parentElement.querySelector('.url-status');
+    if (!status) return;
+    const val = input.value.trim();
+    if (!val) {
+        status.textContent = '';
+    } else {
+        try {
+            new URL(val);
+            status.textContent = '✓';
+            status.className = 'url-status text-lg text-green-600 font-bold';
+        } catch {
+            status.textContent = '✗';
+            status.className = 'url-status text-lg text-red-600 font-bold';
+        }
+    }
+    showUnsavedBanner();
+}
+</script>
+{{end}}

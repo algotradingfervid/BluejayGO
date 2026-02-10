@@ -1,0 +1,98 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="mb-6">
+            <a href="/admin/dashboard" class="text-sm font-bold uppercase text-blue-600 hover:text-blue-800 border-b-2 border-blue-600">&larr; Back to Dashboard</a>
+            <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+        </div>
+
+        <form method="POST" action="/admin/about/mvv" class="max-w-4xl space-y-4">
+
+            <!-- Section: Statements -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <div class="px-5 py-3 bg-black text-white font-bold uppercase text-sm">
+                    <span>Mission, Vision &amp; Values</span>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Mission Statement *
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Your company's mission - what you do and why. Keep to 1-2 sentences.">ⓘ</span>
+                        </label>
+                        <textarea name="mission" rows="3" required
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Mission}}{{end}}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Vision Statement *
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Where your company is headed. An aspirational future state.">ⓘ</span>
+                        </label>
+                        <textarea name="vision" rows="3" required
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Vision}}{{end}}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Values Introduction
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Brief intro text before the list of core values.">ⓘ</span>
+                        </label>
+                        <textarea name="values_summary" rows="3"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.ValuesSummary.String}}{{end}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Icons -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <div class="px-5 py-3 bg-black text-white font-bold uppercase text-sm">
+                    <span>Section Icons</span>
+                </div>
+                <div class="p-5">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Mission Icon
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="Material Symbols icon name for the mission section.">ⓘ</span>
+                            </label>
+                            <input type="text" name="mission_icon" value="{{if .Item}}{{.Item.MissionIcon}}{{else}}flag{{end}}"
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Vision Icon
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="Material Symbols icon name for the vision section.">ⓘ</span>
+                            </label>
+                            <input type="text" name="vision_icon" value="{{if .Item}}{{.Item.VisionIcon}}{{else}}visibility{{end}}"
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Values Icon
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="Material Symbols icon name for the values section.">ⓘ</span>
+                            </label>
+                            <input type="text" name="values_icon" value="{{if .Item}}{{.Item.ValuesIcon}}{{else}}diamond{{end}}"
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-2">
+                <button type="submit"
+                        class="bg-blue-600 text-white px-8 py-3 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 4px 4px 0px #000;">
+                    Save Mission, Vision &amp; Values
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

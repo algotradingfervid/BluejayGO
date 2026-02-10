@@ -1,0 +1,116 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="mb-6">
+            <a href="/admin/dashboard" class="text-sm font-bold uppercase text-blue-600 hover:text-blue-800 border-b-2 border-blue-600">&larr; Back to Dashboard</a>
+            <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+        </div>
+
+        <form method="POST" action="/admin/about/overview" enctype="multipart/form-data" class="max-w-4xl space-y-4">
+
+            <!-- Section: Page Details -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <div class="px-5 py-3 bg-black text-white font-bold uppercase text-sm">
+                    <span>Page Details</span>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Headline *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="The main heading for the About page.">ⓘ</span>
+                            </label>
+                            <input type="text" name="headline" value="{{if .Item}}{{.Item.Headline}}{{end}}" required
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Tagline *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="Subheading text below the main title.">ⓘ</span>
+                            </label>
+                            <input type="text" name="tagline" value="{{if .Item}}{{.Item.Tagline}}{{end}}" required
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Content -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <div class="px-5 py-3 bg-black text-white font-bold uppercase text-sm">
+                    <span>Content</span>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Main Description *
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Full description of your company. Shown as the main About page content.">ⓘ</span>
+                        </label>
+                        <textarea name="description_main" rows="4" required
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.DescriptionMain}}{{end}}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Secondary Description
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Additional supporting text for the About page.">ⓘ</span>
+                        </label>
+                        <textarea name="description_secondary" rows="3"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.DescriptionSecondary.String}}{{end}}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Tertiary Description
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Third block of descriptive text, shown below secondary.">ⓘ</span>
+                        </label>
+                        <textarea name="description_tertiary" rows="3"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.DescriptionTertiary.String}}{{end}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Media -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;">
+                <div class="px-5 py-3 bg-black text-white font-bold uppercase text-sm">
+                    <span>Media</span>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Hero Image URL
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Banner image for the About page hero section.">ⓘ</span>
+                        </label>
+                        <input type="text" name="hero_image_url" value="{{if .Item}}{{.Item.HeroImageUrl.String}}{{end}}"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Company Image URL
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Company photo or team image for the About page.">ⓘ</span>
+                        </label>
+                        <input type="text" name="company_image_url" value="{{if .Item}}{{.Item.CompanyImageUrl.String}}{{end}}"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-2">
+                <button type="submit"
+                        class="bg-blue-600 text-white px-8 py-3 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 4px 4px 0px #000;">
+                    Save About Overview
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,26 @@
+{{define "base"}}
+{{if .Tags}}
+{{range .Tags}}
+<button type="button"
+    class="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 flex items-center justify-between"
+    onclick="addTag({{.ID}}, '{{.Name}}'); document.getElementById('tag-suggestions').classList.add('hidden'); document.getElementById('tag-search').value='';">
+    <span>{{.Name}}</span>
+    <span class="text-xs text-gray-400">{{.Slug}}</span>
+</button>
+{{end}}
+{{end}}
+{{if .Query}}
+<button type="button"
+    class="w-full text-left px-3 py-2 text-sm hover:bg-green-50 text-green-700 border-t border-gray-100 font-medium"
+    hx-post="/admin/blog/tags/quick-create"
+    hx-vals='{"name": "{{.Query}}"}'
+    hx-target="#selected-tags"
+    hx-swap="beforeend"
+    hx-on::after-request="document.getElementById('tag-suggestions').classList.add('hidden'); document.getElementById('tag-search').value='';">
+    + Create tag "{{.Query}}"
+</button>
+{{end}}
+{{if not .Tags}}{{if not .Query}}
+<div class="px-3 py-2 text-sm text-gray-400">Type to search...</div>
+{{end}}{{end}}
+{{end}}

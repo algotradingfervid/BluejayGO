@@ -1,0 +1,115 @@
+{
+  "current_phase": "11",
+  "phases": {
+    "01": {
+      "status": "completed",
+      "started_at": "2026-02-10T07:31:30Z",
+      "completed_at": "2026-02-10T07:33:40Z"
+    },
+    "02": {
+      "status": "completed",
+      "started_at": "2026-02-10T07:33:42Z",
+      "completed_at": "2026-02-10T07:36:50Z"
+    },
+    "03": {
+      "status": "completed",
+      "started_at": "2026-02-10T07:36:52Z",
+      "completed_at": "2026-02-10T07:40:48Z"
+    },
+    "04": {
+      "status": "completed",
+      "started_at": "2026-02-10T07:44:53Z",
+      "completed_at": "2026-02-10T07:45:39Z"
+    },
+    "05": {
+      "status": "completed",
+      "started_at": "2026-02-10T07:45:41Z",
+      "completed_at": "2026-02-10T07:52:02Z"
+    },
+    "06": {
+      "status": "completed",
+      "started_at": "2026-02-10T07:52:04Z",
+      "completed_at": "2026-02-10T08:03:46Z"
+    },
+    "07": {
+      "status": "completed",
+      "started_at": "2026-02-10T08:03:48Z",
+      "completed_at": "2026-02-10T08:07:46Z"
+    },
+    "08": {
+      "status": "completed",
+      "started_at": "2026-02-10T08:07:49Z",
+      "completed_at": "2026-02-10T08:09:42Z"
+    },
+    "09": {
+      "status": "completed",
+      "started_at": "2026-02-10T08:09:44Z",
+      "completed_at": "2026-02-10T08:14:35Z"
+    },
+    "10": {
+      "status": "completed",
+      "started_at": "2026-02-10T08:14:37Z",
+      "completed_at": "2026-02-10T08:16:39Z"
+    },
+    "11": {
+      "status": "in_progress",
+      "started_at": "2026-02-10T08:16:41Z",
+      "completed_at": null
+    },
+    "12": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "13": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "14": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "15": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "16": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "17": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "18": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "19": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "20": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "21": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    },
+    "22": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null
+    }
+  }
+}

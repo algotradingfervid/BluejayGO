@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certifications - Bluejay CMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="../../components/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../components/tailwind.config.js"></script>
+</head>
+<body class="bg-background-light">
+
+    <div class="admin-layout flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar-light fixed lg:sticky top-0 left-0 h-screen z-50 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <span class="sidebar-logo-text">BLUEJAY</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Content</div>
+                    <a href="../dashboard/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="../homepage/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">home</span>
+                        Homepage
+                    </a>
+                    <a href="../about/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">info</span>
+                        About Us
+                    </a>
+                    <a href="../products/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">inventory_2</span>
+                        Products
+                    </a>
+                    <a href="../solutions/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">lightbulb</span>
+                        Solutions
+                    </a>
+                    <a href="../blog/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">article</span>
+                        Blog
+                    </a>
+                    <a href="../case-studies/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">cases</span>
+                        Case Studies
+                    </a>
+                    <a href="../whitepapers/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu_book</span>
+                        Whitepapers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Resources</div>
+                    <a href="../partners/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">handshake</span>
+                        Partners
+                    </a>
+                    <a href="../testimonials/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">format_quote</span>
+                        Testimonials
+                    </a>
+                    <a href="../certifications/list.html" class="sidebar-item active">
+                        <span class="material-symbols-outlined sidebar-item-icon">verified</span>
+                        Certifications
+                    </a>
+                </div>                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Global Elements</div>
+                    <a href="../header/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">web_asset</span>
+                        Header
+                    </a>
+                    <a href="../footer/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">call_to_action</span>
+                        Footer
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="../media/library.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">perm_media</span>
+                        Media
+                    </a>
+                    <a href="../forms/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">mail</span>
+                        Forms
+                        <span class="sidebar-item-badge">3</span>
+                    </a>
+                    <a href="../navigation/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">menu</span>
+                        Navigation
+                    </a>
+                    <a href="../users/list.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">group</span>
+                        Users
+                    </a>
+                    <a href="../settings/index.html" class="sidebar-item">
+                        <span class="material-symbols-outlined sidebar-item-icon">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User Footer -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">JS</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">John Smith</div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button (Mobile) -->
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 p-2 lg:hidden manual-border bg-white hover:bg-[var(--color-background-light)]">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main bg-grid-white">
+            <!-- Top Navigation Bar -->
+            <header class="h-16 bg-white manual-border-thick border-t-0 border-l-0 border-r-0 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
+                <!-- Left side - Hamburger (mobile) -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 manual-border hover:bg-[var(--color-background-light)] lg:hidden">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="font-display font-extrabold uppercase lg:hidden">BLUEJAY</span>
+                </div>
+
+                <!-- Right side - Actions -->
+                <div class="flex items-center gap-2">
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                    <button class="p-2 manual-border bg-white hover:bg-[var(--color-primary)] hover:text-white relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[var(--color-warning)] text-black text-[10px] font-bold flex items-center justify-center manual-border">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="admin-content">
+
+                <!-- Warning Banner for Expiring Certifications -->
+                <div class="manual-border bg-warning-light p-4 mb-6 flex items-center gap-3">
+                    <span class="material-symbols-outlined text-warning">warning</span>
+                    <div class="flex-1">
+                        <p class="font-mono text-xs font-bold uppercase text-warning-orange">2 certifications are expiring within 30 days</p>
+                        <p class="font-mono text-xs text-text-secondary mt-1">Review and renew to maintain compliance.</p>
+                    </div>
+                    <button class="p-1 hover:bg-warning/20">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="content-card mb-6">
+                    <div class="content-card-body flex items-center justify-between flex-wrap gap-4">
+                        <div class="flex items-center gap-4">
+                            <!-- Search -->
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">search</span>
+                                <input type="text" class="form-input pl-10 w-72" placeholder="SEARCH CERTIFICATIONS...">
+                            </div>
+
+                            <!-- Status Filter -->
+                            <select class="form-input w-40">
+                                <option value="">ALL STATUS</option>
+                                <option value="active">ACTIVE</option>
+                                <option value="expiring">EXPIRING SOON</option>
+                                <option value="expired">EXPIRED</option>
+                            </select>
+                        </div>
+
+                        <a href="edit.html" class="btn btn-primary manual-border manual-shadow btn-press inline-flex items-center gap-2 px-5 py-3 bg-primary text-white font-mono text-xs font-bold uppercase">
+                            <span class="material-symbols-outlined">add</span>
+                            Add Certification
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="content-card overflow-hidden">
+                    <table class="data-table-brutalist">
+                        <thead>
+                            <tr>
+                                <th class="w-12">
+                                    <input type="checkbox" class="custom-checkbox" id="select-all">
+                                </th>
+                                <th class="w-16">Logo</th>
+                                <th>Certification Name</th>
+                                <th>Issuing Authority</th>
+                                <th>Certificate No.</th>
+                                <th>Issue Date</th>
+                                <th>Expiry Date</th>
+                                <th>Status</th>
+                                <th class="w-20">Active</th>
+                                <th class="w-24">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Row 1 - Valid Certification -->
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="custom-checkbox">
+                                </td>
+                                <td>
+                                    <div class="w-10 h-10 manual-border bg-success flex items-center justify-center">
+                                        <span class="font-mono text-xs font-bold text-white">ISO</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="font-display font-bold text-text-primary">ISO 9001:2015</div>
+                                    <div class="font-mono text-xs text-text-secondary">Quality Management System</div>
+                                </td>
+                                <td class="font-mono text-xs">Bureau Veritas</td>
+                                <td class="font-mono text-xs">QMS-2024-78542</td>
+                                <td class="font-mono text-xs">Jan 15, 2024</td>
+                                <td class="font-mono text-xs">Jan 15, 2027</td>
+                                <td>
+                                    <span class="status-badge status-badge-active">Valid</span>
+                                </td>
+                                <td>
+                                    <label class="toggle-brutalist active">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="edit.html" class="table-action-btn" title="Edit">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                        </a>
+                                        <button class="table-action-btn text-error" title="Delete">
+                                            <span class="material-symbols-outlined text-lg">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 2 - Expiring Soon -->
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="custom-checkbox">
+                                </td>
+                                <td>
+                                    <div class="w-10 h-10 manual-border bg-warning flex items-center justify-center">
+                                        <span class="font-mono text-xs font-bold text-black">ISO</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="font-display font-bold text-text-primary">ISO 14001:2015</div>
+                                    <div class="font-mono text-xs text-text-secondary">Environmental Management</div>
+                                </td>
+                                <td class="font-mono text-xs">SGS</td>
+                                <td class="font-mono text-xs">ENV-2022-34521</td>
+                                <td class="font-mono text-xs">Feb 20, 2022</td>
+                                <td class="font-mono text-xs font-bold text-warning">Feb 20, 2025</td>
+                                <td>
+                                    <span class="status-badge status-badge-warning">Expiring</span>
+                                </td>
+                                <td>
+                                    <label class="toggle-brutalist active">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="edit.html" class="table-action-btn" title="Edit">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                        </a>
+                                        <button class="table-action-btn text-error" title="Delete">
+                                            <span class="material-symbols-outlined text-lg">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 3 - Expiring Soon -->
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="custom-checkbox">
+                                </td>
+                                <td>
+                                    <div class="w-10 h-10 manual-border bg-primary flex items-center justify-center">
+                                        <span class="font-mono text-xs font-bold text-white">AWS</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="font-display font-bold text-text-primary">AWS Advanced Partner</div>
+                                    <div class="font-mono text-xs text-text-secondary">Cloud Services Partnership</div>
+                                </td>
+                                <td class="font-mono text-xs">Amazon Web Services</td>
+                                <td class="font-mono text-xs">AWS-PART-2023-9871</td>
+                                <td class="font-mono text-xs">Mar 01, 2023</td>
+                                <td class="font-mono text-xs font-bold text-warning">Feb 28, 2025</td>
+                                <td>
+                                    <span class="status-badge status-badge-warning">Expiring</span>
+                                </td>
+                                <td>
+                                    <label class="toggle-brutalist active">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="edit.html" class="table-action-btn" title="Edit">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                        </a>
+                                        <button class="table-action-btn text-error" title="Delete">
+                                            <span class="material-symbols-outlined text-lg">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 4 - Expired -->
+                            <tr class="opacity-75">
+                                <td>
+                                    <input type="checkbox" class="custom-checkbox">
+                                </td>
+                                <td>
+                                    <div class="w-10 h-10 manual-border bg-error flex items-center justify-center">
+                                        <span class="font-mono text-xs font-bold text-white">PCI</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="font-display font-bold text-text-primary">PCI DSS Level 1</div>
+                                    <div class="font-mono text-xs text-text-secondary">Payment Card Security</div>
+                                </td>
+                                <td class="font-mono text-xs">Trustwave</td>
+                                <td class="font-mono text-xs">PCI-2021-45632</td>
+                                <td class="font-mono text-xs">Dec 01, 2021</td>
+                                <td class="font-mono text-xs font-bold text-error">Dec 01, 2024</td>
+                                <td>
+                                    <span class="status-badge status-badge-expired">Expired</span>
+                                </td>
+                                <td>
+                                    <label class="toggle-brutalist">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="edit.html" class="table-action-btn" title="Edit">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                        </a>
+                                        <button class="table-action-btn text-error" title="Delete">
+                                            <span class="material-symbols-outlined text-lg">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 5 - Valid (No Expiry) -->
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="custom-checkbox">
+                                </td>
+                                <td>
+                                    <div class="w-10 h-10 manual-border bg-[#6366F1] flex items-center justify-center">
+                                        <span class="font-mono text-xs font-bold text-white">SOC</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="font-display font-bold text-text-primary">SOC 2 Type II</div>
+                                    <div class="font-mono text-xs text-text-secondary">Security & Compliance</div>
+                                </td>
+                                <td class="font-mono text-xs">KPMG</td>
+                                <td class="font-mono text-xs">SOC2-2024-11234</td>
+                                <td class="font-mono text-xs">Jun 15, 2024</td>
+                                <td class="font-mono text-xs">Jun 15, 2025</td>
+                                <td>
+                                    <span class="status-badge status-badge-active">Valid</span>
+                                </td>
+                                <td>
+                                    <label class="toggle-brutalist active">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="edit.html" class="table-action-btn" title="Edit">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                        </a>
+                                        <button class="table-action-btn text-error" title="Delete">
+                                            <span class="material-symbols-outlined text-lg">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 6 - Valid (Perpetual) -->
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="custom-checkbox">
+                                </td>
+                                <td>
+                                    <div class="w-10 h-10 manual-border bg-success flex items-center justify-center">
+                                        <span class="font-mono text-xs font-bold text-white">BBB</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="font-display font-bold text-text-primary">BBB A+ Rating</div>
+                                    <div class="font-mono text-xs text-text-secondary">Better Business Bureau</div>
+                                </td>
+                                <td class="font-mono text-xs">Better Business Bureau</td>
+                                <td class="font-mono text-xs">BBB-ACC-78945</td>
+                                <td class="font-mono text-xs">May 10, 2020</td>
+                                <td class="font-mono text-xs italic text-text-muted">No Expiry</td>
+                                <td>
+                                    <span class="status-badge status-badge-active">Valid</span>
+                                </td>
+                                <td>
+                                    <label class="toggle-brutalist active">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="edit.html" class="table-action-btn" title="Edit">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                        </a>
+                                        <button class="table-action-btn text-error" title="Delete">
+                                            <span class="material-symbols-outlined text-lg">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 border-t-2 border-black flex items-center justify-between">
+                        <div class="font-mono text-xs text-text-secondary">
+                            Showing <span class="font-bold">1-6</span> of <span class="font-bold">12</span> certifications
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="w-9 h-9 manual-border bg-white flex items-center justify-center btn-press disabled:opacity-50" disabled>
+                                <span class="material-symbols-outlined text-lg">chevron_left</span>
+                            </button>
+                            <button class="w-9 h-9 manual-border bg-primary text-white flex items-center justify-center font-mono text-xs font-bold btn-press">1</button>
+                            <button class="w-9 h-9 manual-border bg-white flex items-center justify-center font-mono text-xs font-bold btn-press hover:bg-primary hover:text-white">2</button>
+                            <button class="w-9 h-9 manual-border bg-white flex items-center justify-center btn-press hover:bg-primary hover:text-white">
+                                <span class="material-symbols-outlined text-lg">chevron_right</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript for interactions -->
+    <script>
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // Select All Checkbox
+        document.getElementById('select-all').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('tbody .custom-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Individual checkbox handling
+        document.querySelectorAll('tbody .custom-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const allCheckboxes = document.querySelectorAll('tbody .custom-checkbox');
+                const selectAll = document.getElementById('select-all');
+                const checkedCount = document.querySelectorAll('tbody .custom-checkbox:checked').length;
+
+                selectAll.checked = checkedCount === allCheckboxes.length;
+                selectAll.indeterminate = checkedCount > 0 && checkedCount < allCheckboxes.length;
+            });
+        });
+
+        // Close warning banner
+        document.querySelector('.bg-warning-light button').addEventListener('click', function() {
+            this.closest('.bg-warning-light').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

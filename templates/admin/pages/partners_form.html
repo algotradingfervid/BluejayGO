@@ -1,0 +1,219 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="mb-6">
+            <a href="/admin/partners" class="text-sm font-bold uppercase text-green-600 hover:text-green-800 border-b-2 border-green-600">&larr; Back to Partners</a>
+            <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
+        </div>
+
+        <form action="{{.FormAction}}" method="POST" class="max-w-4xl space-y-4">
+
+            <!-- Section 1: Company Info (open) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section>
+                <button type="button" onclick="toggleSection(this)"
+                        class="w-full flex items-center justify-between px-5 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>Company Info</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform">expand_more</span>
+                </button>
+                <div class="section-body p-5 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Company Name *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="Partner company's official name.">ⓘ</span>
+                            </label>
+                            <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
+                                   id="partner-name"
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Slug
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="URL-friendly identifier. Auto-generated from name.">ⓘ</span>
+                            </label>
+                            <input type="text" name="slug" id="partner-slug" readonly
+                                   value="{{if .Item}}{{.Item.Name}}{{end}}"
+                                   class="w-full border-2 border-black px-3 py-2 text-sm bg-gray-100 text-gray-500 focus:outline-none"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Tier *
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="Partnership level. Manage tiers in the sidebar under Partners > Tiers.">ⓘ</span>
+                            </label>
+                            <select name="tier_id" required
+                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    style="font-family: 'JetBrains Mono', monospace;">
+                                <option value="">Select a Tier</option>
+                                {{range .Tiers}}
+                                <option value="{{.ID}}" {{if $.Item}}{{if eq $.Item.TierID .ID}}selected{{end}}{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">
+                                Website URL
+                                <span class="inline-block ml-1 cursor-help text-gray-400" title="Link to partner's website. Shown as a clickable link on the partners page.">ⓘ</span>
+                            </label>
+                            <input type="url" name="website_url"
+                                   value="{{if .Item}}{{.Item.WebsiteUrl.String}}{{end}}"
+                                   placeholder="https://..."
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Status</label>
+                            {{if .Item}}
+                            <select name="is_active"
+                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    style="font-family: 'JetBrains Mono', monospace;">
+                                <option value="1" {{if .Item.IsActive}}selected{{end}}>Active</option>
+                                <option value="0" {{if not .Item.IsActive}}selected{{end}}>Inactive</option>
+                            </select>
+                            {{else}}
+                            <input type="hidden" name="is_active" value="1">
+                            <span class="block border-2 border-black px-3 py-2 text-sm bg-gray-100 text-gray-500">Active (default)</span>
+                            {{end}}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Display Order</label>
+                            <input type="number" name="display_order" min="0"
+                                   value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
+                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                                   style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Branding (open) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section>
+                <button type="button" onclick="toggleSection(this)"
+                        class="w-full flex items-center justify-between px-5 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>Branding</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform">expand_more</span>
+                </button>
+                <div class="section-body p-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Company Logo URL
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Partner's logo. Displayed on the partners page. Recommended: 200x100 PNG with transparency.">ⓘ</span>
+                        </label>
+                        <input type="text" name="logo_url"
+                               value="{{if .Item}}{{.Item.LogoUrl.String}}{{end}}"
+                               placeholder="https://example.com/logo.png"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                               style="font-family: 'JetBrains Mono', monospace;"
+                               oninput="previewLogo(this.value)">
+                        {{if .Item}}{{if .Item.LogoUrl.Valid}}
+                        <div class="mt-2">
+                            <img src="{{.Item.LogoUrl.String}}" alt="Current logo" id="logo-preview"
+                                 class="h-12 object-contain border-2 border-black bg-white p-1">
+                        </div>
+                        {{end}}{{end}}
+                        <div id="new-logo-preview" class="mt-2 hidden">
+                            <img src="" alt="Logo preview" class="h-12 object-contain border-2 border-black bg-white p-1">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Icon (Material Symbol)
+                        </label>
+                        <input type="text" name="icon"
+                               value="{{if .Item}}{{.Item.Icon.String}}{{end}}"
+                               placeholder="e.g. business, storefront"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">
+                            Description
+                            <span class="inline-block ml-1 cursor-help text-gray-400" title="Brief description of the partnership and what they offer.">ⓘ</span>
+                        </label>
+                        <textarea name="description" rows="4"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                                  style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description.String}}{{end}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: SEO (collapsed) -->
+            <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section data-collapsed>
+                <button type="button" onclick="toggleSection(this)"
+                        class="w-full flex items-center justify-between px-5 py-3 bg-black text-white font-bold uppercase text-sm hover:bg-gray-900">
+                    <span>SEO</span>
+                    <span class="material-symbols-outlined section-chevron transition-transform rotate-[-90deg]">expand_more</span>
+                </button>
+                <div class="section-body p-5 space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Meta Title</label>
+                        <input type="text" name="meta_title" maxlength="70"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                               style="font-family: 'JetBrains Mono', monospace;"
+                               oninput="updateCharCount(this, 'meta-title-count', 70)">
+                        <p class="text-xs text-gray-500 mt-1"><span id="meta-title-count">0</span>/70 characters</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Meta Description</label>
+                        <textarea name="meta_description" maxlength="160" rows="2"
+                                  class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                                  style="font-family: 'JetBrains Mono', monospace;"
+                                  oninput="updateCharCount(this, 'meta-desc-count', 160)"></textarea>
+                        <p class="text-xs text-gray-500 mt-1"><span id="meta-desc-count">0</span>/160 characters</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-2">
+                <button type="submit"
+                        class="bg-green-500 text-white px-8 py-3 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                        style="box-shadow: 4px 4px 0px #000;">
+                    {{if .Item}}Update Partner{{else}}Create Partner{{end}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleSection(btn) {
+    var body = btn.nextElementSibling;
+    var chevron = btn.querySelector('.section-chevron');
+    if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        chevron.style.transform = 'rotate(0deg)';
+    } else {
+        body.classList.add('hidden');
+        chevron.style.transform = 'rotate(-90deg)';
+    }
+}
+
+function updateCharCount(input, countId, max) {
+    var el = document.getElementById(countId);
+    if (el) el.textContent = input.value.length;
+}
+
+function previewLogo(url) {
+    var preview = document.getElementById('new-logo-preview');
+    if (url && preview) {
+        preview.querySelector('img').src = url;
+        preview.classList.remove('hidden');
+    }
+}
+
+// Auto-slug generation
+(function() {
+    var nameInput = document.getElementById('partner-name');
+    var slugInput = document.getElementById('partner-slug');
+    if (nameInput && slugInput) {
+        nameInput.addEventListener('input', function() {
+            slugInput.value = nameInput.value.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        });
+    }
+})();
+</script>
+{{end}}

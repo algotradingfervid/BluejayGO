@@ -1,0 +1,13 @@
+ALTER TABLE settings DROP COLUMN show_nav_home;
+ALTER TABLE settings DROP COLUMN show_nav_about;
+ALTER TABLE settings DROP COLUMN show_nav_products;
+ALTER TABLE settings DROP COLUMN show_nav_solutions;
+ALTER TABLE settings DROP COLUMN show_nav_blog;
+ALTER TABLE settings DROP COLUMN show_nav_partners;
+ALTER TABLE settings DROP COLUMN show_nav_contact;
+ALTER TABLE settings DROP COLUMN show_footer_about;
+ALTER TABLE settings DROP COLUMN show_footer_socials;
+ALTER TABLE settings DROP COLUMN show_footer_products;
+ALTER TABLE settings DROP COLUMN show_footer_solutions;
+ALTER TABLE settings DROP COLUMN show_footer_resources;
+ALTER TABLE settings DROP COLUMN show_footer_contact;

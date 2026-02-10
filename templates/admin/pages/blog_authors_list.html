@@ -1,0 +1,84 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold uppercase tracking-tight">Blog Authors</h1>
+                <p class="text-sm text-gray-600 mt-1">Manage blog post authors</p>
+            </div>
+            <a href="/admin/blog-authors/new"
+               class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-block"
+               style="box-shadow: 4px 4px 0px #000;">
+                + New Author
+            </a>
+        </div>
+
+        {{if .Items}}
+        <!-- Authors Table -->
+        <div class="bg-white border-2 border-black mb-6" style="box-shadow: 4px 4px 0px #000;">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b-2 border-black bg-gray-100">
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Author</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Email</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Bio</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Sort</th>
+                        <th class="px-4 py-3 text-right text-xs font-bold uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Items}}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-3">
+                                <!-- Avatar with initials -->
+                                <div class="w-9 h-9 border-2 border-black flex items-center justify-center text-white text-xs font-bold uppercase flex-shrink-0 bg-gray-700">
+                                    {{slice .Name 0 1}}
+                                </div>
+                                <div>
+                                    <span class="font-bold text-sm">{{.Name}}</span>
+                                    {{if .Title}}<span class="block text-xs text-gray-500">{{.Title}}</span>{{end}}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600">{{.Email.String}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{{.Bio.String}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">{{.SortOrder}}</td>
+                        <td class="px-4 py-3 text-right">
+                            <a href="/admin/blog-authors/{{.ID}}/edit"
+                               class="inline-block bg-white text-black px-3 py-1 text-xs font-bold uppercase border-2 border-black hover:bg-blue-50 mr-1"
+                               style="box-shadow: 2px 2px 0px #000;">
+                                Edit
+                            </a>
+                            <button hx-delete="/admin/blog-authors/{{.ID}}"
+                                    hx-confirm="Delete this author?"
+                                    hx-target="closest tr"
+                                    hx-swap="outerHTML swap:0.3s"
+                                    class="inline-block bg-white text-red-600 px-3 py-1 text-xs font-bold uppercase border-2 border-red-600 hover:bg-red-50"
+                                    style="box-shadow: 2px 2px 0px #991b1b;">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+        {{else}}
+        <!-- Empty State -->
+        <div class="bg-white border-2 border-black p-12 text-center" style="box-shadow: 4px 4px 0px #000;">
+            <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">person</span>
+            <h2 class="text-xl font-bold uppercase mb-2">No Authors Yet</h2>
+            <p class="text-gray-600 text-sm mb-6">Add your first author to start publishing blog posts.</p>
+            <a href="/admin/blog-authors/new"
+               class="bg-blue-600 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black inline-block hover:bg-blue-700"
+               style="box-shadow: 4px 4px 0px #000;">
+                Add Your First Author
+            </a>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

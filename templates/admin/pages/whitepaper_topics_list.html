@@ -1,0 +1,77 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Whitepaper Topics</h1>
+                <p class="text-sm text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">
+                    Topics help organize whitepapers by subject area.
+                    <span class="inline-block ml-1 cursor-help text-gray-400" title="Topics help organize whitepapers by subject area.">ⓘ</span>
+                </p>
+            </div>
+            <a href="/admin/whitepaper-topics/new"
+               class="bg-blue-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-block"
+               style="box-shadow: 4px 4px 0px #000; font-family: 'JetBrains Mono', monospace;">
+                + New Topic
+            </a>
+        </div>
+
+        <!-- Table -->
+        {{if .Items}}
+        <div class="bg-white border-2 border-black mb-6" style="box-shadow: 4px 4px 0px #000;">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b-2 border-black bg-gray-100">
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Color</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Whitepapers</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Sort</th>
+                        <th class="px-4 py-3 text-right text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Items}}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="px-4 py-3 font-bold text-sm" style="font-family: 'JetBrains Mono', monospace;">
+                            <span class="material-symbols-outlined align-middle mr-1 text-gray-500" style="font-size: 18px;">{{.Icon}}</span>
+                            {{.Name}}
+                        </td>
+                        <td class="px-4 py-3 text-sm" style="font-family: 'JetBrains Mono', monospace;">
+                            <span class="inline-block w-4 h-4 border-2 border-black mr-2 align-middle" style="background-color: {{.ColorHex}};"></span>
+                            <span class="text-gray-600">{{.ColorHex}}</span>
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 text-xs font-bold border-2 border-blue-800" style="font-family: 'JetBrains Mono', monospace;">{{.WhitepaperCount}}</span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600" style="font-family: 'JetBrains Mono', monospace;">{{.SortOrder}}</td>
+                        <td class="px-4 py-3 text-right text-sm">
+                            <a href="/admin/whitepaper-topics/{{.ID}}/edit"
+                               class="inline-block bg-white text-black px-3 py-1 text-xs font-bold uppercase border-2 border-black hover:bg-blue-50 mr-1"
+                               style="box-shadow: 2px 2px 0px #000; font-family: 'JetBrains Mono', monospace;">
+                                Edit
+                            </a>
+                            <button hx-delete="/admin/whitepaper-topics/{{.ID}}"
+                                    hx-confirm="Delete this topic?"
+                                    hx-target="closest tr"
+                                    hx-swap="outerHTML swap:0.3s"
+                                    class="inline-block bg-white text-red-600 px-3 py-1 text-xs font-bold uppercase border-2 border-red-600 hover:bg-red-50"
+                                    style="box-shadow: 2px 2px 0px #991b1b; font-family: 'JetBrains Mono', monospace;">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+        {{else}}
+        <div class="bg-white border-2 border-black p-8 text-center" style="box-shadow: 4px 4px 0px #000; font-family: 'JetBrains Mono', monospace;">
+            <p class="text-gray-500">No whitepaper topics found.</p>
+            <a href="/admin/whitepaper-topics/new" class="text-blue-600 hover:underline font-bold">Create one</a>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

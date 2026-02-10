@@ -1,0 +1,218 @@
+{{define "admin-sidebar"}}
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<aside class="admin-sidebar w-[260px] bg-[#004499] text-white border-r-4 border-black flex flex-col h-full">
+    <!-- Logo (pinned top) -->
+    <div class="p-5 border-b-2 border-white/30 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#0066CC]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+            </div>
+            <div>
+                <div class="font-bold text-sm tracking-wide">BLUEJAY</div>
+                <div class="text-[10px] opacity-60 tracking-widest">CMS</div>
+            </div>
+            <!-- Mobile close button -->
+            <button onclick="toggleSidebar()" class="lg:hidden ml-auto p-1 hover:bg-[#0066CC]">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scrollable nav -->
+    <nav class="flex-1 overflow-y-auto sidebar-nav py-3 px-3" id="sidebar-nav">
+
+        <!-- Dashboard (always visible, not in a group) -->
+        <a href="/admin/dashboard" class="sidebar-link" data-path="/admin/dashboard">
+            <span class="material-symbols-outlined text-lg">dashboard</span>
+            Dashboard
+        </a>
+
+        <!-- ═══ WEBSITE ═══ -->
+        <div class="sidebar-section-label">WEBSITE</div>
+
+        <!-- Homepage group -->
+        <div class="sidebar-group" data-group="homepage">
+            <button class="sidebar-group-header" onclick="toggleGroup('homepage')">
+                <span class="material-symbols-outlined text-lg">home</span>
+                <span class="flex-1 text-left">Homepage</span>
+                <span class="material-symbols-outlined sidebar-chevron text-sm">chevron_right</span>
+            </button>
+            <div class="sidebar-group-items">
+                <a href="/admin/homepage/heroes" class="sidebar-sublink" data-path="/admin/homepage/heroes">Heroes</a>
+                <a href="/admin/homepage/stats" class="sidebar-sublink" data-path="/admin/homepage/stats">Stats</a>
+                <a href="/admin/homepage/testimonials" class="sidebar-sublink" data-path="/admin/homepage/testimonials">Testimonials</a>
+                <a href="/admin/homepage/cta" class="sidebar-sublink" data-path="/admin/homepage/cta">CTAs</a>
+                <a href="/admin/homepage/settings" class="sidebar-sublink sidebar-settings-link" data-path="/admin/homepage/settings">
+                    <span class="material-symbols-outlined text-sm">settings</span>
+                    Homepage Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- About group -->
+        <div class="sidebar-group" data-group="about">
+            <button class="sidebar-group-header" onclick="toggleGroup('about')">
+                <span class="material-symbols-outlined text-lg">info</span>
+                <span class="flex-1 text-left">About</span>
+                <span class="material-symbols-outlined sidebar-chevron text-sm">chevron_right</span>
+            </button>
+            <div class="sidebar-group-items">
+                <a href="/admin/about/overview" class="sidebar-sublink" data-path="/admin/about/overview">Overview</a>
+                <a href="/admin/about/mvv" class="sidebar-sublink" data-path="/admin/about/mvv">Mission/Vision/Values</a>
+                <a href="/admin/about/values" class="sidebar-sublink" data-path="/admin/about/values">Core Values</a>
+                <a href="/admin/about/milestones" class="sidebar-sublink" data-path="/admin/about/milestones">Milestones</a>
+                <a href="/admin/about/certifications" class="sidebar-sublink" data-path="/admin/about/certifications">Certifications</a>
+                <a href="/admin/about/settings" class="sidebar-sublink sidebar-settings-link" data-path="/admin/about/settings">
+                    <span class="material-symbols-outlined text-sm">settings</span>
+                    About Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- Header (single page) -->
+        <a href="/admin/header" class="sidebar-link" data-path="/admin/header">
+            <span class="material-symbols-outlined text-lg">web_asset</span>
+            Header
+        </a>
+
+        <!-- Footer (single page) -->
+        <a href="/admin/footer" class="sidebar-link" data-path="/admin/footer">
+            <span class="material-symbols-outlined text-lg">call_to_action</span>
+            Footer
+        </a>
+
+        <!-- ═══ CONTENT ═══ -->
+        <div class="sidebar-section-label">CONTENT</div>
+
+        <!-- Products group -->
+        <div class="sidebar-group" data-group="products">
+            <button class="sidebar-group-header" onclick="toggleGroup('products')">
+                <span class="material-symbols-outlined text-lg">inventory_2</span>
+                <span class="flex-1 text-left">Products</span>
+                <span class="material-symbols-outlined sidebar-chevron text-sm">chevron_right</span>
+            </button>
+            <div class="sidebar-group-items">
+                <a href="/admin/products" class="sidebar-sublink" data-path="/admin/products">All Products</a>
+                <a href="/admin/product-categories" class="sidebar-sublink" data-path="/admin/product-categories">Categories</a>
+                <a href="/admin/products/settings" class="sidebar-sublink sidebar-settings-link" data-path="/admin/products/settings">
+                    <span class="material-symbols-outlined text-sm">settings</span>
+                    Product Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- Solutions group -->
+        <div class="sidebar-group" data-group="solutions">
+            <button class="sidebar-group-header" onclick="toggleGroup('solutions')">
+                <span class="material-symbols-outlined text-lg">lightbulb</span>
+                <span class="flex-1 text-left">Solutions</span>
+                <span class="material-symbols-outlined sidebar-chevron text-sm">chevron_right</span>
+            </button>
+            <div class="sidebar-group-items">
+                <a href="/admin/solutions" class="sidebar-sublink" data-path="/admin/solutions">All Solutions</a>
+                <a href="/admin/solutions/settings" class="sidebar-sublink sidebar-settings-link" data-path="/admin/solutions/settings">
+                    <span class="material-symbols-outlined text-sm">settings</span>
+                    Solution Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- Blog group -->
+        <div class="sidebar-group" data-group="blog">
+            <button class="sidebar-group-header" onclick="toggleGroup('blog')">
+                <span class="material-symbols-outlined text-lg">article</span>
+                <span class="flex-1 text-left">Blog</span>
+                <span class="material-symbols-outlined sidebar-chevron text-sm">chevron_right</span>
+            </button>
+            <div class="sidebar-group-items">
+                <a href="/admin/blog/posts" class="sidebar-sublink" data-path="/admin/blog/posts">All Posts</a>
+                <a href="/admin/blog-categories" class="sidebar-sublink" data-path="/admin/blog-categories">Categories</a>
+                <a href="/admin/blog-authors" class="sidebar-sublink" data-path="/admin/blog-authors">Authors</a>
+                <a href="/admin/blog/tags" class="sidebar-sublink" data-path="/admin/blog/tags">Tags</a>
+                <a href="/admin/blog/settings" class="sidebar-sublink sidebar-settings-link" data-path="/admin/blog/settings">
+                    <span class="material-symbols-outlined text-sm">settings</span>
+                    Blog Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- Case Studies (single page) -->
+        <a href="/admin/case-studies" class="sidebar-link" data-path="/admin/case-studies">
+            <span class="material-symbols-outlined text-lg">business_center</span>
+            Case Studies
+        </a>
+
+        <!-- Whitepapers group -->
+        <div class="sidebar-group" data-group="whitepapers">
+            <button class="sidebar-group-header" onclick="toggleGroup('whitepapers')">
+                <span class="material-symbols-outlined text-lg">description</span>
+                <span class="flex-1 text-left">Whitepapers</span>
+                <span class="material-symbols-outlined sidebar-chevron text-sm">chevron_right</span>
+            </button>
+            <div class="sidebar-group-items">
+                <a href="/admin/whitepapers" class="sidebar-sublink" data-path="/admin/whitepapers">All Whitepapers</a>
+                <a href="/admin/whitepaper-topics" class="sidebar-sublink" data-path="/admin/whitepaper-topics">Topics</a>
+            </div>
+        </div>
+
+        <!-- Partners group -->
+        <div class="sidebar-group" data-group="partners">
+            <button class="sidebar-group-header" onclick="toggleGroup('partners')">
+                <span class="material-symbols-outlined text-lg">handshake</span>
+                <span class="flex-1 text-left">Partners</span>
+                <span class="material-symbols-outlined sidebar-chevron text-sm">chevron_right</span>
+            </button>
+            <div class="sidebar-group-items">
+                <a href="/admin/partners" class="sidebar-sublink" data-path="/admin/partners">All Partners</a>
+                <a href="/admin/partner-tiers" class="sidebar-sublink" data-path="/admin/partner-tiers">Tiers</a>
+                <a href="/admin/partners/testimonials" class="sidebar-sublink" data-path="/admin/partners/testimonials">Testimonials</a>
+            </div>
+        </div>
+
+        <!-- ═══ ADMIN ═══ -->
+        <div class="sidebar-section-label">ADMIN</div>
+
+        <a href="/admin/media" class="sidebar-link" data-path="/admin/media">
+            <span class="material-symbols-outlined text-lg">perm_media</span>
+            Media Library
+        </a>
+
+        <a href="/admin/contact/submissions" class="sidebar-link" data-path="/admin/contact/submissions">
+            <span class="material-symbols-outlined text-lg">mail</span>
+            Contact Submissions
+        </a>
+
+        <a href="/admin/navigation" class="sidebar-link" data-path="/admin/navigation">
+            <span class="material-symbols-outlined text-lg">menu_open</span>
+            Navigation
+        </a>
+
+        <a href="/admin/activity" class="sidebar-link" data-path="/admin/activity">
+            <span class="material-symbols-outlined text-lg">history</span>
+            Activity Log
+        </a>
+
+        <a href="/admin/settings" class="sidebar-link" data-path="/admin/settings">
+            <span class="material-symbols-outlined text-lg">settings</span>
+            Global Settings
+        </a>
+
+    </nav>
+
+    <!-- Footer (pinned bottom) -->
+    <div class="shrink-0 border-t-2 border-white/30 p-3 space-y-2">
+        <a href="/" target="_blank" class="sidebar-link justify-center border-2 border-white/40 hover:bg-white hover:text-[#004499]">
+            <span class="material-symbols-outlined text-lg">open_in_new</span>
+            View Site
+        </a>
+        <div class="flex items-center gap-2 px-3 py-2 text-xs opacity-70">
+            <span class="material-symbols-outlined text-sm">person</span>
+            <span>{{.DisplayName}}</span>
+            {{if .Role}}<span class="opacity-50">/ {{.Role}}</span>{{end}}
+        </div>
+    </div>
+</aside>
+<script src="/public/js/admin.js"></script>
+{{end}}

@@ -1,0 +1,59 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-2xl">
+            <a href="/admin/whitepaper-topics" class="text-sm font-bold uppercase hover:underline" style="font-family: 'JetBrains Mono', monospace;">&larr; Back to Topics</a>
+            <h1 class="text-2xl font-bold mb-6 mt-2 uppercase" style="font-family: 'JetBrains Mono', monospace;">{{.Title}}</h1>
+            <form method="POST" action="{{.FormAction}}" class="bg-white border-2 border-black p-6 space-y-4" style="box-shadow: 4px 4px 0px #000;">
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Name *</label>
+                    <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Color</label>
+                    <div class="flex items-center gap-2">
+                        <input type="color" name="color_hex" value="{{if .Item}}{{.Item.ColorHex}}{{else}}#1E88E5{{end}}"
+                               class="h-10 w-14 border-2 border-black cursor-pointer">
+                        <input type="text" name="color_hex_text" value="{{if .Item}}{{.Item.ColorHex}}{{else}}#1E88E5{{end}}" pattern="#[0-9A-Fa-f]{6}"
+                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Icon (Material Symbol) *</label>
+                    <input type="text" name="icon" value="{{if .Item}}{{.Item.Icon}}{{end}}" placeholder="description" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Description</label>
+                    <textarea name="description" rows="3"
+                              class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description.String}}{{end}}</textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Sort Order</label>
+                    <input type="number" name="sort_order" value="{{if .Item}}{{.Item.SortOrder}}{{else}}0{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           style="font-family: 'JetBrains Mono', monospace;">
+                </div>
+                <div class="flex justify-end gap-3 pt-4">
+                    <a href="/admin/whitepaper-topics"
+                       class="bg-white text-black px-4 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100"
+                       style="box-shadow: 2px 2px 0px #000; font-family: 'JetBrains Mono', monospace;">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="bg-blue-600 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+                            style="box-shadow: 4px 4px 0px #000; font-family: 'JetBrains Mono', monospace;">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

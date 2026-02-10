@@ -1,0 +1,72 @@
+{{define "product_features"}}
+<div id="features-section" class="font-mono">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <h3 class="text-lg font-bold uppercase tracking-wider">Features</h3>
+            <div class="relative group">
+                <span class="inline-flex items-center justify-center w-5 h-5 border-2 border-black text-xs font-bold cursor-help bg-yellow-300" style="box-shadow: 2px 2px 0px #000;">?</span>
+                <div class="hidden group-hover:block absolute left-0 top-7 z-50 w-72 p-3 bg-white border-2 border-black text-xs" style="box-shadow: 4px 4px 0px #000;">
+                    Product features shown as bullet points on the product page. Max 10 recommended.
+                </div>
+            </div>
+            {{if .Features}}
+            <span class="text-xs font-bold px-2 py-1 border-2 border-black bg-white">
+                {{len .Features}} of 10 recommended
+            </span>
+            {{end}}
+        </div>
+        {{if .Features}}
+        <button hx-delete="/admin/products/{{.ProductID}}/features"
+                hx-target="#features-section"
+                hx-swap="outerHTML"
+                hx-confirm="Delete all features for this product?"
+                class="text-xs uppercase font-bold tracking-wider px-3 py-1 border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition-colors">Delete All</button>
+        {{end}}
+    </div>
+
+    {{if .Features}}
+    <div class="space-y-2 mb-6">
+        {{range .Features}}
+        <div class="flex items-center gap-3 border-2 border-black px-4 py-3 bg-white group" style="box-shadow: 2px 2px 0px #000;">
+            <span class="text-lg font-bold text-gray-400">&#x2022;</span>
+            <span class="flex-1 text-sm">{{.FeatureText}}</span>
+            <span class="text-xs text-gray-400 font-bold">#{{.DisplayOrder}}</span>
+            <button hx-delete="/admin/products/{{$.ProductID}}/features/{{.ID}}"
+                    hx-target="#features-section"
+                    hx-swap="outerHTML"
+                    hx-confirm="Delete this feature?"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase">&#x2715;</button>
+        </div>
+        {{end}}
+    </div>
+    {{else}}
+    <div class="border-2 border-dashed border-gray-400 p-8 text-center mb-6">
+        <p class="text-gray-500 text-sm uppercase tracking-wider">No features added yet. Click 'Add Feature' to get started.</p>
+    </div>
+    {{end}}
+
+    <!-- Add Feature Form -->
+    <form hx-post="/admin/products/{{.ProductID}}/features"
+          hx-target="#features-section"
+          hx-swap="outerHTML"
+          class="border-2 border-black p-4 space-y-3 bg-gray-50" style="box-shadow: 4px 4px 0px #000;">
+        <h4 class="text-sm font-bold uppercase tracking-wider">Add Feature</h4>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div class="md:col-span-3">
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Feature Text</label>
+                <input type="text" name="feature_text" placeholder="e.g. IP67 rated for outdoor use" required
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
+                <input type="number" name="display_order" placeholder="0" value="0"
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+        </div>
+        <button type="submit" class="bg-black text-white px-6 py-2 text-sm font-bold uppercase tracking-wider border-2 border-black hover:bg-white hover:text-black transition-colors" style="box-shadow: 3px 3px 0px #000;">
+            + Add Feature
+        </button>
+    </form>
+</div>
+{{end}}

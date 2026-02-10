@@ -1,0 +1,68 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold uppercase tracking-tight">Milestones</h1>
+            <a href="/admin/about/milestones/new"
+               class="bg-blue-600 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+               style="box-shadow: 3px 3px 0px #000;">
+                + New Milestone
+            </a>
+        </div>
+
+        {{if .Items}}
+        <!-- Vertical Timeline -->
+        <div class="max-w-3xl relative">
+            <!-- Timeline Line -->
+            <div class="absolute left-[59px] top-0 bottom-0 w-[2px] bg-black"></div>
+
+            {{range .Items}}
+            <div class="flex gap-6 mb-6 relative">
+                <!-- Year Badge -->
+                <div class="flex-shrink-0 w-[120px] text-right">
+                    <span class="inline-block bg-black text-white text-xs font-bold px-3 py-1">{{.Year}}</span>
+                </div>
+
+                <!-- Timeline Dot -->
+                <div class="absolute left-[55px] top-2 w-[10px] h-[10px] bg-blue-600 border-2 border-black z-10"></div>
+
+                <!-- Content Card -->
+                <div class="flex-1 bg-white border-2 border-black p-4" style="box-shadow: 4px 4px 0px #000;">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold uppercase text-sm">{{.Title}}</h3>
+                            <p class="text-xs text-gray-600 mt-1">{{.Description}}</p>
+                            {{if .IsCurrent}}
+                            <span class="inline-block mt-2 bg-green-100 text-green-800 text-xs font-bold uppercase px-2 py-0.5 border border-green-800">Current</span>
+                            {{end}}
+                        </div>
+                        <div class="flex items-center gap-2 ml-4 flex-shrink-0">
+                            <a href="/admin/about/milestones/{{.ID}}/edit"
+                               class="text-xs font-bold uppercase text-blue-600 hover:text-blue-800">Edit</a>
+                            <button hx-delete="/admin/about/milestones/{{.ID}}"
+                                    hx-confirm="Delete this milestone?"
+                                    hx-target="closest div.flex.gap-6"
+                                    hx-swap="outerHTML swap:0.3s"
+                                    class="text-xs font-bold uppercase text-red-600 hover:text-red-800">Del</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="bg-white border-2 border-black p-8 text-center max-w-2xl" style="box-shadow: 4px 4px 0px #000;">
+            <span class="material-symbols-outlined text-4xl text-gray-400 mb-2">timeline</span>
+            <p class="text-sm text-gray-500 mb-4">No milestones found.</p>
+            <a href="/admin/about/milestones/new"
+               class="inline-block bg-blue-600 text-white px-6 py-2 text-xs font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+               style="box-shadow: 3px 3px 0px #000;">
+                Create First Milestone
+            </a>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

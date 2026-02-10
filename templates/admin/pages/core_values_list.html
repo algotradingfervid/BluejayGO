@@ -1,0 +1,62 @@
+{{define "content"}}
+<div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold uppercase tracking-tight">Core Values</h1>
+            <a href="/admin/about/values/new"
+               class="bg-blue-600 text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+               style="box-shadow: 3px 3px 0px #000;">
+                + New Value
+            </a>
+        </div>
+
+        {{if .Items}}
+        <!-- Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl">
+            {{range .Items}}
+            <div class="bg-white border-2 border-black p-5 relative" style="box-shadow: 4px 4px 0px #000;">
+                <!-- Sort Order Badge -->
+                <div class="absolute top-0 right-0 bg-black text-white text-xs font-bold px-2 py-1">
+                    #{{.DisplayOrder}}
+                </div>
+
+                <!-- Icon -->
+                <div class="w-12 h-12 bg-blue-100 border-2 border-black flex items-center justify-center mb-3">
+                    <span class="material-symbols-outlined text-blue-600">{{.Icon}}</span>
+                </div>
+
+                <!-- Title -->
+                <h3 class="font-bold uppercase text-sm mb-2">{{.Title}}</h3>
+
+                <!-- Description -->
+                <p class="text-xs text-gray-600 mb-4 line-clamp-3">{{.Description}}</p>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-3 pt-3 border-t-2 border-black">
+                    <a href="/admin/about/values/{{.ID}}/edit"
+                       class="text-xs font-bold uppercase text-blue-600 hover:text-blue-800 border-b-2 border-blue-600">Edit</a>
+                    <button hx-delete="/admin/about/values/{{.ID}}"
+                            hx-confirm="Delete this value?"
+                            hx-target="closest div[style]"
+                            hx-swap="outerHTML swap:0.3s"
+                            class="text-xs font-bold uppercase text-red-600 hover:text-red-800 border-b-2 border-red-600">Delete</button>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="bg-white border-2 border-black p-8 text-center max-w-2xl" style="box-shadow: 4px 4px 0px #000;">
+            <span class="material-symbols-outlined text-4xl text-gray-400 mb-2">diamond</span>
+            <p class="text-sm text-gray-500 mb-4">No core values found.</p>
+            <a href="/admin/about/values/new"
+               class="inline-block bg-blue-600 text-white px-6 py-2 text-xs font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
+               style="box-shadow: 3px 3px 0px #000;">
+                Create First Value
+            </a>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

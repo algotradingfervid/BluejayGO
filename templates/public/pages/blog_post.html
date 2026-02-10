@@ -1,0 +1,134 @@
+{{define "content"}}
+    <!-- Breadcrumb -->
+    <div class="max-w-[1200px] mx-auto px-4 py-4">
+        <nav class="flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
+            <a class="hover:text-[#0066CC]" href="/">Home</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <a class="hover:text-[#0066CC]" href="/blog">Blog</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <a class="hover:text-[#0066CC]" href="/blog?category={{.Post.CategorySlug}}">{{.Post.CategoryName}}</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <span class="text-[#0066CC]">{{.Post.Title}}</span>
+        </nav>
+    </div>
+
+    <!-- Post Header -->
+    <section class="max-w-[1200px] mx-auto px-4 pb-8">
+        <div class="manual-border-thick p-8 md:p-12 bg-white manual-shadow-lg relative overflow-hidden">
+            <div class="absolute inset-0 grid-dotted pointer-events-none"></div>
+            <div class="relative z-10">
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <span class="px-3 py-1 text-white text-xs font-bold uppercase" style="background-color: {{.Post.CategoryColor}}">{{.Post.CategoryName}}</span>
+                    {{if .Post.ReadingTimeMinutes.Valid}}
+                    <span class="font-mono text-xs opacity-60">{{.Post.ReadingTimeMinutes.Int64}} min read</span>
+                    {{end}}
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black font-mono leading-none uppercase mb-6">{{.Post.Title}}</h1>
+                {{if .Post.Excerpt}}
+                <p class="text-lg font-mono opacity-70 max-w-3xl mb-6">{{.Post.Excerpt}}</p>
+                {{end}}
+                <div class="flex items-center gap-4">
+                    {{if .Post.AuthorAvatar.Valid}}
+                    <img src="{{.Post.AuthorAvatar.String}}" alt="{{.Post.AuthorName}}" class="w-10 h-10 rounded-full object-cover manual-border">
+                    {{end}}
+                    <div>
+                        <div class="text-sm font-bold">{{.Post.AuthorName}}</div>
+                        {{if .Post.PublishedAt.Valid}}
+                        <div class="text-xs font-mono opacity-60">{{formatDate .Post.PublishedAt.Time ""}}</div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Image -->
+    {{if .Post.FeaturedImageUrl.Valid}}
+    <section class="max-w-[1200px] mx-auto px-4 pb-8">
+        <div class="manual-border-thick overflow-hidden manual-shadow-lg">
+            <img src="{{.Post.FeaturedImageUrl.String}}" alt="{{if .Post.FeaturedImageAlt.Valid}}{{.Post.FeaturedImageAlt.String}}{{end}}" class="w-full aspect-[21/9] object-cover">
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Article Body -->
+    <section class="max-w-[800px] mx-auto px-4 pb-12">
+        <div class="manual-border bg-white p-8 md:p-12 manual-shadow prose prose-lg max-w-none font-mono text-sm leading-relaxed">
+            {{safeHTML .Post.Body}}
+        </div>
+    </section>
+
+    <!-- Tags -->
+    {{if .Tags}}
+    <section class="max-w-[800px] mx-auto px-4 pb-8">
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="font-mono text-xs font-bold uppercase opacity-60">Tags:</span>
+            {{range .Tags}}
+            <a href="/blog?tag={{.Slug}}" class="manual-border bg-white px-3 py-1 text-[10px] font-bold uppercase font-mono hover:bg-black hover:text-white transition-colors">{{.Name}}</a>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Author Bio Card -->
+    <section class="max-w-[800px] mx-auto px-4 pb-12">
+        <div class="manual-border-thick bg-white p-8 manual-shadow-lg">
+            <div class="flex items-start gap-6">
+                {{if .Post.AuthorAvatar.Valid}}
+                <img src="{{.Post.AuthorAvatar.String}}" alt="{{.Post.AuthorName}}" class="w-20 h-20 rounded-full object-cover manual-border flex-shrink-0">
+                {{else}}
+                <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center manual-border flex-shrink-0">
+                    <span class="material-symbols-outlined text-3xl opacity-20">person</span>
+                </div>
+                {{end}}
+                <div>
+                    <div class="text-[10px] font-bold uppercase opacity-60 mb-1">Written by</div>
+                    <h3 class="font-black font-mono text-xl uppercase mb-2">{{.Post.AuthorName}}</h3>
+                    {{if .Post.AuthorBio.Valid}}
+                    <p class="font-mono text-sm opacity-70 mb-3">{{.Post.AuthorBio.String}}</p>
+                    {{end}}
+                    {{if .Post.AuthorLinkedin.Valid}}
+                    <a href="{{.Post.AuthorLinkedin.String}}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[#0066CC] text-xs font-bold uppercase hover:underline">
+                        <span class="material-symbols-outlined text-sm">open_in_new</span>
+                        LinkedIn
+                    </a>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products -->
+    {{if .RelatedProducts}}
+    <section class="max-w-[1200px] mx-auto px-4 pb-12">
+        <div class="flex items-center gap-4 mb-8">
+            <h2 class="font-mono font-black text-2xl uppercase">Related Products</h2>
+            <div class="flex-grow h-[2px] bg-black/20"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {{range .RelatedProducts}}
+            <article class="manual-border-thick bg-white manual-shadow group hover:-translate-y-1 transition-transform">
+                <a href="/products/{{.CategorySlug}}/{{.Slug}}" class="block">
+                    <div class="aspect-[16/10] relative overflow-hidden">
+                        {{if .PrimaryImage.Valid}}
+                        <img src="{{.PrimaryImage.String}}" alt="{{.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500">
+                        {{else}}
+                        <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-4xl opacity-20">inventory_2</span>
+                        </div>
+                        {{end}}
+                        <div class="absolute top-3 left-3 px-2 py-0.5 text-white text-[10px] font-bold uppercase bg-black">{{.CategoryName}}</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-black font-mono uppercase text-lg mb-2 leading-tight">{{.Name}}</h3>
+                        {{if .Tagline.Valid}}
+                        <p class="text-xs font-mono opacity-60">{{.Tagline.String}}</p>
+                        {{end}}
+                    </div>
+                </a>
+            </article>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+{{end}}

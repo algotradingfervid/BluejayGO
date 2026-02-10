@@ -1,0 +1,14 @@
+ALTER TABLE settings ADD COLUMN header_logo_path TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN header_logo_alt TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN header_cta_enabled BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE settings ADD COLUMN header_cta_text TEXT NOT NULL DEFAULT 'Request a Quote';
+ALTER TABLE settings ADD COLUMN header_cta_url TEXT NOT NULL DEFAULT '/contact';
+ALTER TABLE settings ADD COLUMN header_cta_style TEXT NOT NULL DEFAULT 'primary';
+ALTER TABLE settings ADD COLUMN header_show_phone BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE settings ADD COLUMN header_show_email BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE settings ADD COLUMN header_show_social BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE settings ADD COLUMN header_social_style TEXT NOT NULL DEFAULT 'icons';
+ALTER TABLE settings ADD COLUMN show_nav_case_studies BOOLEAN NOT NULL DEFAULT 1;
+ALTER TABLE settings ADD COLUMN show_nav_whitepapers BOOLEAN NOT NULL DEFAULT 1;
+ALTER TABLE settings ADD COLUMN nav_label_case_studies TEXT NOT NULL DEFAULT 'Case Studies';
+ALTER TABLE settings ADD COLUMN nav_label_whitepapers TEXT NOT NULL DEFAULT 'Whitepapers';

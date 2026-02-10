@@ -1,0 +1,307 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-3xl">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold uppercase tracking-tight" style="font-family: 'JetBrains Mono', monospace;">Footer Management</h1>
+                <p class="text-sm text-gray-600 mt-1" style="font-family: 'JetBrains Mono', monospace;">Configure your site footer: columns, social media, copyright, and legal links.</p>
+            </div>
+
+            {{if .Saved}}
+            <div class="bg-green-100 border-2 border-black text-green-900 px-4 py-3 mb-6 font-bold uppercase text-sm" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                ✓ Footer settings saved successfully.
+            </div>
+            {{end}}
+
+            <form id="footer-form" method="POST" action="/admin/footer" class="space-y-6">
+
+                <!-- Section 1: Footer Layout -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Footer Layout</h2>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Column Count</label>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="How many columns to display in the footer. 3 or 4 works best for most sites.">info</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 {{if eq .Settings.FooterColumns 2}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="footer_columns" value="2" {{if eq .Settings.FooterColumns 2}}checked{{end}} class="sr-only" onchange="updateColumnCount(this.value); updateRadioGroupUI('footer_columns')">
+                                <span class="text-sm font-bold uppercase">2 Columns</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 {{if eq .Settings.FooterColumns 3}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="footer_columns" value="3" {{if eq .Settings.FooterColumns 3}}checked{{end}} class="sr-only" onchange="updateColumnCount(this.value); updateRadioGroupUI('footer_columns')">
+                                <span class="text-sm font-bold uppercase">3 Columns</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 {{if eq .Settings.FooterColumns 4}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="footer_columns" value="4" {{if eq .Settings.FooterColumns 4}}checked{{end}} class="sr-only" onchange="updateColumnCount(this.value); updateRadioGroupUI('footer_columns')">
+                                <span class="text-sm font-bold uppercase">4 Columns</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Background Style</label>
+                        <div class="flex gap-4">
+                            {{$bgStyle := .Settings.FooterBgStyle}}
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 bg-style-option {{if eq $bgStyle "dark"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="footer_bg_style" value="dark" {{if eq $bgStyle "dark"}}checked{{end}} class="sr-only" onchange="updateRadioGroupUI('footer_bg_style')">
+                                <span class="text-sm font-bold uppercase">Dark (Navy)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 bg-style-option {{if eq $bgStyle "light"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="footer_bg_style" value="light" {{if eq $bgStyle "light"}}checked{{end}} class="sr-only" onchange="updateRadioGroupUI('footer_bg_style')">
+                                <span class="text-sm font-bold uppercase">Light (White)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 bg-style-option {{if eq $bgStyle "primary"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="footer_bg_style" value="primary" {{if eq $bgStyle "primary"}}checked{{end}} class="sr-only" onchange="updateRadioGroupUI('footer_bg_style')">
+                                <span class="text-sm font-bold uppercase">Primary (Blue)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Column Configuration -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Column Configuration</h2>
+
+                    {{range $idx := seq 4}}
+                    {{$colData := index $.ColumnData $idx}}
+                    <div class="column-config border-2 border-gray-300 p-4 space-y-4 {{if ge (int64 $idx) $.Settings.FooterColumns}}hidden{{end}}" data-column="{{$idx}}">
+                        <h3 class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Column {{add $idx 1}}</h3>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Column Heading</label>
+                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="The bold title shown above this column's links.">info</span>
+                            </div>
+                            <input type="text" name="col_{{$idx}}_heading" value="{{$colData.Heading}}" placeholder="Column heading" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Column Type</label>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-3 py-1 {{if eq $colData.Type "links"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                    <input type="radio" name="col_{{$idx}}_type" value="links" {{if eq $colData.Type "links"}}checked{{end}} class="sr-only" onchange="updateColumnType({{$idx}}, this.value); updateRadioGroupUI('col_{{$idx}}_type')">
+                                    <span class="text-xs font-bold uppercase">Links</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-3 py-1 {{if eq $colData.Type "text"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                    <input type="radio" name="col_{{$idx}}_type" value="text" {{if eq $colData.Type "text"}}checked{{end}} class="sr-only" onchange="updateColumnType({{$idx}}, this.value); updateRadioGroupUI('col_{{$idx}}_type')">
+                                    <span class="text-xs font-bold uppercase">Text</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-3 py-1 {{if eq $colData.Type "contact"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                    <input type="radio" name="col_{{$idx}}_type" value="contact" {{if eq $colData.Type "contact"}}checked{{end}} class="sr-only" onchange="updateColumnType({{$idx}}, this.value); updateRadioGroupUI('col_{{$idx}}_type')">
+                                    <span class="text-xs font-bold uppercase">Contact Info</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Links section -->
+                        <div class="col-links-section" data-column="{{$idx}}" {{if and (ne $colData.Type "links") (ne $colData.Type "")}}style="display:none"{{end}}>
+                            <div class="space-y-2 links-container" data-column="{{$idx}}">
+                                {{range $colData.Links}}
+                                <div class="flex gap-2 items-center link-row">
+                                    <input type="text" name="col_{{$idx}}_link_label[]" value="{{.Label}}" placeholder="Label" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                    <input type="text" name="col_{{$idx}}_link_url[]" value="{{.Url}}" placeholder="/page-url" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                    <button type="button" onclick="this.closest('.link-row').remove()" class="border-2 border-black px-2 py-1 bg-red-100 hover:bg-red-200 text-sm font-bold" style="font-family: 'JetBrains Mono', monospace;">✕</button>
+                                </div>
+                                {{end}}
+                            </div>
+                            <button type="button" onclick="addLink({{$idx}})" class="mt-2 px-3 py-1 border-2 border-black bg-gray-100 hover:bg-gray-200 text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">+ Add Link</button>
+                        </div>
+
+                        <!-- Text section -->
+                        <div class="col-text-section" data-column="{{$idx}}" {{if ne $colData.Type "text"}}style="display:none"{{end}}>
+                            <textarea name="col_{{$idx}}_content" rows="4" placeholder="Custom footer text content..." class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">{{$colData.Content}}</textarea>
+                        </div>
+
+                        <!-- Contact section -->
+                        <div class="col-contact-section" data-column="{{$idx}}" {{if ne $colData.Type "contact"}}style="display:none"{{end}}>
+                            <div class="bg-gray-50 border-2 border-black p-3 space-y-1">
+                                <p class="text-xs font-bold uppercase text-gray-600" style="font-family: 'JetBrains Mono', monospace;">Auto-pulled from Global Settings:</p>
+                                {{if $.Settings.Address}}
+                                <p class="text-xs text-gray-700" style="font-family: 'JetBrains Mono', monospace;">Address: {{$.Settings.Address}}</p>
+                                {{end}}
+                                {{if $.Settings.ContactPhone}}
+                                <p class="text-xs text-gray-700" style="font-family: 'JetBrains Mono', monospace;">Phone: {{$.Settings.ContactPhone}}</p>
+                                {{end}}
+                                {{if $.Settings.ContactEmail}}
+                                <p class="text-xs text-gray-700" style="font-family: 'JetBrains Mono', monospace;">Email: {{$.Settings.ContactEmail}}</p>
+                                {{end}}
+                                <p class="text-xs text-gray-500 mt-2" style="font-family: 'JetBrains Mono', monospace;">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">info</span>
+                                    Edit in <a href="/admin/settings?tab=contact" class="underline font-bold hover:text-black">Global Settings</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+
+                <!-- Section 3: Social Media Row -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Social Media Row</h2>
+
+                    <div class="flex items-center gap-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="footer_show_social" class="sr-only peer" {{if .Settings.FooterShowSocial}}checked{{end}}>
+                            <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                        </label>
+                        <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Show Social Icons in Footer</span>
+                    </div>
+
+                    <div class="bg-gray-50 border-2 border-black p-4 space-y-2">
+                        <p class="text-xs font-bold uppercase text-gray-600 mb-2" style="font-family: 'JetBrains Mono', monospace;">Configured Platforms:</p>
+                        <div class="flex flex-wrap gap-2">
+                            {{if .Settings.SocialFacebook}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ Facebook</span>
+                            {{end}}
+                            {{if .Settings.SocialTwitter}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ Twitter</span>
+                            {{end}}
+                            {{if .Settings.SocialLinkedin}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ LinkedIn</span>
+                            {{end}}
+                            {{if .Settings.SocialInstagram}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ Instagram</span>
+                            {{end}}
+                            {{if .Settings.SocialYoutube}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ YouTube</span>
+                            {{end}}
+                            {{if .Settings.SocialGithub}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ GitHub</span>
+                            {{end}}
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2" style="font-family: 'JetBrains Mono', monospace;">
+                            <span class="material-symbols-outlined" style="font-size: 14px;">info</span>
+                            Manage social URLs in <a href="/admin/settings?tab=social" class="underline font-bold hover:text-black">Global Settings</a>
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Display Style</label>
+                        <div class="flex gap-4">
+                            {{$socialStyle := .Settings.FooterSocialStyle}}
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 social-style-option {{if eq $socialStyle "icons"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="footer_social_style" value="icons" {{if eq $socialStyle "icons"}}checked{{end}} class="sr-only" onchange="updateRadioGroupUI('footer_social_style')">
+                                <span class="text-sm font-bold uppercase">Icons Only</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 social-style-option {{if eq $socialStyle "icons_labels"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="footer_social_style" value="icons_labels" {{if eq $socialStyle "icons_labels"}}checked{{end}} class="sr-only" onchange="updateRadioGroupUI('footer_social_style')">
+                                <span class="text-sm font-bold uppercase">Icons + Platform Name</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Bottom Bar -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Bottom Bar</h2>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Copyright Text</label>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Footer copyright text. Use {year} for auto-updating year.">info</span>
+                        </div>
+                        <input type="text" name="footer_copyright" value="{{.Settings.FooterCopyright}}" placeholder="© {year} Company Name. All rights reserved." class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        <p class="text-xs text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">Use <code class="bg-gray-200 px-1">{year}</code> for auto-updating year</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Legal Links</label>
+                        <div class="space-y-2" id="legal-links-container">
+                            {{range .LegalLinks}}
+                            <div class="flex gap-2 items-center legal-link-row">
+                                <input type="text" name="legal_link_label[]" value="{{.Label}}" placeholder="Privacy Policy" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="text" name="legal_link_url[]" value="{{.Url}}" placeholder="/privacy" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                <button type="button" onclick="this.closest('.legal-link-row').remove()" class="border-2 border-black px-2 py-1 bg-red-100 hover:bg-red-200 text-sm font-bold" style="font-family: 'JetBrains Mono', monospace;">✕</button>
+                            </div>
+                            {{end}}
+                        </div>
+                        <button type="button" onclick="addLegalLink()" class="mt-2 px-3 py-1 border-2 border-black bg-gray-100 hover:bg-gray-200 text-xs font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">+ Add Legal Link</button>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex justify-end gap-3 pt-4 pb-8">
+                    <button type="submit" class="px-6 py-3 border-2 border-black bg-black text-white text-sm font-bold uppercase hover:translate-x-[2px] hover:translate-y-[2px] transition-transform" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;" onmouseenter="this.style.boxShadow='2px 2px 0px #000'" onmouseleave="this.style.boxShadow='4px 4px 0px #000'">
+                        Save Footer Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateRadioGroupUI(name) {
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function(radio) {
+        var label = radio.closest('label');
+        if (radio.checked) {
+            label.classList.add('bg-black', 'text-white');
+            label.classList.remove('bg-white', 'text-black');
+        } else {
+            label.classList.remove('bg-black', 'text-white');
+            label.classList.add('bg-white', 'text-black');
+        }
+    });
+}
+
+function updateColumnCount(count) {
+    updateRadioGroupUI('footer_columns');
+    count = parseInt(count);
+    document.querySelectorAll('.column-config').forEach(function(el) {
+        var colIdx = parseInt(el.getAttribute('data-column'));
+        if (colIdx < count) {
+            el.classList.remove('hidden');
+        } else {
+            el.classList.add('hidden');
+        }
+    });
+}
+
+function updateColumnType(colIdx, type) {
+    // Update radio button UI
+    document.querySelectorAll('input[name="col_' + colIdx + '_type"]').forEach(function(radio) {
+        var label = radio.closest('label');
+        if (radio.checked) {
+            label.classList.add('bg-black', 'text-white');
+            label.classList.remove('bg-white', 'text-black');
+        } else {
+            label.classList.remove('bg-black', 'text-white');
+            label.classList.add('bg-white', 'text-black');
+        }
+    });
+
+    // Show/hide sections
+    var linksSection = document.querySelector('.col-links-section[data-column="' + colIdx + '"]');
+    var textSection = document.querySelector('.col-text-section[data-column="' + colIdx + '"]');
+    var contactSection = document.querySelector('.col-contact-section[data-column="' + colIdx + '"]');
+
+    linksSection.style.display = type === 'links' ? '' : 'none';
+    textSection.style.display = type === 'text' ? '' : 'none';
+    contactSection.style.display = type === 'contact' ? '' : 'none';
+}
+
+function addLink(colIdx) {
+    var container = document.querySelector('.links-container[data-column="' + colIdx + '"]');
+    var row = document.createElement('div');
+    row.className = 'flex gap-2 items-center link-row';
+    row.innerHTML = '<input type="text" name="col_' + colIdx + '_link_label[]" placeholder="Label" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: \'JetBrains Mono\', monospace;">' +
+        '<input type="text" name="col_' + colIdx + '_link_url[]" placeholder="/page-url" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: \'JetBrains Mono\', monospace;">' +
+        '<button type="button" onclick="this.closest(\'.link-row\').remove()" class="border-2 border-black px-2 py-1 bg-red-100 hover:bg-red-200 text-sm font-bold" style="font-family: \'JetBrains Mono\', monospace;">✕</button>';
+    container.appendChild(row);
+}
+
+function addLegalLink() {
+    var container = document.getElementById('legal-links-container');
+    var row = document.createElement('div');
+    row.className = 'flex gap-2 items-center legal-link-row';
+    row.innerHTML = '<input type="text" name="legal_link_label[]" placeholder="Privacy Policy" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: \'JetBrains Mono\', monospace;">' +
+        '<input type="text" name="legal_link_url[]" placeholder="/privacy" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: \'JetBrains Mono\', monospace;">' +
+        '<button type="button" onclick="this.closest(\'.legal-link-row\').remove()" class="border-2 border-black px-2 py-1 bg-red-100 hover:bg-red-200 text-sm font-bold" style="font-family: \'JetBrains Mono\', monospace;">✕</button>';
+    container.appendChild(row);
+}
+</script>
+{{end}}

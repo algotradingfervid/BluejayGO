@@ -1,0 +1,372 @@
+{{define "content"}}
+<div class="flex h-screen">
+    {{template "admin-sidebar" .}}
+    <div class="flex-1 overflow-auto p-8">
+        <div class="max-w-3xl">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold uppercase tracking-tight" style="font-family: 'JetBrains Mono', monospace;">Header Management</h1>
+                <p class="text-sm text-gray-600 mt-1" style="font-family: 'JetBrains Mono', monospace;">Configure your site header: logo, navigation, CTA button, and more.</p>
+            </div>
+
+            {{if .Saved}}
+            <div class="bg-green-100 border-2 border-black text-green-900 px-4 py-3 mb-6 font-bold uppercase text-sm" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                ✓ Header settings saved successfully.
+            </div>
+            {{end}}
+
+            <form id="header-form" method="POST" action="/admin/header" class="space-y-6">
+
+                <!-- Section 1: Logo -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Logo</h2>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Logo Image Path</label>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Your site logo displayed in the header. Recommended size: 240x60px. PNG or SVG.">info</span>
+                        </div>
+                        {{if .Settings.HeaderLogoPath}}
+                        <div class="mb-3 p-3 border-2 border-dashed border-gray-400 bg-gray-50 inline-block">
+                            <img src="{{.Settings.HeaderLogoPath}}" alt="{{.Settings.HeaderLogoAlt}}" class="max-h-16">
+                        </div>
+                        {{else}}
+                        <div class="mb-3 p-6 border-2 border-dashed border-gray-400 bg-gray-50 flex flex-col items-center justify-center">
+                            <span class="material-symbols-outlined text-gray-400 mb-1" style="font-size: 32px;">image</span>
+                            <p class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">No logo set. Enter path below.</p>
+                        </div>
+                        {{end}}
+                        <input type="text" name="header_logo_path" value="{{.Settings.HeaderLogoPath}}" placeholder="/uploads/logo.png" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        <p class="text-xs text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">Recommended: 240×60px, PNG or SVG</p>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Logo Alt Text</label>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Accessibility text for the logo. Typically your company name.">info</span>
+                        </div>
+                        <input type="text" name="header_logo_alt" value="{{.Settings.HeaderLogoAlt}}" placeholder="Company Name" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+                </div>
+
+                <!-- Section 2: Navigation Links -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Navigation Links</h2>
+                    <p class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">Toggle visibility and customize labels for each navigation item.</p>
+
+                    <!-- Products -->
+                    <div class="flex items-center gap-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center gap-2 w-48 shrink-0">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="show_nav_products" class="sr-only peer" {{if .Settings.ShowNavProducts}}checked{{end}}>
+                                <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                            </label>
+                            <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Products</span>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Toggle whether this page appears in the main navigation menu.">info</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 uppercase" style="font-family: 'JetBrains Mono', monospace;">Label:</span>
+                                <input type="text" name="nav_label_products" value="{{.Settings.NavLabelProducts}}" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" title="Customize the display text for this navigation link.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solutions -->
+                    <div class="flex items-center gap-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center gap-2 w-48 shrink-0">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="show_nav_solutions" class="sr-only peer" {{if .Settings.ShowNavSolutions}}checked{{end}}>
+                                <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                            </label>
+                            <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Solutions</span>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Toggle whether this page appears in the main navigation menu.">info</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 uppercase" style="font-family: 'JetBrains Mono', monospace;">Label:</span>
+                                <input type="text" name="nav_label_solutions" value="{{.Settings.NavLabelSolutions}}" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" title="Customize the display text for this navigation link.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Case Studies -->
+                    <div class="flex items-center gap-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center gap-2 w-48 shrink-0">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="show_nav_case_studies" class="sr-only peer" {{if .Settings.ShowNavCaseStudies}}checked{{end}}>
+                                <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                            </label>
+                            <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Case Studies</span>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Toggle whether this page appears in the main navigation menu.">info</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 uppercase" style="font-family: 'JetBrains Mono', monospace;">Label:</span>
+                                <input type="text" name="nav_label_case_studies" value="{{.Settings.NavLabelCaseStudies}}" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" title="Customize the display text for this navigation link.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About -->
+                    <div class="flex items-center gap-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center gap-2 w-48 shrink-0">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="show_nav_about" class="sr-only peer" {{if .Settings.ShowNavAbout}}checked{{end}}>
+                                <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                            </label>
+                            <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">About</span>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Toggle whether this page appears in the main navigation menu.">info</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 uppercase" style="font-family: 'JetBrains Mono', monospace;">Label:</span>
+                                <input type="text" name="nav_label_about" value="{{.Settings.NavLabelAbout}}" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" title="Customize the display text for this navigation link.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blog -->
+                    <div class="flex items-center gap-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center gap-2 w-48 shrink-0">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="show_nav_blog" class="sr-only peer" {{if .Settings.ShowNavBlog}}checked{{end}}>
+                                <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                            </label>
+                            <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Blog</span>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Toggle whether this page appears in the main navigation menu.">info</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 uppercase" style="font-family: 'JetBrains Mono', monospace;">Label:</span>
+                                <input type="text" name="nav_label_blog" value="{{.Settings.NavLabelBlog}}" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" title="Customize the display text for this navigation link.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Whitepapers -->
+                    <div class="flex items-center gap-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center gap-2 w-48 shrink-0">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="show_nav_whitepapers" class="sr-only peer" {{if .Settings.ShowNavWhitepapers}}checked{{end}}>
+                                <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                            </label>
+                            <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Whitepapers</span>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Toggle whether this page appears in the main navigation menu.">info</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 uppercase" style="font-family: 'JetBrains Mono', monospace;">Label:</span>
+                                <input type="text" name="nav_label_whitepapers" value="{{.Settings.NavLabelWhitepapers}}" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" title="Customize the display text for this navigation link.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Partners -->
+                    <div class="flex items-center gap-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center gap-2 w-48 shrink-0">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="show_nav_partners" class="sr-only peer" {{if .Settings.ShowNavPartners}}checked{{end}}>
+                                <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                            </label>
+                            <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Partners</span>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Toggle whether this page appears in the main navigation menu.">info</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 uppercase" style="font-family: 'JetBrains Mono', monospace;">Label:</span>
+                                <input type="text" name="nav_label_partners" value="{{.Settings.NavLabelPartners}}" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" title="Customize the display text for this navigation link.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="flex items-center gap-4 py-3">
+                        <div class="flex items-center gap-2 w-48 shrink-0">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="show_nav_contact" class="sr-only peer" {{if .Settings.ShowNavContact}}checked{{end}}>
+                                <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                            </label>
+                            <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Contact</span>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Toggle whether this page appears in the main navigation menu.">info</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 uppercase" style="font-family: 'JetBrains Mono', monospace;">Label:</span>
+                                <input type="text" name="nav_label_contact" value="{{.Settings.NavLabelContact}}" class="flex-1 border-2 border-black px-2 py-1 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" title="Customize the display text for this navigation link.">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: CTA Button -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">CTA Button</h2>
+
+                    <div class="flex items-center gap-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="header_cta_enabled" class="sr-only peer" {{if .Settings.HeaderCtaEnabled}}checked{{end}}>
+                            <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                        </label>
+                        <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Show CTA Button in Header</span>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">CTA Text</label>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Button text shown in the header. Keep it short and action-oriented.">info</span>
+                        </div>
+                        <input type="text" name="header_cta_text" value="{{.Settings.HeaderCtaText}}" placeholder="Request a Quote" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">CTA Link URL</label>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Where the button links to. Use /contact for the contact page.">info</span>
+                        </div>
+                        <input type="text" name="header_cta_url" value="{{.Settings.HeaderCtaUrl}}" placeholder="/contact" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">CTA Style</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 {{if eq .Settings.HeaderCtaStyle "primary"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="header_cta_style" value="primary" {{if eq .Settings.HeaderCtaStyle "primary"}}checked{{end}} class="sr-only" onchange="updateCtaStyleUI()">
+                                <span class="text-sm font-bold uppercase">Primary (Filled)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 {{if eq .Settings.HeaderCtaStyle "secondary"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="header_cta_style" value="secondary" {{if eq .Settings.HeaderCtaStyle "secondary"}}checked{{end}} class="sr-only" onchange="updateCtaStyleUI()">
+                                <span class="text-sm font-bold uppercase">Secondary (Outlined)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Contact Info Display -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Contact Info Display</h2>
+
+                    <div class="flex items-center gap-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="header_show_phone" class="sr-only peer" {{if .Settings.HeaderShowPhone}}checked{{end}}>
+                            <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                        </label>
+                        <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Show Phone Number</span>
+                        {{if .Settings.ContactPhone}}
+                        <span class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">({{.Settings.ContactPhone}})</span>
+                        {{end}}
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="header_show_email" class="sr-only peer" {{if .Settings.HeaderShowEmail}}checked{{end}}>
+                            <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                        </label>
+                        <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Show Email Address</span>
+                        {{if .Settings.ContactEmail}}
+                        <span class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">({{.Settings.ContactEmail}})</span>
+                        {{end}}
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-3">
+                        <p class="text-xs text-gray-500 flex items-center gap-1" style="font-family: 'JetBrains Mono', monospace;">
+                            <span class="material-symbols-outlined" style="font-size: 14px;">info</span>
+                            Edit contact info in <a href="/admin/settings?tab=contact" class="underline font-bold hover:text-black">Global Settings</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 5: Social Icons -->
+                <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                    <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Social Icons</h2>
+
+                    <div class="flex items-center gap-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="header_show_social" class="sr-only peer" {{if .Settings.HeaderShowSocial}}checked{{end}}>
+                            <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                        </label>
+                        <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Show Social Media Icons in Header</span>
+                    </div>
+
+                    <div class="bg-gray-50 border-2 border-black p-4 space-y-2">
+                        <p class="text-xs font-bold uppercase text-gray-600 mb-2" style="font-family: 'JetBrains Mono', monospace;">Configured Platforms:</p>
+                        <div class="flex flex-wrap gap-2">
+                            {{if .Settings.SocialFacebook}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ Facebook</span>
+                            {{end}}
+                            {{if .Settings.SocialTwitter}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ Twitter</span>
+                            {{end}}
+                            {{if .Settings.SocialLinkedin}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ LinkedIn</span>
+                            {{end}}
+                            {{if .Settings.SocialInstagram}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ Instagram</span>
+                            {{end}}
+                            {{if .Settings.SocialYoutube}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ YouTube</span>
+                            {{end}}
+                            {{if .Settings.SocialGithub}}
+                            <span class="inline-flex items-center gap-1 px-2 py-1 border-2 border-black bg-white text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;">✓ GitHub</span>
+                            {{end}}
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2" style="font-family: 'JetBrains Mono', monospace;">
+                            <span class="material-symbols-outlined" style="font-size: 14px;">info</span>
+                            Manage social URLs in <a href="/admin/settings?tab=social" class="underline font-bold hover:text-black">Global Settings</a>
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Display Style</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 {{if eq .Settings.HeaderSocialStyle "icons"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="header_social_style" value="icons" {{if eq .Settings.HeaderSocialStyle "icons"}}checked{{end}} class="sr-only" onchange="updateSocialStyleUI()">
+                                <span class="text-sm font-bold uppercase">Icons Only</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer border-2 border-black px-4 py-2 {{if eq .Settings.HeaderSocialStyle "icons_labels"}}bg-black text-white{{else}}bg-white text-black{{end}}" style="font-family: 'JetBrains Mono', monospace;">
+                                <input type="radio" name="header_social_style" value="icons_labels" {{if eq .Settings.HeaderSocialStyle "icons_labels"}}checked{{end}} class="sr-only" onchange="updateSocialStyleUI()">
+                                <span class="text-sm font-bold uppercase">Icons + Labels</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex justify-end gap-3 pt-4 pb-8">
+                    <button type="submit" class="px-6 py-3 border-2 border-black bg-black text-white text-sm font-bold uppercase hover:translate-x-[2px] hover:translate-y-[2px] transition-transform" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;" onmouseenter="this.style.boxShadow='2px 2px 0px #000'" onmouseleave="this.style.boxShadow='4px 4px 0px #000'">
+                        Save Header Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateCtaStyleUI() {
+    document.querySelectorAll('input[name="header_cta_style"]').forEach(radio => {
+        const label = radio.closest('label');
+        if (radio.checked) {
+            label.classList.add('bg-black', 'text-white');
+            label.classList.remove('bg-white', 'text-black');
+        } else {
+            label.classList.remove('bg-black', 'text-white');
+            label.classList.add('bg-white', 'text-black');
+        }
+    });
+}
+
+function updateSocialStyleUI() {
+    document.querySelectorAll('input[name="header_social_style"]').forEach(radio => {
+        const label = radio.closest('label');
+        if (radio.checked) {
+            label.classList.add('bg-black', 'text-white');
+            label.classList.remove('bg-white', 'text-black');
+        } else {
+            label.classList.remove('bg-black', 'text-white');
+            label.classList.add('bg-white', 'text-black');
+        }
+    });
+}
+</script>
+{{end}}
