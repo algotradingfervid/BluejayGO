@@ -1,7 +1,7 @@
 # Test Plan: Public Search
 
 ## Summary
-Verify full-text search across products, blog posts, and case studies with HTMX autocomplete suggestions.
+Verify full-text search across products, blog posts, and case studies (NOT solutions) with HTMX autocomplete suggestions.
 
 ## Preconditions
 - Server running on localhost:28090
@@ -23,10 +23,10 @@ Verify full-text search across products, blog posts, and case studies with HTMX 
 - **Search page loads**: Verify GET /search returns 200 status
 - **Search input displays**: Verify search input field present
 - **Search with query**: Submit search, verify navigation to GET /search?q={query}
-- **Results display**: Verify search results grouped by type (Products, Blog Posts, Case Studies)
-- **Product results**: Verify matching products with name, tagline, description snippets
-- **Blog post results**: Verify matching posts with title, excerpt, body snippets
-- **Case study results**: Verify matching case studies with title, client_name, content snippets
+- **Results display**: Verify search results in flat list with type badges (Products, Blog Posts, Case Studies)
+- **Product results**: Verify matching products with name, tagline, description snippets and "Product" badge
+- **Blog post results**: Verify matching posts with title, excerpt, body snippets and "Blog Post" badge
+- **Case study results**: Verify matching case studies with title, client_name, content snippets and "Case Study" badge
 - **Result links**: Verify each result links to appropriate detail page
 - **Product link navigation**: Click product result, verify navigation to /products/:category/:slug
 - **Blog link navigation**: Click blog result, verify navigation to /blog/:slug
@@ -35,8 +35,8 @@ Verify full-text search across products, blog posts, and case studies with HTMX 
 ### Happy Path - Autocomplete
 - **Autocomplete input configured**: Verify input has hx-get="/search/suggest", hx-trigger with debounce
 - **Autocomplete triggers**: Type in search input, verify HTMX request to GET /search/suggest?q={query}
-- **Suggestions display**: Verify search_suggestions.html partial renders with suggestions
-- **Suggestion selection**: Click suggestion, verify search executes with selected term
+- **Suggestions display**: Verify search_suggestions.html partial renders with suggestion links
+- **Suggestion selection**: Click suggestion link, verify direct navigation to result detail page (NOT search query trigger)
 
 ### Edge Cases / Error States
 - **Empty query**: Submit empty search, verify appropriate handling
@@ -52,19 +52,19 @@ Verify full-text search across products, blog posts, and case studies with HTMX 
   - Search input field
   - Search submit button
   - Results container
-  - Results grouped by type: Products section, Blog Posts section, Case Studies section
-  - Result items with title, snippet, link
+  - Results in flat list with type badges (NOT grouped by type)
+  - Result items with type badge, title, snippet, link
 - Autocomplete:
   - Search input with HTMX attributes: `hx-get="/search/suggest"`, debounced trigger, target for suggestions
   - Suggestions container (rendered from search_suggestions.html partial)
-  - Suggestion items (clickable)
+  - Suggestion items as direct links (`<a href="{{.URL}}">`) to result detail pages
 
 ## HTMX Interactions
 - **Autocomplete input**: hx-get="/search/suggest?q={query}", debounced trigger (e.g., "keyup changed delay:300ms"), target for suggestions dropdown
 - **Response**: search_suggestions.html partial with suggestion items
 
 ## Dependencies
-- FTS5 virtual tables for full-text search
+- FTS5 virtual tables for full-text search (products, blog posts, case studies ONLY - NOT solutions)
 - Search handler: GET /search?q={query}
 - Autocomplete handler: GET /search/suggest?q={query}
 - Template: search_suggestions.html partial

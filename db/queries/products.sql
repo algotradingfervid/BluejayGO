@@ -91,6 +91,18 @@ SELECT * FROM products WHERE sku = ? LIMIT 1;
 -- PRODUCTS - PUBLIC LISTING QUERIES
 -- ====================================================================
 
+-- name: ListProductsForSitemap :many
+-- Retrieves all published products with category slug for sitemap generation.
+--
+-- Returns: []ListProductsForSitemapRow - slug, category_slug, updated_at
+--
+-- Use case: Generating sitemap.xml with product detail page URLs
+SELECT p.slug, pc.slug AS category_slug, p.updated_at
+FROM products p
+INNER JOIN product_categories pc ON p.category_id = pc.id
+WHERE p.status = 'published'
+ORDER BY p.updated_at DESC;
+
 -- name: ListProducts :many
 -- Retrieves paginated published products with featured products first.
 --
@@ -305,7 +317,7 @@ WHERE
 --   $1 (INTEGER) - product_id: Foreign key to parent product
 --   $2 (TEXT) - section_name: Grouping label (e.g., "Electrical", "Physical", "Environmental")
 --   $3 (TEXT) - spec_key: Specification label (e.g., "Voltage", "Weight", "Operating Temp")
---   $4 (TEXT) - spec_value: Specification value (e.g., "24V DC", "2.5 kg", "-40°C to 85°C")
+--   $4 (TEXT) - spec_value: Specification value (e.g., "24V DC", "2.5 kg", "-40C to 85C")
 --   $5 (INTEGER) - display_order: Position within product specs list
 --
 -- Returns: ProductSpec - The newly created spec with auto-generated ID
@@ -340,6 +352,16 @@ ORDER BY display_order ASC;
 -- Use case: Clearing all specs before re-importing or rebuilding spec list
 -- WARNING: Deletes ALL specs for the product in one operation
 DELETE FROM product_specs WHERE product_id = ?;
+
+-- name: DeleteProductSpec :exec
+-- Deletes a single specification by its ID.
+--
+-- Parameters:
+--   $1 (INTEGER) - id: The spec record ID to delete
+-- Returns: (none)
+--
+-- Use case: Removing an individual spec from the product detail page
+DELETE FROM product_specs WHERE id = ?;
 
 -- ====================================================================
 -- PRODUCT IMAGES (Gallery Images)
@@ -443,6 +465,16 @@ ORDER BY display_order ASC;
 -- WARNING: Deletes ALL features for the product in one operation
 DELETE FROM product_features WHERE product_id = ?;
 
+-- name: DeleteProductFeature :exec
+-- Deletes a single feature by its ID.
+--
+-- Parameters:
+--   $1 (INTEGER) - id: The feature record ID to delete
+-- Returns: (none)
+--
+-- Use case: Removing an individual feature from the product detail page
+DELETE FROM product_features WHERE id = ?;
+
 -- ====================================================================
 -- PRODUCT CERTIFICATIONS (Compliance Badges & Standards)
 -- ====================================================================
@@ -489,6 +521,16 @@ ORDER BY display_order ASC;
 -- Use case: Clearing all certifications before re-importing or deleting product
 -- WARNING: Deletes ALL certifications for the product in one operation
 DELETE FROM product_certifications WHERE product_id = ?;
+
+-- name: DeleteProductCertification :exec
+-- Deletes a single certification by its ID.
+--
+-- Parameters:
+--   $1 (INTEGER) - id: The certification record ID to delete
+-- Returns: (none)
+--
+-- Use case: Removing an individual certification from the product detail page
+DELETE FROM product_certifications WHERE id = ?;
 
 -- ====================================================================
 -- PRODUCT DOWNLOADS (Datasheets, Manuals, CAD Files, etc.)

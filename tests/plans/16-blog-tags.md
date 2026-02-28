@@ -12,7 +12,7 @@ Testing tag creation, listing, HTMX autocomplete search, and inline quick-create
 1. Navigate to http://localhost:28090/admin/blog/tags
 2. Verify list of all tags displays
 3. Create new tag via POST /admin/blog/tags with name field
-4. Test HTMX autocomplete search via GET /admin/blog/tags/search?q=keyword
+4. Test HTMX autocomplete search via GET /admin/blog/tags/search?_tag_search=keyword
 5. Verify search returns tag_suggestions.html partial
 6. Test quick-create via POST /admin/blog/tags/quick-create from blog post form
 7. Verify quick-create returns tag_chip.html appended to #selected-tags
@@ -39,7 +39,7 @@ Testing tag creation, listing, HTMX autocomplete search, and inline quick-create
 - List route: GET /admin/blog/tags
 - Create form action: POST /admin/blog/tags
 - Input name: name (required)
-- Search endpoint: GET /admin/blog/tags/search with query param q
+- Search endpoint: GET /admin/blog/tags/search with query param _tag_search
 - Quick-create endpoint: POST /admin/blog/tags/quick-create
 - Delete button: hx-delete="/admin/blog/tags/:id"
 - Tag search input: id="tag-search"

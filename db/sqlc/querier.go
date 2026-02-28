@@ -10,408 +10,3518 @@ import (
 )
 
 type Querier interface {
+	// sqlc annotation: :exec returns no data
+	// Purpose: Associates a product with a blog post with specific display order
+	// Parameters:
+	//   1. blog_post_id (INTEGER)
+	//   2. product_id (INTEGER)
+	//   3. display_order (INTEGER): position in product list for this post
+	// Return type: none
+	// Note: ON CONFLICT DO NOTHING prevents duplicate associations
 	AddProductToPost(ctx context.Context, arg AddProductToPostParams) error
+	// Adds or updates a product association with a solution (upsert).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution to link product to
+	//   $2 (INTEGER) - product_id: Product to link
+	//   $3 (INTEGER) - display_order: Position in product list
+	//   $4 (BOOLEAN) - is_featured: Whether product is highlighted
+	// Returns: (none)
+	//
+	// Note: ON CONFLICT clause performs upsert - updates if association exists
+	// Use case: Adding products to solution or reordering existing associations
 	AddProductToSolution(ctx context.Context, arg AddProductToSolutionParams) error
+	// ====================================================================
+	// BLOG POST TAGS RELATIONSHIP
+	// ====================================================================
+	// sqlc annotation: :exec returns no data
+	// Purpose: Associates a tag with a blog post (many-to-many relationship)
+	// Parameters:
+	//   1. blog_post_id (INTEGER): post ID
+	//   2. blog_tag_id (INTEGER): tag ID
+	// Return type: none
+	// Note: ON CONFLICT DO NOTHING prevents duplicate tag associations
+	//       (blog_post_tags should have UNIQUE constraint on (blog_post_id, blog_tag_id))
 	AddTagToPost(ctx context.Context, arg AddTagToPostParams) error
-	// Case study products management
+	// ====================================================================
+	// CASE STUDY PRODUCTS MANAGEMENT
+	// ====================================================================
+	// sqlc annotation: :one returns the association row (new or updated)
+	// Purpose: Associates a product with a case study (many-to-many relationship)
+	// Parameters:
+	//   1. case_study_id (INTEGER)
+	//   2. product_id (INTEGER)
+	//   3. display_order (INTEGER): sort position for this product in this case study
+	// Return type: case_study_products row
+	// ON CONFLICT: If association already exists, update the display_order
+	// Note: Assumes UNIQUE constraint on (case_study_id, product_id)
 	AdminAddCaseStudyProduct(ctx context.Context, arg AdminAddCaseStudyProductParams) (CaseStudyProduct, error)
+	// sqlc annotation: :one returns the created case study
+	// Purpose: Creates a new case study (draft or published)
+	// Parameters (17 positional):
+	//   1. slug (TEXT): URL-safe identifier (must be unique)
+	//   2. title (TEXT): case study headline
+	//   3. client_name (TEXT): client/company name
+	//   4. industry_id (INTEGER): foreign key to industries table
+	//   5. hero_image_url (TEXT): hero/header image
+	//   6. summary (TEXT): brief overview for listing pages
+	//   7. challenge_title (TEXT): "Challenge" section heading
+	//   8. challenge_content (TEXT): challenge description (HTML)
+	//   9. challenge_bullets (TEXT): bullet points for challenge (JSON/text)
+	//   10. solution_title (TEXT): "Solution" section heading
+	//   11. solution_content (TEXT): solution description (HTML)
+	//   12. outcome_title (TEXT): "Outcome" section heading
+	//   13. outcome_content (TEXT): results/outcome description (HTML)
+	//   14. meta_title (TEXT): SEO page title
+	//   15. meta_description (TEXT): SEO meta description
+	//   16. is_published (BOOLEAN): 1 = published, 0 = draft
+	//   17. display_order (INTEGER): featured sort position
+	// Return type: complete inserted case study with ID and timestamps
 	AdminCreateCaseStudy(ctx context.Context, arg AdminCreateCaseStudyParams) (CaseStudy, error)
-	// Metrics management
+	// ====================================================================
+	// CASE STUDY METRICS MANAGEMENT
+	// ====================================================================
+	// sqlc annotation: :one returns the created metric
+	// Purpose: Creates a new performance metric for a case study
+	// Parameters (4 positional):
+	//   1. case_study_id (INTEGER): foreign key to case_studies
+	//   2. metric_value (TEXT): numeric value with unit (e.g., "50%", "2x")
+	//   3. metric_label (TEXT): description (e.g., "reduction in costs")
+	//   4. display_order (INTEGER): sort position in metrics list
+	// Return type: complete inserted case_study_metrics row
+	// Example: metric_value="75%", metric_label="faster deployment time"
 	AdminCreateMetric(ctx context.Context, arg AdminCreateMetricParams) (CaseStudyMetric, error)
+	// sqlc annotation: :exec returns no data
+	// Purpose: Permanently removes a case study
+	// Parameters:
+	//   1. id (INTEGER): case study to delete
+	// Return type: none
+	// Note: May cascade delete related case_study_products and case_study_metrics
 	AdminDeleteCaseStudy(ctx context.Context, id int64) error
+	// sqlc annotation: :exec returns no data
+	// Purpose: Removes a metric from a case study
+	// Parameters:
+	//   1. id (INTEGER): metric to delete
+	// Return type: none
 	AdminDeleteMetric(ctx context.Context, id int64) error
+	// sqlc annotation: :one returns single case study by ID for admin editing
+	// Purpose: Retrieves complete case study for admin edit form
+	// Parameters:
+	//   1. id (INTEGER): case study primary key
+	// Return type: complete case_studies row with all fields
 	AdminGetCaseStudy(ctx context.Context, id int64) (CaseStudy, error)
-	// Admin queries
+	// ====================================================================
+	// ADMIN CASE STUDY QUERIES
+	// ====================================================================
+	// sqlc annotation: :many returns all case studies for admin
+	// Purpose: Simple list of all case studies (drafts + published) for admin table
+	// Parameters: none
+	// Return type: slice of case studies with minimal fields
+	// Note: No filtering or pagination; includes all statuses
 	AdminListCaseStudies(ctx context.Context) ([]AdminListCaseStudiesRow, error)
+	// sqlc annotation: :many returns filtered/paginated case studies for admin
+	// Purpose: Advanced admin list with search and status filtering
+	// Parameters (named using @ prefix):
+	//   @filter_search (TEXT): search term for title/client_name ('' = no filter)
+	//   @filter_status (TEXT): 'published', 'draft', or '' for all
+	//   @page_limit (INTEGER): case studies per page
+	//   @page_offset (INTEGER): pagination offset
+	// Return type: slice of case studies with display metadata
+	// Complex WHERE using CASE statements:
+	//   - filter_search: LIKE match in title OR client_name fields
+	//   - filter_status: maps text values to is_published boolean (1/0)
+	//     'published' -> is_published = 1
+	//     'draft' -> is_published = 0
+	//     '' -> all statuses (condition always true)
 	AdminListCaseStudiesFiltered(ctx context.Context, arg AdminListCaseStudiesFilteredParams) ([]AdminListCaseStudiesFilteredRow, error)
+	// sqlc annotation: :many returns products linked to a case study (admin view)
+	// Purpose: Lists products associated with a case study for admin management
+	// Parameters:
+	//   1. case_study_id (INTEGER): case study to list products for
+	// Return type: slice of products with association metadata
+	// JOIN: Gets product name/slug for display in admin UI
+	// ORDER BY display_order: shows custom sort order for this case study
 	AdminListCaseStudyProducts(ctx context.Context, caseStudyID int64) ([]AdminListCaseStudyProductsRow, error)
+	// sqlc annotation: :many returns all metrics for a case study
+	// Purpose: Lists metrics for admin editing interface
+	// Parameters:
+	//   1. case_study_id (INTEGER): case study to list metrics for
+	// Return type: slice of case_study_metrics rows
+	// ORDER BY display_order: shows custom presentation sequence
 	AdminListMetrics(ctx context.Context, caseStudyID int64) ([]AdminListMetricsRow, error)
+	// sqlc annotation: :exec returns no data
+	// Purpose: Removes a specific product association from a case study
+	// Parameters:
+	//   1. case_study_id (INTEGER)
+	//   2. product_id (INTEGER)
+	// Return type: none
 	AdminRemoveCaseStudyProduct(ctx context.Context, arg AdminRemoveCaseStudyProductParams) error
+	// sqlc annotation: :one returns the updated case study
+	// Purpose: Updates an existing case study (all fields except ID/created_at)
+	// Parameters (18 positional):
+	//   1-17. updated field values (same order as AdminCreateCaseStudy)
+	//   18. id (INTEGER): which case study to update (WHERE clause)
+	// Return type: updated case_studies row
+	// Note: updated_at explicitly set to CURRENT_TIMESTAMP
 	AdminUpdateCaseStudy(ctx context.Context, arg AdminUpdateCaseStudyParams) (CaseStudy, error)
+	// sqlc annotation: :one returns the updated metric
+	// Purpose: Updates an existing case study metric
+	// Parameters (4 positional):
+	//   1-3. updated field values (metric_value, metric_label, display_order)
+	//   4. id (INTEGER): which metric to update (WHERE clause)
+	// Return type: updated case_study_metrics row
 	AdminUpdateMetric(ctx context.Context, arg AdminUpdateMetricParams) (CaseStudyMetric, error)
 	BulkMarkContactSubmissionsRead(ctx context.Context) error
+	// sqlc annotation: :exec returns no data
+	// Purpose: Removes all product associations from a post
+	// Parameters:
+	//   1. blog_post_id (INTEGER)
+	// Return type: none
 	ClearPostProducts(ctx context.Context, blogPostID int64) error
+	// sqlc annotation: :exec returns no data
+	// Purpose: Removes all tag associations from a post (used before re-adding tags)
+	// Parameters:
+	//   1. blog_post_id (INTEGER): post to clear tags from
+	// Return type: none
+	// Note: Typically used when updating post tags (clear then re-add)
 	ClearPostTags(ctx context.Context, blogPostID int64) error
+	// sqlc annotation: :one returns single integer count
+	// Purpose: Counts total activity logs matching filters (for pagination UI)
+	// Parameters (named):
+	//   @filter_action (TEXT): same filter as ListActivityLogs
+	//   @filter_search (TEXT): same search filter as ListActivityLogs
+	// Return type: single integer COUNT(*) value
+	// Note: WHERE clause MUST match ListActivityLogs exactly for accurate pagination
 	CountActivityLogs(ctx context.Context, arg CountActivityLogsParams) (int64, error)
+	// sqlc annotation: :one returns integer count for pagination
+	// Purpose: Counts total posts matching admin filters
+	// Parameters: same filters as ListBlogPostsAdminFiltered (except pagination)
+	// Return type: integer count
+	// Note: WHERE clause MUST exactly match ListBlogPostsAdminFiltered for accuracy
+	//       Does NOT include JOINs since we only need count
 	CountBlogPostsAdminFiltered(ctx context.Context, arg CountBlogPostsAdminFilteredParams) (int64, error)
+	// sqlc annotation: :one returns total published case studies count
+	// Purpose: Counts published case studies for stats/pagination
+	// Parameters: none
+	// Return type: integer count
 	CountCaseStudies(ctx context.Context) (int64, error)
+	// sqlc annotation: :one returns count for filtered case studies
+	// Purpose: Counts case studies matching admin filters (for pagination)
+	// Parameters: same filters as AdminListCaseStudiesFiltered (except pagination)
+	// Return type: integer count
+	// Note: WHERE clause MUST match AdminListCaseStudiesFiltered exactly
 	CountCaseStudiesAdminFiltered(ctx context.Context, arg CountCaseStudiesAdminFilteredParams) (int64, error)
+	// sqlc annotation: :one returns count for specific industry
+	// Purpose: Counts published case studies in an industry
+	// Parameters:
+	//   1. industry_id (INTEGER): industry to count
+	// Return type: integer count
 	CountCaseStudiesByIndustry(ctx context.Context, industryID int64) (int64, error)
 	CountContactSubmissions(ctx context.Context) (int64, error)
 	CountContactSubmissionsByStatus(ctx context.Context, status string) (int64, error)
 	CountContactSubmissionsByStatusAndType(ctx context.Context, arg CountContactSubmissionsByStatusAndTypeParams) (int64, error)
 	CountContactSubmissionsByType(ctx context.Context, submissionType string) (int64, error)
 	CountContactSubmissionsSearch(ctx context.Context, arg CountContactSubmissionsSearchParams) (int64, error)
+	// sqlc annotation: :one returns integer count
+	// Purpose: Counts unpublished blog posts (status = 'draft')
+	// Parameters: none
+	// Return type: integer count
+	// Used for: Dashboard alert showing draft blog posts needing review
 	CountDraftBlogPosts(ctx context.Context) (int64, error)
+	// sqlc annotation: :one returns integer count
+	// Purpose: Counts unpublished products (status = 'draft')
+	// Parameters: none
+	// Return type: integer count
+	// Used for: Dashboard alert showing draft products needing review
 	CountDraftProducts(ctx context.Context) (int64, error)
+	// Returns the total count of all media files.
+	//
+	// Parameters: none
+	// Returns: INTEGER - Total number of media files in the library
+	//
+	// Use case: Calculating total pages for pagination, displaying library statistics
 	CountMediaFiles(ctx context.Context) (int64, error)
+	// Returns the count of media files matching a search query.
+	//
+	// Parameters:
+	//   @search (TEXT) - Search term to match against original_filename
+	// Returns: INTEGER - Number of files matching the search
+	//
+	// Use case: Pagination for search results
+	// Note: Uses same LIKE pattern as SearchMediaFiles for consistent counts
 	CountMediaFilesSearch(ctx context.Context, search sql.NullString) (int64, error)
+	// ====================================================================
+	// DASHBOARD STATISTICS QUERIES
+	// ====================================================================
+	// This file contains simple COUNT queries used to populate admin dashboard
+	// widgets showing key metrics and pending items requiring attention.
+	//
+	// All queries return single integer counts for dashboard cards/badges.
+	// These queries help admins quickly see:
+	// - Pending contact submissions needing response
+	// - Total partner count
+	// - Draft content needing review/publication
+	// ====================================================================
+	// sqlc annotation: :one returns integer count
+	// Purpose: Counts unread contact form submissions (status = 'new')
+	// Parameters: none
+	// Return type: integer count
+	// Used for: Dashboard alert badge showing pending inquiries
 	CountNewContactSubmissions(ctx context.Context) (int64, error)
+	// sqlc annotation: :one returns integer count
+	// Purpose: Counts total partners in the system
+	// Parameters: none
+	// Return type: integer count
+	// Used for: Dashboard "Total Partners" statistic card
 	CountPartners(ctx context.Context) (int64, error)
+	// Returns the total count of published products.
+	//
+	// Parameters: none
+	// Returns: INTEGER - Total number of published products
+	//
+	// Filtering: status = 'published' - Only counts public products
+	// Use case: Pagination calculations, site statistics
 	CountProducts(ctx context.Context) (int64, error)
+	// Returns count of products matching admin filters (for pagination).
+	//
+	// Parameters: Same as ListProductsAdminFiltered (@filter_status, @filter_category, @filter_search)
+	// Returns: INTEGER - Count of products matching filter criteria
+	//
+	// Note: Uses identical WHERE clause as ListProductsAdminFiltered for consistent counts
+	// Use case: Calculating total pages for filtered admin product listing
 	CountProductsAdminFiltered(ctx context.Context, arg CountProductsAdminFilteredParams) (int64, error)
+	// Returns the count of published products in a specific category.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - category_id: Category to count products in
+	// Returns: INTEGER - Number of published products in the category
+	//
+	// Use case: Category page pagination, category statistics
 	CountProductsByCategory(ctx context.Context, categoryID int64) (int64, error)
+	// sqlc annotation: :one returns single integer count
+	// Purpose: Counts total published posts for pagination calculations
+	// Parameters: none
+	// Return type: integer count
+	// Note: WHERE clause must match ListPublishedPosts for accurate pagination
 	CountPublishedPosts(ctx context.Context) (int64, error)
+	// sqlc annotation: :one returns integer count
+	// Purpose: Counts posts in specific category for pagination
+	// Parameters:
+	//   1. category slug (TEXT)
+	// Return type: integer count
+	// Note: JOIN required to filter by category slug; WHERE must match ListPublishedPostsByCategory
 	CountPublishedPostsByCategory(ctx context.Context, slug string) (int64, error)
+	// Returns the total count of published whitepapers.
+	//
+	// Parameters: none
+	// Returns: INTEGER - Total number of published whitepapers
+	//
+	// Use case: Site statistics, pagination calculations
 	CountPublishedWhitepapers(ctx context.Context) (int64, error)
+	// Returns the count of published whitepapers in a specific topic.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - topic_id: Topic to count whitepapers in
+	// Returns: INTEGER - Number of published whitepapers in the topic
+	//
+	// Use case: Topic page statistics, showing "(12 whitepapers)" on topic badges
 	CountPublishedWhitepapersByTopic(ctx context.Context, topicID int64) (int64, error)
+	// Returns count of solutions matching admin filters (for pagination).
+	//
+	// Parameters: Same as ListSolutionsAdminFiltered (@filter_status, @filter_search)
+	// Returns: INTEGER - Count of solutions matching filter criteria
+	//
+	// Note: Uses identical WHERE clause as ListSolutionsAdminFiltered for consistent counts
 	CountSolutionsAdminFiltered(ctx context.Context, arg CountSolutionsAdminFilteredParams) (int64, error)
+	// Returns the total count of all whitepaper downloads.
+	//
+	// Parameters: none
+	// Returns: INTEGER - Total number of download records across all whitepapers
+	//
+	// Use case: Site statistics, lead generation metrics
 	CountWhitepaperDownloads(ctx context.Context) (int64, error)
+	// Returns count of download records matching admin filters (for pagination).
+	//
+	// Parameters: Same as ListWhitepaperDownloadsFiltered (@filter_whitepaper, @filter_date_from, @filter_date_to)
+	// Returns: INTEGER - Count of download records matching filter criteria
+	//
+	// Note: Uses identical WHERE clause as ListWhitepaperDownloadsFiltered for consistent counts
 	CountWhitepaperDownloadsFiltered(ctx context.Context, arg CountWhitepaperDownloadsFilteredParams) (int64, error)
+	// Returns count of whitepapers matching admin filters (for pagination).
+	//
+	// Parameters: Same as ListWhitepapersAdminFiltered (@filter_search, @filter_topic, @filter_status)
+	// Returns: INTEGER - Count of whitepapers matching filter criteria
+	//
+	// Note: Uses identical WHERE clause as ListWhitepapersAdminFiltered for consistent counts
 	CountWhitepapersAdminFiltered(ctx context.Context, arg CountWhitepapersAdminFilteredParams) (int64, error)
+	// ====================================================================
+	// ACTIVITY LOG QUERIES
+	// ====================================================================
+	// This file manages audit trail queries for tracking admin user actions
+	// throughout the CMS. All create/update/delete operations should be logged
+	// to provide accountability and change history.
+	//
+	// Managed entity:
+	// - activity_log: stores admin actions with context (who, what, when, where)
+	// ====================================================================
+	// sqlc annotation: :exec returns no data, only error or success
+	// Purpose: Records a new activity log entry when admins perform actions
+	// Parameters (6 positional):
+	//   1. user_id (INTEGER): ID of admin user performing the action
+	//   2. action (TEXT): type of action (e.g., "created", "updated", "deleted")
+	//   3. resource_type (TEXT): entity being modified (e.g., "blog_post", "product")
+	//   4. resource_id (INTEGER): ID of the modified resource
+	//   5. resource_title (TEXT): human-readable title of modified resource
+	//   6. description (TEXT): detailed description of the action
+	// Return type: none (exec only returns error status)
+	// Note: created_at timestamp is auto-generated by database
 	CreateActivityLog(ctx context.Context, arg CreateActivityLogParams) error
+	// sqlc annotation: :one returns the newly created user (partial)
+	// Purpose: Creates a new admin user account
+	// Parameters (4 positional):
+	//   1. email (TEXT): unique email address for login
+	//   2. password_hash (TEXT): bcrypt/argon2 hashed password
+	//   3. display_name (TEXT): human-friendly name for UI
+	//   4. role (TEXT): permission level (e.g., "admin", "editor", "viewer")
+	// Return type: partial row (id, email, display_name, role, created_at)
+	// Note: Does NOT return password_hash for security
+	//       is_active defaults to 1 (true) via schema default
+	//       UNIQUE constraint on email enforced at database level
 	CreateAdminUser(ctx context.Context, arg CreateAdminUserParams) (CreateAdminUserRow, error)
+	// sqlc annotation: :one returns the created author row
+	// Purpose: Creates a new blog author profile
+	// Parameters (8 positional):
+	//   1. name (TEXT): author's full name
+	//   2. slug (TEXT): URL-safe identifier (must be unique)
+	//   3. title (TEXT): job title or role (e.g., "Senior Editor")
+	//   4. bio (TEXT): author biography for byline display
+	//   5. avatar_url (TEXT): profile image URL
+	//   6. linkedin_url (TEXT): LinkedIn profile link (optional)
+	//   7. email (TEXT): contact email (optional, may not be publicly displayed)
+	//   8. sort_order (INTEGER): display order in author lists
+	// Return type: complete inserted row with generated ID and timestamps
 	CreateBlogAuthor(ctx context.Context, arg CreateBlogAuthorParams) (BlogAuthor, error)
+	// sqlc annotation: :one returns the created category row
+	// Purpose: Creates a new blog category
+	// Parameters (5 positional):
+	//   1. name (TEXT): category display name
+	//   2. slug (TEXT): URL-safe identifier (must be unique)
+	//   3. color_hex (TEXT): hex color for UI badges (e.g., "#3B82F6")
+	//   4. description (TEXT): category description for archive page
+	//   5. sort_order (INTEGER): display order in category lists
+	// Return type: complete inserted row with generated ID and timestamps
 	CreateBlogCategory(ctx context.Context, arg CreateBlogCategoryParams) (BlogCategory, error)
+	// sqlc annotation: :one returns the created blog post
+	// Purpose: Creates a new blog post (draft or published)
+	// Parameters (12 positional):
+	//   1. title (TEXT): post headline
+	//   2. slug (TEXT): URL-safe identifier (must be unique)
+	//   3. excerpt (TEXT): short summary for listings
+	//   4. body (TEXT): full HTML content
+	//   5. featured_image_url (TEXT): hero image URL
+	//   6. featured_image_alt (TEXT): image alt text for accessibility
+	//   7. category_id (INTEGER): foreign key to blog_categories
+	//   8. author_id (INTEGER): foreign key to blog_authors
+	//   9. meta_description (TEXT): SEO description
+	//   10. reading_time_minutes (INTEGER): estimated read time
+	//   11. status (TEXT): 'draft' or 'published'
+	//   12. published_at (TIMESTAMP): publication datetime (NULL for drafts)
+	// Return type: complete inserted row with ID and timestamps
 	CreateBlogPost(ctx context.Context, arg CreateBlogPostParams) (BlogPost, error)
+	// sqlc annotation: :one returns the created tag
+	// Purpose: Creates a new blog tag
+	// Parameters (2 positional):
+	//   1. name (TEXT): display name of tag
+	//   2. slug (TEXT): URL-safe identifier (must be unique)
+	// Return type: complete inserted row with ID
 	CreateBlogTag(ctx context.Context, arg CreateBlogTagParams) (BlogTag, error)
+	// Purpose: Creates a new CTA block variant
+	// Parameters (8 positional):
+	//   1. headline (TEXT): CTA section headline
+	//   2. description (TEXT): supporting description/pitch
+	//   3. primary_cta_text (TEXT): primary button text
+	//   4. primary_cta_url (TEXT): primary button link
+	//   5. secondary_cta_text (TEXT): optional secondary button text
+	//   6. secondary_cta_url (TEXT): secondary button link
+	//   7. background_style (TEXT): visual style ('gradient', 'solid', 'image', etc.)
+	//   8. is_active (BOOLEAN): whether this CTA is currently displayed
+	// Note: Only one CTA should have is_active = 1 at a time
 	CreateCTA(ctx context.Context, arg CreateCTAParams) (HomepageCtum, error)
+	// sqlc annotation: :one returns created certification
+	// Purpose: Adds a new certification/credential entry
+	// Parameters (5 positional):
+	//   1. name (TEXT): full certification name
+	//   2. abbreviation (TEXT): short form (e.g., "ISO 9001")
+	//   3. description (TEXT): certification details
+	//   4. icon (TEXT): icon identifier for display
+	//   5. display_order (INTEGER): sort position
+	// Return type: complete inserted row with ID
 	CreateCertification(ctx context.Context, arg CreateCertificationParams) (Certification, error)
 	// ====================================================================
-	// CONTACT SUBMISSIONS
+	// CONTACT SUBMISSIONS QUERIES
 	// ====================================================================
+	// This file manages contact form submissions and office location data.
+	// Includes both public-facing queries (form submission, office listings)
+	// and admin operations (submission management, filtering, status updates).
+	//
+	// Managed entities:
+	// - contact_submissions: form submissions with status tracking
+	// - office_locations: physical office addresses and contact info
+	//
+	// Key concepts:
+	// - status: 'new', 'read', 'replied', 'archived' (tracks submission lifecycle)
+	// - submission_type: categorizes inquiry type
+	// - is_active: controls office location visibility on public site
+	// ====================================================================
+	// ====================================================================
+	// PUBLIC CONTACT QUERIES
+	// ====================================================================
+	// sqlc annotation: :one returns minimal info after creating submission
+	// Purpose: Records a new contact form submission from public website
+	// Parameters (8 positional):
+	//   1. name (TEXT): submitter's full name
+	//   2. email (TEXT): submitter's email address
+	//   3. phone (TEXT): optional phone number
+	//   4. company (TEXT): optional company/organization name
+	//   5. inquiry_type (TEXT): type of inquiry (e.g., "sales", "support", "general")
+	//   6. message (TEXT): inquiry message content
+	//   7. ip_address (TEXT): submitter's IP for spam prevention
+	//   8. user_agent (TEXT): browser user agent for tracking
+	// Return type: id and created_at only (minimal response)
+	// Note: status defaults to 'new' via schema default
 	CreateContactSubmission(ctx context.Context, arg CreateContactSubmissionParams) (CreateContactSubmissionRow, error)
+	// sqlc annotation: :one returns the created row
+	// Purpose: Creates a new core value entry
+	// Parameters (4 positional):
+	//   1. title (TEXT): value name/title
+	//   2. description (TEXT): detailed explanation
+	//   3. icon (TEXT): icon identifier (e.g., "shield", "star")
+	//   4. display_order (INTEGER): sort position in list
+	// Return type: complete inserted row with generated ID
 	CreateCoreValue(ctx context.Context, arg CreateCoreValueParams) (CoreValue, error)
+	// Purpose: Creates new content block in footer column
+	// Parameters: column_index, type, heading, content, sort_order
+	// type examples: 'text', 'links', 'newsletter'
 	CreateFooterColumnItem(ctx context.Context, arg CreateFooterColumnItemParams) (FooterColumnItem, error)
+	// Purpose: Creates a new legal link in footer bottom bar
+	// Parameters: label (link text), url, sort_order
 	CreateFooterLegalLink(ctx context.Context, arg CreateFooterLegalLinkParams) (FooterLegalLink, error)
+	// Purpose: Creates a new link within a footer column item
+	// Parameters: column_item_id (parent), label (link text), url, sort_order
 	CreateFooterLink(ctx context.Context, arg CreateFooterLinkParams) (FooterLink, error)
+	// Purpose: Creates a new hero banner variant
+	// Parameters (10 positional):
+	//   1. headline (TEXT): main hero headline
+	//   2. subheadline (TEXT): supporting text
+	//   3. badge_text (TEXT): optional badge/announcement text
+	//   4. primary_cta_text (TEXT): primary button text
+	//   5. primary_cta_url (TEXT): primary button link
+	//   6. secondary_cta_text (TEXT): optional secondary button text
+	//   7. secondary_cta_url (TEXT): secondary button link
+	//   8. background_image (TEXT): hero background/featured image URL
+	//   9. is_active (BOOLEAN): whether this hero is currently displayed
+	//   10. display_order (INTEGER): sort position
+	// Note: Only one hero should have is_active = 1 at a time
 	CreateHero(ctx context.Context, arg CreateHeroParams) (HomepageHero, error)
+	// Inserts a new industry record and returns the created record.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Display name of the industry
+	//   $2 (TEXT) - slug: URL-safe identifier
+	//   $3 (TEXT) - icon: Icon identifier or CSS class (optional)
+	//   $4 (TEXT) - description: Industry description (optional)
+	//   $5 (INTEGER) - sort_order: Display position (lower = higher priority)
+	//
+	// Returns: Industry - The newly created industry record with auto-generated ID and timestamps
+	//
+	// Note: RETURNING * returns all columns including auto-generated created_at, updated_at
 	CreateIndustry(ctx context.Context, arg CreateIndustryParams) (Industry, error)
+	// Inserts a new media file record after successful upload.
+	//
+	// Parameters:
+	//   $1 (TEXT) - filename: System-generated unique filename (e.g., uuid.jpg)
+	//   $2 (TEXT) - original_filename: User's original upload filename
+	//   $3 (TEXT) - file_path: Relative/absolute path to stored file
+	//   $4 (INTEGER) - file_size: File size in bytes
+	//   $5 (TEXT) - mime_type: MIME type (e.g., image/jpeg, application/pdf)
+	//   $6 (INTEGER) - width: Image width in pixels (NULL for non-images)
+	//   $7 (INTEGER) - height: Image height in pixels (NULL for non-images)
+	//   $8 (TEXT) - alt_text: Accessibility alt text for images (optional)
+	//
+	// Returns: MediaFile - The newly created media file record with auto-generated ID and timestamps
+	//
+	// Note: width/height should be extracted from image files during upload processing
 	CreateMediaFile(ctx context.Context, arg CreateMediaFileParams) (MediaFile, error)
+	// sqlc annotation: :one returns created milestone
+	// Purpose: Creates a new milestone entry for company timeline
+	// Parameters (5 positional):
+	//   1. year (TEXT): year of milestone (stored as text for flexibility)
+	//   2. title (TEXT): milestone heading
+	//   3. description (TEXT): milestone details
+	//   4. is_current (BOOLEAN): marks if this is the current/ongoing milestone
+	//   5. display_order (INTEGER): sort position in timeline
+	// Return type: complete inserted row
 	CreateMilestone(ctx context.Context, arg CreateMilestoneParams) (Milestone, error)
+	// Creates a new navigation item (link) within a menu.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - menu_id: Parent menu container ID
+	//   $2 (INTEGER) - parent_id: Parent item ID for nested items (NULL for top-level)
+	//   $3 (TEXT) - label: Display text for the link
+	//   $4 (TEXT) - link_type: Type of link ("url", "page", "custom")
+	//   $5 (TEXT) - url: External or custom URL (NULL if using page_identifier)
+	//   $6 (TEXT) - page_identifier: Internal page slug/ID (NULL if using url)
+	//   $7 (BOOLEAN) - open_new_tab: Whether link opens in new window
+	//   $8 (BOOLEAN) - is_active: Whether item is visible (soft delete alternative)
+	//   $9 (INTEGER) - sort_order: Display position within menu
+	//
+	// Returns: NavigationItem - The newly created item with auto-generated ID and timestamps
+	//
+	// Link type logic:
+	//   - "url": Uses the url field for external/custom links
+	//   - "page": Uses page_identifier to reference internal content
+	//   - Application code resolves page_identifier to actual URL
 	CreateNavigationItem(ctx context.Context, arg CreateNavigationItemParams) (NavigationItem, error)
+	// Creates a new navigation menu container.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Display name for admin (e.g., "Main Navigation")
+	//   $2 (TEXT) - location: Identifier for template placement (e.g., "header", "footer")
+	// Returns: NavigationMenu - The newly created menu with auto-generated ID and timestamps
+	//
+	// Use case: Setting up a new menu location (header, footer, sidebar, etc.)
 	CreateNavigationMenu(ctx context.Context, arg CreateNavigationMenuParams) (NavigationMenu, error)
 	CreateOfficeLocation(ctx context.Context, arg CreateOfficeLocationParams) (CreateOfficeLocationRow, error)
+	// Creates a new partner record.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Partner company name
+	//   $2 (INTEGER) - tier_id: Partner tier category ID
+	//   $3 (TEXT) - logo_url: Path/URL to partner logo image
+	//   $4 (TEXT) - icon: Icon identifier or CSS class (optional)
+	//   $5 (TEXT) - website_url: Partner website URL (optional)
+	//   $6 (TEXT) - description: Partner description or relationship details (optional)
+	//   $7 (INTEGER) - display_order: Position within tier for ordering
+	//
+	// Returns: Partner - The newly created partner with auto-generated ID and timestamps
+	//
+	// Note: is_active defaults to 1 (true) via database schema, is_featured defaults to 0
 	CreatePartner(ctx context.Context, arg CreatePartnerParams) (Partner, error)
+	// Creates a new partner tier category.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Display name (e.g., "Platinum Partner", "Gold Partner")
+	//   $2 (TEXT) - slug: URL-safe identifier (e.g., "platinum", "gold")
+	//   $3 (TEXT) - description: Tier description or benefits (optional)
+	//   $4 (INTEGER) - sort_order: Display priority (lower = higher tier)
+	//
+	// Returns: PartnerTier - The newly created tier with auto-generated ID and timestamps
+	//
+	// Note: RETURNING * includes auto-generated created_at, updated_at timestamps
 	CreatePartnerTier(ctx context.Context, arg CreatePartnerTierParams) (PartnerTier, error)
 	// ====================================================================
-	// PRODUCTS
+	// PRODUCTS QUERY FILE
 	// ====================================================================
+	// This file contains all SQL queries for managing products and related entities.
+	//
+	// Main entities:
+	//   - products: Core product records
+	//   - product_specs: Technical specifications (grouped by section)
+	//   - product_images: Gallery images for product detail pages
+	//   - product_features: Bullet-point feature lists
+	//   - product_certifications: Compliance badges (UL, CE, ISO, etc.)
+	//   - product_downloads: Datasheets, manuals, CAD files, etc.
+	//
+	// Product status values: "published", "draft", "archived"
+	// Features:
+	//   - Multi-status workflow (draft/published/archived)
+	//   - Featured products for homepage highlights
+	//   - Rich metadata for SEO (meta_title, meta_description)
+	//   - Category-based organization
+	//   - Search and filtering capabilities
+	// ====================================================================
+	// ====================================================================
+	// PRODUCTS - CORE CRUD OPERATIONS
+	// ====================================================================
+	// Creates a new product record with all core fields.
+	//
+	// Parameters:
+	//   $1 (TEXT) - sku: Stock Keeping Unit / product code
+	//   $2 (TEXT) - slug: URL-safe identifier for product page
+	//   $3 (TEXT) - name: Product display name
+	//   $4 (TEXT) - tagline: Short marketing tagline
+	//   $5 (TEXT) - description: Full product description (HTML/Markdown)
+	//   $6 (TEXT) - overview: Brief product overview
+	//   $7 (INTEGER) - category_id: Foreign key to product_categories
+	//   $8 (TEXT) - status: "published", "draft", or "archived"
+	//   $9 (BOOLEAN) - is_featured: Whether product appears in featured listings
+	//   $10 (INTEGER) - featured_order: Display position for featured products
+	//   $11 (TEXT) - meta_title: SEO page title
+	//   $12 (TEXT) - meta_description: SEO meta description
+	//   $13 (TEXT) - primary_image: Main product image path
+	//   $14 (TEXT) - video_url: Product demo/promo video URL (optional)
+	//   $15 (TIMESTAMP) - published_at: Publication date/time
+	//
+	// Returns: Product - The newly created product with auto-generated ID and timestamps
+	//
+	// Note: Related entities (specs, images, features) are created separately after product creation
 	CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error)
+	// Creates a new product category.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Display name of the category
+	//   $2 (TEXT) - slug: URL-safe identifier
+	//   $3 (TEXT) - description: Category description for category page (optional)
+	//   $4 (TEXT) - icon: Icon identifier or CSS class (optional)
+	//   $5 (TEXT) - image_url: Header/banner image for category page (optional)
+	//   $6 (INTEGER) - sort_order: Display position (lower = higher priority)
+	//
+	// Returns: ProductCategory - The newly created category with auto-generated ID and timestamps
+	//
+	// Note: RETURNING * includes auto-generated created_at, updated_at
 	CreateProductCategory(ctx context.Context, arg CreateProductCategoryParams) (ProductCategory, error)
 	// ====================================================================
-	// PRODUCT CERTIFICATIONS
+	// PRODUCT CERTIFICATIONS (Compliance Badges & Standards)
 	// ====================================================================
+	// Adds a certification/compliance badge to a product.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Foreign key to parent product
+	//   $2 (TEXT) - certification_name: Display name (e.g., "UL Listed", "CE Certified")
+	//   $3 (TEXT) - certification_code: Official code/number (e.g., "UL 508", "CE 2014/35/EU")
+	//   $4 (TEXT) - icon_type: Icon source type ("upload", "library", "font-icon")
+	//   $5 (TEXT) - icon_path: Path to icon file or icon class name
+	//   $6 (INTEGER) - display_order: Position in certifications list
+	//
+	// Returns: ProductCertification - The newly created certification with auto-generated ID
+	//
+	// Use case: Adding compliance badges during product creation/editing
+	// Note: Common certifications include UL, CE, FCC, RoHS, ISO, CSA
 	CreateProductCertification(ctx context.Context, arg CreateProductCertificationParams) (ProductCertification, error)
 	// ====================================================================
-	// PRODUCT DOWNLOADS
+	// PRODUCT DOWNLOADS (Datasheets, Manuals, CAD Files, etc.)
 	// ====================================================================
+	// Adds a downloadable file (datasheet, manual, CAD, etc.) to a product.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Foreign key to parent product
+	//   $2 (TEXT) - title: Download display name (e.g., "Product Datasheet", "User Manual")
+	//   $3 (TEXT) - description: Download description or notes (optional)
+	//   $4 (TEXT) - file_type: File type label (e.g., "PDF", "DWG", "STEP", "ZIP")
+	//   $5 (TEXT) - file_path: Path to downloadable file
+	//   $6 (INTEGER) - file_size: File size in bytes
+	//   $7 (TEXT) - version: Document/file version (e.g., "v2.1", "Rev A")
+	//   $8 (INTEGER) - display_order: Position in downloads list
+	//
+	// Returns: ProductDownload - The newly created download with auto-generated ID
+	//
+	// Use case: Adding technical documents during product creation/editing
+	// Note: download_count initializes to 0 via database schema default
 	CreateProductDownload(ctx context.Context, arg CreateProductDownloadParams) (ProductDownload, error)
 	// ====================================================================
-	// PRODUCT FEATURES
+	// PRODUCT FEATURES (Bullet-Point Feature Lists)
 	// ====================================================================
+	// Adds a single feature bullet point to a product.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Foreign key to parent product
+	//   $2 (TEXT) - feature_text: Feature description (e.g., "IP67 waterproof rating")
+	//   $3 (INTEGER) - display_order: Position in features list
+	//
+	// Returns: ProductFeature - The newly created feature with auto-generated ID
+	//
+	// Use case: Building key features list during product creation/editing
+	// Note: Features are typically short, marketing-focused bullet points
 	CreateProductFeature(ctx context.Context, arg CreateProductFeatureParams) (ProductFeature, error)
 	// ====================================================================
-	// PRODUCT IMAGES
+	// PRODUCT IMAGES (Gallery Images)
 	// ====================================================================
+	// Adds a gallery image to a product.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Foreign key to parent product
+	//   $2 (TEXT) - image_path: Path to image file
+	//   $3 (TEXT) - alt_text: Accessibility alt text for screen readers
+	//   $4 (TEXT) - caption: Optional image caption for display
+	//   $5 (INTEGER) - display_order: Position in image gallery
+	//   $6 (BOOLEAN) - is_thumbnail: Whether this image is the thumbnail (usually first image)
+	//
+	// Returns: ProductImage - The newly created image record with auto-generated ID
+	//
+	// Use case: Building product image gallery during product creation/editing
+	// Note: Typically only one image should have is_thumbnail=1 per product
 	CreateProductImage(ctx context.Context, arg CreateProductImageParams) (ProductImage, error)
 	// ====================================================================
-	// PRODUCT SPECS
+	// PRODUCT SPECS (Technical Specifications)
 	// ====================================================================
+	// Creates a single technical specification for a product.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Foreign key to parent product
+	//   $2 (TEXT) - section_name: Grouping label (e.g., "Electrical", "Physical", "Environmental")
+	//   $3 (TEXT) - spec_key: Specification label (e.g., "Voltage", "Weight", "Operating Temp")
+	//   $4 (TEXT) - spec_value: Specification value (e.g., "24V DC", "2.5 kg", "-40C to 85C")
+	//   $5 (INTEGER) - display_order: Position within product specs list
+	//
+	// Returns: ProductSpec - The newly created spec with auto-generated ID
+	//
+	// Use case: Adding technical specifications during product creation/editing
+	// Note: Specs can be grouped by section_name for tabbed or sectioned display
 	CreateProductSpec(ctx context.Context, arg CreateProductSpecParams) (ProductSpec, error)
+	// Creates a new solution record.
+	//
+	// Parameters:
+	//   $1 (TEXT) - title: Solution display name
+	//   $2 (TEXT) - slug: URL-safe identifier
+	//   $3 (TEXT) - icon: Icon identifier or CSS class
+	//   $4 (TEXT) - short_description: Brief description for cards/listings
+	//   $5 (TEXT) - hero_image_url: Hero section background image
+	//   $6 (TEXT) - hero_title: Hero section heading
+	//   $7 (TEXT) - hero_description: Hero section subheading/description
+	//   $8 (TEXT) - overview_content: Full solution overview (HTML/Markdown)
+	//   $9 (TEXT) - meta_description: SEO meta description
+	//   $10 (TEXT) - reference_code: Internal reference/code (optional)
+	//   $11 (BOOLEAN) - is_published: Publication status (1=published, 0=draft)
+	//   $12 (INTEGER) - display_order: Position in solutions listing
+	//
+	// Returns: Solution - The newly created solution with auto-generated ID and timestamps
+	//
+	// Note: Related entities (stats, challenges, products, CTAs) are created separately
 	CreateSolution(ctx context.Context, arg CreateSolutionParams) (Solution, error)
+	// Creates a CTA section for a solution.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Parent solution
+	//   $2 (TEXT) - heading: CTA main heading
+	//   $3 (TEXT) - subheading: CTA description/subheading
+	//   $4 (TEXT) - primary_button_text: Primary button label
+	//   $5 (TEXT) - primary_button_url: Primary button link
+	//   $6 (TEXT) - secondary_button_text: Secondary button label (optional)
+	//   $7 (TEXT) - secondary_button_url: Secondary button link (optional)
+	//   $8 (TEXT) - phone_number: Contact phone for "Call Now" CTAs (optional)
+	//   $9 (TEXT) - section_name: Identifier for positioning (e.g., "mid-page", "footer")
+	// Returns: SolutionCTA - Newly created CTA
 	CreateSolutionCTA(ctx context.Context, arg CreateSolutionCTAParams) (SolutionCta, error)
+	// Adds a challenge/problem statement to a solution.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Parent solution
+	//   $2 (TEXT) - title: Challenge heading (e.g., "Slow Production Times")
+	//   $3 (TEXT) - description: Detailed problem description
+	//   $4 (TEXT) - icon: Icon identifier for visual representation
+	//   $5 (INTEGER) - display_order: Position in challenges list
+	// Returns: SolutionChallenge - Newly created challenge
 	CreateSolutionChallenge(ctx context.Context, arg CreateSolutionChallengeParams) (SolutionChallenge, error)
+	// Creates a new solution page feature.
+	//
+	// Parameters:
+	//   $1 (TEXT) - title: Feature heading
+	//   $2 (TEXT) - description: Feature description
+	//   $3 (TEXT) - icon: Icon identifier
+	//   $4 (INTEGER) - display_order: Position in features list
+	//   $5 (BOOLEAN) - is_active: Visibility status
+	// Returns: SolutionPageFeature - Newly created feature
 	CreateSolutionPageFeature(ctx context.Context, arg CreateSolutionPageFeatureParams) (SolutionPageFeature, error)
+	// Adds a stat metric to a solution.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Parent solution
+	//   $2 (TEXT) - value: Metric value (e.g., "50%", "99.9%", "24/7")
+	//   $3 (TEXT) - label: Metric description (e.g., "Faster Processing", "Uptime")
+	//   $4 (INTEGER) - display_order: Position in stats list
+	// Returns: SolutionStat - Newly created stat
 	CreateSolutionStat(ctx context.Context, arg CreateSolutionStatParams) (SolutionStat, error)
+	// Creates a new solutions listing CTA.
+	//
+	// Parameters:
+	//   $1 (TEXT) - heading: CTA main heading
+	//   $2 (TEXT) - subheading: CTA description
+	//   $3 (TEXT) - primary_button_text: Primary button label
+	//   $4 (TEXT) - primary_button_url: Primary button URL
+	//   $5 (TEXT) - secondary_button_text: Secondary button label (optional)
+	//   $6 (TEXT) - secondary_button_url: Secondary button URL (optional)
+	//   $7 (BOOLEAN) - is_active: Whether this CTA is active
+	// Returns: SolutionsListingCTA - Newly created CTA
 	CreateSolutionsListingCTA(ctx context.Context, arg CreateSolutionsListingCTAParams) (SolutionsListingCtum, error)
+	// Purpose: Creates a new homepage statistic
+	// Parameters (4 positional):
+	//   1. stat_value (TEXT): numeric value with unit (e.g., "500+", "10 Years")
+	//   2. stat_label (TEXT): description (e.g., "Happy Clients", "Experience")
+	//   3. display_order (INTEGER): sort position (left to right typically)
+	//   4. is_active (BOOLEAN): whether to display on homepage
 	CreateStat(ctx context.Context, arg CreateStatParams) (HomepageStat, error)
+	// Creates a new partner testimonial.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - partner_id: ID of partner providing the testimonial
+	//   $2 (TEXT) - quote: Testimonial text/quote
+	//   $3 (TEXT) - author_name: Name of person giving testimonial
+	//   $4 (TEXT) - author_title: Job title of testimonial author
+	//   $5 (INTEGER) - display_order: Position in testimonial sequence
+	//
+	// Returns: PartnerTestimonial - The newly created testimonial with auto-generated ID
+	//
+	// Note: is_active defaults to 1 (true) via database schema
 	CreateTestimonial(ctx context.Context, arg CreateTestimonialParams) (PartnerTestimonial, error)
+	// Purpose: Creates a new homepage testimonial
+	// Parameters (8 positional):
+	//   1. quote (TEXT): testimonial text/content
+	//   2. author_name (TEXT): customer name
+	//   3. author_title (TEXT): job title
+	//   4. author_company (TEXT): company/organization name
+	//   5. author_image (TEXT): headshot/avatar URL
+	//   6. rating (INTEGER): star rating (typically 1-5)
+	//   7. display_order (INTEGER): carousel slide order
+	//   8. is_active (BOOLEAN): whether to display on homepage
 	CreateTestimonialHomepage(ctx context.Context, arg CreateTestimonialHomepageParams) (HomepageTestimonial, error)
+	// Creates a new whitepaper record.
+	//
+	// Parameters:
+	//   $1 (TEXT) - title: Whitepaper title
+	//   $2 (TEXT) - slug: URL-safe identifier
+	//   $3 (TEXT) - description: Brief description/summary
+	//   $4 (INTEGER) - topic_id: Foreign key to whitepaper_topics
+	//   $5 (TEXT) - pdf_file_path: Path to uploaded PDF file
+	//   $6 (INTEGER) - file_size_bytes: PDF file size in bytes
+	//   $7 (INTEGER) - page_count: Number of pages in PDF
+	//   $8 (TEXT) - published_date: Publication date (YYYY-MM-DD)
+	//   $9 (BOOLEAN) - is_published: Publication status (1=published, 0=draft)
+	//   $10 (TEXT) - cover_color_from: Gradient start color (hex)
+	//   $11 (TEXT) - cover_color_to: Gradient end color (hex)
+	//   $12 (TEXT) - meta_description: SEO meta description
+	//
+	// Returns: Whitepaper - The newly created whitepaper with auto-generated ID and timestamps
+	//
+	// Note: Learning points created separately via CreateWhitepaperLearningPoint
 	CreateWhitepaper(ctx context.Context, arg CreateWhitepaperParams) (Whitepaper, error)
+	// Records a whitepaper download with lead capture information.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - whitepaper_id: Whitepaper being downloaded
+	//   $2 (TEXT) - name: Downloader's name
+	//   $3 (TEXT) - email: Downloader's email (lead capture)
+	//   $4 (TEXT) - company: Downloader's company (optional)
+	//   $5 (TEXT) - designation: Downloader's job title (optional)
+	//   $6 (BOOLEAN) - marketing_consent: Whether user opted into marketing
+	//   $7 (TEXT) - ip_address: Downloader's IP for analytics
+	//   $8 (TEXT) - user_agent: Browser user agent string
+	//
+	// Returns: Partial WhitepaperDownload - Only id and created_at
+	//
+	// Use case: Lead generation - capturing contact info when user downloads whitepaper
+	// Note: This data feeds into CRM/marketing automation systems
 	CreateWhitepaperDownload(ctx context.Context, arg CreateWhitepaperDownloadParams) (CreateWhitepaperDownloadRow, error)
+	// Adds a learning point (key takeaway) to a whitepaper.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - whitepaper_id: Parent whitepaper
+	//   $2 (TEXT) - point_text: Learning point description
+	//   $3 (INTEGER) - display_order: Position in learning points list
+	// Returns: Partial WhitepaperLearningPoint - Only id
+	//
+	// Use case: Building "What You'll Learn" bullet points during whitepaper creation/editing
 	CreateWhitepaperLearningPoint(ctx context.Context, arg CreateWhitepaperLearningPointParams) (int64, error)
+	// Creates a new whitepaper topic category.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Display name of the topic
+	//   $2 (TEXT) - slug: URL-safe identifier
+	//   $3 (TEXT) - color_hex: Hex color code for topic badge/card (e.g., "#3B82F6")
+	//   $4 (TEXT) - icon: Icon identifier or CSS class (optional)
+	//   $5 (TEXT) - description: Topic description (optional)
+	//   $6 (INTEGER) - sort_order: Display position (lower = higher priority)
+	//
+	// Returns: WhitepaperTopic - The newly created topic with auto-generated ID and timestamps
+	//
+	// Note: color_hex is used for visual differentiation in topic badges and cards
 	CreateWhitepaperTopic(ctx context.Context, arg CreateWhitepaperTopicParams) (WhitepaperTopic, error)
+	// Purpose: Removes all legal links (used when rebuilding legal link set)
+	// Note: No WHERE clause - deletes entire table contents
 	DeleteAllFooterLegalLinks(ctx context.Context) error
+	// sqlc annotation: :exec returns no data, only error or success
+	// Purpose: Permanently removes a blog author
+	// Parameters:
+	//   1. id (INTEGER): author to delete
+	// Return type: none
+	// Warning: This will fail if author has associated blog posts (foreign key constraint)
+	//          Consider soft-delete or reassigning posts before deletion
 	DeleteBlogAuthor(ctx context.Context, id int64) error
+	// sqlc annotation: :exec returns no data, only error or success
+	// Purpose: Permanently removes a blog category
+	// Parameters:
+	//   1. id (INTEGER): category to delete
+	// Return type: none
+	// Warning: This will fail if category has associated blog posts (foreign key constraint)
+	//          Consider reassigning posts before deletion
 	DeleteBlogCategory(ctx context.Context, id int64) error
+	// sqlc annotation: :exec returns no data
+	// Purpose: Permanently removes a blog post
+	// Parameters:
+	//   1. id (INTEGER): post to delete
+	// Return type: none
+	// Note: This will cascade delete related blog_post_tags and blog_post_products
+	//       if foreign keys are configured with ON DELETE CASCADE
 	DeleteBlogPost(ctx context.Context, id int64) error
+	// sqlc annotation: :exec returns no data
+	// Purpose: Permanently removes a blog tag
+	// Parameters:
+	//   1. id (INTEGER): tag to delete
+	// Return type: none
+	// Note: May fail if tag is still associated with posts (foreign key constraint)
+	//       Consider removing tag associations first or using ON DELETE CASCADE
 	DeleteBlogTag(ctx context.Context, id int64) error
+	// Purpose: Removes a CTA block variant
 	DeleteCTA(ctx context.Context, id int64) error
+	// sqlc annotation: :exec returns no data
+	// Purpose: Removes a certification from the list
+	// Parameters:
+	//   1. id (INTEGER): certification to delete
+	// Return type: none
 	DeleteCertification(ctx context.Context, id int64) error
 	DeleteContactSubmission(ctx context.Context, id int64) error
+	// sqlc annotation: :exec returns no data, only error or nil
+	// Purpose: Permanently removes a core value entry
+	// Parameters:
+	//   1. id (INTEGER): core value to delete
+	// Return type: none (exec returns only error status)
 	DeleteCoreValue(ctx context.Context, id int64) error
+	// Purpose: Removes specific footer column item
 	DeleteFooterColumnItem(ctx context.Context, id int64) error
+	// Purpose: Bulk delete all items in columns >= specified index
+	// Use case: When reducing number of footer columns, remove excess column content
+	// Parameters:
+	//   1. min_column_index (INTEGER): delete all items with column_index >= this
 	DeleteFooterColumnItemsByIndex(ctx context.Context, columnIndex int64) error
+	// Purpose: Bulk delete all links belonging to a column item
+	// Use case: When deleting or rebuilding a footer column's links
+	// Parameters:
+	//   1. column_item_id (INTEGER): delete all links for this column item
 	DeleteFooterLinksByColumnItem(ctx context.Context, columnItemID int64) error
+	// Purpose: Removes a hero banner variant
 	DeleteHero(ctx context.Context, id int64) error
+	// Permanently deletes an industry record.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - industry ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count, no data
+	//
+	// WARNING: This is a hard delete. Consider adding soft delete (is_active flag) for production.
+	// Note: May fail if foreign key constraints exist (e.g., solutions referencing this industry)
 	DeleteIndustry(ctx context.Context, id int64) error
+	// Permanently deletes a media file record from the database.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - media file ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: This only deletes the database record, not the physical file on disk
+	// Note: Application code should delete the physical file before calling this query
+	// Caution: May orphan file references in products, solutions, or other content
 	DeleteMediaFile(ctx context.Context, id int64) error
+	// sqlc annotation: :exec returns no data
+	// Purpose: Removes a milestone from the timeline
+	// Parameters:
+	//   1. id (INTEGER): milestone to delete
+	// Return type: none
 	DeleteMilestone(ctx context.Context, id int64) error
+	// Permanently deletes a single navigation item.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - navigation item ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: If this is a parent item, child items may become orphaned or cascade delete
+	// Note: Consider setting is_active=0 for soft delete instead
 	DeleteNavigationItem(ctx context.Context, id int64) error
+	// Permanently deletes all navigation items belonging to a specific menu.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - menu_id: Parent menu ID
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Clearing all items from a menu before rebuilding, cleanup after menu deletion
+	// WARNING: This is a bulk hard delete operation
 	DeleteNavigationItemsByMenu(ctx context.Context, menuID int64) error
+	// Permanently deletes a navigation menu container.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - menu ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: This is a hard delete. Should cascade delete all navigation_items in this menu
+	// Note: Ensure foreign key constraints are configured for cascading deletes
 	DeleteNavigationMenu(ctx context.Context, id int64) error
 	DeleteOfficeLocation(ctx context.Context, id int64) error
+	// Permanently deletes a partner record.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - partner ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: Will cascade delete related testimonials if foreign key configured
+	// Note: Consider setting is_active=0 for soft delete instead
 	DeletePartner(ctx context.Context, id int64) error
+	// Permanently deletes a partner tier.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - tier ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: Will fail if partners reference this tier (foreign key constraint)
+	// Note: Consider archiving or reassigning partners before deletion
 	DeletePartnerTier(ctx context.Context, id int64) error
+	// Permanently deletes a product record.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: Should cascade delete related records (specs, images, features, etc.)
+	// Note: Ensure foreign key constraints are configured for CASCADE DELETE
+	// Alternative: Set status='archived' for soft delete instead
 	DeleteProduct(ctx context.Context, id int64) error
+	// Permanently deletes a product category.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - category ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: Will fail if products reference this category (foreign key constraint)
+	// Note: Reassign or delete products in this category before deletion
 	DeleteProductCategory(ctx context.Context, id int64) error
+	// Deletes a single certification by its ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - id: The certification record ID to delete
+	// Returns: (none)
+	//
+	// Use case: Removing an individual certification from the product detail page
+	DeleteProductCertification(ctx context.Context, id int64) error
+	// Deletes all certifications for a product (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product whose certifications to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Clearing all certifications before re-importing or deleting product
+	// WARNING: Deletes ALL certifications for the product in one operation
 	DeleteProductCertifications(ctx context.Context, productID int64) error
+	// Deletes a single product download.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - download ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Removing individual downloads from product
+	// WARNING: Only deletes database record; application should delete physical file
 	DeleteProductDownload(ctx context.Context, id int64) error
+	// Deletes all downloads for a product (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product whose downloads to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Clearing all downloads before re-importing or deleting product
+	// WARNING: Deletes ALL downloads for the product; physical files should also be removed
 	DeleteProductDownloads(ctx context.Context, productID int64) error
+	// Deletes a single feature by its ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - id: The feature record ID to delete
+	// Returns: (none)
+	//
+	// Use case: Removing an individual feature from the product detail page
+	DeleteProductFeature(ctx context.Context, id int64) error
+	// Deletes all features for a product (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product whose features to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Clearing all features before re-importing or rebuilding features list
+	// WARNING: Deletes ALL features for the product in one operation
 	DeleteProductFeatures(ctx context.Context, productID int64) error
+	// Deletes a single product gallery image.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - image ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Removing individual images from product gallery
+	// WARNING: Only deletes database record; application should delete physical file
 	DeleteProductImage(ctx context.Context, id int64) error
+	// Deletes all gallery images for a product (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product whose images to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Clearing all images before re-importing or deleting product
+	// WARNING: Deletes ALL images for the product; physical files should also be removed
 	DeleteProductImages(ctx context.Context, productID int64) error
+	// Deletes a single specification by its ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - id: The spec record ID to delete
+	// Returns: (none)
+	//
+	// Use case: Removing an individual spec from the product detail page
+	DeleteProductSpec(ctx context.Context, id int64) error
+	// Deletes all technical specifications for a product (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product whose specs to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Clearing all specs before re-importing or rebuilding spec list
+	// WARNING: Deletes ALL specs for the product in one operation
 	DeleteProductSpecs(ctx context.Context, productID int64) error
+	// Permanently deletes a solution.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: Should cascade delete related records (stats, challenges, products, CTAs)
+	// Note: Ensure foreign key constraints are configured for CASCADE DELETE
 	DeleteSolution(ctx context.Context, id int64) error
+	// Deletes a single solution CTA.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - CTA ID to delete
+	// Returns: (none)
 	DeleteSolutionCTA(ctx context.Context, id int64) error
+	// Deletes all CTAs for a solution (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution whose CTAs to delete
+	// Returns: (none)
 	DeleteSolutionCTAsBySolutionID(ctx context.Context, solutionID int64) error
+	// Deletes a single solution challenge.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - challenge ID to delete
+	// Returns: (none)
 	DeleteSolutionChallenge(ctx context.Context, id int64) error
+	// Deletes all challenges for a solution (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution whose challenges to delete
+	// Returns: (none)
 	DeleteSolutionChallengesBySolutionID(ctx context.Context, solutionID int64) error
+	// Deletes a solution page feature.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - feature ID to delete
+	// Returns: (none)
 	DeleteSolutionPageFeature(ctx context.Context, id int64) error
+	// Removes all product associations for a solution (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution to clear products from
+	// Returns: (none)
 	DeleteSolutionProductsBySolutionID(ctx context.Context, solutionID int64) error
+	// Deletes a single solution stat.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - stat ID to delete
+	// Returns: (none)
 	DeleteSolutionStat(ctx context.Context, id int64) error
+	// Deletes all stats for a solution (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution whose stats to delete
+	// Returns: (none)
+	//
+	// Use case: Clearing stats before rebuilding or deleting solution
 	DeleteSolutionStatsBySolutionID(ctx context.Context, solutionID int64) error
+	// Purpose: Removes a homepage statistic
 	DeleteStat(ctx context.Context, id int64) error
+	// Permanently deletes a partner testimonial.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - testimonial ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: Hard delete, consider setting is_active=0 for soft delete instead
 	DeleteTestimonial(ctx context.Context, id int64) error
+	// Purpose: Removes a homepage testimonial
 	DeleteTestimonialHomepage(ctx context.Context, id int64) error
+	// Permanently deletes a whitepaper.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - whitepaper ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: Should cascade delete related records (learning points, downloads)
+	// Note: Physical PDF file should be deleted separately by application code
 	DeleteWhitepaper(ctx context.Context, id int64) error
+	// Deletes all learning points for a whitepaper (bulk delete).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - whitepaper_id: Whitepaper whose learning points to delete
+	// Returns: (none)
+	//
+	// Use case: Clearing learning points before rebuilding or deleting whitepaper
 	DeleteWhitepaperLearningPoints(ctx context.Context, whitepaperID int64) error
+	// Permanently deletes a whitepaper topic.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - topic ID to delete
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// WARNING: Will fail if whitepapers reference this topic (foreign key constraint)
+	// Note: Reassign or delete whitepapers in this topic before deletion
 	DeleteWhitepaperTopic(ctx context.Context, id int64) error
 	// ====================================================================
-	// HOMEPAGE CTA
+	// HOMEPAGE CALL-TO-ACTION (CTA)
 	// ====================================================================
+	// Purpose: Retrieves the currently active CTA block for public homepage
+	// Parameters: none
+	// Return type: single homepage_cta row
+	// WHERE: is_active = 1 (only one CTA should be active at a time)
+	// LIMIT 1: safety fallback if multiple CTAs accidentally marked active
 	GetActiveCTA(ctx context.Context) (HomepageCtum, error)
+	// ====================================================================
+	// HOMEPAGE CONTENT QUERIES
+	// ====================================================================
+	// This file manages all homepage content sections including:
+	// - Hero banner (headline, CTAs, background image)
+	// - Statistics/metrics display
+	// - Testimonials carousel
+	// - Call-to-action (CTA) blocks
+	//
+	// Managed entities:
+	// - homepage_hero: hero banner variations (only one active at a time)
+	// - homepage_stats: key metrics/statistics
+	// - homepage_testimonials: customer testimonials
+	// - homepage_cta: call-to-action sections
+	//
+	// Key concepts:
+	// - is_active: controls which variant is currently displayed
+	// - display_order: custom sort sequence for multi-item sections
+	// ====================================================================
 	// ====================================================================
 	// HOMEPAGE HERO
 	// ====================================================================
+	// sqlc annotation: :one returns the currently active hero banner
+	// Purpose: Retrieves hero content displayed on public homepage
+	// Parameters: none
+	// Return type: single homepage_hero row
+	// WHERE: is_active = 1 (only one hero should be active at a time)
+	// ORDER BY display_order ASC LIMIT 1: safety fallback if multiple are accidentally active
 	GetActiveHero(ctx context.Context) (HomepageHero, error)
+	// sqlc annotation: :many returns active office locations for public display
+	// Purpose: Lists office locations shown on contact page
+	// Parameters: none
+	// Return type: slice of office_locations with contact details
+	// WHERE: is_active = 1 (only show enabled locations)
+	// ORDER BY:
+	//   - Primary: is_primary DESC (primary office first)
+	//   - Secondary: display_order ASC (custom sort order)
+	//   - Tertiary: id ASC (stable fallback)
 	GetActiveOfficeLocations(ctx context.Context) ([]GetActiveOfficeLocationsRow, error)
 	// ====================================================================
-	// SOLUTIONS LISTING CTA
+	// SOLUTIONS LISTING CTA (Singleton for Solutions Index Page)
 	// ====================================================================
+	// CTA displayed on the main solutions listing page
+	// Retrieves the active CTA for solutions listing page (singleton).
+	//
+	// Parameters: none
+	// Returns: SolutionsListingCTA - The active CTA or error if none active
+	//
+	// Filtering: is_active = 1 - Only the currently active CTA
+	// Note: Typically only one CTA should be active at a time
 	GetActiveSolutionsListingCTA(ctx context.Context) (SolutionsListingCtum, error)
+	// ====================================================================
+	// ADMIN USERS QUERIES
+	// ====================================================================
+	// This file manages authentication and admin user account operations.
+	// These queries handle login verification, user creation, and admin
+	// user management within the CMS.
+	//
+	// Managed entity:
+	// - admin_users: CMS admin accounts with roles and permissions
+	//
+	// Security notes:
+	// - password_hash is stored, never plain text passwords
+	// - is_active flag allows soft-disable of accounts
+	// - last_login_at tracks account activity
+	// ====================================================================
+	// sqlc annotation: :one returns single admin_users row or error
+	// Purpose: Retrieves admin user by email for authentication during login
+	// Parameters:
+	//   1. email (TEXT): email address to look up
+	// Return type: partial admin_users row (excludes sensitive created_at/updated_at)
+	// WHERE clause notes:
+	//   - email = ? ensures exact match (case-sensitive in SQLite)
+	//   - is_active = 1 prevents disabled accounts from logging in
+	// Security: Only returns active accounts; password_hash included for verification
 	GetAdminUserByEmail(ctx context.Context, email string) (GetAdminUserByEmailRow, error)
+	// sqlc annotation: :one returns single blog_authors row or error
+	// Purpose: Retrieves specific author by ID for editing
+	// Parameters:
+	//   1. id (INTEGER): author primary key
+	// Return type: single complete blog_authors row
 	GetBlogAuthor(ctx context.Context, id int64) (BlogAuthor, error)
+	// sqlc annotation: :one returns single blog_authors row or error
+	// Purpose: Retrieves author by URL slug for public author archive pages
+	// Parameters:
+	//   1. slug (TEXT): URL-safe author identifier (e.g., "john-doe")
+	// Return type: single blog_authors row
+	// Note: slug should be UNIQUE via database constraint to prevent duplicates
 	GetBlogAuthorBySlug(ctx context.Context, slug string) (BlogAuthor, error)
+	// sqlc annotation: :one returns single blog_categories row or error
+	// Purpose: Retrieves specific category by ID for editing
+	// Parameters:
+	//   1. id (INTEGER): category primary key
+	// Return type: single complete blog_categories row
 	GetBlogCategory(ctx context.Context, id int64) (BlogCategory, error)
+	// sqlc annotation: :one returns single blog_categories row or error
+	// Purpose: Retrieves category by URL slug for public category archive pages
+	// Parameters:
+	//   1. slug (TEXT): URL-safe category identifier (e.g., "technology")
+	// Return type: single blog_categories row
+	// Note: slug should be UNIQUE via database constraint
 	GetBlogCategoryBySlug(ctx context.Context, slug string) (BlogCategory, error)
+	// sqlc annotation: :one returns single blog post by ID
+	// Purpose: Retrieves blog post for admin editing (all statuses)
+	// Parameters:
+	//   1. id (INTEGER): post primary key
+	// Return type: complete blog_posts row with all fields
 	GetBlogPost(ctx context.Context, id int64) (BlogPost, error)
+	// sqlc annotation: :one returns single blog tag by ID
+	// Purpose: Retrieves specific tag for editing
+	// Parameters:
+	//   1. id (INTEGER): tag primary key
+	// Return type: single blog_tags row
 	GetBlogTag(ctx context.Context, id int64) (BlogTag, error)
+	// sqlc annotation: :one returns single blog tag by slug
+	// Purpose: Retrieves tag by URL slug (for tag archive pages if implemented)
+	// Parameters:
+	//   1. slug (TEXT): URL-safe tag identifier
+	// Return type: single blog_tags row
+	// Note: slug should be UNIQUE via database constraint
 	GetBlogTagBySlug(ctx context.Context, slug string) (BlogTag, error)
+	// Purpose: Retrieves specific CTA by ID for editing
 	GetCTA(ctx context.Context, id int64) (HomepageCtum, error)
+	// sqlc annotation: :one returns single case study by slug
+	// Purpose: Retrieves full published case study for public detail page
+	// Parameters:
+	//   1. slug (TEXT): URL-safe case study identifier
+	// Return type: complete case study with all content sections
+	// SELECT fields:
+	//   - All case study sections (challenge, solution, outcome)
+	//   - SEO metadata (meta_title, meta_description, og_image)
+	//   - Industry details for breadcrumbs/categorization
+	// WHERE:
+	//   - slug = ?: exact slug match
+	//   - is_published = 1: published only (hide drafts from public)
 	GetCaseStudyBySlug(ctx context.Context, slug string) (GetCaseStudyBySlugRow, error)
+	// sqlc annotation: :one returns case study including drafts
+	// Purpose: Retrieves case study for admin preview (allows viewing unpublished)
+	// Parameters:
+	//   1. slug (TEXT): case study slug
+	// Return type: same as GetCaseStudyBySlug but without publish filter
+	// Note: Used for admin preview functionality; no is_published filter
 	GetCaseStudyBySlugIncludeDrafts(ctx context.Context, slug string) (GetCaseStudyBySlugIncludeDraftsRow, error)
+	// sqlc annotation: :many returns key metrics/results for a case study
+	// Purpose: Retrieves performance metrics showcasing case study results
+	// Parameters:
+	//   1. case_study_id (INTEGER): case study to get metrics for
+	// Return type: slice of metrics (value + label pairs)
+	// Example metrics: "50% reduction in costs", "2x faster deployment"
+	// ORDER BY display_order: custom presentation order
 	GetCaseStudyMetrics(ctx context.Context, caseStudyID int64) ([]GetCaseStudyMetricsRow, error)
+	// sqlc annotation: :many returns products featured in a case study
+	// Purpose: Retrieves products associated with/featured in a case study
+	// Parameters:
+	//   1. case_study_id (INTEGER): case study to get products for
+	// Return type: slice of products with category info
+	// JOINs:
+	//   - case_study_products: junction table with display_order
+	//   - products: product details
+	//   - product_categories: for category name
+	// WHERE:
+	//   - csp.case_study_id = ?: filter to specific case study
+	//   - p.status = 'published': only show published products
+	// ORDER BY csp.display_order: custom sort order per case study
 	GetCaseStudyProducts(ctx context.Context, caseStudyID int64) ([]GetCaseStudyProductsRow, error)
+	// sqlc annotation: :one returns single certification or error
+	// Purpose: Retrieves specific certification for editing
+	// Parameters:
+	//   1. id (INTEGER): certification primary key
+	// Return type: single certifications row
 	GetCertification(ctx context.Context, id int64) (Certification, error)
+	// ====================================================================
+	// ABOUT PAGE QUERIES
+	// ====================================================================
+	// This file contains all SQL queries for managing "About Us" page content
+	// including company overview, mission/vision/values, core values list,
+	// company milestones timeline, and certifications/credentials display.
+	//
+	// Managed entities:
+	// - company_overview: main about page hero content
+	// - mission_vision_values: strategic statements section
+	// - core_values: individual value items with icons
+	// - milestones: company history timeline
+	// - certifications: professional credentials and certifications
+	// ====================================================================
+	// ====================================================================
+	// COMPANY OVERVIEW
+	// ====================================================================
+	// sqlc annotation: :one returns a single row or error if not found
+	// Purpose: Retrieves the most recent company overview content for the About page
+	// Parameters: none
+	// Return type: single company_overview row
+	// Note: Uses ORDER BY id DESC to get the latest entry (highest ID)
 	GetCompanyOverview(ctx context.Context) (CompanyOverview, error)
 	GetContactSubmissionByID(ctx context.Context, id int64) (GetContactSubmissionByIDRow, error)
+	// sqlc annotation: :one returns single row or error
+	// Purpose: Retrieves a specific core value by ID for editing
+	// Parameters:
+	//   1. id (INTEGER): core value primary key
+	// Return type: single core_values row
 	GetCoreValue(ctx context.Context, id int64) (CoreValue, error)
+	// sqlc annotation: :one returns single featured blog post
+	// Purpose: Retrieves most recent published post for homepage/featured display
+	// Parameters: none
+	// Return type: single blog post with category/author details (no body)
+	// Logic: Simply gets the newest published post (highest published_at date)
+	// ORDER BY bp.published_at DESC LIMIT 1: most recent post only
 	GetFeaturedPost(ctx context.Context) (GetFeaturedPostRow, error)
+	// Purpose: Retrieves specific footer column item for editing
 	GetFooterColumnItem(ctx context.Context, id int64) (FooterColumnItem, error)
+	// Purpose: Retrieves specific hero by ID for editing
 	GetHero(ctx context.Context, id int64) (HomepageHero, error)
+	// Retrieves a single industry by its primary key ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - industry ID
+	// Returns: Industry - Single industry record or error if not found
+	//
+	// Note: sqlc annotation :one expects exactly one row; will error if 0 or >1 rows returned
 	GetIndustry(ctx context.Context, id int64) (Industry, error)
+	// Retrieves a single industry by its URL-safe slug identifier.
+	//
+	// Parameters:
+	//   $1 (TEXT) - industry slug (e.g., "healthcare", "manufacturing")
+	// Returns: Industry - Single industry record or error if not found
+	//
+	// Use case: Frontend routing, displaying industry-specific content
+	// Note: Slugs should be unique (enforced by database constraint)
 	GetIndustryBySlug(ctx context.Context, slug string) (Industry, error)
+	// Retrieves a single media file by its primary key ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - media file ID
+	// Returns: MediaFile - Single media file record or error if not found
+	//
+	// Use case: Displaying file details, embedding in content
 	GetMediaFile(ctx context.Context, id int64) (MediaFile, error)
+	// Retrieves a single media file by its storage file path.
+	//
+	// Parameters:
+	//   $1 (TEXT) - file_path: Relative or absolute path to file on disk
+	// Returns: MediaFile - Single media file record or error if not found
+	//
+	// Use case: Checking if a file already exists before upload, resolving paths to records
+	// Note: file_path should be unique (enforced by database constraint)
 	GetMediaFileByPath(ctx context.Context, filePath string) (MediaFile, error)
+	// sqlc annotation: :one returns single milestone or error
+	// Purpose: Retrieves specific milestone for editing
+	// Parameters:
+	//   1. id (INTEGER): milestone primary key
+	// Return type: single milestones row
 	GetMilestone(ctx context.Context, id int64) (Milestone, error)
+	// ====================================================================
+	// MISSION, VISION & VALUES
+	// ====================================================================
+	// sqlc annotation: :one returns single row or error
+	// Purpose: Retrieves the latest mission/vision/values content block
+	// Parameters: none
+	// Return type: single mission_vision_values row
+	// Note: ORDER BY id DESC ensures we get the most recent version
 	GetMissionVisionValues(ctx context.Context) (MissionVisionValue, error)
+	// Retrieves a single navigation item by its primary key ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - navigation item ID
+	// Returns: NavigationItem - Single item record or error if not found
+	//
+	// Use case: Editing a specific menu item
 	GetNavigationItem(ctx context.Context, id int64) (NavigationItem, error)
+	// Retrieves a single navigation menu by its primary key ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - menu ID
+	// Returns: NavigationMenu - Single menu record or error if not found
+	//
+	// Use case: Editing a specific menu, fetching menu details
 	GetNavigationMenu(ctx context.Context, id int64) (NavigationMenu, error)
+	// Purpose: Gets ID of submission created BEFORE current one (for "next" navigation button)
+	// Parameters:
+	//   1. current_id (INTEGER): current submission ID
+	// Logic: Finds submission with created_at < current submission's created_at
+	//        Orders DESC and takes first = chronologically next older submission
 	GetNextSubmissionID(ctx context.Context, id int64) (int64, error)
 	GetOfficeLocationByID(ctx context.Context, id int64) (GetOfficeLocationByIDRow, error)
 	// ====================================================================
-	// PAGE SECTIONS
+	// PAGE SECTIONS QUERY FILE
 	// ====================================================================
+	// This file contains SQL queries for managing configurable page sections
+	// (heroes, CTAs, testimonials, stats, etc.) across different pages.
+	//
+	// Entity: page_sections table
+	// Purpose: Store content for modular page sections that can be edited via admin
+	// Features:
+	//   - Multi-page support via page_key (e.g., "homepage", "about", "contact")
+	//   - Section-specific content via section_key (e.g., "hero", "cta", "stats")
+	//   - Flexible content fields (heading, subheading, description, buttons, etc.)
+	//   - Visibility control via is_active flag
+	//   - Display ordering for multiple sections on same page
+	//
+	// Common page_key values: homepage, about, products, solutions, contact
+	// Common section_key values: hero, cta, stats, testimonials, features
+	// ====================================================================
+	// Retrieves a specific active section for a given page.
+	//
+	// Parameters:
+	//   $1 (TEXT) - page_key: Page identifier (e.g., "homepage", "about")
+	//   $2 (TEXT) - section_key: Section identifier (e.g., "hero", "cta")
+	// Returns: PageSection - Single section record or error if not found/inactive
+	//
+	// Filtering logic:
+	//   - page_key = ? - Matches specific page
+	//   - section_key = ? - Matches specific section type
+	//   - is_active = 1 - Only returns visible sections
+	//
+	// Use case: Fetching hero content for homepage, CTA for contact page, etc.
 	GetPageSection(ctx context.Context, arg GetPageSectionParams) (PageSection, error)
+	// Retrieves a single page section by its primary key ID (ignores is_active).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - section ID
+	// Returns: PageSection - Single section record or error if not found
+	//
+	// Use case: Admin editing, fetching section for update regardless of active status
+	// Note: Does NOT filter by is_active, so returns draft/inactive sections
 	GetPageSectionByID(ctx context.Context, id int64) (PageSection, error)
+	// Retrieves a single partner by ID with tier information.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - partner ID
+	// Returns: Partner - Single partner record with tier metadata
+	//
+	// JOIN logic:
+	//   - JOIN partner_tiers pt ON p.tier_id = pt.id
+	//     Adds tier_name and tier_level (sort_order) columns
+	//
+	// Use case: Partner detail view, editing partner with tier context
+	// Note: Does NOT filter by is_active, returns inactive partners for admin use
 	GetPartner(ctx context.Context, id int64) (GetPartnerRow, error)
+	// Retrieves a single partner tier by its primary key ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - tier ID
+	// Returns: PartnerTier - Single tier record or error if not found
+	//
+	// Use case: Editing a specific tier, fetching tier details for validation
 	GetPartnerTier(ctx context.Context, id int64) (PartnerTier, error)
+	// Retrieves a single partner tier by its URL-safe slug identifier.
+	//
+	// Parameters:
+	//   $1 (TEXT) - tier slug (e.g., "platinum", "gold", "silver")
+	// Returns: PartnerTier - Single tier record or error if not found
+	//
+	// Use case: Frontend routing, filtering partners by tier via URL parameter
+	// Note: Slugs should be unique (enforced by database constraint)
 	GetPartnerTierBySlug(ctx context.Context, slug string) (PartnerTier, error)
+	// sqlc annotation: :one returns single blog post row including drafts
+	// Purpose: Retrieves blog post for admin preview (allows viewing draft posts)
+	// Parameters:
+	//   1. slug (TEXT): post slug
+	// Return type: same as GetPublishedPostBySlug but without status filter
+	// Note: Used for admin preview functionality; no status/published_at filter
+	//       allows editors to preview unpublished/draft content
 	GetPostBySlugIncludeDrafts(ctx context.Context, slug string) (GetPostBySlugIncludeDraftsRow, error)
+	// ====================================================================
+	// BLOG POST PRODUCTS RELATIONSHIP
+	// ====================================================================
+	// sqlc annotation: :many returns slice of products associated with a post
+	// Purpose: Retrieves products featured/mentioned in a blog post
+	// Parameters:
+	//   1. blog_post_id (INTEGER): post to get products for
+	// Return type: slice of products with category info
+	// JOINs:
+	//   - blog_post_products: junction table with display_order
+	//   - products: product details
+	//   - product_categories: for category name/slug
+	// ORDER BY: display_order (custom order), then name (alphabetical fallback)
 	GetPostProductsByPostID(ctx context.Context, blogPostID int64) ([]GetPostProductsByPostIDRow, error)
+	// sqlc annotation: :many returns slice of blog_tags rows
+	// Purpose: Retrieves all tags associated with a specific blog post
+	// Parameters:
+	//   1. blog_post_id (INTEGER): post to get tags for
+	// Return type: slice of blog_tags (id, name, slug)
+	// JOIN explained:
+	//   - blog_post_tags is junction table for many-to-many relationship
+	//   - INNER JOIN ensures only tags actually linked to the post are returned
+	// ORDER BY bt.name: alphabetical tag display
 	GetPostTagsByPostID(ctx context.Context, blogPostID int64) ([]GetPostTagsByPostIDRow, error)
+	// Purpose: Gets ID of submission created AFTER current one (for "previous" navigation button)
+	// Parameters:
+	//   1. current_id (INTEGER): current submission ID
+	// Logic: Finds submission with created_at > current submission's created_at
+	//        Orders ASC and takes first = chronologically next newer submission
+	// Subquery: Gets created_at of current submission for comparison
 	GetPreviousSubmissionID(ctx context.Context, id int64) (int64, error)
+	// Retrieves a single product by its primary key ID (all statuses).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product ID
+	// Returns: Product - Single product record or error if not found
+	//
+	// Use case: Admin editing, fetching product for update regardless of status
+	// Note: Does NOT filter by status, returns draft/archived products
 	GetProduct(ctx context.Context, id int64) (Product, error)
+	// Retrieves a single product by its SKU/product code.
+	//
+	// Parameters:
+	//   $1 (TEXT) - sku: Stock Keeping Unit (e.g., "PROD-12345")
+	// Returns: Product - Single product record or error if not found
+	//
+	// Use case: SKU lookup, validation during data import, order processing
+	// Note: SKUs should be unique (enforced by database constraint)
 	GetProductBySKU(ctx context.Context, sku string) (Product, error)
+	// Retrieves a single product by its URL-safe slug (all statuses).
+	//
+	// Parameters:
+	//   $1 (TEXT) - product slug (e.g., "industrial-sensor-x200")
+	// Returns: Product - Single product record or error if not found
+	//
+	// Use case: Frontend product detail page, preview mode
+	// Note: Does NOT filter by status; application should check status before displaying
 	GetProductBySlug(ctx context.Context, slug string) (Product, error)
+	// Retrieves a single product category by its primary key ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - category ID
+	// Returns: ProductCategory - Single category record or error if not found
+	//
+	// Use case: Editing a specific category, fetching category details
 	GetProductCategory(ctx context.Context, id int64) (ProductCategory, error)
+	// Retrieves a single product category by its URL-safe slug identifier.
+	//
+	// Parameters:
+	//   $1 (TEXT) - category slug (e.g., "hardware", "software", "services")
+	// Returns: ProductCategory - Single category record or error if not found
+	//
+	// Use case: Frontend category page routing, filtering products by category URL
+	// Note: Slugs should be unique (enforced by database constraint)
 	GetProductCategoryBySlug(ctx context.Context, slug string) (ProductCategory, error)
+	// Retrieves a single product download by its ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - download ID
+	// Returns: ProductDownload - Single download record or error if not found
+	//
+	// Use case: Fetching download metadata before serving file, tracking analytics
 	GetProductDownload(ctx context.Context, id int64) (ProductDownload, error)
+	// sqlc annotation: :one returns single blog post row or error if not found
+	// Purpose: Retrieves full published blog post by slug for public post detail page
+	// Parameters:
+	//   1. slug (TEXT): URL-safe post identifier
+	// Return type: single denormalized blog post with full body content, SEO metadata
+	// SELECT fields:
+	//   - Full post content including body (HTML)
+	//   - Category details (name, slug, color) for breadcrumbs/badges
+	//   - Extended author info (bio, linkedin) for author card display
+	//   - SEO fields (meta_title, meta_description, og_image)
+	// WHERE clause:
+	//   - bp.slug = ?: exact slug match
+	//   - bp.status = 'published' AND bp.published_at IS NOT NULL: public posts only
 	GetPublishedPostBySlug(ctx context.Context, slug string) (GetPublishedPostBySlugRow, error)
+	// sqlc annotation: :many returns slice of related blog posts
+	// Purpose: Retrieves posts from same category for "Related Posts" widget
+	// Parameters (positional):
+	//   1. category_id (INTEGER): category to match
+	//   2. current_post_id (INTEGER): post to exclude (don't show current post as related)
+	//   3. LIMIT (INTEGER): max number of related posts (typically 3-5)
+	// Return type: slice of minimal blog post data (no body content)
+	// WHERE clause:
+	//   - bp.status = 'published' AND bp.published_at IS NOT NULL: public posts only
+	//   - bp.category_id = ?: same category as current post
+	//   - bp.id != ?: exclude current post from results
+	// ORDER BY bp.published_at DESC: newest related posts first
 	GetRelatedPosts(ctx context.Context, arg GetRelatedPostsParams) ([]GetRelatedPostsRow, error)
+	// Retrieves up to 3 related published whitepapers from the same topic.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - whitepaper_id: Current whitepaper ID (to exclude from results)
+	//   $2 (INTEGER) - topic_id: Topic to find related whitepapers in
+	// Returns: []Whitepaper - Array of up to 3 related whitepapers (minimal fields)
+	//
+	// Filtering:
+	//   - w.is_published = 1 - Only published whitepapers
+	//   - w.id != ? - Excludes current whitepaper
+	//   - w.topic_id = ? - Same topic only
+	//
+	// Sorting: w.published_date DESC - Newest related whitepapers first
+	// LIMIT: 3 - Maximum 3 recommendations
+	//
+	// Use case: "Related Whitepapers" section on whitepaper detail page
 	GetRelatedWhitepapers(ctx context.Context, arg GetRelatedWhitepapersParams) ([]GetRelatedWhitepapersRow, error)
+	// ====================================================================
+	// SETTINGS QUERY FILE
+	// ====================================================================
+	// This file contains all SQL queries for managing global site settings.
+	//
+	// Entity: settings table (singleton pattern - only one row with id=1)
+	// Purpose: Store site-wide configuration, metadata, feature toggles
+	//
+	// Settings categories:
+	//   - Global: Site name, contact info, social media links
+	//   - Header: Logo, CTA buttons, navigation toggles
+	//   - Homepage: Section visibility, carousel settings
+	//   - Page-specific: About, Products, Solutions, Blog configurations
+	//
+	// Note: All queries target id=1 (singleton row)
+	// ====================================================================
+	// Retrieves the global settings record (singleton).
+	//
+	// Parameters: none
+	// Returns: Settings - The single settings record
+	//
+	// Note: Always targets id=1; settings table should only contain one row
+	// Use case: Loading site configuration on application startup, template rendering
 	GetSettings(ctx context.Context) (Setting, error)
+	// Retrieves a single solution by its primary key ID (any status).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution ID
+	// Returns: Solution - Single solution or error if not found
+	//
+	// Use case: Admin editing, fetching solution for update
+	// Note: No status filtering, returns drafts and published
 	GetSolutionByID(ctx context.Context, id int64) (Solution, error)
+	// Retrieves a single published solution by its URL slug.
+	//
+	// Parameters:
+	//   $1 (TEXT) - slug: URL-safe identifier (e.g., "industrial-automation")
+	// Returns: Solution - Single published solution or error if not found/draft
+	//
+	// Filtering:
+	//   - slug = ? - Matches specific solution
+	//   - is_published = 1 - Only published solutions (public view)
+	//
+	// Use case: Public solution detail page
 	GetSolutionBySlug(ctx context.Context, slug string) (Solution, error)
+	// Retrieves a single solution by slug regardless of published status.
+	//
+	// Parameters:
+	//   $1 (TEXT) - slug: URL-safe identifier
+	// Returns: Solution - Single solution (published or draft) or error if not found
+	//
+	// Use case: Admin preview mode, editing draft solutions
+	// Note: Does NOT filter by is_published, returns draft solutions
 	GetSolutionBySlugIncludeDrafts(ctx context.Context, slug string) (Solution, error)
 	// ====================================================================
-	// SOLUTION CTAS
+	// SOLUTION CTAS (Call-to-Action Sections)
 	// ====================================================================
+	// CTAs are action-oriented sections within solution pages (e.g., "Get Started", "Contact Sales")
+	// Retrieves all CTA sections for a solution.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution to fetch CTAs for
+	// Returns: []SolutionCTA - Array of CTA sections
+	//
+	// Use case: Displaying CTAs within solution page (typically 1-2 per solution)
+	// Note: Multiple CTAs can exist per solution (e.g., mid-page and bottom CTAs)
 	GetSolutionCTAs(ctx context.Context, solutionID int64) ([]SolutionCta, error)
 	// ====================================================================
-	// SOLUTION CHALLENGES
+	// SOLUTION CHALLENGES (Problem Statements)
 	// ====================================================================
+	// Challenges describe customer pain points that the solution addresses
+	// Retrieves all challenges for a solution in display order.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution to fetch challenges for
+	// Returns: []SolutionChallenge - Array of challenge problem statements
+	//
+	// Sorting: display_order ASC - Challenges appear in configured order
+	// Use case: Displaying "Challenges We Solve" section on solution page
 	GetSolutionChallenges(ctx context.Context, solutionID int64) ([]SolutionChallenge, error)
 	// ====================================================================
-	// SOLUTION PRODUCTS
+	// SOLUTION PRODUCTS (Many-to-Many Relationship)
 	// ====================================================================
+	// Links products to solutions showing which products support each solution
+	// Retrieves all published products associated with a solution.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution to fetch products for
+	// Returns: []SolutionProduct - Array of products with solution-specific metadata
+	//
+	// JOIN logic:
+	//   - JOIN products p ON sp.product_id = p.id
+	//     Brings in product details (name, slug, tagline, image, status)
+	//
+	// Filtering:
+	//   - sp.solution_id = ? - Products for this solution
+	//   - p.status = 'published' - Only public products
+	//
+	// Sorting: sp.display_order ASC - Products in admin-configured order
+	// Use case: Displaying "Related Products" section on solution page
 	GetSolutionProducts(ctx context.Context, solutionID int64) ([]GetSolutionProductsRow, error)
 	// ====================================================================
-	// SOLUTION STATS
+	// SOLUTION STATS (Quantifiable Metrics)
 	// ====================================================================
+	// Stats display key metrics like "50% Faster", "99.9% Uptime", "24/7 Support"
+	// Retrieves all stats for a solution in display order.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution to fetch stats for
+	// Returns: []SolutionStat - Array of stats
+	//
+	// Sorting: display_order ASC - Stats appear in admin-configured order
+	// Use case: Displaying stats section on solution detail page
 	GetSolutionStats(ctx context.Context, solutionID int64) ([]SolutionStat, error)
+	// Purpose: Retrieves specific stat by ID for editing
 	GetStat(ctx context.Context, id int64) (HomepageStat, error)
+	// Retrieves a single testimonial by ID with partner name.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - testimonial ID
+	// Returns: PartnerTestimonial - Single testimonial with partner_name
+	//
+	// JOIN logic: Adds partner_name for display/admin context
+	// Use case: Editing testimonial, displaying single testimonial detail
 	GetTestimonial(ctx context.Context, id int64) (GetTestimonialRow, error)
+	// Purpose: Retrieves specific testimonial by ID for editing
 	GetTestimonialHomepage(ctx context.Context, id int64) (HomepageTestimonial, error)
+	// Retrieves a single whitepaper by its primary key ID (any status).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - whitepaper ID
+	// Returns: Whitepaper - Single whitepaper record or error if not found
+	//
+	// Use case: Admin editing, fetching whitepaper for update regardless of status
+	// Note: Does NOT filter by is_published, returns draft whitepapers
 	GetWhitepaperByID(ctx context.Context, id int64) (GetWhitepaperByIDRow, error)
+	// Retrieves a single published whitepaper by slug with full metadata.
+	//
+	// Parameters:
+	//   $1 (TEXT) - slug: URL-safe identifier
+	// Returns: Whitepaper - Single published whitepaper with complete data
+	//
+	// JOIN logic: Adds topic_name and topic_color_hex
+	//
+	// Filtering:
+	//   - w.slug = ? - Matches specific whitepaper
+	//   - w.is_published = 1 - Only published whitepapers
+	//
+	// Use case: Public whitepaper detail/download page
+	// Note: Includes pdf_file_path, SEO metadata (meta_title, meta_description, og_image)
 	GetWhitepaperBySlug(ctx context.Context, slug string) (GetWhitepaperBySlugRow, error)
+	// Retrieves a single whitepaper by slug regardless of published status.
+	//
+	// Parameters:
+	//   $1 (TEXT) - slug: URL-safe identifier
+	// Returns: Whitepaper - Single whitepaper (published or draft)
+	//
+	// Use case: Admin preview mode, editing draft whitepapers
+	// Note: Does NOT filter by is_published, returns draft whitepapers
 	GetWhitepaperBySlugIncludeDrafts(ctx context.Context, slug string) (GetWhitepaperBySlugIncludeDraftsRow, error)
+	// Retrieves all learning points (key takeaways) for a whitepaper.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - whitepaper_id: Whitepaper to fetch learning points for
+	// Returns: []WhitepaperLearningPoint - Array of bullet points
+	//
+	// Sorting:
+	//   1. display_order ASC - Admin-configured order
+	//   2. id ASC - ID fallback for same display_order
+	//
+	// Use case: Displaying "What You'll Learn" section on whitepaper page
 	GetWhitepaperLearningPoints(ctx context.Context, whitepaperID int64) ([]GetWhitepaperLearningPointsRow, error)
+	// Retrieves a single whitepaper topic by its primary key ID.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - topic ID
+	// Returns: WhitepaperTopic - Single topic record or error if not found
+	//
+	// Use case: Editing a specific topic, fetching topic details
 	GetWhitepaperTopic(ctx context.Context, id int64) (WhitepaperTopic, error)
+	// Retrieves a single whitepaper topic by its URL-safe slug identifier.
+	//
+	// Parameters:
+	//   $1 (TEXT) - topic slug (e.g., "iot", "cloud-computing", "cybersecurity")
+	// Returns: WhitepaperTopic - Single topic record or error if not found
+	//
+	// Use case: Frontend topic page routing, filtering whitepapers by topic URL
+	// Note: Slugs should be unique (enforced by database constraint)
 	GetWhitepaperTopicBySlug(ctx context.Context, slug string) (WhitepaperTopic, error)
+	// Increments the download counter for analytics tracking.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - download ID
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Tracking download analytics when user downloads a file
+	// Note: Uses download_count + 1 to atomically increment without race conditions
 	IncrementDownloadCount(ctx context.Context, id int64) error
+	// Increments the download counter for analytics tracking.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - whitepaper_id: Whitepaper that was downloaded
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Tracking download popularity metrics
+	// Note: Uses download_count + 1 for atomic increment without race conditions
 	IncrementWhitepaperDownloadCount(ctx context.Context, id int64) error
 	// ====================================================================
-	// HOMEPAGE STATS
+	// HOMEPAGE STATS / METRICS
 	// ====================================================================
+	// Purpose: Retrieves active statistics for public homepage display
+	// WHERE: is_active = 1 (allows hiding stats without deleting them)
+	// ORDER BY display_order: custom presentation sequence
+	// Example stats: "500+ Clients", "10 Years Experience", "99% Satisfaction"
 	ListActiveStats(ctx context.Context) ([]HomepageStat, error)
+	// ====================================================================
+	// PARTNER TESTIMONIALS
+	// ====================================================================
+	// Retrieves all active partner testimonials with partner details for display.
+	//
+	// Parameters: none
+	// Returns: []PartnerTestimonial - Array of active testimonials with partner metadata
+	//
+	// JOIN logic:
+	//   - JOIN partners p ON pt.partner_id = p.id
+	//     Adds partner_name, partner_logo_url, partner_icon for display context
+	//
+	// Filtering: pt.is_active = 1 - Only visible testimonials
+	// Sorting: pt.display_order ASC - Custom-defined testimonial sequence
+	//
+	// Use case: Homepage testimonials section, partners page testimonials carousel
 	ListActiveTestimonials(ctx context.Context) ([]ListActiveTestimonialsRow, error)
 	// ====================================================================
 	// HOMEPAGE TESTIMONIALS
 	// ====================================================================
+	// Purpose: Retrieves active testimonials for public homepage carousel/display
+	// WHERE: is_active = 1 (allows managing testimonial rotation)
+	// ORDER BY display_order: custom sequence for carousel slides
 	ListActiveTestimonialsHomepage(ctx context.Context) ([]HomepageTestimonial, error)
+	// sqlc annotation: :many returns slice of activity_log rows
+	// Purpose: Retrieves paginated, filtered activity log entries for admin dashboard
+	// Parameters (named parameters using @ prefix):
+	//   @filter_action (TEXT): filter by action type (empty string = no filter)
+	//   @filter_search (TEXT): search term for description field (empty = no filter)
+	//   @page_limit (INTEGER): number of results per page
+	//   @page_offset (INTEGER): pagination offset (page_number * page_limit)
+	// Return type: slice of activity_log rows
+	// Complex WHERE logic:
+	//   - CAST to TEXT handles nullable/empty filter parameters safely
+	//   - Empty string check allows "no filter" without complex null handling
+	//   - LIKE with wildcards enables partial text search in descriptions
+	// Note: Always ordered by created_at DESC to show newest actions first
 	ListActivityLogs(ctx context.Context, arg ListActivityLogsParams) ([]ActivityLog, error)
+	// sqlc annotation: :many returns slice of admin_users rows
+	// Purpose: Lists all admin users for management dashboard
+	// Parameters: none
+	// Return type: slice of partial admin_users rows (excludes password_hash)
+	// Note: Ordered by created_at DESC to show newest accounts first
+	//       Does NOT return password_hash for security
 	ListAdminUsers(ctx context.Context) ([]ListAdminUsersRow, error)
+	// ====================================================================
+	// ADMIN BLOG POST QUERIES
+	// ====================================================================
+	// sqlc annotation: :many returns slice of all blog posts (drafts + published)
+	// Purpose: Simple admin list of all posts without filtering/pagination
+	// Parameters: none
+	// Return type: slice of blog posts with basic metadata (no body/excerpt)
+	// Note: Includes all statuses (draft, published); used for simple admin views
+	//       ORDER BY created_at DESC shows newest posts first
 	ListAllBlogPosts(ctx context.Context) ([]ListAllBlogPostsRow, error)
+	// ====================================================================
+	// BLOG TAGS QUERIES
+	// ====================================================================
+	// This file manages blog tags (keywords/topics) used for cross-referencing
+	// and organizing blog posts. Tags enable many-to-many relationships with
+	// posts (one post can have multiple tags, one tag can be on multiple posts).
+	//
+	// Managed entity:
+	// - blog_tags: tag definitions (name, slug)
+	//
+	// Note: Tags are linked to posts via blog_post_tags junction table
+	// ====================================================================
+	// sqlc annotation: :many returns slice of all blog tags
+	// Purpose: Lists all available tags for admin management or tag selection
+	// Parameters: none
+	// Return type: slice of blog_tags rows
+	// ORDER BY name: alphabetical sorting for easier browsing
 	ListAllBlogTags(ctx context.Context) ([]BlogTag, error)
+	// Purpose: Lists all CTA variants (active + inactive) for admin management
+	// ORDER BY id: chronological order (oldest first)
 	ListAllCTAs(ctx context.Context) ([]HomepageCtum, error)
+	// Purpose: Lists all footer links across all column items
+	// ORDER BY: groups by column_item_id, then sort_order within each group
 	ListAllFooterLinks(ctx context.Context) ([]FooterLink, error)
+	// Purpose: Lists all hero variants (active + inactive) for admin management
+	// ORDER BY display_order: custom sort for A/B testing or scheduling
 	ListAllHeroes(ctx context.Context) ([]HomepageHero, error)
 	// ====================================================================
-	// OFFICE LOCATIONS - ADMIN
+	// OFFICE LOCATIONS - ADMIN QUERIES
+	// ====================================================================
+	// Manages physical office location data displayed on contact page.
+	// - is_primary: marks the main/headquarters office (only one should be primary)
+	// - is_active: controls public visibility
+	// - display_order: custom sort order for multiple locations
 	// ====================================================================
 	ListAllOfficeLocations(ctx context.Context) ([]OfficeLocation, error)
+	// Retrieves all page sections across all pages, grouped and ordered.
+	//
+	// Parameters: none
+	// Returns: []PageSection - Array of all sections across entire site
+	//
+	// Sorting logic:
+	//   1. page_key - Groups sections by page (alphabetical)
+	//   2. display_order ASC - Orders sections within each page
+	//
+	// Use case: Admin section management dashboard, bulk operations, site-wide overview
+	// Note: Returns ALL sections including inactive ones (is_active not filtered)
 	ListAllPageSections(ctx context.Context) ([]PageSection, error)
+	// ====================================================================
+	// PARTNER LISTING QUERIES
+	// ====================================================================
+	// Retrieves all partners (active and inactive) with tier information.
+	//
+	// Parameters: none
+	// Returns: []Partner - Array of all partners with tier_name
+	//
+	// JOIN logic: Adds tier_name from partner_tiers table
+	//
+	// Sorting:
+	//   1. pt.sort_order ASC - Higher tiers first
+	//   2. p.display_order ASC - Custom order within tier
+	//
+	// Use case: Admin partner management, bulk operations
+	// Note: Returns ALL partners regardless of is_active status
 	ListAllPartners(ctx context.Context) ([]ListAllPartnersRow, error)
+	// ====================================================================
+	// PRODUCTS - ADMIN QUERIES
+	// ====================================================================
+	// Retrieves all products (any status) for admin dashboard.
+	//
+	// Parameters: none
+	// Returns: []Product - Array of all products including drafts and archived
+	//
+	// Sorting: created_at DESC - Newest products first
+	// Use case: Admin product management dashboard
+	// Note: No status filtering - shows published, draft, and archived products
 	ListAllProductsAdmin(ctx context.Context) ([]Product, error)
+	// Retrieves all solution page features (active and inactive) for admin.
+	//
+	// Parameters: none
+	// Returns: []SolutionPageFeature - Array of all features
+	//
+	// Sorting: display_order ASC
+	// Use case: Admin management of solution page features
 	ListAllSolutionPageFeatures(ctx context.Context) ([]SolutionPageFeature, error)
+	// Retrieves all solutions (published and draft) for admin dashboard.
+	//
+	// Parameters: none
+	// Returns: []Solution - Array of all solutions
+	//
+	// Sorting:
+	//   1. display_order ASC - Custom order
+	//   2. title ASC - Alphabetical fallback
+	//
+	// Use case: Admin solutions management listing
+	// Note: Returns ALL solutions regardless of is_published status
 	ListAllSolutions(ctx context.Context) ([]Solution, error)
+	// Purpose: Lists all stats (active + inactive) for admin management
 	ListAllStats(ctx context.Context) ([]HomepageStat, error)
+	// Purpose: Lists all testimonials (active + inactive) for admin management
 	ListAllTestimonialsHomepage(ctx context.Context) ([]HomepageTestimonial, error)
 	// ====================================================================
-	// WHITEPAPERS - ADMIN
+	// WHITEPAPERS - ADMIN QUERIES
 	// ====================================================================
+	// Retrieves all whitepapers (published and draft) for admin dashboard.
+	//
+	// Parameters: none
+	// Returns: []Whitepaper - Array of all whitepapers with topic name
+	//
+	// JOIN logic: Adds topic_name from whitepaper_topics
+	//
+	// Sorting: w.created_at DESC - Newest whitepapers first (by creation date)
+	// Use case: Admin whitepapers management listing
+	// Note: Returns ALL whitepapers regardless of is_published status
+	// Note: Selects subset of columns optimized for admin listing (not full content)
 	ListAllWhitepapers(ctx context.Context) ([]ListAllWhitepapersRow, error)
+	// ====================================================================
+	// BLOG AUTHORS QUERIES
+	// ====================================================================
+	// This file manages blog author profiles used for article attribution.
+	// Authors can be team members, guest writers, or external contributors.
+	//
+	// Managed entity:
+	// - blog_authors: author profiles with bio, avatar, social links
+	//
+	// Note: slug field is used for author archive pages (e.g., /blog/author/{slug})
+	// ====================================================================
+	// sqlc annotation: :many returns slice of blog_authors rows
+	// Purpose: Lists all blog authors for admin management or author selection
+	// Parameters: none
+	// Return type: slice of all blog_authors rows
+	// ORDER BY logic:
+	//   - Primary sort: sort_order ASC (allows manual ordering)
+	//   - Secondary sort: name ASC (alphabetical fallback if sort_order is same)
 	ListBlogAuthors(ctx context.Context) ([]BlogAuthor, error)
+	// ====================================================================
+	// BLOG CATEGORIES QUERIES
+	// ====================================================================
+	// This file manages blog category taxonomy for organizing posts into
+	// distinct content verticals (e.g., "Technology", "Industry News", "Tutorials").
+	//
+	// Managed entity:
+	// - blog_categories: post classification with color coding for UI
+	//
+	// Note: slug field enables category archive pages (e.g., /blog/category/{slug})
+	//       color_hex allows color-coded category badges in UI
+	// ====================================================================
+	// sqlc annotation: :many returns slice of blog_categories rows
+	// Purpose: Lists all blog categories for admin management or post categorization
+	// Parameters: none
+	// Return type: slice of all blog_categories rows
+	// ORDER BY logic:
+	//   - Primary sort: sort_order ASC (custom display order)
+	//   - Secondary sort: name ASC (alphabetical fallback)
 	ListBlogCategories(ctx context.Context) ([]BlogCategory, error)
+	// sqlc annotation: :many returns filtered/paginated blog posts for admin table
+	// Purpose: Advanced admin list with multiple filter options and pagination
+	// Parameters (named using @ prefix):
+	//   @filter_status (TEXT): filter by status ('draft', 'published', or '' for all)
+	//   @filter_category (INTEGER): filter by category ID (0 = all categories)
+	//   @filter_author (INTEGER): filter by author ID (0 = all authors)
+	//   @filter_search (TEXT): search term for title/slug ('' = no search)
+	//   @page_limit (INTEGER): posts per page
+	//   @page_offset (INTEGER): pagination offset
+	// Return type: slice of blog posts with full display metadata
+	// Complex WHERE clause using CASE statements:
+	//   - CASE WHEN @filter_status = '' THEN 1: when filter is empty, condition is always true (1)
+	//   - ELSE bp.status = @filter_status: otherwise, apply the filter
+	//   - This pattern allows optional filters without complex NULL handling
+	//   - filter_category/filter_author use 0 as "no filter" sentinel value
+	//   - filter_search uses LIKE for partial matching in title OR slug
 	ListBlogPostsAdminFiltered(ctx context.Context, arg ListBlogPostsAdminFilteredParams) ([]ListBlogPostsAdminFilteredRow, error)
 	// ====================================================================
-	// CASE STUDIES
+	// CASE STUDIES QUERIES
 	// ====================================================================
+	// This file manages case study content showcasing client success stories.
+	// Case studies demonstrate real-world applications of products/services
+	// and include challenge, solution, and outcome sections.
+	//
+	// Managed entities:
+	// - case_studies: main case study content with sections
+	// - case_study_products: many-to-many link to featured products
+	// - case_study_metrics: key performance indicators/results
+	//
+	// Key concepts:
+	// - is_published: controls public visibility (1 = published, 0 = draft)
+	// - display_order: custom sorting for featured case studies
+	// - industry_id: categorizes by client industry vertical
+	// ====================================================================
+	// ====================================================================
+	// PUBLIC CASE STUDY QUERIES
+	// ====================================================================
+	// sqlc annotation: :many returns slice of published case studies
+	// Purpose: Lists all published case studies for public case studies index page
+	// Parameters: none
+	// Return type: slice of case studies with industry details
+	// JOIN:
+	//   - INNER JOIN industries: gets industry name/slug for categorization
+	// WHERE:
+	//   - is_published = 1: only show published case studies, hide drafts
+	// ORDER BY:
+	//   - Primary: display_order ASC (manual featured ordering)
+	//   - Secondary: created_at DESC (newest first as fallback)
 	ListCaseStudies(ctx context.Context) ([]ListCaseStudiesRow, error)
+	// sqlc annotation: :many returns case studies filtered by industry
+	// Purpose: Lists published case studies for specific industry vertical
+	// Parameters:
+	//   1. industry_id (INTEGER): industry to filter by
+	// Return type: slice of case studies for that industry
+	// WHERE:
+	//   - is_published = 1: published only
+	//   - industry_id = ?: filter to specific industry
 	ListCaseStudiesByIndustry(ctx context.Context, industryID int64) ([]ListCaseStudiesByIndustryRow, error)
+	// ====================================================================
+	// CERTIFICATIONS & CREDENTIALS
+	// ====================================================================
+	// sqlc annotation: :many returns slice of certification rows
+	// Purpose: Lists all certifications/credentials for About page display
+	// Parameters: none
+	// Return type: slice of certifications rows
+	// Note: ORDER BY display_order for custom presentation sequence
 	ListCertifications(ctx context.Context) ([]Certification, error)
 	// ====================================================================
-	// CONTACT - ADMIN
+	// CONTACT SUBMISSIONS - ADMIN QUERIES
 	// ====================================================================
+	// Admin queries support multiple filtering patterns:
+	// - ListContactSubmissions: all submissions (basic pagination)
+	// - ListContactSubmissionsByStatus: filter by status (new/read/replied/archived)
+	// - ListContactSubmissionsByType: filter by submission_type
+	// - ListContactSubmissionsByStatusAndType: combined filters
+	// - SearchContactSubmissions: text search in name/email/company/message
+	//
+	// Each List* query has a corresponding Count* query for pagination.
+	// Navigation queries (GetPrevious/NextSubmissionID) enable prev/next buttons.
+	// ====================================================================
+	// sqlc annotation: :many returns paginated contact submissions
+	// Purpose: Basic paginated list of all contact submissions
+	// Parameters:
+	//   1. LIMIT (INTEGER): submissions per page
+	//   2. OFFSET (INTEGER): pagination offset
+	// Return type: slice of contact_submissions (excludes ip_address/user_agent for security)
+	// Note: Ordered by created_at DESC (newest first)
 	ListContactSubmissions(ctx context.Context, arg ListContactSubmissionsParams) ([]ListContactSubmissionsRow, error)
 	ListContactSubmissionsByStatus(ctx context.Context, arg ListContactSubmissionsByStatusParams) ([]ListContactSubmissionsByStatusRow, error)
 	ListContactSubmissionsByStatusAndType(ctx context.Context, arg ListContactSubmissionsByStatusAndTypeParams) ([]ListContactSubmissionsByStatusAndTypeRow, error)
 	ListContactSubmissionsByType(ctx context.Context, arg ListContactSubmissionsByTypeParams) ([]ListContactSubmissionsByTypeRow, error)
+	// ====================================================================
+	// CORE VALUES
+	// ====================================================================
+	// sqlc annotation: :many returns slice of rows (0 or more)
+	// Purpose: Lists all core values for display on About page
+	// Parameters: none
+	// Return type: slice of core_values rows
+	// Note: ORDER BY display_order ensures consistent presentation order
 	ListCoreValues(ctx context.Context) ([]CoreValue, error)
+	// Retrieves a limited number of featured active partners.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - LIMIT: Maximum number of featured partners to return
+	// Returns: []Partner - Array of featured partners with tier_name
+	//
+	// JOIN logic: Adds tier_name from partner_tiers table
+	//
+	// Filtering:
+	//   - p.is_featured = 1 - Only partners marked as featured
+	//   - p.is_active = 1 - Only visible partners
+	//
+	// Sorting: p.display_order ASC - Featured partners in custom order
+	// LIMIT: Controls how many featured partners to display (e.g., 6 for homepage)
+	//
+	// Use case: Homepage featured partners section, highlighting key partnerships
 	ListFeaturedPartners(ctx context.Context, limit int64) ([]ListFeaturedPartnersRow, error)
+	// Retrieves a limited number of featured products with category slug.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - LIMIT: Maximum number of featured products to return
+	// Returns: []Product - Array of featured products with category_slug
+	//
+	// JOIN logic:
+	//   - INNER JOIN product_categories pc ON p.category_id = pc.id
+	//     Adds category_slug for building product URLs
+	//
+	// Filtering:
+	//   - p.is_featured = 1 - Only featured products
+	//   - p.status = 'published' - Only public products
+	//
+	// Sorting: p.featured_order ASC - Featured products in custom order (1, 2, 3...)
+	// LIMIT: Controls homepage featured products count (e.g., 4 or 6)
+	//
+	// Use case: Homepage featured products section, product highlights carousel
 	ListFeaturedProducts(ctx context.Context, limit int64) ([]ListFeaturedProductsRow, error)
+	// ====================================================================
+	// FOOTER COLUMN ITEMS
+	// ====================================================================
+	// Purpose: Lists all footer column content blocks
+	// ORDER BY: column_index (left to right), then sort_order (top to bottom)
 	ListFooterColumnItems(ctx context.Context) ([]FooterColumnItem, error)
+	// ====================================================================
+	// FOOTER LEGAL LINKS (bottom bar)
+	// ====================================================================
+	// Purpose: Lists legal/policy links shown in footer bottom bar
+	// Examples: "Privacy Policy", "Terms of Service", "Accessibility"
+	// ORDER BY sort_order: custom display sequence
 	ListFooterLegalLinks(ctx context.Context) ([]FooterLegalLink, error)
+	// ====================================================================
+	// FOOTER LINKS (within column items)
+	// ====================================================================
+	// Purpose: Lists links belonging to a specific footer column item
+	// Parameters:
+	//   1. column_item_id (INTEGER): parent column item
+	// Use case: Getting links for a "Quick Links" or "Resources" column block
 	ListFooterLinks(ctx context.Context, columnItemID int64) ([]FooterLink, error)
+	// ====================================================================
+	// INDUSTRIES QUERY FILE
+	// ====================================================================
+	// This file contains all SQL queries for managing industry categories.
+	// Industries are used to categorize solutions and content by target market
+	// or business sector (e.g., Healthcare, Manufacturing, Finance).
+	//
+	// Entity: industries table
+	// Related tables: solutions (via solution_industries junction table)
+	// ====================================================================
+	// Retrieves all industries ordered by custom sort order, then alphabetically.
+	//
+	// Parameters: none
+	// Returns: []Industry - Array of all industry records
+	//
+	// Sorting logic:
+	//   1. sort_order ASC - Custom display order (lower numbers appear first)
+	//   2. name ASC - Alphabetical fallback for same sort_order values
+	//
+	// Use case: Display industries in navigation, filters, or admin listing
 	ListIndustries(ctx context.Context) ([]Industry, error)
+	// ====================================================================
+	// UTILITY QUERIES
+	// ====================================================================
+	// sqlc annotation: :many returns recent published posts
+	// Purpose: Lists N most recent published posts (for homepage, sidebar widgets)
+	// Parameters:
+	//   1. LIMIT (INTEGER): number of posts to return
+	// Return type: slice of blog posts with category/author details
+	// Note: Similar to ListPublishedPosts but without pagination offset
+	//       Used for "Recent Posts" widgets with fixed count
 	ListLatestPublishedPosts(ctx context.Context, limit int64) ([]ListLatestPublishedPostsRow, error)
+	// ====================================================================
+	// MEDIA FILES QUERY FILE
+	// ====================================================================
+	// This file contains all SQL queries for managing uploaded media files
+	// (images, PDFs, videos, etc.) in the media library.
+	//
+	// Entity: media_files table
+	// Purpose: Track uploaded files with metadata for reuse across the CMS
+	// Features: Pagination, search, multiple sort orders, alt text for accessibility
+	// ====================================================================
+	// Retrieves paginated media files sorted by upload date (newest first).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - LIMIT: Number of records to return per page
+	//   $2 (INTEGER) - OFFSET: Number of records to skip (for pagination)
+	// Returns: []MediaFile - Array of media file records
+	//
+	// Sorting: created_at DESC - Most recently uploaded files appear first
+	// Use case: Default media library view showing latest uploads
 	ListMediaFiles(ctx context.Context, arg ListMediaFilesParams) ([]MediaFile, error)
+	// Retrieves paginated media files sorted alphabetically by filename.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - LIMIT: Number of records per page
+	//   $2 (INTEGER) - OFFSET: Pagination offset
+	// Returns: []MediaFile - Array of media file records
+	//
+	// Sorting: filename ASC - Alphabetical order (A-Z)
+	// Use case: User prefers alphabetical file organization
 	ListMediaFilesByName(ctx context.Context, arg ListMediaFilesByNameParams) ([]MediaFile, error)
+	// Retrieves paginated media files sorted by file size (largest first).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - LIMIT: Number of records per page
+	//   $2 (INTEGER) - OFFSET: Pagination offset
+	// Returns: []MediaFile - Array of media file records
+	//
+	// Sorting: file_size DESC - Largest files appear first
+	// Use case: Identifying large files for storage cleanup or optimization
 	ListMediaFilesBySize(ctx context.Context, arg ListMediaFilesBySizeParams) ([]MediaFile, error)
+	// Retrieves paginated media files sorted by upload date (oldest first).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - LIMIT: Number of records per page
+	//   $2 (INTEGER) - OFFSET: Pagination offset
+	// Returns: []MediaFile - Array of media file records
+	//
+	// Sorting: created_at ASC - Oldest files appear first
+	// Use case: Identifying old/unused files for archival or cleanup
 	ListMediaFilesOldest(ctx context.Context, arg ListMediaFilesOldestParams) ([]MediaFile, error)
+	// ====================================================================
+	// MILESTONES / COMPANY TIMELINE
+	// ====================================================================
+	// sqlc annotation: :many returns slice of milestone rows
+	// Purpose: Lists all company milestones for timeline display
+	// Parameters: none
+	// Return type: slice of milestones rows
+	// Note: ORDER BY display_order for chronological or custom ordering
 	ListMilestones(ctx context.Context) ([]Milestone, error)
+	// ====================================================================
+	// NAVIGATION ITEMS
+	// ====================================================================
+	// Retrieves all navigation items for a specific menu, sorted by display order.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - menu_id: Parent menu ID
+	// Returns: []NavigationItem - Array of menu items in display order
+	//
+	// Sorting: sort_order ASC - Items appear in manually configured order
+	// Use case: Rendering menu items in templates, admin item listing
+	// Note: Returns both parent and child items; application must build hierarchy
 	ListNavigationItems(ctx context.Context, menuID int64) ([]NavigationItem, error)
+	// ====================================================================
+	// NAVIGATION QUERY FILE
+	// ====================================================================
+	// This file contains all SQL queries for managing navigation menus and menu items.
+	//
+	// Entities:
+	//   - navigation_menus: Container for menu items (e.g., "Main Menu", "Footer Menu")
+	//   - navigation_items: Individual links/items within a menu (supports nesting)
+	//
+	// Features:
+	//   - Multiple menus per site (header, footer, sidebar, etc.)
+	//   - Hierarchical navigation (parent/child items for dropdowns)
+	//   - Flexible link types (URL, page identifier, custom)
+	//   - Drag-and-drop reordering via sort_order
+	// ====================================================================
+	// ====================================================================
+	// NAVIGATION MENUS
+	// ====================================================================
+	// Retrieves all navigation menus sorted by creation date (newest first).
+	//
+	// Parameters: none
+	// Returns: []NavigationMenu - Array of all menu containers
+	//
+	// Use case: Admin panel menu management, displaying available menus
 	ListNavigationMenus(ctx context.Context) ([]NavigationMenu, error)
+	// Retrieves all active sections for a specific page in display order.
+	//
+	// Parameters:
+	//   $1 (TEXT) - page_key: Page identifier
+	// Returns: []PageSection - Array of active sections for the page
+	//
+	// Filtering: is_active = 1 - Only visible sections
+	// Sorting: display_order ASC - Sections appear in configured order
+	//
+	// Use case: Rendering all sections for a page, building page content dynamically
 	ListPageSections(ctx context.Context, pageKey string) ([]PageSection, error)
+	// ====================================================================
+	// PARTNER TIERS QUERY FILE
+	// ====================================================================
+	// This file contains all SQL queries for managing partner tier categories.
+	//
+	// Entity: partner_tiers table
+	// Purpose: Categorize partners by level/tier (e.g., Platinum, Gold, Silver, Bronze)
+	// Related: partners table references partner_tiers via tier_id foreign key
+	//
+	// Business logic:
+	//   - Higher tier partners (lower sort_order) appear first in listings
+	//   - Used to organize partners page, display partner logos by importance
+	//   - Tier descriptions can explain benefits or requirements
+	// ====================================================================
+	// Retrieves all partner tiers ordered by display priority, then alphabetically.
+	//
+	// Parameters: none
+	// Returns: []PartnerTier - Array of all tier records
+	//
+	// Sorting logic:
+	//   1. sort_order ASC - Custom priority (lower = higher tier, e.g., Platinum=1, Gold=2)
+	//   2. name ASC - Alphabetical fallback for tiers with same sort_order
+	//
+	// Use case: Displaying tier dropdown in partner form, organizing partners page by tier
 	ListPartnerTiers(ctx context.Context) ([]PartnerTier, error)
+	// ====================================================================
+	// PARTNERS QUERY FILE
+	// ====================================================================
+	// This file contains all SQL queries for managing business partners and
+	// their testimonials.
+	//
+	// Entities:
+	//   - partners: Company partner records with tier/category
+	//   - partner_testimonials: Customer quotes and testimonials from partners
+	//
+	// Related tables:
+	//   - partner_tiers: Defines partner levels (Platinum, Gold, Silver, etc.)
+	//
+	// Features:
+	//   - Multi-tier partner management
+	//   - Active/inactive status for visibility control
+	//   - Featured partners for homepage highlights
+	//   - Partner testimonials with author details
+	//   - Display ordering within tiers
+	// ====================================================================
+	// ====================================================================
+	// PARTNERS
+	// ====================================================================
+	// Retrieves all active partners organized by tier, with tier metadata.
+	//
+	// Parameters: none
+	// Returns: []Partner - Array of active partners with tier information
+	//
+	// JOIN logic:
+	//   - JOIN partner_tiers pt ON p.tier_id = pt.id
+	//     Links partners to their tier category, adds tier_name and tier_level
+	//
+	// Filtering: p.is_active = 1 - Only visible partners
+	//
+	// Sorting logic:
+	//   1. pt.sort_order ASC - Higher tier partners first (Platinum before Gold)
+	//   2. p.display_order ASC - Custom ordering within each tier
+	//
+	// Use case: Partners page display, showing partners grouped by tier
+	// Note: Returns tier_name and tier_level (sort_order) as additional columns
 	ListPartnersByTier(ctx context.Context) ([]ListPartnersByTierRow, error)
+	// Retrieves all active partners for a specific tier.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - tier_id: Partner tier ID to filter by
+	// Returns: []Partner - Array of active partners in the specified tier
+	//
+	// Filtering:
+	//   - tier_id = ? - Matches specific tier
+	//   - is_active = 1 - Only visible partners
+	//
+	// Sorting: display_order ASC - Partners in custom-defined order
+	//
+	// Use case: Displaying partners filtered by tier (e.g., "Show all Platinum Partners")
 	ListPartnersByTierID(ctx context.Context, tierID int64) ([]Partner, error)
+	// ====================================================================
+	// PRODUCT CATEGORIES QUERY FILE
+	// ====================================================================
+	// This file contains all SQL queries for managing product category taxonomy.
+	//
+	// Entity: product_categories table
+	// Purpose: Organize products into logical groups (e.g., "Hardware", "Software", "Services")
+	// Related: products table references product_categories via category_id foreign key
+	//
+	// Features:
+	//   - Hierarchical organization of product catalog
+	//   - Category pages with custom imagery and descriptions
+	//   - Icon support for visual navigation
+	//   - Custom display ordering
+	// ====================================================================
+	// Retrieves all product categories ordered by display priority, then alphabetically.
+	//
+	// Parameters: none
+	// Returns: []ProductCategory - Array of all category records
+	//
+	// Sorting logic:
+	//   1. sort_order ASC - Custom display order (lower numbers appear first)
+	//   2. name ASC - Alphabetical fallback for same sort_order values
+	//
+	// Use case: Category navigation menu, product filters, admin category listing
 	ListProductCategories(ctx context.Context) ([]ProductCategory, error)
+	// Retrieves all certifications for a product in display order.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product to fetch certifications for
+	// Returns: []ProductCertification - Array of certifications ordered by display_order
+	//
+	// Sorting: display_order ASC - Certifications appear in admin-configured order
+	// Use case: Displaying compliance badges on product detail page
 	ListProductCertifications(ctx context.Context, productID int64) ([]ProductCertification, error)
+	// Retrieves all downloadable files for a product in display order.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product to fetch downloads for
+	// Returns: []ProductDownload - Array of downloads ordered by display_order
+	//
+	// Sorting: display_order ASC - Downloads appear in admin-configured order
+	// Use case: Displaying downloads list on product detail page
 	ListProductDownloads(ctx context.Context, productID int64) ([]ProductDownload, error)
+	// Retrieves all features for a product in display order.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product to fetch features for
+	// Returns: []ProductFeature - Array of features ordered by display_order
+	//
+	// Sorting: display_order ASC - Features appear in admin-configured order
+	// Use case: Displaying key features list on product detail page
 	ListProductFeatures(ctx context.Context, productID int64) ([]ProductFeature, error)
+	// Retrieves all gallery images for a product in display order.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product to fetch images for
+	// Returns: []ProductImage - Array of images ordered by display_order
+	//
+	// Sorting: display_order ASC - Images appear in admin-configured order
+	// Use case: Rendering product image gallery, lightbox, thumbnails
 	ListProductImages(ctx context.Context, productID int64) ([]ProductImage, error)
+	// Retrieves all technical specifications for a product in display order.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - product_id: Product to fetch specs for
+	// Returns: []ProductSpec - Array of specifications ordered by display_order
+	//
+	// Sorting: display_order ASC - Specs appear in admin-configured order
+	// Use case: Displaying specs table on product detail page
+	// Note: Application code should group by section_name for organized display
 	ListProductSpecs(ctx context.Context, productID int64) ([]ProductSpec, error)
+	// Retrieves paginated published products with featured products first.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - LIMIT: Number of products per page
+	//   $2 (INTEGER) - OFFSET: Pagination offset
+	// Returns: []Product - Array of published products
+	//
+	// Filtering: status = 'published' - Only live, public products
+	//
+	// Sorting logic (complex CASE statement):
+	//   1. Featured products (is_featured = 1) ordered by featured_order (1, 2, 3...)
+	//   2. Non-featured products ordered by published_at DESC (newest first)
+	//   - CASE WHEN is_featured = 1 THEN featured_order ELSE 999999 END
+	//     This ensures featured products (orders 1-100) appear before non-featured (999999)
+	//
+	// Use case: Main products catalog page, products listing
 	ListProducts(ctx context.Context, arg ListProductsParams) ([]Product, error)
+	// Retrieves paginated products with optional filters for admin interface.
+	//
+	// Parameters (named parameters with @):
+	//   @filter_status (TEXT) - Filter by status ("published", "draft", "archived", or "" for all)
+	//   @filter_category (INTEGER) - Filter by category_id (0 for all categories)
+	//   @filter_search (TEXT) - Search term for name/SKU (empty string for no search)
+	//   @page_limit (INTEGER) - Results per page
+	//   @page_offset (INTEGER) - Pagination offset
+	// Returns: []Product - Array of filtered products
+	//
+	// Complex WHERE clause with CASE statements for optional filters:
+	//   1. Status filter: CASE WHEN @filter_status = '' THEN 1 (all) ELSE match status
+	//   2. Category filter: CASE WHEN @filter_category = 0 THEN 1 (all) ELSE match category_id
+	//   3. Search filter: CASE WHEN @filter_search = '' THEN 1 (all) ELSE LIKE match on name/SKU
+	//
+	// The CASE WHEN pattern allows filters to be "turned off" by passing default values
+	// ("" for strings, 0 for category ID)
+	//
+	// Sorting: p.created_at DESC - Newest products first
+	// Use case: Admin product listing with filter dropdowns and search bar
 	ListProductsAdminFiltered(ctx context.Context, arg ListProductsAdminFilteredParams) ([]Product, error)
+	// Retrieves paginated published products for a specific category.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - category_id: Filter by this product category
+	//   $2 (INTEGER) - LIMIT: Number of products per page
+	//   $3 (INTEGER) - OFFSET: Pagination offset
+	// Returns: []Product - Array of published products in the category
+	//
+	// Filtering:
+	//   - category_id = ? - Specific category only
+	//   - status = 'published' - Only public products
+	//
+	// Sorting: Same complex ordering as ListProducts (featured first, then by date)
+	//
+	// Use case: Category-specific product listing pages
 	ListProductsByCategory(ctx context.Context, arg ListProductsByCategoryParams) ([]Product, error)
+	// ====================================================================
+	// PRODUCTS - PUBLIC LISTING QUERIES
+	// ====================================================================
+	// Retrieves all published products with category slug for sitemap generation.
+	//
+	// Returns: []ListProductsForSitemapRow - slug, category_slug, updated_at
+	//
+	// Use case: Generating sitemap.xml with product detail page URLs
+	ListProductsForSitemap(ctx context.Context) ([]ListProductsForSitemapRow, error)
+	// ====================================================================
+	// BLOG POSTS QUERIES
+	// ====================================================================
+	// This file contains all queries for managing blog posts, including both
+	// public-facing queries (listing published posts) and admin operations
+	// (CRUD, filtering, searching). Includes relationship management for
+	// tags and products associated with blog posts.
+	//
+	// Managed entities:
+	// - blog_posts: main blog content with status, metadata, SEO fields
+	// - blog_post_tags: many-to-many relationship with blog_tags
+	// - blog_post_products: many-to-many relationship with products
+	//
+	// Key concepts:
+	// - status: 'draft' or 'published' (only published shown on frontend)
+	// - published_at: must be non-null for public display
+	// - JOINs with categories/authors for denormalized display data
+	// ====================================================================
+	// ====================================================================
+	// PUBLIC BLOG POST QUERIES
+	// ====================================================================
+	// sqlc annotation: :many returns slice of blog post rows
+	// Purpose: Lists published blog posts for main blog index page
+	// Parameters (positional):
+	//   1. LIMIT (INTEGER): number of posts per page
+	//   2. OFFSET (INTEGER): pagination offset
+	// Return type: slice of denormalized blog post rows with category/author details
+	// JOINs explained:
+	//   - INNER JOIN blog_categories: gets category name/slug/color for each post
+	//   - INNER JOIN blog_authors: gets author name/avatar for byline display
+	//   Note: INNER JOINs ensure posts without valid category/author are excluded
+	// WHERE clause:
+	//   - status = 'published': only show published posts, hide drafts
+	//   - published_at IS NOT NULL: additional safety check for scheduled posts
+	// ORDER BY published_at DESC: newest posts first (reverse chronological)
 	ListPublishedPosts(ctx context.Context, arg ListPublishedPostsParams) ([]ListPublishedPostsRow, error)
+	// sqlc annotation: :many returns slice of blog post rows
+	// Purpose: Lists published posts filtered by category slug (category archive page)
+	// Parameters (positional):
+	//   1. category slug (TEXT): URL-safe category identifier
+	//   2. LIMIT (INTEGER): posts per page
+	//   3. OFFSET (INTEGER): pagination offset
+	// Return type: slice of denormalized blog post rows
+	// WHERE clause:
+	//   - bp.status = 'published' AND bp.published_at IS NOT NULL: same as main list
+	//   - bc.slug = ?: filters by category slug (JOIN to blog_categories required)
+	// Note: INNER JOIN ensures only valid category slugs return results
 	ListPublishedPostsByCategory(ctx context.Context, arg ListPublishedPostsByCategoryParams) ([]ListPublishedPostsByCategoryRow, error)
 	// ====================================================================
-	// SOLUTIONS
+	// SOLUTIONS QUERY FILE
 	// ====================================================================
+	// This file contains all SQL queries for managing solutions and related entities.
+	//
+	// Main entities:
+	//   - solutions: Industry solutions/use cases
+	//   - solution_stats: Quantifiable metrics (e.g., "50% faster", "99.9% uptime")
+	//   - solution_challenges: Problem statements solved by solution
+	//   - solution_products: Products associated with solution (many-to-many)
+	//   - solution_ctas: Call-to-action sections within solution page
+	//   - solution_page_features: "Why Choose BlueJay" features (shared across solutions)
+	//   - solutions_listing_cta: CTA for solutions listing page
+	//
+	// Solution status: is_published (1=published, 0=draft)
+	// Features:
+	//   - Rich content pages with heroes, stats, challenges, related products
+	//   - Draft/published workflow
+	//   - Admin filtering and search
+	//   - Featured products within solutions
+	// ====================================================================
+	// ====================================================================
+	// SOLUTIONS - CORE CRUD OPERATIONS
+	// ====================================================================
+	// Retrieves all published solutions in display order for public listing.
+	//
+	// Parameters: none
+	// Returns: []Solution - Array of published solutions (partial columns for performance)
+	//
+	// Filtering: is_published = 1 - Only public solutions
+	//
+	// Sorting logic:
+	//   1. display_order ASC - Custom admin-defined order
+	//   2. title ASC - Alphabetical fallback for same display_order
+	//
+	// Use case: Solutions listing page, navigation menus
+	// Note: Only selects necessary columns for listing (not full content fields)
 	ListPublishedSolutions(ctx context.Context) ([]ListPublishedSolutionsRow, error)
 	// ====================================================================
-	// WHITEPAPERS
+	// WHITEPAPERS QUERY FILE
 	// ====================================================================
+	// This file contains all SQL queries for managing whitepapers and download tracking.
+	//
+	// Main entities:
+	//   - whitepapers: PDF whitepapers with metadata
+	//   - whitepaper_learning_points: Key takeaways/bullets for each whitepaper
+	//   - whitepaper_downloads: Download tracking with lead capture (name, email, company)
+	//
+	// Related: whitepaper_topics for categorization
+	//
+	// Features:
+	//   - Lead generation via download forms
+	//   - Download analytics and tracking
+	//   - Gradient cover colors for visual appeal
+	//   - Topic-based filtering
+	//   - Published/draft workflow
+	//   - Admin filtering with date ranges
+	// ====================================================================
+	// ====================================================================
+	// WHITEPAPERS - PUBLIC QUERIES
+	// ====================================================================
+	// Retrieves all published whitepapers with topic metadata for public listing.
+	//
+	// Parameters: none
+	// Returns: []Whitepaper - Array of published whitepapers with topic information
+	//
+	// JOIN logic:
+	//   - INNER JOIN whitepaper_topics t ON w.topic_id = t.id
+	//     Adds topic_name and topic_color_hex for display/filtering
+	//
+	// Filtering: w.is_published = 1 - Only public whitepapers
+	//
+	// Sorting logic:
+	//   1. w.published_date DESC - Newest whitepapers first
+	//   2. w.id DESC - ID fallback for same publication date
+	//
+	// Use case: Whitepapers listing page, showing latest publications
+	// Note: Selects subset of columns for performance (excludes PDF path, full metadata)
 	ListPublishedWhitepapers(ctx context.Context) ([]ListPublishedWhitepapersRow, error)
+	// Retrieves published whitepapers filtered by a specific topic.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - topic_id: Filter by this whitepaper topic
+	// Returns: []Whitepaper - Array of published whitepapers in the topic
+	//
+	// JOIN logic: Same as ListPublishedWhitepapers
+	//
+	// Filtering:
+	//   - w.is_published = 1 - Only public whitepapers
+	//   - w.topic_id = ? - Specific topic only
+	//
+	// Sorting: Same as ListPublishedWhitepapers (newest first)
+	// Use case: Topic-specific whitepaper listing pages
 	ListPublishedWhitepapersByTopic(ctx context.Context, topicID int64) ([]ListPublishedWhitepapersByTopicRow, error)
 	// ====================================================================
-	// SOLUTION PAGE FEATURES (Why Choose BlueJay)
+	// SOLUTION PAGE FEATURES ("Why Choose BlueJay" Section)
 	// ====================================================================
+	// Shared features that appear on all solution pages (company differentiators)
+	// Retrieves all active solution page features.
+	//
+	// Parameters: none
+	// Returns: []SolutionPageFeature - Array of active features
+	//
+	// Filtering: is_active = 1 - Only visible features
+	// Sorting: display_order ASC - Features in configured order
+	// Use case: Displaying "Why Choose BlueJay" section on solution pages
 	ListSolutionPageFeatures(ctx context.Context) ([]SolutionPageFeature, error)
+	// ====================================================================
+	// SOLUTIONS - ADMIN QUERIES
+	// ====================================================================
+	// Retrieves paginated solutions with optional status and search filters.
+	//
+	// Parameters (named parameters with @):
+	//   @filter_status (TEXT) - Filter by status ("published", "draft", or "" for all)
+	//   @filter_search (TEXT) - Search term for title (empty string for no search)
+	//   @page_limit (INTEGER) - Results per page
+	//   @page_offset (INTEGER) - Pagination offset
+	// Returns: []Solution - Array of filtered solutions
+	//
+	// Complex WHERE clause with nested CASE statements:
+	//   1. Status filter:
+	//      - "" (empty) -> Shows all solutions
+	//      - "published" -> Shows is_published = 1
+	//      - "draft" -> Shows is_published = 0 OR NULL
+	//   2. Search filter:
+	//      - "" (empty) -> No filtering
+	//      - Non-empty -> LIKE search on title
+	//
+	// Sorting: display_order ASC, title ASC - Custom order then alphabetical
+	// Use case: Admin solutions management with status filter and search bar
 	ListSolutionsAdminFiltered(ctx context.Context, arg ListSolutionsAdminFilteredParams) ([]Solution, error)
+	// Retrieves paginated whitepaper download records (all whitepapers).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - LIMIT: Results per page
+	//   $2 (INTEGER) - OFFSET: Pagination offset
+	// Returns: []WhitepaperDownload - Array of download records with whitepaper title
+	//
+	// JOIN logic: Adds whitepaper_title from whitepapers table
+	// Sorting: wd.created_at DESC - Newest downloads first
+	// Use case: Admin lead management dashboard (all whitepapers combined)
 	ListWhitepaperDownloads(ctx context.Context, arg ListWhitepaperDownloadsParams) ([]ListWhitepaperDownloadsRow, error)
+	// Retrieves all download records for a specific whitepaper (no pagination).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - whitepaper_id: Whitepaper to fetch downloads for
+	// Returns: []WhitepaperDownload - Array of all download records for the whitepaper
+	//
+	// Sorting: created_at DESC - Newest downloads first
+	// Use case: Viewing all leads captured for a specific whitepaper
 	ListWhitepaperDownloadsByWhitepaperId(ctx context.Context, whitepaperID int64) ([]ListWhitepaperDownloadsByWhitepaperIdRow, error)
+	// Retrieves paginated whitepaper download records with filters (lead management).
+	//
+	// Parameters (named parameters with @):
+	//   @filter_whitepaper (INTEGER) - Filter by whitepaper_id (0 for all whitepapers)
+	//   @filter_date_from (TEXT) - Start date filter (YYYY-MM-DD format, empty for no filter)
+	//   @filter_date_to (TEXT) - End date filter (YYYY-MM-DD format, empty for no filter)
+	//   @page_limit (INTEGER) - Results per page
+	//   @page_offset (INTEGER) - Pagination offset
+	// Returns: []WhitepaperDownload - Array of download records with whitepaper title
+	//
+	// JOIN logic:
+	//   - INNER JOIN whitepapers w ON wd.whitepaper_id = w.id
+	//     Adds whitepaper_title for context in admin listing
+	//
+	// Complex WHERE clause with CASE statements:
+	//   1. Whitepaper filter: CASE WHEN @filter_whitepaper = 0 THEN 1 (all) ELSE match whitepaper_id
+	//   2. Date range filters:
+	//      - filter_date_from: >= comparison for start date
+	//      - filter_date_to: <= comparison with ' 23:59:59' appended to include full day
+	//
+	// Sorting: wd.created_at DESC - Newest downloads first
+	// Use case: Admin lead management, download analytics, CRM export
 	ListWhitepaperDownloadsFiltered(ctx context.Context, arg ListWhitepaperDownloadsFilteredParams) ([]ListWhitepaperDownloadsFilteredRow, error)
+	// ====================================================================
+	// WHITEPAPER TOPICS QUERY FILE
+	// ====================================================================
+	// This file contains all SQL queries for managing whitepaper topic categories.
+	//
+	// Entity: whitepaper_topics table
+	// Purpose: Categorize whitepapers by subject/topic (e.g., "IoT", "Cloud", "Security")
+	// Related: whitepapers table references whitepaper_topics via topic_id foreign key
+	//
+	// Features:
+	//   - Color-coded topics for visual organization (color_hex)
+	//   - Icon support for topic badges
+	//   - Custom display ordering
+	//   - Used for filtering whitepapers by topic
+	// ====================================================================
+	// Retrieves all whitepaper topics ordered by display priority, then alphabetically.
+	//
+	// Parameters: none
+	// Returns: []WhitepaperTopic - Array of all topic records
+	//
+	// Sorting logic:
+	//   1. sort_order ASC - Custom display order (lower numbers appear first)
+	//   2. name ASC - Alphabetical fallback for same sort_order values
+	//
+	// Use case: Topic navigation, whitepaper filters, admin topic listing
 	ListWhitepaperTopics(ctx context.Context) ([]WhitepaperTopic, error)
+	// Retrieves all topics with whitepaper count (aggregated via subquery).
+	//
+	// Parameters: none
+	// Returns: []WhitepaperTopic - Array of topics with whitepaper_count column
+	//
+	// Subquery logic:
+	//   - (SELECT COUNT(*) FROM whitepapers w WHERE w.topic_id = t.id) as whitepaper_count
+	//     Counts total whitepapers (published + draft) for each topic
+	//
+	// Sorting: t.sort_order ASC, t.name ASC
+	// Use case: Admin topic management showing whitepaper count per topic
 	ListWhitepaperTopicsWithCount(ctx context.Context) ([]ListWhitepaperTopicsWithCountRow, error)
+	// Retrieves paginated whitepapers with optional filters for admin interface.
+	//
+	// Parameters (named parameters with @):
+	//   @filter_search (TEXT) - Search term for title (empty string for no search)
+	//   @filter_topic (INTEGER) - Filter by topic_id (0 for all topics)
+	//   @filter_status (TEXT) - Filter by status ("published", "draft", or "" for all)
+	//   @page_limit (INTEGER) - Results per page
+	//   @page_offset (INTEGER) - Pagination offset
+	// Returns: []Whitepaper - Array of filtered whitepapers with topic name
+	//
+	// Complex WHERE clause with CASE statements for optional filters:
+	//   1. Search filter: CASE WHEN @filter_search = '' THEN 1 (all) ELSE LIKE match on title
+	//   2. Topic filter: CASE WHEN @filter_topic = 0 THEN 1 (all) ELSE match topic_id
+	//   3. Status filter:
+	//      - "" (empty) -> Shows all whitepapers
+	//      - "published" -> Shows is_published = 1
+	//      - "draft" -> Shows is_published = 0
+	//
+	// Sorting: w.created_at DESC - Newest whitepapers first
+	// Use case: Admin whitepapers listing with search, topic dropdown, and status filter
 	ListWhitepapersAdminFiltered(ctx context.Context, arg ListWhitepapersAdminFilteredParams) ([]ListWhitepapersAdminFilteredRow, error)
+	// Removes a product association from a solution.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - solution_id: Solution to remove product from
+	//   $2 (INTEGER) - product_id: Product to unlink
+	// Returns: (none)
 	RemoveProductFromSolution(ctx context.Context, arg RemoveProductFromSolutionParams) error
+	// sqlc annotation: :exec returns no data
+	// Purpose: Removes a specific tag association from a post
+	// Parameters:
+	//   1. blog_post_id (INTEGER)
+	//   2. blog_tag_id (INTEGER)
+	// Return type: none
 	RemoveTagFromPost(ctx context.Context, arg RemoveTagFromPostParams) error
+	// sqlc annotation: :many returns filtered tags for autocomplete
+	// Purpose: Searches tags by partial name match (for typeahead/autocomplete UI)
+	// Parameters:
+	//   1. search_pattern (TEXT): LIKE pattern (e.g., "%java%")
+	// Return type: slice of blog_tags (limited to 10 results)
+	// LIMIT 10: restricts results for autocomplete dropdown performance
 	SearchBlogTags(ctx context.Context, name string) ([]BlogTag, error)
+	// Purpose: Full-text search across multiple fields for admin search functionality
+	// Parameters:
+	//   1-4. search_term (TEXT): same search term repeated 4 times for each field
+	//   5. LIMIT (INTEGER)
+	//   6. OFFSET (INTEGER)
+	// WHERE clause: LIKE search in name OR email OR company OR message
+	// Note: SQLite doesn't support full-text search here, so LIKE is used for simplicity
 	SearchContactSubmissions(ctx context.Context, arg SearchContactSubmissionsParams) ([]SearchContactSubmissionsRow, error)
+	// Searches media files by original filename with pagination.
+	//
+	// Parameters:
+	//   @search (TEXT) - Search term to match against original_filename
+	//   @page_limit (INTEGER) - Number of results per page
+	//   @page_offset (INTEGER) - Pagination offset
+	// Returns: []MediaFile - Array of matching media file records
+	//
+	// Search logic: LIKE '%' || @search || '%' - Case-insensitive partial match
+	// Note: Searches original_filename (user's uploaded filename) not stored filename
+	// Performance: May be slow on large tables without full-text search index
 	SearchMediaFiles(ctx context.Context, arg SearchMediaFilesParams) ([]MediaFile, error)
+	// Searches published products by name, description, or tagline.
+	//
+	// Parameters:
+	//   $1 (TEXT) - Search term for name (LIKE pattern, e.g., "%sensor%")
+	//   $2 (TEXT) - Search term for description (same pattern as $1)
+	//   $3 (TEXT) - Search term for tagline (same pattern as $1)
+	//   $4 (INTEGER) - LIMIT: Results per page
+	//   $5 (INTEGER) - OFFSET: Pagination offset
+	// Returns: []Product - Array of matching published products
+	//
+	// Search logic: OR condition across three fields (name, description, tagline)
+	// Note: Caller must add wildcards (%) to search term for partial matching
+	// Example: SearchProducts("%industrial%", "%industrial%", "%industrial%", 20, 0)
+	//
+	// Performance: May be slow without full-text search index on large datasets
+	// Sorting: published_at DESC - Newest matching products first
 	SearchProducts(ctx context.Context, arg SearchProductsParams) ([]Product, error)
+	// sqlc annotation: :many returns slice of products for search autocomplete
+	// Purpose: Searches published products by name for adding to blog posts
+	// Parameters:
+	//   1. search_pattern (TEXT): LIKE pattern (e.g., "%laptop%")
+	// Return type: slice of minimal product data (id, name, slug, image)
+	// WHERE: status = 'published' ensures only published products can be linked
+	// LIMIT 10: restricts results for autocomplete/typeahead UI
 	SearchPublishedProducts(ctx context.Context, name string) ([]SearchPublishedProductsRow, error)
 	UnsetPrimaryOfficeLocations(ctx context.Context) error
+	// Updates About page section visibility toggles.
+	//
+	// Parameters:
+	//   $1-$4: Section visibility toggles (mission, milestones, certifications, team)
+	//
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Admin About page configuration
+	// Note: Controls which About page sections are displayed
 	UpdateAboutSettings(ctx context.Context, arg UpdateAboutSettingsParams) error
+	// sqlc annotation: :one returns the updated author row
+	// Purpose: Updates an existing blog author profile
+	// Parameters (9 positional):
+	//   1-8. updated field values (name, slug, title, bio, avatar_url, linkedin_url, email, sort_order)
+	//   9. id (INTEGER): which author to update (WHERE clause)
+	// Return type: updated blog_authors row
+	// Note: updated_at explicitly set to CURRENT_TIMESTAMP to track modifications
 	UpdateBlogAuthor(ctx context.Context, arg UpdateBlogAuthorParams) (BlogAuthor, error)
+	// sqlc annotation: :one returns the updated category row
+	// Purpose: Updates an existing blog category
+	// Parameters (6 positional):
+	//   1-5. updated field values (name, slug, color_hex, description, sort_order)
+	//   6. id (INTEGER): which category to update (WHERE clause)
+	// Return type: updated blog_categories row
+	// Note: updated_at explicitly set to CURRENT_TIMESTAMP
 	UpdateBlogCategory(ctx context.Context, arg UpdateBlogCategoryParams) (BlogCategory, error)
+	// sqlc annotation: :one returns the updated blog post
+	// Purpose: Updates existing blog post (all fields except ID/created_at)
+	// Parameters (13 positional):
+	//   1-12. updated field values (same order as CreateBlogPost)
+	//   13. id (INTEGER): which post to update (WHERE clause)
+	// Return type: updated blog_posts row
+	// Note: updated_at explicitly set to CURRENT_TIMESTAMP
 	UpdateBlogPost(ctx context.Context, arg UpdateBlogPostParams) (BlogPost, error)
+	// Updates Blog page display and metadata settings.
+	//
+	// Parameters:
+	//   $1: blog_posts_per_page - Number of posts per page (pagination)
+	//   $2-$5: Metadata visibility toggles (author, date, categories, tags)
+	//   $6: blog_show_search - Show search bar
+	//
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Admin Blog page configuration
+	// Note: Controls blog post listing metadata and features
 	UpdateBlogSettings(ctx context.Context, arg UpdateBlogSettingsParams) error
+	// sqlc annotation: :one returns the updated tag
+	// Purpose: Updates an existing blog tag
+	// Parameters (3 positional):
+	//   1. name (TEXT): updated display name
+	//   2. slug (TEXT): updated slug
+	//   3. id (INTEGER): which tag to update (WHERE clause)
+	// Return type: updated blog_tags row
 	UpdateBlogTag(ctx context.Context, arg UpdateBlogTagParams) (BlogTag, error)
+	// Purpose: Updates an existing CTA block
+	// Parameters (9 positional): same as CreateCTA + id (WHERE clause)
 	UpdateCTA(ctx context.Context, arg UpdateCTAParams) error
+	// sqlc annotation: :one returns updated row
+	// Purpose: Updates an existing certification entry
+	// Parameters (6 positional):
+	//   1-5. updated field values
+	//   6. id (INTEGER): which certification to update
+	// Return type: updated certification row
 	UpdateCertification(ctx context.Context, arg UpdateCertificationParams) (Certification, error)
 	UpdateContactSubmissionStatus(ctx context.Context, arg UpdateContactSubmissionStatusParams) error
+	// sqlc annotation: :one returns the updated row
+	// Purpose: Updates an existing core value
+	// Parameters (5 positional):
+	//   1. title (TEXT): updated title
+	//   2. description (TEXT): updated description
+	//   3. icon (TEXT): updated icon
+	//   4. display_order (INTEGER): updated sort position
+	//   5. id (INTEGER): which core value to update (WHERE clause)
+	// Return type: updated row with new values
 	UpdateCoreValue(ctx context.Context, arg UpdateCoreValueParams) (CoreValue, error)
+	// Purpose: Updates existing footer column item
 	UpdateFooterColumnItem(ctx context.Context, arg UpdateFooterColumnItemParams) error
+	// ====================================================================
+	// FOOTER CONFIGURATION QUERIES
+	// ====================================================================
+	// This file manages footer content and structure including:
+	// - Global footer settings (columns layout, social links, copyright)
+	// - Footer column items (text blocks, link groups per column)
+	// - Footer links (navigation links within column items)
+	// - Footer legal links (bottom legal/policy links)
+	//
+	// Managed entities:
+	// - settings: global footer configuration (single row, id=1)
+	// - footer_column_items: content blocks in footer columns
+	// - footer_links: individual links within column items
+	// - footer_legal_links: bottom legal/policy links
+	//
+	// Key concepts:
+	// - column_index: which footer column (0, 1, 2, etc.)
+	// - sort_order: display order within column
+	// - type: 'text', 'links', 'newsletter', etc.
+	// ====================================================================
+	// ====================================================================
+	// FOOTER SETTINGS
+	// ====================================================================
+	// sqlc annotation: :exec returns no data
+	// Purpose: Updates global footer configuration settings
+	// Parameters (5 positional):
+	//   1. footer_columns (INTEGER): number of footer columns (2, 3, 4, etc.)
+	//   2. footer_bg_style (TEXT): background style ('dark', 'light', 'gradient', etc.)
+	//   3. footer_show_social (BOOLEAN): whether to display social media links
+	//   4. footer_social_style (TEXT): social links style ('icons', 'text', etc.)
+	//   5. footer_copyright (TEXT): copyright text
+	// Return type: none
+	// Note: Always updates row with id=1 (single settings row pattern)
 	UpdateFooterSettings(ctx context.Context, arg UpdateFooterSettingsParams) error
+	// Updates site-wide global settings (identity, contact, SEO, social).
+	//
+	// Parameters:
+	//   $1-$2: Site identity (name, tagline)
+	//   $3-$6: Contact information (email, phone, address, hours)
+	//   $7-$8: SEO metadata (meta_description, meta_keywords)
+	//   $9: google_analytics_id - GA tracking ID
+	//   $10-$14: Social media URLs (Facebook, Twitter, LinkedIn, Instagram, YouTube)
+	//
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Admin global settings page (site identity and contact info)
+	// Note: Most commonly updated settings for basic site configuration
 	UpdateGlobalSettings(ctx context.Context, arg UpdateGlobalSettingsParams) error
+	// ====================================================================
+	// SETTINGS - SECTION-SPECIFIC UPDATES
+	// ====================================================================
+	// Updates header and navigation-specific settings.
+	//
+	// Parameters:
+	//   $1-$2: Logo settings (path, alt text)
+	//   $3-$6: Header CTA button (enabled, text, URL, style)
+	//   $7-$10: Header contact display toggles (phone, email, social, social style)
+	//   $11-$18: Navigation item visibility toggles (show_nav_*)
+	//   $19-$26: Navigation item custom labels (nav_label_*)
+	//
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Admin header/navigation settings page
+	// Note: Scoped update - only affects header-related fields
 	UpdateHeaderSettings(ctx context.Context, arg UpdateHeaderSettingsParams) error
+	// Purpose: Updates an existing hero banner
+	// Parameters (11 positional): same as CreateHero + id (WHERE clause)
 	UpdateHero(ctx context.Context, arg UpdateHeroParams) error
+	// Updates homepage-specific feature toggles and limits.
+	//
+	// Parameters:
+	//   $1-$4: Section visibility toggles (heroes, stats, testimonials, CTA)
+	//   $5-$7: Maximum items to display (heroes, stats, testimonials)
+	//   $8-$9: Hero carousel settings (autoplay enabled, interval in milliseconds)
+	//
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Admin homepage configuration page
+	// Note: Controls which homepage sections are visible and their behavior
 	UpdateHomepageSettings(ctx context.Context, arg UpdateHomepageSettingsParams) error
+	// Updates an existing industry record and returns the updated record.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Updated display name
+	//   $2 (TEXT) - slug: Updated URL-safe identifier
+	//   $3 (TEXT) - icon: Updated icon identifier
+	//   $4 (TEXT) - description: Updated description
+	//   $5 (INTEGER) - sort_order: Updated display position
+	//   $6 (INTEGER) - id: Primary key of industry to update
+	//
+	// Returns: Industry - The updated industry record
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP to track last modification
 	UpdateIndustry(ctx context.Context, arg UpdateIndustryParams) (Industry, error)
+	// sqlc annotation: :exec returns no data, only error or success
+	// Purpose: Updates last_login_at timestamp after successful authentication
+	// Parameters:
+	//   1. id (INTEGER): admin user ID to update
+	// Return type: none
+	// Note: CURRENT_TIMESTAMP uses database server time (UTC in SQLite)
+	//       updated_at also refreshed to track any account modifications
 	UpdateLastLogin(ctx context.Context, id int64) error
+	// Updates the alt text for an existing media file (accessibility).
+	//
+	// Parameters:
+	//   $1 (TEXT) - alt_text: Updated accessibility description
+	//   $2 (INTEGER) - id: Media file ID to update
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Adding or editing alt text for screen readers and SEO
+	// Note: Only updates alt_text, not other file metadata
 	UpdateMediaFileAltText(ctx context.Context, arg UpdateMediaFileAltTextParams) error
+	// sqlc annotation: :one returns updated row
+	// Purpose: Updates an existing milestone entry
+	// Parameters (6 positional):
+	//   1-5. updated field values (year, title, description, is_current, display_order)
+	//   6. id (INTEGER): which milestone to update
+	// Return type: updated milestone row
 	UpdateMilestone(ctx context.Context, arg UpdateMilestoneParams) (Milestone, error)
+	// Updates an existing navigation item's properties.
+	//
+	// Parameters:
+	//   $1 (TEXT) - label: Updated link text
+	//   $2 (TEXT) - link_type: Updated link type
+	//   $3 (TEXT) - url: Updated URL
+	//   $4 (TEXT) - page_identifier: Updated page reference
+	//   $5 (BOOLEAN) - open_new_tab: Updated target behavior
+	//   $6 (BOOLEAN) - is_active: Updated visibility status
+	//   $7 (INTEGER) - parent_id: Updated parent (for moving in hierarchy)
+	//   $8 (INTEGER) - sort_order: Updated display position
+	//   $9 (INTEGER) - id: Item ID to update
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Editing menu items, changing hierarchy, reordering
 	UpdateNavigationItem(ctx context.Context, arg UpdateNavigationItemParams) error
+	// Updates a navigation item's sort order and parent (for drag-and-drop reordering).
+	//
+	// Parameters:
+	//   $1 (INTEGER) - sort_order: New display position
+	//   $2 (INTEGER) - parent_id: New parent ID (NULL for top-level, or parent item ID)
+	//   $3 (INTEGER) - id: Item ID to update
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Drag-and-drop reordering in admin interface
+	// Note: Application should handle recalculating sort_order for all affected items
 	UpdateNavigationItemOrder(ctx context.Context, arg UpdateNavigationItemOrderParams) error
+	// Updates an existing navigation menu's metadata.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Updated menu display name
+	//   $2 (TEXT) - location: Updated location identifier
+	//   $3 (INTEGER) - id: Menu ID to update
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 	UpdateNavigationMenu(ctx context.Context, arg UpdateNavigationMenuParams) error
 	UpdateOfficeLocation(ctx context.Context, arg UpdateOfficeLocationParams) error
+	// Updates the content fields of an existing page section.
+	//
+	// Parameters:
+	//   $1 (TEXT) - heading: Main heading/title for the section
+	//   $2 (TEXT) - subheading: Secondary heading or subtitle
+	//   $3 (TEXT) - description: Longer description or body text
+	//   $4 (TEXT) - label: Short label or tag (e.g., "New", "Featured")
+	//   $5 (TEXT) - primary_button_text: Text for primary CTA button
+	//   $6 (TEXT) - primary_button_url: URL for primary button
+	//   $7 (TEXT) - secondary_button_text: Text for secondary button
+	//   $8 (TEXT) - secondary_button_url: URL for secondary button
+	//   $9 (BOOLEAN) - is_active: Visibility flag (1=visible, 0=hidden)
+	//   $10 (INTEGER) - id: Section ID to update
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP to track modifications
+	// Use case: Admin content editing for heroes, CTAs, and other configurable sections
+	//
+	// Content structure supports common section patterns:
+	//   - Hero: heading, subheading, description, primary_button (CTA)
+	//   - CTA: heading, description, primary_button, secondary_button
+	//   - Feature: label, heading, description
 	UpdatePageSection(ctx context.Context, arg UpdatePageSectionParams) error
+	// Updates an existing partner record.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Updated company name
+	//   $2 (INTEGER) - tier_id: Updated tier assignment
+	//   $3 (TEXT) - logo_url: Updated logo path
+	//   $4 (TEXT) - icon: Updated icon identifier
+	//   $5 (TEXT) - website_url: Updated website URL
+	//   $6 (TEXT) - description: Updated description
+	//   $7 (INTEGER) - display_order: Updated display position
+	//   $8 (BOOLEAN) - is_active: Updated visibility status
+	//   $9 (INTEGER) - id: Partner ID to update
+	//
+	// Returns: Partner - The updated partner record
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 	UpdatePartner(ctx context.Context, arg UpdatePartnerParams) (Partner, error)
+	// Updates an existing partner tier.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Updated display name
+	//   $2 (TEXT) - slug: Updated URL-safe identifier
+	//   $3 (TEXT) - description: Updated description
+	//   $4 (INTEGER) - sort_order: Updated display priority
+	//   $5 (INTEGER) - id: Tier ID to update
+	//
+	// Returns: PartnerTier - The updated tier record
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 	UpdatePartnerTier(ctx context.Context, arg UpdatePartnerTierParams) (PartnerTier, error)
+	// Updates all core fields of an existing product.
+	//
+	// Parameters:
+	//   $1-$15 - Same as CreateProduct parameters (sku through published_at)
+	//   $16 (INTEGER) - id: Product ID to update
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Note: This updates the main product record only, not related entities
+	// Separate queries handle specs, images, features, certifications, downloads
 	UpdateProduct(ctx context.Context, arg UpdateProductParams) error
+	// Updates an existing product category.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Updated display name
+	//   $2 (TEXT) - slug: Updated URL-safe identifier
+	//   $3 (TEXT) - description: Updated description
+	//   $4 (TEXT) - icon: Updated icon identifier
+	//   $5 (TEXT) - image_url: Updated header image path
+	//   $6 (INTEGER) - sort_order: Updated display position
+	//   $7 (INTEGER) - id: Category ID to update
+	//
+	// Returns: ProductCategory - The updated category record
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 	UpdateProductCategory(ctx context.Context, arg UpdateProductCategoryParams) (ProductCategory, error)
+	// Updates Products page display and filter settings.
+	//
+	// Parameters:
+	//   $1: products_per_page - Number of products per page (pagination)
+	//   $2: products_show_categories - Show category filter
+	//   $3: products_show_search - Show search bar
+	//   $4: products_default_sort - Default sort order ("newest", "name", "price", etc.)
+	//
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Admin Products page configuration
 	UpdateProductsSettings(ctx context.Context, arg UpdateProductsSettingsParams) error
+	// Updates the global settings record with comprehensive site configuration.
+	//
+	// Parameters (47 total):
+	//   $1-$8: Site identity (name, tagline, contact info, footer text, SEO)
+	//   $9: google_analytics_id - GA tracking ID
+	//   $10-$15: Social media URLs (LinkedIn, Twitter, GitHub, Facebook, YouTube, Instagram)
+	//   $16-$17: Business info (hours, about text)
+	//   $18-$24: Navigation visibility toggles (show_nav_*)
+	//   $25-$30: Footer section visibility toggles (show_footer_*)
+	//   $31-$37: Navigation labels (nav_label_*)
+	//   $38-$41: Footer section headings (footer_heading_*)
+	//
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP
+	// Use case: Comprehensive settings update from admin settings page (legacy query)
+	// Recommendation: Use specific Update*Settings queries for better maintainability
 	UpdateSettings(ctx context.Context, arg UpdateSettingsParams) error
+	// Updates an existing solution's core fields.
+	//
+	// Parameters: Same as CreateSolution ($1-$12), plus:
+	//   $13 (INTEGER) - id: Solution ID to update
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP
+	// Related entities updated via separate queries
 	UpdateSolution(ctx context.Context, arg UpdateSolutionParams) error
+	// Updates an existing solution CTA.
+	//
+	// Parameters: $1-$8 same as CreateSolutionCTA (minus solution_id), plus:
+	//   $9 (INTEGER) - id: CTA ID to update
+	// Returns: (none)
 	UpdateSolutionCTA(ctx context.Context, arg UpdateSolutionCTAParams) error
+	// Updates an existing solution challenge.
+	//
+	// Parameters:
+	//   $1 (TEXT) - title: Updated heading
+	//   $2 (TEXT) - description: Updated description
+	//   $3 (TEXT) - icon: Updated icon identifier
+	//   $4 (INTEGER) - display_order: Updated position
+	//   $5 (INTEGER) - id: Challenge ID to update
+	// Returns: (none)
 	UpdateSolutionChallenge(ctx context.Context, arg UpdateSolutionChallengeParams) error
+	// Updates an existing solution page feature.
+	//
+	// Parameters:
+	//   $1-$5: Same as CreateSolutionPageFeature
+	//   $6 (INTEGER) - id: Feature ID to update
+	// Returns: (none)
 	UpdateSolutionPageFeature(ctx context.Context, arg UpdateSolutionPageFeatureParams) error
+	// Updates an existing solution stat.
+	//
+	// Parameters:
+	//   $1 (TEXT) - value: Updated metric value
+	//   $2 (TEXT) - label: Updated label
+	//   $3 (INTEGER) - display_order: Updated position
+	//   $4 (INTEGER) - id: Stat ID to update
+	// Returns: (none)
 	UpdateSolutionStat(ctx context.Context, arg UpdateSolutionStatParams) error
+	// Updates an existing solutions listing CTA.
+	//
+	// Parameters: $1-$7 same as CreateSolutionsListingCTA, plus:
+	//   $8 (INTEGER) - id: CTA ID to update
+	// Returns: (none)
 	UpdateSolutionsListingCTA(ctx context.Context, arg UpdateSolutionsListingCTAParams) error
+	// Updates Solutions page display and filter settings.
+	//
+	// Parameters:
+	//   $1: solutions_per_page - Number of solutions per page (pagination)
+	//   $2: solutions_show_industries - Show industry filter
+	//   $3: solutions_show_search - Show search bar
+	//
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Use case: Admin Solutions page configuration
 	UpdateSolutionsSettings(ctx context.Context, arg UpdateSolutionsSettingsParams) error
+	// Purpose: Updates an existing homepage statistic
+	// Parameters (5 positional): same as CreateStat + id
 	UpdateStat(ctx context.Context, arg UpdateStatParams) error
+	// Updates an existing partner testimonial.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - partner_id: Updated partner assignment
+	//   $2 (TEXT) - quote: Updated testimonial text
+	//   $3 (TEXT) - author_name: Updated author name
+	//   $4 (TEXT) - author_title: Updated author job title
+	//   $5 (INTEGER) - display_order: Updated display position
+	//   $6 (BOOLEAN) - is_active: Updated visibility status
+	//   $7 (INTEGER) - id: Testimonial ID to update
+	//
+	// Returns: PartnerTestimonial - The updated testimonial record
 	UpdateTestimonial(ctx context.Context, arg UpdateTestimonialParams) (PartnerTestimonial, error)
+	// Purpose: Updates an existing homepage testimonial
+	// Parameters (9 positional): same as CreateTestimonialHomepage + id
 	UpdateTestimonialHomepage(ctx context.Context, arg UpdateTestimonialHomepageParams) error
+	// Updates an existing whitepaper's core fields.
+	//
+	// Parameters: Same as CreateWhitepaper ($1-$12), plus:
+	//   $13 (INTEGER) - id: Whitepaper ID to update
+	// Returns: (none) - sqlc annotation :exec returns only row count
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 	UpdateWhitepaper(ctx context.Context, arg UpdateWhitepaperParams) error
+	// Updates an existing whitepaper topic.
+	//
+	// Parameters:
+	//   $1 (TEXT) - name: Updated display name
+	//   $2 (TEXT) - slug: Updated URL-safe identifier
+	//   $3 (TEXT) - color_hex: Updated color code
+	//   $4 (TEXT) - icon: Updated icon identifier
+	//   $5 (TEXT) - description: Updated description
+	//   $6 (INTEGER) - sort_order: Updated display position
+	//   $7 (INTEGER) - id: Topic ID to update
+	//
+	// Returns: WhitepaperTopic - The updated topic record
+	//
+	// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 	UpdateWhitepaperTopic(ctx context.Context, arg UpdateWhitepaperTopicParams) (WhitepaperTopic, error)
+	// sqlc annotation: :one returns the newly inserted row
+	// Purpose: Creates a new company overview entry (upsert pattern via insert-only)
+	// Parameters (7 positional):
+	//   1. headline (TEXT): main hero headline
+	//   2. tagline (TEXT): supporting tagline
+	//   3. description_main (TEXT): primary description paragraph
+	//   4. description_secondary (TEXT): secondary description
+	//   5. description_tertiary (TEXT): tertiary description
+	//   6. hero_image_url (TEXT): hero section image
+	//   7. company_image_url (TEXT): additional company image
+	// Return type: complete inserted row with generated ID and timestamps
+	// Note: Called "Upsert" but actually inserts new row each time
 	UpsertCompanyOverview(ctx context.Context, arg UpsertCompanyOverviewParams) (CompanyOverview, error)
+	// sqlc annotation: :one returns inserted row
+	// Purpose: Creates new mission/vision/values entry
+	// Parameters (6 positional):
+	//   1. mission (TEXT): company mission statement
+	//   2. vision (TEXT): company vision statement
+	//   3. values_summary (TEXT): overview of company values
+	//   4. mission_icon (TEXT): icon identifier for mission
+	//   5. vision_icon (TEXT): icon identifier for vision
+	//   6. values_icon (TEXT): icon identifier for values
+	// Return type: complete inserted row
 	UpsertMissionVisionValues(ctx context.Context, arg UpsertMissionVisionValuesParams) (MissionVisionValue, error)
 }
 

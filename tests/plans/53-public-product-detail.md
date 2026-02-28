@@ -28,20 +28,20 @@ Verify product detail page displays complete product information with interactiv
 - **Image switching**: Click thumbnail, verify switchImage() JS updates main image
 - **Video section displays**: Verify video embed if product has video_url
 - **Features section displays**: Verify checklist with icons for product features
-- **Specifications accordion**: Verify specifications grouped by section
+- **Specifications accordion**: Verify specifications grouped by section — NOTE: Handler groups specs by section
 - **Accordion toggle**: Click specification section, verify toggleSpec() JS expands/collapses content
 - **Certifications display**: Verify product certifications listed
 - **Downloads section**: Verify downloadable files with links
-- **Related products section**: Verify related products cards with links to other product detail pages
+- **CTA section placeholder replacement**: Verify handler replaces `{product_name}` and `{product_sku}` placeholders in CTA text
 
 ### Edge Cases / Error States
 - **Product not found**: Navigate to invalid slug, verify 404 or error page
 - **No video**: Verify video section hidden when video_url is null
 - **No certifications**: Verify certifications section handles empty list
 - **No downloads**: Verify downloads section handles empty list
-- **No related products**: Verify related products section handles empty list
 - **Single image**: Verify gallery works with only one image
 - **Multiple accordion clicks**: Rapidly toggle specifications, verify state management
+- **CTA placeholder replacement**: Verify CTA text correctly replaces `{product_name}` and `{product_sku}` placeholders
 
 ## Selectors & Elements
 - Breadcrumb: text pattern "Home > Products > * > *"
@@ -53,7 +53,7 @@ Verify product detail page displays complete product information with interactiv
 - Specifications: accordion container, section headers (clickable), section content (collapsible)
 - Certifications: certification list container
 - Downloads: download links container
-- Related products: product cards grid with links to `/products/*/*`
+- CTA section: call-to-action section with placeholder text replaced
 
 ## HTMX Interactions
 - None (JavaScript-based interactions only)

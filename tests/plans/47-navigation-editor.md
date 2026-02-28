@@ -35,9 +35,9 @@ Tests the comprehensive navigation editor with menu creation, hierarchical item 
 
 ### Happy Path - Menu Management
 - **List menus**: Verifies GET /admin/navigation shows all menus
-- **Create new menu**: POSTs name="Main Menu" location="header", verifies creation
-- **Create footer menu**: POSTs name="Footer Links" location="footer", verifies creation
-- **Create sidebar menu**: POSTs name="Sidebar Nav" location="sidebar", verifies creation
+- **Create new menu**: POSTs name="Main Menu" location="header" to POST /admin/navigation, verifies creation
+- **Create footer menu**: POSTs name="Footer Links" location="footer" to POST /admin/navigation, verifies creation
+- **Create sidebar menu**: POSTs name="Sidebar Nav" location="sidebar" to POST /admin/navigation, verifies creation
 - **Edit menu settings**: Updates menu name and location via POST /admin/navigation/:id/settings
 - **Delete menu**: Deletes entire menu via DELETE /admin/navigation/:id, verifies removal
 
@@ -67,7 +67,7 @@ Tests the comprehensive navigation editor with menu creation, hierarchical item 
 
 ### Happy Path - Deletion
 - **Delete leaf item**: Deletes item with no children, verifies removal
-- **Delete dropdown**: Deletes parent item, verifies handling of children (cascade or prevent)
+- **Delete dropdown**: Deletes parent item, verifies handling of children — NOTE: DeleteNavigationItem does NOT cascade, children become orphaned when parent is deleted
 - **Delete confirmation**: Verifies confirmation modal before deletion
 
 ### Edge Cases / Error States
@@ -125,6 +125,7 @@ Tests the comprehensive navigation editor with menu creation, hierarchical item 
 - Link type radios: `input[name="link_type"][value="page"]`, `[value="url"]`, `[value="dropdown"]`
 - Page identifier select: `select[name="page_identifier"]`
 - Page options: `option[value="home"]`, `option[value="about"]`, `option[value="products"]`, etc.
+  - NOTE: Predefined pageOptions are: ["Products", "Solutions", "About", "Blog", "Case Studies", "Whitepapers", "Partners", "Contact"]
 - URL input: `input[name="url"][type="url"]`
 - Open new tab checkbox: `input[name="open_new_tab"][type="checkbox"]`
 - Is active checkbox: `input[name="is_active"][type="checkbox"]`

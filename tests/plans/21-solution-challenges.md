@@ -11,22 +11,23 @@ Testing HTMX-driven addition and deletion of challenges within solution edit pag
 
 ## User Journey Steps
 1. Navigate to http://localhost:28090/admin/solutions/:id/edit
-2. Locate #challenges-section container
+2. Locate #challenges-list container
 3. Fill add challenge form: title (required), description (textarea required), icon, display_order
 4. Click add button with hx-post="/admin/solutions/:id/challenges"
-5. Verify hx-target="#challenges-section" hx-swap="outerHTML" replaces entire section
-6. Verify new challenge appears in updated section
+5. Verify hx-target="#challenges-list" hx-swap="innerHTML" adds new challenge to list
+6. Verify new challenge appears in list
 7. Click delete button on existing challenge with hx-delete="/admin/solutions/:id/challenges/:challengeId"
-8. Verify challenge removed from #challenges-section without page reload
+8. Verify challenge removed (hx-target="closest div" hx-swap="outerHTML swap:0.3s") without page reload
 
 ## Test Cases
 
 ### Happy Path
-- **Add challenge**: Fill title "Data Silos", description "Legacy systems...", icon "storage", display_order 1, submit, challenge added
+- **Add challenge**: Fill title "Data Silos", description "Legacy systems...", icon "storage", display_order 1, submit, challenge added (innerHTML swap adds partial HTML)
 - **Multiple challenges**: Add 3 challenges with different display_order values, verify all appear
 - **Display order**: Challenges display in order based on display_order field
-- **Delete challenge**: Click delete button on challenge, hx-delete removes it from section
-- **Section swap**: After add/delete, entire #challenges-section swapped with updated HTML
+- **Delete challenge**: Click delete button on challenge, hx-delete removes individual div (returns c.NoContent(http.StatusOK) with no HTML)
+- **Add returns HTML**: Add handler returns partial HTML
+- **Delete returns no content**: DeleteChallenge returns c.NoContent(http.StatusOK) with no HTML
 - **No page reload**: All operations via HTMX, no full page refresh
 - **Material icon**: Icon field accepts Material icon names like "warning", "error_outline"
 
@@ -40,16 +41,16 @@ Testing HTMX-driven addition and deletion of challenges within solution edit pag
 - **HTMX error handling**: Server error on add/delete shows error message in section
 
 ## Selectors & Elements
-- Section container: id="challenges-section"
-- Add form action: hx-post="/admin/solutions/:id/challenges" hx-target="#challenges-section" hx-swap="outerHTML"
+- Section container: id="challenges-list"
+- Add form action: hx-post="/admin/solutions/:id/challenges" hx-target="#challenges-list" hx-swap="innerHTML"
 - Input names: title (required), description (textarea required), icon, display_order (number)
-- Delete button: hx-delete="/admin/solutions/:id/challenges/:challengeId" hx-target="#challenges-section" hx-swap="outerHTML"
+- Delete button: hx-delete="/admin/solutions/:id/challenges/:challengeId" hx-target="closest div" hx-swap="outerHTML swap:0.3s"
 - Add button: text "Add Challenge"
 
 ## HTMX Interactions
-- **Add challenge**: hx-post="/admin/solutions/:id/challenges" hx-target="#challenges-section" hx-swap="outerHTML" (returns updated challenges_section.html partial)
-- **Delete challenge**: hx-delete="/admin/solutions/:id/challenges/:challengeId" hx-target="#challenges-section" hx-swap="outerHTML" (returns updated challenges_section.html partial)
-- Both operations swap entire #challenges-section to reflect current state
+- **Add challenge**: hx-post="/admin/solutions/:id/challenges" hx-target="#challenges-list" hx-swap="innerHTML" (returns partial HTML)
+- **Delete challenge**: hx-delete="/admin/solutions/:id/challenges/:challengeId" hx-target="closest div" hx-swap="outerHTML swap:0.3s" (returns c.NoContent(http.StatusOK) with no HTML content)
+- Add operation inserts new challenge HTML into list, delete operation removes individual item div
 
 ## Dependencies
 - 19-solutions-crud.md (parent solution edit page)

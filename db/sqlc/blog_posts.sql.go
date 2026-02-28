@@ -23,12 +23,22 @@ type AddProductToPostParams struct {
 	DisplayOrder sql.NullInt64 `json:"display_order"`
 }
 
+// sqlc annotation: :exec returns no data
+// Purpose: Associates a product with a blog post with specific display order
+// Parameters:
+//  1. blog_post_id (INTEGER)
+//  2. product_id (INTEGER)
+//  3. display_order (INTEGER): position in product list for this post
+//
+// Return type: none
+// Note: ON CONFLICT DO NOTHING prevents duplicate associations
 func (q *Queries) AddProductToPost(ctx context.Context, arg AddProductToPostParams) error {
 	_, err := q.db.ExecContext(ctx, addProductToPost, arg.BlogPostID, arg.ProductID, arg.DisplayOrder)
 	return err
 }
 
 const addTagToPost = `-- name: AddTagToPost :exec
+
 INSERT INTO blog_post_tags (blog_post_id, blog_tag_id)
 VALUES (?, ?)
 ON CONFLICT DO NOTHING
@@ -39,6 +49,19 @@ type AddTagToPostParams struct {
 	BlogTagID  int64 `json:"blog_tag_id"`
 }
 
+// ====================================================================
+// BLOG POST TAGS RELATIONSHIP
+// ====================================================================
+// sqlc annotation: :exec returns no data
+// Purpose: Associates a tag with a blog post (many-to-many relationship)
+// Parameters:
+//  1. blog_post_id (INTEGER): post ID
+//  2. blog_tag_id (INTEGER): tag ID
+//
+// Return type: none
+// Note: ON CONFLICT DO NOTHING prevents duplicate tag associations
+//
+//	(blog_post_tags should have UNIQUE constraint on (blog_post_id, blog_tag_id))
 func (q *Queries) AddTagToPost(ctx context.Context, arg AddTagToPostParams) error {
 	_, err := q.db.ExecContext(ctx, addTagToPost, arg.BlogPostID, arg.BlogTagID)
 	return err
@@ -48,6 +71,12 @@ const clearPostProducts = `-- name: ClearPostProducts :exec
 DELETE FROM blog_post_products WHERE blog_post_id = ?
 `
 
+// sqlc annotation: :exec returns no data
+// Purpose: Removes all product associations from a post
+// Parameters:
+//  1. blog_post_id (INTEGER)
+//
+// Return type: none
 func (q *Queries) ClearPostProducts(ctx context.Context, blogPostID int64) error {
 	_, err := q.db.ExecContext(ctx, clearPostProducts, blogPostID)
 	return err
@@ -57,6 +86,13 @@ const clearPostTags = `-- name: ClearPostTags :exec
 DELETE FROM blog_post_tags WHERE blog_post_id = ?
 `
 
+// sqlc annotation: :exec returns no data
+// Purpose: Removes all tag associations from a post (used before re-adding tags)
+// Parameters:
+//  1. blog_post_id (INTEGER): post to clear tags from
+//
+// Return type: none
+// Note: Typically used when updating post tags (clear then re-add)
 func (q *Queries) ClearPostTags(ctx context.Context, blogPostID int64) error {
 	_, err := q.db.ExecContext(ctx, clearPostTags, blogPostID)
 	return err
@@ -65,6 +101,7 @@ func (q *Queries) ClearPostTags(ctx context.Context, blogPostID int64) error {
 const countBlogPostsAdminFiltered = `-- name: CountBlogPostsAdminFiltered :one
 SELECT COUNT(*) FROM blog_posts bp
 WHERE
+    -- Exact same filter logic as ListBlogPostsAdminFiltered
     (CASE WHEN ?1 = '' THEN 1 ELSE bp.status = ?1 END)
     AND (CASE WHEN ?2 = 0 THEN 1 ELSE bp.category_id = ?2 END)
     AND (CASE WHEN ?3 = 0 THEN 1 ELSE bp.author_id = ?3 END)
@@ -78,6 +115,13 @@ type CountBlogPostsAdminFilteredParams struct {
 	FilterSearch   interface{} `json:"filter_search"`
 }
 
+// sqlc annotation: :one returns integer count for pagination
+// Purpose: Counts total posts matching admin filters
+// Parameters: same filters as ListBlogPostsAdminFiltered (except pagination)
+// Return type: integer count
+// Note: WHERE clause MUST exactly match ListBlogPostsAdminFiltered for accuracy
+//
+//	Does NOT include JOINs since we only need count
 func (q *Queries) CountBlogPostsAdminFiltered(ctx context.Context, arg CountBlogPostsAdminFilteredParams) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countBlogPostsAdminFiltered,
 		arg.FilterStatus,
@@ -95,6 +139,11 @@ SELECT COUNT(*) FROM blog_posts
 WHERE status = 'published' AND published_at IS NOT NULL
 `
 
+// sqlc annotation: :one returns single integer count
+// Purpose: Counts total published posts for pagination calculations
+// Parameters: none
+// Return type: integer count
+// Note: WHERE clause must match ListPublishedPosts for accurate pagination
 func (q *Queries) CountPublishedPosts(ctx context.Context) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countPublishedPosts)
 	var count int64
@@ -110,6 +159,13 @@ WHERE bp.status = 'published'
     AND bc.slug = ?
 `
 
+// sqlc annotation: :one returns integer count
+// Purpose: Counts posts in specific category for pagination
+// Parameters:
+//  1. category slug (TEXT)
+//
+// Return type: integer count
+// Note: JOIN required to filter by category slug; WHERE must match ListPublishedPostsByCategory
 func (q *Queries) CountPublishedPostsByCategory(ctx context.Context, slug string) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countPublishedPostsByCategory, slug)
 	var count int64
@@ -142,6 +198,23 @@ type CreateBlogPostParams struct {
 	PublishedAt        sql.NullTime   `json:"published_at"`
 }
 
+// sqlc annotation: :one returns the created blog post
+// Purpose: Creates a new blog post (draft or published)
+// Parameters (12 positional):
+//  1. title (TEXT): post headline
+//  2. slug (TEXT): URL-safe identifier (must be unique)
+//  3. excerpt (TEXT): short summary for listings
+//  4. body (TEXT): full HTML content
+//  5. featured_image_url (TEXT): hero image URL
+//  6. featured_image_alt (TEXT): image alt text for accessibility
+//  7. category_id (INTEGER): foreign key to blog_categories
+//  8. author_id (INTEGER): foreign key to blog_authors
+//  9. meta_description (TEXT): SEO description
+//  10. reading_time_minutes (INTEGER): estimated read time
+//  11. status (TEXT): 'draft' or 'published'
+//  12. published_at (TIMESTAMP): publication datetime (NULL for drafts)
+//
+// Return type: complete inserted row with ID and timestamps
 func (q *Queries) CreateBlogPost(ctx context.Context, arg CreateBlogPostParams) (BlogPost, error) {
 	row := q.db.QueryRowContext(ctx, createBlogPost,
 		arg.Title,
@@ -184,6 +257,15 @@ const deleteBlogPost = `-- name: DeleteBlogPost :exec
 DELETE FROM blog_posts WHERE id = ?
 `
 
+// sqlc annotation: :exec returns no data
+// Purpose: Permanently removes a blog post
+// Parameters:
+//  1. id (INTEGER): post to delete
+//
+// Return type: none
+// Note: This will cascade delete related blog_post_tags and blog_post_products
+//
+//	if foreign keys are configured with ON DELETE CASCADE
 func (q *Queries) DeleteBlogPost(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteBlogPost, id)
 	return err
@@ -193,6 +275,12 @@ const getBlogPost = `-- name: GetBlogPost :one
 SELECT id, title, slug, excerpt, body, featured_image_url, featured_image_alt, category_id, author_id, meta_description, reading_time_minutes, status, published_at, created_at, updated_at, meta_title, og_image FROM blog_posts WHERE id = ?
 `
 
+// sqlc annotation: :one returns single blog post by ID
+// Purpose: Retrieves blog post for admin editing (all statuses)
+// Parameters:
+//  1. id (INTEGER): post primary key
+//
+// Return type: complete blog_posts row with all fields
 func (q *Queries) GetBlogPost(ctx context.Context, id int64) (BlogPost, error) {
 	row := q.db.QueryRowContext(ctx, getBlogPost, id)
 	var i BlogPost
@@ -250,6 +338,12 @@ type GetFeaturedPostRow struct {
 	PublishedAt        sql.NullTime   `json:"published_at"`
 }
 
+// sqlc annotation: :one returns single featured blog post
+// Purpose: Retrieves most recent published post for homepage/featured display
+// Parameters: none
+// Return type: single blog post with category/author details (no body)
+// Logic: Simply gets the newest published post (highest published_at date)
+// ORDER BY bp.published_at DESC LIMIT 1: most recent post only
 func (q *Queries) GetFeaturedPost(ctx context.Context) (GetFeaturedPostRow, error) {
 	row := q.db.QueryRowContext(ctx, getFeaturedPost)
 	var i GetFeaturedPostRow
@@ -312,6 +406,15 @@ type GetPostBySlugIncludeDraftsRow struct {
 	OgImage            string         `json:"og_image"`
 }
 
+// sqlc annotation: :one returns single blog post row including drafts
+// Purpose: Retrieves blog post for admin preview (allows viewing draft posts)
+// Parameters:
+//  1. slug (TEXT): post slug
+//
+// Return type: same as GetPublishedPostBySlug but without status filter
+// Note: Used for admin preview functionality; no status/published_at filter
+//
+//	allows editors to preview unpublished/draft content
 func (q *Queries) GetPostBySlugIncludeDrafts(ctx context.Context, slug string) (GetPostBySlugIncludeDraftsRow, error) {
 	row := q.db.QueryRowContext(ctx, getPostBySlugIncludeDrafts, slug)
 	var i GetPostBySlugIncludeDraftsRow
@@ -342,6 +445,7 @@ func (q *Queries) GetPostBySlugIncludeDrafts(ctx context.Context, slug string) (
 }
 
 const getPostProductsByPostID = `-- name: GetPostProductsByPostID :many
+
 SELECT p.id, p.name, p.slug, p.primary_image, p.tagline, pc.slug AS category_slug, pc.name AS category_name
 FROM products p
 INNER JOIN blog_post_products bpp ON p.id = bpp.product_id
@@ -360,6 +464,21 @@ type GetPostProductsByPostIDRow struct {
 	CategoryName string         `json:"category_name"`
 }
 
+// ====================================================================
+// BLOG POST PRODUCTS RELATIONSHIP
+// ====================================================================
+// sqlc annotation: :many returns slice of products associated with a post
+// Purpose: Retrieves products featured/mentioned in a blog post
+// Parameters:
+//  1. blog_post_id (INTEGER): post to get products for
+//
+// Return type: slice of products with category info
+// JOINs:
+//   - blog_post_products: junction table with display_order
+//   - products: product details
+//   - product_categories: for category name/slug
+//
+// ORDER BY: display_order (custom order), then name (alphabetical fallback)
 func (q *Queries) GetPostProductsByPostID(ctx context.Context, blogPostID int64) ([]GetPostProductsByPostIDRow, error) {
 	rows, err := q.db.QueryContext(ctx, getPostProductsByPostID, blogPostID)
 	if err != nil {
@@ -405,6 +524,17 @@ type GetPostTagsByPostIDRow struct {
 	Slug string `json:"slug"`
 }
 
+// sqlc annotation: :many returns slice of blog_tags rows
+// Purpose: Retrieves all tags associated with a specific blog post
+// Parameters:
+//  1. blog_post_id (INTEGER): post to get tags for
+//
+// Return type: slice of blog_tags (id, name, slug)
+// JOIN explained:
+//   - blog_post_tags is junction table for many-to-many relationship
+//   - INNER JOIN ensures only tags actually linked to the post are returned
+//
+// ORDER BY bt.name: alphabetical tag display
 func (q *Queries) GetPostTagsByPostID(ctx context.Context, blogPostID int64) ([]GetPostTagsByPostIDRow, error) {
 	rows, err := q.db.QueryContext(ctx, getPostTagsByPostID, blogPostID)
 	if err != nil {
@@ -467,6 +597,21 @@ type GetPublishedPostBySlugRow struct {
 	OgImage            string         `json:"og_image"`
 }
 
+// sqlc annotation: :one returns single blog post row or error if not found
+// Purpose: Retrieves full published blog post by slug for public post detail page
+// Parameters:
+//  1. slug (TEXT): URL-safe post identifier
+//
+// Return type: single denormalized blog post with full body content, SEO metadata
+// SELECT fields:
+//   - Full post content including body (HTML)
+//   - Category details (name, slug, color) for breadcrumbs/badges
+//   - Extended author info (bio, linkedin) for author card display
+//   - SEO fields (meta_title, meta_description, og_image)
+//
+// WHERE clause:
+//   - bp.slug = ?: exact slug match
+//   - bp.status = 'published' AND bp.published_at IS NOT NULL: public posts only
 func (q *Queries) GetPublishedPostBySlug(ctx context.Context, slug string) (GetPublishedPostBySlugRow, error) {
 	row := q.db.QueryRowContext(ctx, getPublishedPostBySlug, slug)
 	var i GetPublishedPostBySlugRow
@@ -530,6 +675,20 @@ type GetRelatedPostsRow struct {
 	PublishedAt        sql.NullTime   `json:"published_at"`
 }
 
+// sqlc annotation: :many returns slice of related blog posts
+// Purpose: Retrieves posts from same category for "Related Posts" widget
+// Parameters (positional):
+//  1. category_id (INTEGER): category to match
+//  2. current_post_id (INTEGER): post to exclude (don't show current post as related)
+//  3. LIMIT (INTEGER): max number of related posts (typically 3-5)
+//
+// Return type: slice of minimal blog post data (no body content)
+// WHERE clause:
+//   - bp.status = 'published' AND bp.published_at IS NOT NULL: public posts only
+//   - bp.category_id = ?: same category as current post
+//   - bp.id != ?: exclude current post from results
+//
+// ORDER BY bp.published_at DESC: newest related posts first
 func (q *Queries) GetRelatedPosts(ctx context.Context, arg GetRelatedPostsParams) ([]GetRelatedPostsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getRelatedPosts, arg.CategoryID, arg.ID, arg.Limit)
 	if err != nil {
@@ -565,6 +724,7 @@ func (q *Queries) GetRelatedPosts(ctx context.Context, arg GetRelatedPostsParams
 }
 
 const listAllBlogPosts = `-- name: ListAllBlogPosts :many
+
 SELECT
     bp.id, bp.title, bp.slug, bp.status, bp.category_id, bc.name AS category_name,
     bp.author_id, ba.name AS author_name, bp.published_at, bp.created_at, bp.updated_at
@@ -588,6 +748,16 @@ type ListAllBlogPostsRow struct {
 	UpdatedAt    time.Time    `json:"updated_at"`
 }
 
+// ====================================================================
+// ADMIN BLOG POST QUERIES
+// ====================================================================
+// sqlc annotation: :many returns slice of all blog posts (drafts + published)
+// Purpose: Simple admin list of all posts without filtering/pagination
+// Parameters: none
+// Return type: slice of blog posts with basic metadata (no body/excerpt)
+// Note: Includes all statuses (draft, published); used for simple admin views
+//
+//	ORDER BY created_at DESC shows newest posts first
 func (q *Queries) ListAllBlogPosts(ctx context.Context) ([]ListAllBlogPostsRow, error) {
 	rows, err := q.db.QueryContext(ctx, listAllBlogPosts)
 	if err != nil {
@@ -633,9 +803,13 @@ FROM blog_posts bp
 INNER JOIN blog_categories bc ON bp.category_id = bc.id
 INNER JOIN blog_authors ba ON bp.author_id = ba.id
 WHERE
+    -- Optional status filter: '' = all statuses, otherwise exact match
     (CASE WHEN ?1 = '' THEN 1 ELSE bp.status = ?1 END)
+    -- Optional category filter: 0 = all categories, otherwise exact ID match
     AND (CASE WHEN ?2 = 0 THEN 1 ELSE bp.category_id = ?2 END)
+    -- Optional author filter: 0 = all authors, otherwise exact ID match
     AND (CASE WHEN ?3 = 0 THEN 1 ELSE bp.author_id = ?3 END)
+    -- Optional search filter: '' = no search, otherwise LIKE match in title or slug
     AND (CASE WHEN ?4 = '' THEN 1 ELSE (bp.title LIKE '%' || ?4 || '%' OR bp.slug LIKE '%' || ?4 || '%') END)
 ORDER BY bp.created_at DESC
 LIMIT ?6 OFFSET ?5
@@ -669,6 +843,24 @@ type ListBlogPostsAdminFilteredRow struct {
 	UpdatedAt          time.Time      `json:"updated_at"`
 }
 
+// sqlc annotation: :many returns filtered/paginated blog posts for admin table
+// Purpose: Advanced admin list with multiple filter options and pagination
+// Parameters (named using @ prefix):
+//
+//	@filter_status (TEXT): filter by status ('draft', 'published', or '' for all)
+//	@filter_category (INTEGER): filter by category ID (0 = all categories)
+//	@filter_author (INTEGER): filter by author ID (0 = all authors)
+//	@filter_search (TEXT): search term for title/slug ('' = no search)
+//	@page_limit (INTEGER): posts per page
+//	@page_offset (INTEGER): pagination offset
+//
+// Return type: slice of blog posts with full display metadata
+// Complex WHERE clause using CASE statements:
+//   - CASE WHEN @filter_status = ” THEN 1: when filter is empty, condition is always true (1)
+//   - ELSE bp.status = @filter_status: otherwise, apply the filter
+//   - This pattern allows optional filters without complex NULL handling
+//   - filter_category/filter_author use 0 as "no filter" sentinel value
+//   - filter_search uses LIKE for partial matching in title OR slug
 func (q *Queries) ListBlogPostsAdminFiltered(ctx context.Context, arg ListBlogPostsAdminFilteredParams) ([]ListBlogPostsAdminFilteredRow, error) {
 	rows, err := q.db.QueryContext(ctx, listBlogPostsAdminFiltered,
 		arg.FilterStatus,
@@ -717,6 +909,7 @@ func (q *Queries) ListBlogPostsAdminFiltered(ctx context.Context, arg ListBlogPo
 }
 
 const listLatestPublishedPosts = `-- name: ListLatestPublishedPosts :many
+
 SELECT
     bp.id, bp.title, bp.slug, bp.excerpt, bp.featured_image_url, bp.featured_image_alt,
     bp.category_id, bc.name AS category_name, bc.slug AS category_slug, bc.color_hex AS category_color,
@@ -749,6 +942,18 @@ type ListLatestPublishedPostsRow struct {
 	CreatedAt          time.Time      `json:"created_at"`
 }
 
+// ====================================================================
+// UTILITY QUERIES
+// ====================================================================
+// sqlc annotation: :many returns recent published posts
+// Purpose: Lists N most recent published posts (for homepage, sidebar widgets)
+// Parameters:
+//  1. LIMIT (INTEGER): number of posts to return
+//
+// Return type: slice of blog posts with category/author details
+// Note: Similar to ListPublishedPosts but without pagination offset
+//
+//	Used for "Recent Posts" widgets with fixed count
 func (q *Queries) ListLatestPublishedPosts(ctx context.Context, limit int64) ([]ListLatestPublishedPostsRow, error) {
 	rows, err := q.db.QueryContext(ctx, listLatestPublishedPosts, limit)
 	if err != nil {
@@ -790,6 +995,8 @@ func (q *Queries) ListLatestPublishedPosts(ctx context.Context, limit int64) ([]
 }
 
 const listPublishedPosts = `-- name: ListPublishedPosts :many
+
+
 SELECT
     bp.id, bp.title, bp.slug, bp.excerpt, bp.featured_image_url, bp.featured_image_alt,
     bp.category_id, bc.name AS category_name, bc.slug AS category_slug, bc.color_hex AS category_color,
@@ -827,6 +1034,44 @@ type ListPublishedPostsRow struct {
 	CreatedAt          time.Time      `json:"created_at"`
 }
 
+// ====================================================================
+// BLOG POSTS QUERIES
+// ====================================================================
+// This file contains all queries for managing blog posts, including both
+// public-facing queries (listing published posts) and admin operations
+// (CRUD, filtering, searching). Includes relationship management for
+// tags and products associated with blog posts.
+//
+// Managed entities:
+// - blog_posts: main blog content with status, metadata, SEO fields
+// - blog_post_tags: many-to-many relationship with blog_tags
+// - blog_post_products: many-to-many relationship with products
+//
+// Key concepts:
+// - status: 'draft' or 'published' (only published shown on frontend)
+// - published_at: must be non-null for public display
+// - JOINs with categories/authors for denormalized display data
+// ====================================================================
+// ====================================================================
+// PUBLIC BLOG POST QUERIES
+// ====================================================================
+// sqlc annotation: :many returns slice of blog post rows
+// Purpose: Lists published blog posts for main blog index page
+// Parameters (positional):
+//  1. LIMIT (INTEGER): number of posts per page
+//  2. OFFSET (INTEGER): pagination offset
+//
+// Return type: slice of denormalized blog post rows with category/author details
+// JOINs explained:
+//   - INNER JOIN blog_categories: gets category name/slug/color for each post
+//   - INNER JOIN blog_authors: gets author name/avatar for byline display
+//     Note: INNER JOINs ensure posts without valid category/author are excluded
+//
+// WHERE clause:
+//   - status = 'published': only show published posts, hide drafts
+//   - published_at IS NOT NULL: additional safety check for scheduled posts
+//
+// ORDER BY published_at DESC: newest posts first (reverse chronological)
 func (q *Queries) ListPublishedPosts(ctx context.Context, arg ListPublishedPostsParams) ([]ListPublishedPostsRow, error) {
 	rows, err := q.db.QueryContext(ctx, listPublishedPosts, arg.Limit, arg.Offset)
 	if err != nil {
@@ -908,6 +1153,19 @@ type ListPublishedPostsByCategoryRow struct {
 	CreatedAt          time.Time      `json:"created_at"`
 }
 
+// sqlc annotation: :many returns slice of blog post rows
+// Purpose: Lists published posts filtered by category slug (category archive page)
+// Parameters (positional):
+//  1. category slug (TEXT): URL-safe category identifier
+//  2. LIMIT (INTEGER): posts per page
+//  3. OFFSET (INTEGER): pagination offset
+//
+// Return type: slice of denormalized blog post rows
+// WHERE clause:
+//   - bp.status = 'published' AND bp.published_at IS NOT NULL: same as main list
+//   - bc.slug = ?: filters by category slug (JOIN to blog_categories required)
+//
+// Note: INNER JOIN ensures only valid category slugs return results
 func (q *Queries) ListPublishedPostsByCategory(ctx context.Context, arg ListPublishedPostsByCategoryParams) ([]ListPublishedPostsByCategoryRow, error) {
 	rows, err := q.db.QueryContext(ctx, listPublishedPostsByCategory, arg.Slug, arg.Limit, arg.Offset)
 	if err != nil {
@@ -958,6 +1216,13 @@ type RemoveTagFromPostParams struct {
 	BlogTagID  int64 `json:"blog_tag_id"`
 }
 
+// sqlc annotation: :exec returns no data
+// Purpose: Removes a specific tag association from a post
+// Parameters:
+//  1. blog_post_id (INTEGER)
+//  2. blog_tag_id (INTEGER)
+//
+// Return type: none
 func (q *Queries) RemoveTagFromPost(ctx context.Context, arg RemoveTagFromPostParams) error {
 	_, err := q.db.ExecContext(ctx, removeTagFromPost, arg.BlogPostID, arg.BlogTagID)
 	return err
@@ -976,6 +1241,14 @@ type SearchPublishedProductsRow struct {
 	PrimaryImage sql.NullString `json:"primary_image"`
 }
 
+// sqlc annotation: :many returns slice of products for search autocomplete
+// Purpose: Searches published products by name for adding to blog posts
+// Parameters:
+//  1. search_pattern (TEXT): LIKE pattern (e.g., "%laptop%")
+//
+// Return type: slice of minimal product data (id, name, slug, image)
+// WHERE: status = 'published' ensures only published products can be linked
+// LIMIT 10: restricts results for autocomplete/typeahead UI
 func (q *Queries) SearchPublishedProducts(ctx context.Context, name string) ([]SearchPublishedProductsRow, error) {
 	rows, err := q.db.QueryContext(ctx, searchPublishedProducts, name)
 	if err != nil {
@@ -1039,6 +1312,15 @@ type UpdateBlogPostParams struct {
 	ID                 int64          `json:"id"`
 }
 
+// sqlc annotation: :one returns the updated blog post
+// Purpose: Updates existing blog post (all fields except ID/created_at)
+// Parameters (13 positional):
+//
+//	1-12. updated field values (same order as CreateBlogPost)
+//	13. id (INTEGER): which post to update (WHERE clause)
+//
+// Return type: updated blog_posts row
+// Note: updated_at explicitly set to CURRENT_TIMESTAMP
 func (q *Queries) UpdateBlogPost(ctx context.Context, arg UpdateBlogPostParams) (BlogPost, error) {
 	row := q.db.QueryRowContext(ctx, updateBlogPost,
 		arg.Title,

@@ -15,9 +15,8 @@ Tests the company overview page editing functionality including headline, taglin
 3. Edit headline, tagline, and description fields
 4. Update hero and company image URLs
 5. Submit form
-6. Verify redirect to /admin/about/overview?saved=1
-7. Confirm success message appears
-8. Verify updated data persists on page reload
+6. Verify redirect to /admin/about/overview
+7. Verify updated data persists on page reload
 
 ## Test Cases
 
@@ -25,7 +24,6 @@ Tests the company overview page editing functionality including headline, taglin
 - **Load overview form**: Verifies GET /admin/about/overview loads with all fields populated from seeded data
 - **Update all fields**: Updates headline, tagline, all three description fields, and both image URLs, verifies successful save
 - **Update single field**: Changes only headline, verifies other fields remain unchanged
-- **Success indicator**: Verifies ?saved=1 query param shows success banner
 - **Cache invalidation**: Confirms page:about cache is cleared after update
 
 ### Edge Cases / Error States
@@ -45,7 +43,6 @@ Tests the company overview page editing functionality including headline, taglin
 - Hero image URL: `input[name="hero_image_url"]`
 - Company image URL: `input[name="company_image_url"]`
 - Submit button: `button[type="submit"]`
-- Success banner: `.alert-success` or `[data-saved="true"]` (check for ?saved=1)
 
 ## HTMX Interactions
 - None - standard form POST with full page redirect

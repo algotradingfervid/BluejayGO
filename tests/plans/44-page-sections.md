@@ -19,9 +19,8 @@ Tests the editing of pre-seeded page sections with no create/delete functionalit
 7. Update primary button text and URL
 8. Update secondary button text and URL
 9. Toggle is_active checkbox
-10. Update display_order
-11. Submit form via POST /admin/page-sections/:id
-12. Verify redirect back to edit page or list
+10. Submit form via POST /admin/page-sections/:id
+11. Verify redirect back to edit page or list
 13. Confirm updated data persists
 14. Verify no "New Section" or "Delete" buttons exist
 
@@ -44,7 +43,6 @@ Tests the editing of pre-seeded page sections with no create/delete functionalit
 - **Update secondary button**: Changes secondary_button_text and secondary_button_url, verifies save
 - **Remove secondary button**: Clears secondary button fields, verifies removal
 - **Toggle is_active**: Checks/unchecks is_active checkbox, verifies status change
-- **Update display_order**: Changes display_order value, verifies list reordering
 
 ### Edge Cases / Error States
 - **No create button**: Verifies "New Section" button does not exist on list page
@@ -60,7 +58,6 @@ Tests the editing of pre-seeded page sections with no create/delete functionalit
 - **Very long heading**: Tests character limits on heading field
 - **Very long description**: Tests textarea character limits
 - **All sections inactive**: Sets all sections is_active=false, checks site behavior
-- **Duplicate display_order**: Sets multiple sections to same order, verifies handling
 - **Section identifier immutable**: Verifies section identifier (home, products, etc.) cannot be changed
 
 ## Selectors & Elements
@@ -79,7 +76,6 @@ Tests the editing of pre-seeded page sections with no create/delete functionalit
 - Secondary button text: `input[name="secondary_button_text"]`
 - Secondary button URL: `input[name="secondary_button_url"]`
 - Is active checkbox: `input[name="is_active"][type="checkbox"]`
-- Display order input: `input[name="display_order"][type="number"]`
 - Submit button: `button[type="submit"]`
 - Success message: `.alert-success`
 - Section identifier display: `.section-identifier` or read-only field showing page type
@@ -93,3 +89,8 @@ Tests the editing of pre-seeded page sections with no create/delete functionalit
 - Template: templates/admin/pages/page-sections-list.html, page-sections-edit.html
 - Handler: internal/handlers/page_sections.go (ListPageSections, EditPageSection, UpdatePageSection)
 - Section identifiers are immutable and tied to specific pages
+
+## Implementation Notes
+- **Update endpoint**: POST /admin/page-sections/:id (not /admin/page-sections/:id/update)
+- **Display order**: `display_order` is NOT in the `UpdatePageSection` query — only content fields are updateable
+- **Read-only operations**: Page sections are read-only in terms of create/delete — only content editing is supported

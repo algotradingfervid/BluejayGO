@@ -28,6 +28,21 @@ type CreatePartnerParams struct {
 	DisplayOrder int64          `json:"display_order"`
 }
 
+// Creates a new partner record.
+//
+// Parameters:
+//
+//	$1 (TEXT) - name: Partner company name
+//	$2 (INTEGER) - tier_id: Partner tier category ID
+//	$3 (TEXT) - logo_url: Path/URL to partner logo image
+//	$4 (TEXT) - icon: Icon identifier or CSS class (optional)
+//	$5 (TEXT) - website_url: Partner website URL (optional)
+//	$6 (TEXT) - description: Partner description or relationship details (optional)
+//	$7 (INTEGER) - display_order: Position within tier for ordering
+//
+// Returns: Partner - The newly created partner with auto-generated ID and timestamps
+//
+// Note: is_active defaults to 1 (true) via database schema, is_featured defaults to 0
 func (q *Queries) CreatePartner(ctx context.Context, arg CreatePartnerParams) (Partner, error) {
 	row := q.db.QueryRowContext(ctx, createPartner,
 		arg.Name,
@@ -71,6 +86,19 @@ type CreateTestimonialParams struct {
 	DisplayOrder int64  `json:"display_order"`
 }
 
+// Creates a new partner testimonial.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - partner_id: ID of partner providing the testimonial
+//	$2 (TEXT) - quote: Testimonial text/quote
+//	$3 (TEXT) - author_name: Name of person giving testimonial
+//	$4 (TEXT) - author_title: Job title of testimonial author
+//	$5 (INTEGER) - display_order: Position in testimonial sequence
+//
+// Returns: PartnerTestimonial - The newly created testimonial with auto-generated ID
+//
+// Note: is_active defaults to 1 (true) via database schema
 func (q *Queries) CreateTestimonial(ctx context.Context, arg CreateTestimonialParams) (PartnerTestimonial, error) {
 	row := q.db.QueryRowContext(ctx, createTestimonial,
 		arg.PartnerID,
@@ -97,6 +125,16 @@ const deletePartner = `-- name: DeletePartner :exec
 DELETE FROM partners WHERE id = ?
 `
 
+// Permanently deletes a partner record.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - partner ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// WARNING: Will cascade delete related testimonials if foreign key configured
+// Note: Consider setting is_active=0 for soft delete instead
 func (q *Queries) DeletePartner(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deletePartner, id)
 	return err
@@ -106,6 +144,15 @@ const deleteTestimonial = `-- name: DeleteTestimonial :exec
 DELETE FROM partner_testimonials WHERE id = ?
 `
 
+// Permanently deletes a partner testimonial.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - testimonial ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// WARNING: Hard delete, consider setting is_active=0 for soft delete instead
 func (q *Queries) DeleteTestimonial(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteTestimonial, id)
 	return err
@@ -135,6 +182,20 @@ type GetPartnerRow struct {
 	TierLevel    int64          `json:"tier_level"`
 }
 
+// Retrieves a single partner by ID with tier information.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - partner ID
+//
+// Returns: Partner - Single partner record with tier metadata
+//
+// JOIN logic:
+//   - JOIN partner_tiers pt ON p.tier_id = pt.id
+//     Adds tier_name and tier_level (sort_order) columns
+//
+// Use case: Partner detail view, editing partner with tier context
+// Note: Does NOT filter by is_active, returns inactive partners for admin use
 func (q *Queries) GetPartner(ctx context.Context, id int64) (GetPartnerRow, error) {
 	row := q.db.QueryRowContext(ctx, getPartner, id)
 	var i GetPartnerRow
@@ -176,6 +237,16 @@ type GetTestimonialRow struct {
 	PartnerName  string    `json:"partner_name"`
 }
 
+// Retrieves a single testimonial by ID with partner name.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - testimonial ID
+//
+// Returns: PartnerTestimonial - Single testimonial with partner_name
+//
+// JOIN logic: Adds partner_name for display/admin context
+// Use case: Editing testimonial, displaying single testimonial detail
 func (q *Queries) GetTestimonial(ctx context.Context, id int64) (GetTestimonialRow, error) {
 	row := q.db.QueryRowContext(ctx, getTestimonial, id)
 	var i GetTestimonialRow
@@ -194,6 +265,7 @@ func (q *Queries) GetTestimonial(ctx context.Context, id int64) (GetTestimonialR
 }
 
 const listActiveTestimonials = `-- name: ListActiveTestimonials :many
+
 SELECT pt.id, pt.partner_id, pt.quote, pt.author_name, pt.author_title, pt.display_order, pt.is_active, pt.created_at, p.name AS partner_name, p.logo_url AS partner_logo_url, p.icon AS partner_icon
 FROM partner_testimonials pt
 JOIN partners p ON pt.partner_id = p.id
@@ -215,6 +287,22 @@ type ListActiveTestimonialsRow struct {
 	PartnerIcon    sql.NullString `json:"partner_icon"`
 }
 
+// ====================================================================
+// PARTNER TESTIMONIALS
+// ====================================================================
+// Retrieves all active partner testimonials with partner details for display.
+//
+// Parameters: none
+// Returns: []PartnerTestimonial - Array of active testimonials with partner metadata
+//
+// JOIN logic:
+//   - JOIN partners p ON pt.partner_id = p.id
+//     Adds partner_name, partner_logo_url, partner_icon for display context
+//
+// Filtering: pt.is_active = 1 - Only visible testimonials
+// Sorting: pt.display_order ASC - Custom-defined testimonial sequence
+//
+// Use case: Homepage testimonials section, partners page testimonials carousel
 func (q *Queries) ListActiveTestimonials(ctx context.Context) ([]ListActiveTestimonialsRow, error) {
 	rows, err := q.db.QueryContext(ctx, listActiveTestimonials)
 	if err != nil {
@@ -251,6 +339,7 @@ func (q *Queries) ListActiveTestimonials(ctx context.Context) ([]ListActiveTesti
 }
 
 const listAllPartners = `-- name: ListAllPartners :many
+
 SELECT p.id, p.name, p.tier_id, p.logo_url, p.icon, p.website_url, p.description, p.display_order, p.is_active, p.created_at, p.updated_at, p.is_featured, pt.name AS tier_name
 FROM partners p
 JOIN partner_tiers pt ON p.tier_id = pt.id
@@ -273,6 +362,22 @@ type ListAllPartnersRow struct {
 	TierName     string         `json:"tier_name"`
 }
 
+// ====================================================================
+// PARTNER LISTING QUERIES
+// ====================================================================
+// Retrieves all partners (active and inactive) with tier information.
+//
+// Parameters: none
+// Returns: []Partner - Array of all partners with tier_name
+//
+// JOIN logic: Adds tier_name from partner_tiers table
+//
+// Sorting:
+//  1. pt.sort_order ASC - Higher tiers first
+//  2. p.display_order ASC - Custom order within tier
+//
+// Use case: Admin partner management, bulk operations
+// Note: Returns ALL partners regardless of is_active status
 func (q *Queries) ListAllPartners(ctx context.Context) ([]ListAllPartnersRow, error) {
 	rows, err := q.db.QueryContext(ctx, listAllPartners)
 	if err != nil {
@@ -335,6 +440,24 @@ type ListFeaturedPartnersRow struct {
 	TierName     string         `json:"tier_name"`
 }
 
+// Retrieves a limited number of featured active partners.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - LIMIT: Maximum number of featured partners to return
+//
+// Returns: []Partner - Array of featured partners with tier_name
+//
+// JOIN logic: Adds tier_name from partner_tiers table
+//
+// Filtering:
+//   - p.is_featured = 1 - Only partners marked as featured
+//   - p.is_active = 1 - Only visible partners
+//
+// Sorting: p.display_order ASC - Featured partners in custom order
+// LIMIT: Controls how many featured partners to display (e.g., 6 for homepage)
+//
+// Use case: Homepage featured partners section, highlighting key partnerships
 func (q *Queries) ListFeaturedPartners(ctx context.Context, limit int64) ([]ListFeaturedPartnersRow, error) {
 	rows, err := q.db.QueryContext(ctx, listFeaturedPartners, limit)
 	if err != nil {
@@ -373,6 +496,8 @@ func (q *Queries) ListFeaturedPartners(ctx context.Context, limit int64) ([]List
 }
 
 const listPartnersByTier = `-- name: ListPartnersByTier :many
+
+
 SELECT p.id, p.name, p.tier_id, p.logo_url, p.icon, p.website_url, p.description, p.display_order, p.is_active, p.created_at, p.updated_at, p.is_featured, pt.name AS tier_name, pt.sort_order AS tier_level
 FROM partners p
 JOIN partner_tiers pt ON p.tier_id = pt.id
@@ -397,6 +522,47 @@ type ListPartnersByTierRow struct {
 	TierLevel    int64          `json:"tier_level"`
 }
 
+// ====================================================================
+// PARTNERS QUERY FILE
+// ====================================================================
+// This file contains all SQL queries for managing business partners and
+// their testimonials.
+//
+// Entities:
+//   - partners: Company partner records with tier/category
+//   - partner_testimonials: Customer quotes and testimonials from partners
+//
+// Related tables:
+//   - partner_tiers: Defines partner levels (Platinum, Gold, Silver, etc.)
+//
+// Features:
+//   - Multi-tier partner management
+//   - Active/inactive status for visibility control
+//   - Featured partners for homepage highlights
+//   - Partner testimonials with author details
+//   - Display ordering within tiers
+//
+// ====================================================================
+// ====================================================================
+// PARTNERS
+// ====================================================================
+// Retrieves all active partners organized by tier, with tier metadata.
+//
+// Parameters: none
+// Returns: []Partner - Array of active partners with tier information
+//
+// JOIN logic:
+//   - JOIN partner_tiers pt ON p.tier_id = pt.id
+//     Links partners to their tier category, adds tier_name and tier_level
+//
+// Filtering: p.is_active = 1 - Only visible partners
+//
+// Sorting logic:
+//  1. pt.sort_order ASC - Higher tier partners first (Platinum before Gold)
+//  2. p.display_order ASC - Custom ordering within each tier
+//
+// Use case: Partners page display, showing partners grouped by tier
+// Note: Returns tier_name and tier_level (sort_order) as additional columns
 func (q *Queries) ListPartnersByTier(ctx context.Context) ([]ListPartnersByTierRow, error) {
 	rows, err := q.db.QueryContext(ctx, listPartnersByTier)
 	if err != nil {
@@ -441,6 +607,21 @@ WHERE tier_id = ? AND is_active = 1
 ORDER BY display_order ASC
 `
 
+// Retrieves all active partners for a specific tier.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - tier_id: Partner tier ID to filter by
+//
+// Returns: []Partner - Array of active partners in the specified tier
+//
+// Filtering:
+//   - tier_id = ? - Matches specific tier
+//   - is_active = 1 - Only visible partners
+//
+// Sorting: display_order ASC - Partners in custom-defined order
+//
+// Use case: Displaying partners filtered by tier (e.g., "Show all Platinum Partners")
 func (q *Queries) ListPartnersByTierID(ctx context.Context, tierID int64) ([]Partner, error) {
 	rows, err := q.db.QueryContext(ctx, listPartnersByTierID, tierID)
 	if err != nil {
@@ -498,6 +679,23 @@ type UpdatePartnerParams struct {
 	ID           int64          `json:"id"`
 }
 
+// Updates an existing partner record.
+//
+// Parameters:
+//
+//	$1 (TEXT) - name: Updated company name
+//	$2 (INTEGER) - tier_id: Updated tier assignment
+//	$3 (TEXT) - logo_url: Updated logo path
+//	$4 (TEXT) - icon: Updated icon identifier
+//	$5 (TEXT) - website_url: Updated website URL
+//	$6 (TEXT) - description: Updated description
+//	$7 (INTEGER) - display_order: Updated display position
+//	$8 (BOOLEAN) - is_active: Updated visibility status
+//	$9 (INTEGER) - id: Partner ID to update
+//
+// Returns: Partner - The updated partner record
+//
+// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 func (q *Queries) UpdatePartner(ctx context.Context, arg UpdatePartnerParams) (Partner, error) {
 	row := q.db.QueryRowContext(ctx, updatePartner,
 		arg.Name,
@@ -546,6 +744,19 @@ type UpdateTestimonialParams struct {
 	ID           int64  `json:"id"`
 }
 
+// Updates an existing partner testimonial.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - partner_id: Updated partner assignment
+//	$2 (TEXT) - quote: Updated testimonial text
+//	$3 (TEXT) - author_name: Updated author name
+//	$4 (TEXT) - author_title: Updated author job title
+//	$5 (INTEGER) - display_order: Updated display position
+//	$6 (BOOLEAN) - is_active: Updated visibility status
+//	$7 (INTEGER) - id: Testimonial ID to update
+//
+// Returns: PartnerTestimonial - The updated testimonial record
 func (q *Queries) UpdateTestimonial(ctx context.Context, arg UpdateTestimonialParams) (PartnerTestimonial, error) {
 	row := q.db.QueryRowContext(ctx, updateTestimonial,
 		arg.PartnerID,

@@ -13,7 +13,7 @@ Testing case study creation, editing, listing with filters, deletion, and HTMX-d
 2. Verify case study list displays with search, status, page filters
 3. Click "New Case Study" button to navigate to /admin/case-studies/new
 4. Fill required fields: title, client_name
-5. Auto-generate slug on title blur
+5. Slug will be auto-generated server-side from title on form submission
 6. Select industry_id from dropdown
 7. Fill summary textarea
 8. Fill challenge section: challenge_title, challenge_content (textarea/rich), challenge_bullets (comma-separated)
@@ -30,8 +30,8 @@ Testing case study creation, editing, listing with filters, deletion, and HTMX-d
 
 ### Happy Path
 - **List case studies with filters**: Verify search by title, filter by status/page work correctly
-- **Create new case study**: Required fields (title, client_name) filled, slug auto-generated, case study saved
-- **Auto-slug generation**: Title "Acme Corp Success" generates slug "acme-corp-success" on blur
+- **Create new case study**: Required fields (title, client_name) filled, slug auto-generated server-side on submission, case study saved
+- **Auto-slug generation**: Title "Acme Corp Success" generates slug "acme-corp-success" server-side via `makeSlug()` on form submission
 - **Industry selection**: Select industry from dropdown, association saved
 - **Challenge bullets**: Enter "Cost overruns, Delays, Quality issues" comma-separated, stored as JSON array
 - **Rich text content**: challenge_content, solution_content, outcome_content support textarea or rich editor
@@ -62,8 +62,8 @@ Testing case study creation, editing, listing with filters, deletion, and HTMX-d
 - HTMX sections: id="products-section", id="metrics-section"
 
 ## HTMX Interactions
-- **Slug auto-generation**: hx-get="/admin/case-studies/generate-slug" hx-trigger="blur from:#title" hx-target="#slug"
-- **Delete case study**: hx-delete="/admin/case-studies/:id" hx-target="closest tr" hx-swap="outerHTML"
+- **Slug auto-generation**: NOTE: Slug is auto-generated server-side via `makeSlug()` on form submission. There is NO client-side `/admin/case-studies/generate-slug` endpoint.
+- **Delete case study**: hx-delete="/admin/case-studies/:id" hx-target="closest tr" hx-swap="outerHTML" — returns 204 No Content (no HTML)
 - **Sub-resource sections**: Products and metrics sections loaded/updated via HTMX (see dependent test plans)
 
 ## Dependencies

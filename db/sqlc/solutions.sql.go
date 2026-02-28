@@ -23,6 +23,19 @@ type AddProductToSolutionParams struct {
 	IsFeatured   sql.NullBool  `json:"is_featured"`
 }
 
+// Adds or updates a product association with a solution (upsert).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution to link product to
+//	$2 (INTEGER) - product_id: Product to link
+//	$3 (INTEGER) - display_order: Position in product list
+//	$4 (BOOLEAN) - is_featured: Whether product is highlighted
+//
+// Returns: (none)
+//
+// Note: ON CONFLICT clause performs upsert - updates if association exists
+// Use case: Adding products to solution or reordering existing associations
 func (q *Queries) AddProductToSolution(ctx context.Context, arg AddProductToSolutionParams) error {
 	_, err := q.db.ExecContext(ctx, addProductToSolution,
 		arg.SolutionID,
@@ -49,6 +62,12 @@ type CountSolutionsAdminFilteredParams struct {
 	FilterSearch interface{} `json:"filter_search"`
 }
 
+// Returns count of solutions matching admin filters (for pagination).
+//
+// Parameters: Same as ListSolutionsAdminFiltered (@filter_status, @filter_search)
+// Returns: INTEGER - Count of solutions matching filter criteria
+//
+// Note: Uses identical WHERE clause as ListSolutionsAdminFiltered for consistent counts
 func (q *Queries) CountSolutionsAdminFiltered(ctx context.Context, arg CountSolutionsAdminFilteredParams) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countSolutionsAdminFiltered, arg.FilterStatus, arg.FilterSearch)
 	var count int64
@@ -80,6 +99,26 @@ type CreateSolutionParams struct {
 	DisplayOrder     sql.NullInt64  `json:"display_order"`
 }
 
+// Creates a new solution record.
+//
+// Parameters:
+//
+//	$1 (TEXT) - title: Solution display name
+//	$2 (TEXT) - slug: URL-safe identifier
+//	$3 (TEXT) - icon: Icon identifier or CSS class
+//	$4 (TEXT) - short_description: Brief description for cards/listings
+//	$5 (TEXT) - hero_image_url: Hero section background image
+//	$6 (TEXT) - hero_title: Hero section heading
+//	$7 (TEXT) - hero_description: Hero section subheading/description
+//	$8 (TEXT) - overview_content: Full solution overview (HTML/Markdown)
+//	$9 (TEXT) - meta_description: SEO meta description
+//	$10 (TEXT) - reference_code: Internal reference/code (optional)
+//	$11 (BOOLEAN) - is_published: Publication status (1=published, 0=draft)
+//	$12 (INTEGER) - display_order: Position in solutions listing
+//
+// Returns: Solution - The newly created solution with auto-generated ID and timestamps
+//
+// Note: Related entities (stats, challenges, products, CTAs) are created separately
 func (q *Queries) CreateSolution(ctx context.Context, arg CreateSolutionParams) (Solution, error) {
 	row := q.db.QueryRowContext(ctx, createSolution,
 		arg.Title,
@@ -139,6 +178,21 @@ type CreateSolutionCTAParams struct {
 	SectionName         string         `json:"section_name"`
 }
 
+// Creates a CTA section for a solution.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Parent solution
+//	$2 (TEXT) - heading: CTA main heading
+//	$3 (TEXT) - subheading: CTA description/subheading
+//	$4 (TEXT) - primary_button_text: Primary button label
+//	$5 (TEXT) - primary_button_url: Primary button link
+//	$6 (TEXT) - secondary_button_text: Secondary button label (optional)
+//	$7 (TEXT) - secondary_button_url: Secondary button link (optional)
+//	$8 (TEXT) - phone_number: Contact phone for "Call Now" CTAs (optional)
+//	$9 (TEXT) - section_name: Identifier for positioning (e.g., "mid-page", "footer")
+//
+// Returns: SolutionCTA - Newly created CTA
 func (q *Queries) CreateSolutionCTA(ctx context.Context, arg CreateSolutionCTAParams) (SolutionCta, error) {
 	row := q.db.QueryRowContext(ctx, createSolutionCTA,
 		arg.SolutionID,
@@ -181,6 +235,17 @@ type CreateSolutionChallengeParams struct {
 	DisplayOrder sql.NullInt64 `json:"display_order"`
 }
 
+// Adds a challenge/problem statement to a solution.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Parent solution
+//	$2 (TEXT) - title: Challenge heading (e.g., "Slow Production Times")
+//	$3 (TEXT) - description: Detailed problem description
+//	$4 (TEXT) - icon: Icon identifier for visual representation
+//	$5 (INTEGER) - display_order: Position in challenges list
+//
+// Returns: SolutionChallenge - Newly created challenge
 func (q *Queries) CreateSolutionChallenge(ctx context.Context, arg CreateSolutionChallengeParams) (SolutionChallenge, error) {
 	row := q.db.QueryRowContext(ctx, createSolutionChallenge,
 		arg.SolutionID,
@@ -215,6 +280,17 @@ type CreateSolutionPageFeatureParams struct {
 	IsActive     sql.NullBool  `json:"is_active"`
 }
 
+// Creates a new solution page feature.
+//
+// Parameters:
+//
+//	$1 (TEXT) - title: Feature heading
+//	$2 (TEXT) - description: Feature description
+//	$3 (TEXT) - icon: Icon identifier
+//	$4 (INTEGER) - display_order: Position in features list
+//	$5 (BOOLEAN) - is_active: Visibility status
+//
+// Returns: SolutionPageFeature - Newly created feature
 func (q *Queries) CreateSolutionPageFeature(ctx context.Context, arg CreateSolutionPageFeatureParams) (SolutionPageFeature, error) {
 	row := q.db.QueryRowContext(ctx, createSolutionPageFeature,
 		arg.Title,
@@ -248,6 +324,16 @@ type CreateSolutionStatParams struct {
 	DisplayOrder sql.NullInt64 `json:"display_order"`
 }
 
+// Adds a stat metric to a solution.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Parent solution
+//	$2 (TEXT) - value: Metric value (e.g., "50%", "99.9%", "24/7")
+//	$3 (TEXT) - label: Metric description (e.g., "Faster Processing", "Uptime")
+//	$4 (INTEGER) - display_order: Position in stats list
+//
+// Returns: SolutionStat - Newly created stat
 func (q *Queries) CreateSolutionStat(ctx context.Context, arg CreateSolutionStatParams) (SolutionStat, error) {
 	row := q.db.QueryRowContext(ctx, createSolutionStat,
 		arg.SolutionID,
@@ -284,6 +370,19 @@ type CreateSolutionsListingCTAParams struct {
 	IsActive            sql.NullBool   `json:"is_active"`
 }
 
+// Creates a new solutions listing CTA.
+//
+// Parameters:
+//
+//	$1 (TEXT) - heading: CTA main heading
+//	$2 (TEXT) - subheading: CTA description
+//	$3 (TEXT) - primary_button_text: Primary button label
+//	$4 (TEXT) - primary_button_url: Primary button URL
+//	$5 (TEXT) - secondary_button_text: Secondary button label (optional)
+//	$6 (TEXT) - secondary_button_url: Secondary button URL (optional)
+//	$7 (BOOLEAN) - is_active: Whether this CTA is active
+//
+// Returns: SolutionsListingCTA - Newly created CTA
 func (q *Queries) CreateSolutionsListingCTA(ctx context.Context, arg CreateSolutionsListingCTAParams) (SolutionsListingCtum, error) {
 	row := q.db.QueryRowContext(ctx, createSolutionsListingCTA,
 		arg.Heading,
@@ -312,6 +411,16 @@ const deleteSolution = `-- name: DeleteSolution :exec
 DELETE FROM solutions WHERE id = ?
 `
 
+// Permanently deletes a solution.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// WARNING: Should cascade delete related records (stats, challenges, products, CTAs)
+// Note: Ensure foreign key constraints are configured for CASCADE DELETE
 func (q *Queries) DeleteSolution(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteSolution, id)
 	return err
@@ -321,6 +430,13 @@ const deleteSolutionCTA = `-- name: DeleteSolutionCTA :exec
 DELETE FROM solution_ctas WHERE id = ?
 `
 
+// Deletes a single solution CTA.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - CTA ID to delete
+//
+// Returns: (none)
 func (q *Queries) DeleteSolutionCTA(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteSolutionCTA, id)
 	return err
@@ -330,6 +446,13 @@ const deleteSolutionCTAsBySolutionID = `-- name: DeleteSolutionCTAsBySolutionID 
 DELETE FROM solution_ctas WHERE solution_id = ?
 `
 
+// Deletes all CTAs for a solution (bulk delete).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution whose CTAs to delete
+//
+// Returns: (none)
 func (q *Queries) DeleteSolutionCTAsBySolutionID(ctx context.Context, solutionID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteSolutionCTAsBySolutionID, solutionID)
 	return err
@@ -339,6 +462,13 @@ const deleteSolutionChallenge = `-- name: DeleteSolutionChallenge :exec
 DELETE FROM solution_challenges WHERE id = ?
 `
 
+// Deletes a single solution challenge.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - challenge ID to delete
+//
+// Returns: (none)
 func (q *Queries) DeleteSolutionChallenge(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteSolutionChallenge, id)
 	return err
@@ -348,6 +478,13 @@ const deleteSolutionChallengesBySolutionID = `-- name: DeleteSolutionChallengesB
 DELETE FROM solution_challenges WHERE solution_id = ?
 `
 
+// Deletes all challenges for a solution (bulk delete).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution whose challenges to delete
+//
+// Returns: (none)
 func (q *Queries) DeleteSolutionChallengesBySolutionID(ctx context.Context, solutionID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteSolutionChallengesBySolutionID, solutionID)
 	return err
@@ -357,6 +494,13 @@ const deleteSolutionPageFeature = `-- name: DeleteSolutionPageFeature :exec
 DELETE FROM solution_page_features WHERE id = ?
 `
 
+// Deletes a solution page feature.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - feature ID to delete
+//
+// Returns: (none)
 func (q *Queries) DeleteSolutionPageFeature(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteSolutionPageFeature, id)
 	return err
@@ -366,6 +510,13 @@ const deleteSolutionProductsBySolutionID = `-- name: DeleteSolutionProductsBySol
 DELETE FROM solution_products WHERE solution_id = ?
 `
 
+// Removes all product associations for a solution (bulk delete).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution to clear products from
+//
+// Returns: (none)
 func (q *Queries) DeleteSolutionProductsBySolutionID(ctx context.Context, solutionID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteSolutionProductsBySolutionID, solutionID)
 	return err
@@ -375,6 +526,13 @@ const deleteSolutionStat = `-- name: DeleteSolutionStat :exec
 DELETE FROM solution_stats WHERE id = ?
 `
 
+// Deletes a single solution stat.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - stat ID to delete
+//
+// Returns: (none)
 func (q *Queries) DeleteSolutionStat(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteSolutionStat, id)
 	return err
@@ -384,6 +542,15 @@ const deleteSolutionStatsBySolutionID = `-- name: DeleteSolutionStatsBySolutionI
 DELETE FROM solution_stats WHERE solution_id = ?
 `
 
+// Deletes all stats for a solution (bulk delete).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution whose stats to delete
+//
+// Returns: (none)
+//
+// Use case: Clearing stats before rebuilding or deleting solution
 func (q *Queries) DeleteSolutionStatsBySolutionID(ctx context.Context, solutionID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteSolutionStatsBySolutionID, solutionID)
 	return err
@@ -397,8 +564,16 @@ LIMIT 1
 `
 
 // ====================================================================
-// SOLUTIONS LISTING CTA
+// SOLUTIONS LISTING CTA (Singleton for Solutions Index Page)
 // ====================================================================
+// CTA displayed on the main solutions listing page
+// Retrieves the active CTA for solutions listing page (singleton).
+//
+// Parameters: none
+// Returns: SolutionsListingCTA - The active CTA or error if none active
+//
+// Filtering: is_active = 1 - Only the currently active CTA
+// Note: Typically only one CTA should be active at a time
 func (q *Queries) GetActiveSolutionsListingCTA(ctx context.Context) (SolutionsListingCtum, error) {
 	row := q.db.QueryRowContext(ctx, getActiveSolutionsListingCTA)
 	var i SolutionsListingCtum
@@ -419,6 +594,16 @@ const getSolutionByID = `-- name: GetSolutionByID :one
 SELECT id, title, slug, icon, short_description, hero_image_url, hero_title, hero_description, overview_content, meta_description, reference_code, is_published, display_order, created_at, updated_at, meta_title, og_image FROM solutions WHERE id = ?
 `
 
+// Retrieves a single solution by its primary key ID (any status).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution ID
+//
+// Returns: Solution - Single solution or error if not found
+//
+// Use case: Admin editing, fetching solution for update
+// Note: No status filtering, returns drafts and published
 func (q *Queries) GetSolutionByID(ctx context.Context, id int64) (Solution, error) {
 	row := q.db.QueryRowContext(ctx, getSolutionByID, id)
 	var i Solution
@@ -450,6 +635,19 @@ WHERE slug = ? AND is_published = 1
 LIMIT 1
 `
 
+// Retrieves a single published solution by its URL slug.
+//
+// Parameters:
+//
+//	$1 (TEXT) - slug: URL-safe identifier (e.g., "industrial-automation")
+//
+// Returns: Solution - Single published solution or error if not found/draft
+//
+// Filtering:
+//   - slug = ? - Matches specific solution
+//   - is_published = 1 - Only published solutions (public view)
+//
+// Use case: Public solution detail page
 func (q *Queries) GetSolutionBySlug(ctx context.Context, slug string) (Solution, error) {
 	row := q.db.QueryRowContext(ctx, getSolutionBySlug, slug)
 	var i Solution
@@ -481,6 +679,16 @@ WHERE slug = ?
 LIMIT 1
 `
 
+// Retrieves a single solution by slug regardless of published status.
+//
+// Parameters:
+//
+//	$1 (TEXT) - slug: URL-safe identifier
+//
+// Returns: Solution - Single solution (published or draft) or error if not found
+//
+// Use case: Admin preview mode, editing draft solutions
+// Note: Does NOT filter by is_published, returns draft solutions
 func (q *Queries) GetSolutionBySlugIncludeDrafts(ctx context.Context, slug string) (Solution, error) {
 	row := q.db.QueryRowContext(ctx, getSolutionBySlugIncludeDrafts, slug)
 	var i Solution
@@ -513,8 +721,19 @@ WHERE solution_id = ?
 `
 
 // ====================================================================
-// SOLUTION CTAS
+// SOLUTION CTAS (Call-to-Action Sections)
 // ====================================================================
+// CTAs are action-oriented sections within solution pages (e.g., "Get Started", "Contact Sales")
+// Retrieves all CTA sections for a solution.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution to fetch CTAs for
+//
+// Returns: []SolutionCTA - Array of CTA sections
+//
+// Use case: Displaying CTAs within solution page (typically 1-2 per solution)
+// Note: Multiple CTAs can exist per solution (e.g., mid-page and bottom CTAs)
 func (q *Queries) GetSolutionCTAs(ctx context.Context, solutionID int64) ([]SolutionCta, error) {
 	rows, err := q.db.QueryContext(ctx, getSolutionCTAs, solutionID)
 	if err != nil {
@@ -557,8 +776,19 @@ ORDER BY display_order ASC
 `
 
 // ====================================================================
-// SOLUTION CHALLENGES
+// SOLUTION CHALLENGES (Problem Statements)
 // ====================================================================
+// Challenges describe customer pain points that the solution addresses
+// Retrieves all challenges for a solution in display order.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution to fetch challenges for
+//
+// Returns: []SolutionChallenge - Array of challenge problem statements
+//
+// Sorting: display_order ASC - Challenges appear in configured order
+// Use case: Displaying "Challenges We Solve" section on solution page
 func (q *Queries) GetSolutionChallenges(ctx context.Context, solutionID int64) ([]SolutionChallenge, error) {
 	rows, err := q.db.QueryContext(ctx, getSolutionChallenges, solutionID)
 	if err != nil {
@@ -614,8 +844,27 @@ type GetSolutionProductsRow struct {
 }
 
 // ====================================================================
-// SOLUTION PRODUCTS
+// SOLUTION PRODUCTS (Many-to-Many Relationship)
 // ====================================================================
+// Links products to solutions showing which products support each solution
+// Retrieves all published products associated with a solution.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution to fetch products for
+//
+// Returns: []SolutionProduct - Array of products with solution-specific metadata
+//
+// JOIN logic:
+//   - JOIN products p ON sp.product_id = p.id
+//     Brings in product details (name, slug, tagline, image, status)
+//
+// Filtering:
+//   - sp.solution_id = ? - Products for this solution
+//   - p.status = 'published' - Only public products
+//
+// Sorting: sp.display_order ASC - Products in admin-configured order
+// Use case: Displaying "Related Products" section on solution page
 func (q *Queries) GetSolutionProducts(ctx context.Context, solutionID int64) ([]GetSolutionProductsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getSolutionProducts, solutionID)
 	if err != nil {
@@ -658,8 +907,19 @@ ORDER BY display_order ASC
 `
 
 // ====================================================================
-// SOLUTION STATS
+// SOLUTION STATS (Quantifiable Metrics)
 // ====================================================================
+// Stats display key metrics like "50% Faster", "99.9% Uptime", "24/7 Support"
+// Retrieves all stats for a solution in display order.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution to fetch stats for
+//
+// Returns: []SolutionStat - Array of stats
+//
+// Sorting: display_order ASC - Stats appear in admin-configured order
+// Use case: Displaying stats section on solution detail page
 func (q *Queries) GetSolutionStats(ctx context.Context, solutionID int64) ([]SolutionStat, error) {
 	rows, err := q.db.QueryContext(ctx, getSolutionStats, solutionID)
 	if err != nil {
@@ -694,6 +954,13 @@ SELECT id, title, description, icon, display_order, is_active FROM solution_page
 ORDER BY display_order ASC
 `
 
+// Retrieves all solution page features (active and inactive) for admin.
+//
+// Parameters: none
+// Returns: []SolutionPageFeature - Array of all features
+//
+// Sorting: display_order ASC
+// Use case: Admin management of solution page features
 func (q *Queries) ListAllSolutionPageFeatures(ctx context.Context) ([]SolutionPageFeature, error) {
 	rows, err := q.db.QueryContext(ctx, listAllSolutionPageFeatures)
 	if err != nil {
@@ -728,6 +995,17 @@ const listAllSolutions = `-- name: ListAllSolutions :many
 SELECT id, title, slug, icon, short_description, hero_image_url, hero_title, hero_description, overview_content, meta_description, reference_code, is_published, display_order, created_at, updated_at, meta_title, og_image FROM solutions ORDER BY display_order ASC, title ASC
 `
 
+// Retrieves all solutions (published and draft) for admin dashboard.
+//
+// Parameters: none
+// Returns: []Solution - Array of all solutions
+//
+// Sorting:
+//  1. display_order ASC - Custom order
+//  2. title ASC - Alphabetical fallback
+//
+// Use case: Admin solutions management listing
+// Note: Returns ALL solutions regardless of is_published status
 func (q *Queries) ListAllSolutions(ctx context.Context) ([]Solution, error) {
 	rows, err := q.db.QueryContext(ctx, listAllSolutions)
 	if err != nil {
@@ -771,6 +1049,7 @@ func (q *Queries) ListAllSolutions(ctx context.Context) ([]Solution, error) {
 
 const listPublishedSolutions = `-- name: ListPublishedSolutions :many
 
+
 SELECT id, title, slug, icon, short_description, display_order, created_at, updated_at
 FROM solutions
 WHERE is_published = 1
@@ -789,8 +1068,43 @@ type ListPublishedSolutionsRow struct {
 }
 
 // ====================================================================
-// SOLUTIONS
+// SOLUTIONS QUERY FILE
 // ====================================================================
+// This file contains all SQL queries for managing solutions and related entities.
+//
+// Main entities:
+//   - solutions: Industry solutions/use cases
+//   - solution_stats: Quantifiable metrics (e.g., "50% faster", "99.9% uptime")
+//   - solution_challenges: Problem statements solved by solution
+//   - solution_products: Products associated with solution (many-to-many)
+//   - solution_ctas: Call-to-action sections within solution page
+//   - solution_page_features: "Why Choose BlueJay" features (shared across solutions)
+//   - solutions_listing_cta: CTA for solutions listing page
+//
+// Solution status: is_published (1=published, 0=draft)
+// Features:
+//   - Rich content pages with heroes, stats, challenges, related products
+//   - Draft/published workflow
+//   - Admin filtering and search
+//   - Featured products within solutions
+//
+// ====================================================================
+// ====================================================================
+// SOLUTIONS - CORE CRUD OPERATIONS
+// ====================================================================
+// Retrieves all published solutions in display order for public listing.
+//
+// Parameters: none
+// Returns: []Solution - Array of published solutions (partial columns for performance)
+//
+// Filtering: is_published = 1 - Only public solutions
+//
+// Sorting logic:
+//  1. display_order ASC - Custom admin-defined order
+//  2. title ASC - Alphabetical fallback for same display_order
+//
+// Use case: Solutions listing page, navigation menus
+// Note: Only selects necessary columns for listing (not full content fields)
 func (q *Queries) ListPublishedSolutions(ctx context.Context) ([]ListPublishedSolutionsRow, error) {
 	rows, err := q.db.QueryContext(ctx, listPublishedSolutions)
 	if err != nil {
@@ -831,8 +1145,17 @@ ORDER BY display_order ASC
 `
 
 // ====================================================================
-// SOLUTION PAGE FEATURES (Why Choose BlueJay)
+// SOLUTION PAGE FEATURES ("Why Choose BlueJay" Section)
 // ====================================================================
+// Shared features that appear on all solution pages (company differentiators)
+// Retrieves all active solution page features.
+//
+// Parameters: none
+// Returns: []SolutionPageFeature - Array of active features
+//
+// Filtering: is_active = 1 - Only visible features
+// Sorting: display_order ASC - Features in configured order
+// Use case: Displaying "Why Choose BlueJay" section on solution pages
 func (q *Queries) ListSolutionPageFeatures(ctx context.Context) ([]SolutionPageFeature, error) {
 	rows, err := q.db.QueryContext(ctx, listSolutionPageFeatures)
 	if err != nil {
@@ -864,6 +1187,7 @@ func (q *Queries) ListSolutionPageFeatures(ctx context.Context) ([]SolutionPageF
 }
 
 const listSolutionsAdminFiltered = `-- name: ListSolutionsAdminFiltered :many
+
 SELECT id, title, slug, icon, short_description, hero_image_url, hero_title, hero_description, overview_content, meta_description, reference_code, is_published, display_order, created_at, updated_at, meta_title, og_image FROM solutions
 WHERE
     (CASE WHEN ?1 = '' THEN 1 ELSE
@@ -883,6 +1207,31 @@ type ListSolutionsAdminFilteredParams struct {
 	PageLimit    int64       `json:"page_limit"`
 }
 
+// ====================================================================
+// SOLUTIONS - ADMIN QUERIES
+// ====================================================================
+// Retrieves paginated solutions with optional status and search filters.
+//
+// Parameters (named parameters with @):
+//
+//	@filter_status (TEXT) - Filter by status ("published", "draft", or "" for all)
+//	@filter_search (TEXT) - Search term for title (empty string for no search)
+//	@page_limit (INTEGER) - Results per page
+//	@page_offset (INTEGER) - Pagination offset
+//
+// Returns: []Solution - Array of filtered solutions
+//
+// Complex WHERE clause with nested CASE statements:
+//  1. Status filter:
+//     - "" (empty) -> Shows all solutions
+//     - "published" -> Shows is_published = 1
+//     - "draft" -> Shows is_published = 0 OR NULL
+//  2. Search filter:
+//     - "" (empty) -> No filtering
+//     - Non-empty -> LIKE search on title
+//
+// Sorting: display_order ASC, title ASC - Custom order then alphabetical
+// Use case: Admin solutions management with status filter and search bar
 func (q *Queries) ListSolutionsAdminFiltered(ctx context.Context, arg ListSolutionsAdminFilteredParams) ([]Solution, error) {
 	rows, err := q.db.QueryContext(ctx, listSolutionsAdminFiltered,
 		arg.FilterStatus,
@@ -939,6 +1288,14 @@ type RemoveProductFromSolutionParams struct {
 	ProductID  int64 `json:"product_id"`
 }
 
+// Removes a product association from a solution.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - solution_id: Solution to remove product from
+//	$2 (INTEGER) - product_id: Product to unlink
+//
+// Returns: (none)
 func (q *Queries) RemoveProductFromSolution(ctx context.Context, arg RemoveProductFromSolutionParams) error {
 	_, err := q.db.ExecContext(ctx, removeProductFromSolution, arg.SolutionID, arg.ProductID)
 	return err
@@ -969,6 +1326,16 @@ type UpdateSolutionParams struct {
 	ID               int64          `json:"id"`
 }
 
+// Updates an existing solution's core fields.
+//
+// Parameters: Same as CreateSolution ($1-$12), plus:
+//
+//	$13 (INTEGER) - id: Solution ID to update
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Note: updated_at is automatically set to CURRENT_TIMESTAMP
+// Related entities updated via separate queries
 func (q *Queries) UpdateSolution(ctx context.Context, arg UpdateSolutionParams) error {
 	_, err := q.db.ExecContext(ctx, updateSolution,
 		arg.Title,
@@ -1008,6 +1375,13 @@ type UpdateSolutionCTAParams struct {
 	ID                  int64          `json:"id"`
 }
 
+// Updates an existing solution CTA.
+//
+// Parameters: $1-$8 same as CreateSolutionCTA (minus solution_id), plus:
+//
+//	$9 (INTEGER) - id: CTA ID to update
+//
+// Returns: (none)
 func (q *Queries) UpdateSolutionCTA(ctx context.Context, arg UpdateSolutionCTAParams) error {
 	_, err := q.db.ExecContext(ctx, updateSolutionCTA,
 		arg.Heading,
@@ -1037,6 +1411,17 @@ type UpdateSolutionChallengeParams struct {
 	ID           int64         `json:"id"`
 }
 
+// Updates an existing solution challenge.
+//
+// Parameters:
+//
+//	$1 (TEXT) - title: Updated heading
+//	$2 (TEXT) - description: Updated description
+//	$3 (TEXT) - icon: Updated icon identifier
+//	$4 (INTEGER) - display_order: Updated position
+//	$5 (INTEGER) - id: Challenge ID to update
+//
+// Returns: (none)
 func (q *Queries) UpdateSolutionChallenge(ctx context.Context, arg UpdateSolutionChallengeParams) error {
 	_, err := q.db.ExecContext(ctx, updateSolutionChallenge,
 		arg.Title,
@@ -1063,6 +1448,14 @@ type UpdateSolutionPageFeatureParams struct {
 	ID           int64         `json:"id"`
 }
 
+// Updates an existing solution page feature.
+//
+// Parameters:
+//
+//	$1-$5: Same as CreateSolutionPageFeature
+//	$6 (INTEGER) - id: Feature ID to update
+//
+// Returns: (none)
 func (q *Queries) UpdateSolutionPageFeature(ctx context.Context, arg UpdateSolutionPageFeatureParams) error {
 	_, err := q.db.ExecContext(ctx, updateSolutionPageFeature,
 		arg.Title,
@@ -1088,6 +1481,16 @@ type UpdateSolutionStatParams struct {
 	ID           int64         `json:"id"`
 }
 
+// Updates an existing solution stat.
+//
+// Parameters:
+//
+//	$1 (TEXT) - value: Updated metric value
+//	$2 (TEXT) - label: Updated label
+//	$3 (INTEGER) - display_order: Updated position
+//	$4 (INTEGER) - id: Stat ID to update
+//
+// Returns: (none)
 func (q *Queries) UpdateSolutionStat(ctx context.Context, arg UpdateSolutionStatParams) error {
 	_, err := q.db.ExecContext(ctx, updateSolutionStat,
 		arg.Value,
@@ -1117,6 +1520,13 @@ type UpdateSolutionsListingCTAParams struct {
 	ID                  int64          `json:"id"`
 }
 
+// Updates an existing solutions listing CTA.
+//
+// Parameters: $1-$7 same as CreateSolutionsListingCTA, plus:
+//
+//	$8 (INTEGER) - id: CTA ID to update
+//
+// Returns: (none)
 func (q *Queries) UpdateSolutionsListingCTA(ctx context.Context, arg UpdateSolutionsListingCTAParams) error {
 	_, err := q.db.ExecContext(ctx, updateSolutionsListingCTA,
 		arg.Heading,

@@ -46,9 +46,9 @@ Tests the complete CRUD operations for homepage testimonials including quotes, a
 - **Empty author_name**: Tests required field validation on author_name
 - **Very long quote**: Tests textarea character limits
 - **Very long author name**: Tests character limit on author_name
-- **Invalid rating**: Enters rating outside 1-5 range (e.g., 0, 6, 10), checks validation
-- **Negative rating**: Enters negative number, checks validation
-- **Decimal rating**: Enters 3.5 or 4.7, checks if allowed or rounded
+- **Invalid rating**: Enters rating outside 1-5 range (e.g., 0, 6, 10), checks validation (NOTE: handler does NOT validate rating bounds, `strconv.ParseInt` accepts any integer)
+- **Negative rating**: Enters negative number, checks validation (NOTE: invalid ratings may silently default to 0, not show validation error)
+- **Decimal rating**: Enters 3.5 or 4.7, checks if allowed or rounded (NOTE: decimal ratings will cause `ParseInt` to fail/error, not round)
 - **Invalid author image URL**: Enters malformed URL, checks validation
 - **Missing author title**: Leaves author_title empty, verifies optional handling
 - **Missing author company**: Leaves author_company empty, verifies optional handling
@@ -83,3 +83,8 @@ Tests the complete CRUD operations for homepage testimonials including quotes, a
 - Database seeded with 3 testimonials
 - Template: templates/admin/pages/homepage-testimonials-list.html, homepage-testimonials-form.html
 - Handler: internal/handlers/homepage.go (ListTestimonials, NewTestimonial, CreateTestimonial, EditTestimonial, UpdateTestimonial, DeleteTestimonial)
+
+## Implementation Notes
+- **Rating validation**: Handler does NOT validate rating bounds (no min/max 1-5 check) — `strconv.ParseInt` accepts any integer
+- **Decimal ratings**: Decimal ratings (e.g. 3.5) will cause `ParseInt` to fail/error, not round
+- **Invalid rating behavior**: Invalid ratings may silently default to 0, not show validation error

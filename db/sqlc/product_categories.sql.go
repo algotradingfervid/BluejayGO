@@ -24,6 +24,20 @@ type CreateProductCategoryParams struct {
 	SortOrder   int64          `json:"sort_order"`
 }
 
+// Creates a new product category.
+//
+// Parameters:
+//
+//	$1 (TEXT) - name: Display name of the category
+//	$2 (TEXT) - slug: URL-safe identifier
+//	$3 (TEXT) - description: Category description for category page (optional)
+//	$4 (TEXT) - icon: Icon identifier or CSS class (optional)
+//	$5 (TEXT) - image_url: Header/banner image for category page (optional)
+//	$6 (INTEGER) - sort_order: Display position (lower = higher priority)
+//
+// Returns: ProductCategory - The newly created category with auto-generated ID and timestamps
+//
+// Note: RETURNING * includes auto-generated created_at, updated_at
 func (q *Queries) CreateProductCategory(ctx context.Context, arg CreateProductCategoryParams) (ProductCategory, error) {
 	row := q.db.QueryRowContext(ctx, createProductCategory,
 		arg.Name,
@@ -53,6 +67,16 @@ const deleteProductCategory = `-- name: DeleteProductCategory :exec
 DELETE FROM product_categories WHERE id = ?
 `
 
+// Permanently deletes a product category.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - category ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// WARNING: Will fail if products reference this category (foreign key constraint)
+// Note: Reassign or delete products in this category before deletion
 func (q *Queries) DeleteProductCategory(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteProductCategory, id)
 	return err
@@ -62,6 +86,15 @@ const getProductCategory = `-- name: GetProductCategory :one
 SELECT id, name, slug, description, icon, image_url, product_count, sort_order, created_at, updated_at FROM product_categories WHERE id = ? LIMIT 1
 `
 
+// Retrieves a single product category by its primary key ID.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - category ID
+//
+// Returns: ProductCategory - Single category record or error if not found
+//
+// Use case: Editing a specific category, fetching category details
 func (q *Queries) GetProductCategory(ctx context.Context, id int64) (ProductCategory, error) {
 	row := q.db.QueryRowContext(ctx, getProductCategory, id)
 	var i ProductCategory
@@ -84,6 +117,16 @@ const getProductCategoryBySlug = `-- name: GetProductCategoryBySlug :one
 SELECT id, name, slug, description, icon, image_url, product_count, sort_order, created_at, updated_at FROM product_categories WHERE slug = ? LIMIT 1
 `
 
+// Retrieves a single product category by its URL-safe slug identifier.
+//
+// Parameters:
+//
+//	$1 (TEXT) - category slug (e.g., "hardware", "software", "services")
+//
+// Returns: ProductCategory - Single category record or error if not found
+//
+// Use case: Frontend category page routing, filtering products by category URL
+// Note: Slugs should be unique (enforced by database constraint)
 func (q *Queries) GetProductCategoryBySlug(ctx context.Context, slug string) (ProductCategory, error) {
 	row := q.db.QueryRowContext(ctx, getProductCategoryBySlug, slug)
 	var i ProductCategory
@@ -103,9 +146,36 @@ func (q *Queries) GetProductCategoryBySlug(ctx context.Context, slug string) (Pr
 }
 
 const listProductCategories = `-- name: ListProductCategories :many
+
 SELECT id, name, slug, description, icon, image_url, product_count, sort_order, created_at, updated_at FROM product_categories ORDER BY sort_order ASC, name ASC
 `
 
+// ====================================================================
+// PRODUCT CATEGORIES QUERY FILE
+// ====================================================================
+// This file contains all SQL queries for managing product category taxonomy.
+//
+// Entity: product_categories table
+// Purpose: Organize products into logical groups (e.g., "Hardware", "Software", "Services")
+// Related: products table references product_categories via category_id foreign key
+//
+// Features:
+//   - Hierarchical organization of product catalog
+//   - Category pages with custom imagery and descriptions
+//   - Icon support for visual navigation
+//   - Custom display ordering
+//
+// ====================================================================
+// Retrieves all product categories ordered by display priority, then alphabetically.
+//
+// Parameters: none
+// Returns: []ProductCategory - Array of all category records
+//
+// Sorting logic:
+//  1. sort_order ASC - Custom display order (lower numbers appear first)
+//  2. name ASC - Alphabetical fallback for same sort_order values
+//
+// Use case: Category navigation menu, product filters, admin category listing
 func (q *Queries) ListProductCategories(ctx context.Context) ([]ProductCategory, error) {
 	rows, err := q.db.QueryContext(ctx, listProductCategories)
 	if err != nil {
@@ -154,6 +224,21 @@ type UpdateProductCategoryParams struct {
 	ID          int64          `json:"id"`
 }
 
+// Updates an existing product category.
+//
+// Parameters:
+//
+//	$1 (TEXT) - name: Updated display name
+//	$2 (TEXT) - slug: Updated URL-safe identifier
+//	$3 (TEXT) - description: Updated description
+//	$4 (TEXT) - icon: Updated icon identifier
+//	$5 (TEXT) - image_url: Updated header image path
+//	$6 (INTEGER) - sort_order: Updated display position
+//	$7 (INTEGER) - id: Category ID to update
+//
+// Returns: ProductCategory - The updated category record
+//
+// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 func (q *Queries) UpdateProductCategory(ctx context.Context, arg UpdateProductCategoryParams) (ProductCategory, error) {
 	row := q.db.QueryRowContext(ctx, updateProductCategory,
 		arg.Name,

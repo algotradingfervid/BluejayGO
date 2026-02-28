@@ -17,8 +17,8 @@ Tests the editing of company mission, vision, and values summary with associated
 5. Edit values summary textarea
 6. Update icon selections for each section
 7. Submit form
-8. Verify redirect to /admin/about/mvv?saved=1
-9. Confirm success message and data persistence
+8. Verify redirect to /admin/about/mvv
+9. Verify updated data persists on page reload
 
 ## Test Cases
 
@@ -27,7 +27,6 @@ Tests the editing of company mission, vision, and values summary with associated
 - **Update mission only**: Changes mission text and icon, verifies vision and values unchanged
 - **Update all sections**: Edits all three textareas and all three icons, verifies save
 - **Icon selection**: Updates icon fields with valid Material icon names, verifies display
-- **Success redirect**: Confirms ?saved=1 parameter and success banner appear
 
 ### Edge Cases / Error States
 - **Empty mission**: Tests validation when mission textarea is cleared
@@ -46,7 +45,6 @@ Tests the editing of company mission, vision, and values summary with associated
 - Vision icon: `input[name="vision_icon"]`
 - Values icon: `input[name="values_icon"]`
 - Submit button: `button[type="submit"]`
-- Success banner: `.alert-success` (when ?saved=1 present)
 
 ## HTMX Interactions
 - None - standard form POST with full page redirect

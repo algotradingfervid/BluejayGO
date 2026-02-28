@@ -14,6 +14,12 @@ const countMediaFiles = `-- name: CountMediaFiles :one
 SELECT COUNT(*) FROM media_files
 `
 
+// Returns the total count of all media files.
+//
+// Parameters: none
+// Returns: INTEGER - Total number of media files in the library
+//
+// Use case: Calculating total pages for pagination, displaying library statistics
 func (q *Queries) CountMediaFiles(ctx context.Context) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countMediaFiles)
 	var count int64
@@ -26,6 +32,16 @@ SELECT COUNT(*) FROM media_files
 WHERE original_filename LIKE '%' || ?1 || '%'
 `
 
+// Returns the count of media files matching a search query.
+//
+// Parameters:
+//
+//	@search (TEXT) - Search term to match against original_filename
+//
+// Returns: INTEGER - Number of files matching the search
+//
+// Use case: Pagination for search results
+// Note: Uses same LIKE pattern as SearchMediaFiles for consistent counts
 func (q *Queries) CountMediaFilesSearch(ctx context.Context, search sql.NullString) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countMediaFilesSearch, search)
 	var count int64
@@ -49,6 +65,22 @@ type CreateMediaFileParams struct {
 	AltText          sql.NullString `json:"alt_text"`
 }
 
+// Inserts a new media file record after successful upload.
+//
+// Parameters:
+//
+//	$1 (TEXT) - filename: System-generated unique filename (e.g., uuid.jpg)
+//	$2 (TEXT) - original_filename: User's original upload filename
+//	$3 (TEXT) - file_path: Relative/absolute path to stored file
+//	$4 (INTEGER) - file_size: File size in bytes
+//	$5 (TEXT) - mime_type: MIME type (e.g., image/jpeg, application/pdf)
+//	$6 (INTEGER) - width: Image width in pixels (NULL for non-images)
+//	$7 (INTEGER) - height: Image height in pixels (NULL for non-images)
+//	$8 (TEXT) - alt_text: Accessibility alt text for images (optional)
+//
+// Returns: MediaFile - The newly created media file record with auto-generated ID and timestamps
+//
+// Note: width/height should be extracted from image files during upload processing
 func (q *Queries) CreateMediaFile(ctx context.Context, arg CreateMediaFileParams) (MediaFile, error) {
 	row := q.db.QueryRowContext(ctx, createMediaFile,
 		arg.Filename,
@@ -80,6 +112,17 @@ const deleteMediaFile = `-- name: DeleteMediaFile :exec
 DELETE FROM media_files WHERE id = ?
 `
 
+// Permanently deletes a media file record from the database.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - media file ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// WARNING: This only deletes the database record, not the physical file on disk
+// Note: Application code should delete the physical file before calling this query
+// Caution: May orphan file references in products, solutions, or other content
 func (q *Queries) DeleteMediaFile(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteMediaFile, id)
 	return err
@@ -89,6 +132,15 @@ const getMediaFile = `-- name: GetMediaFile :one
 SELECT id, filename, original_filename, file_path, file_size, mime_type, width, height, alt_text, created_at FROM media_files WHERE id = ? LIMIT 1
 `
 
+// Retrieves a single media file by its primary key ID.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - media file ID
+//
+// Returns: MediaFile - Single media file record or error if not found
+//
+// Use case: Displaying file details, embedding in content
 func (q *Queries) GetMediaFile(ctx context.Context, id int64) (MediaFile, error) {
 	row := q.db.QueryRowContext(ctx, getMediaFile, id)
 	var i MediaFile
@@ -111,6 +163,16 @@ const getMediaFileByPath = `-- name: GetMediaFileByPath :one
 SELECT id, filename, original_filename, file_path, file_size, mime_type, width, height, alt_text, created_at FROM media_files WHERE file_path = ? LIMIT 1
 `
 
+// Retrieves a single media file by its storage file path.
+//
+// Parameters:
+//
+//	$1 (TEXT) - file_path: Relative or absolute path to file on disk
+//
+// Returns: MediaFile - Single media file record or error if not found
+//
+// Use case: Checking if a file already exists before upload, resolving paths to records
+// Note: file_path should be unique (enforced by database constraint)
 func (q *Queries) GetMediaFileByPath(ctx context.Context, filePath string) (MediaFile, error) {
 	row := q.db.QueryRowContext(ctx, getMediaFileByPath, filePath)
 	var i MediaFile
@@ -130,6 +192,7 @@ func (q *Queries) GetMediaFileByPath(ctx context.Context, filePath string) (Medi
 }
 
 const listMediaFiles = `-- name: ListMediaFiles :many
+
 SELECT id, filename, original_filename, file_path, file_size, mime_type, width, height, alt_text, created_at FROM media_files
 ORDER BY created_at DESC
 LIMIT ? OFFSET ?
@@ -140,6 +203,27 @@ type ListMediaFilesParams struct {
 	Offset int64 `json:"offset"`
 }
 
+// ====================================================================
+// MEDIA FILES QUERY FILE
+// ====================================================================
+// This file contains all SQL queries for managing uploaded media files
+// (images, PDFs, videos, etc.) in the media library.
+//
+// Entity: media_files table
+// Purpose: Track uploaded files with metadata for reuse across the CMS
+// Features: Pagination, search, multiple sort orders, alt text for accessibility
+// ====================================================================
+// Retrieves paginated media files sorted by upload date (newest first).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - LIMIT: Number of records to return per page
+//	$2 (INTEGER) - OFFSET: Number of records to skip (for pagination)
+//
+// Returns: []MediaFile - Array of media file records
+//
+// Sorting: created_at DESC - Most recently uploaded files appear first
+// Use case: Default media library view showing latest uploads
 func (q *Queries) ListMediaFiles(ctx context.Context, arg ListMediaFilesParams) ([]MediaFile, error) {
 	rows, err := q.db.QueryContext(ctx, listMediaFiles, arg.Limit, arg.Offset)
 	if err != nil {
@@ -185,6 +269,17 @@ type ListMediaFilesByNameParams struct {
 	Offset int64 `json:"offset"`
 }
 
+// Retrieves paginated media files sorted alphabetically by filename.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - LIMIT: Number of records per page
+//	$2 (INTEGER) - OFFSET: Pagination offset
+//
+// Returns: []MediaFile - Array of media file records
+//
+// Sorting: filename ASC - Alphabetical order (A-Z)
+// Use case: User prefers alphabetical file organization
 func (q *Queries) ListMediaFilesByName(ctx context.Context, arg ListMediaFilesByNameParams) ([]MediaFile, error) {
 	rows, err := q.db.QueryContext(ctx, listMediaFilesByName, arg.Limit, arg.Offset)
 	if err != nil {
@@ -230,6 +325,17 @@ type ListMediaFilesBySizeParams struct {
 	Offset int64 `json:"offset"`
 }
 
+// Retrieves paginated media files sorted by file size (largest first).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - LIMIT: Number of records per page
+//	$2 (INTEGER) - OFFSET: Pagination offset
+//
+// Returns: []MediaFile - Array of media file records
+//
+// Sorting: file_size DESC - Largest files appear first
+// Use case: Identifying large files for storage cleanup or optimization
 func (q *Queries) ListMediaFilesBySize(ctx context.Context, arg ListMediaFilesBySizeParams) ([]MediaFile, error) {
 	rows, err := q.db.QueryContext(ctx, listMediaFilesBySize, arg.Limit, arg.Offset)
 	if err != nil {
@@ -275,6 +381,17 @@ type ListMediaFilesOldestParams struct {
 	Offset int64 `json:"offset"`
 }
 
+// Retrieves paginated media files sorted by upload date (oldest first).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - LIMIT: Number of records per page
+//	$2 (INTEGER) - OFFSET: Pagination offset
+//
+// Returns: []MediaFile - Array of media file records
+//
+// Sorting: created_at ASC - Oldest files appear first
+// Use case: Identifying old/unused files for archival or cleanup
 func (q *Queries) ListMediaFilesOldest(ctx context.Context, arg ListMediaFilesOldestParams) ([]MediaFile, error) {
 	rows, err := q.db.QueryContext(ctx, listMediaFilesOldest, arg.Limit, arg.Offset)
 	if err != nil {
@@ -322,6 +439,19 @@ type SearchMediaFilesParams struct {
 	PageLimit  int64          `json:"page_limit"`
 }
 
+// Searches media files by original filename with pagination.
+//
+// Parameters:
+//
+//	@search (TEXT) - Search term to match against original_filename
+//	@page_limit (INTEGER) - Number of results per page
+//	@page_offset (INTEGER) - Pagination offset
+//
+// Returns: []MediaFile - Array of matching media file records
+//
+// Search logic: LIKE '%' || @search || '%' - Case-insensitive partial match
+// Note: Searches original_filename (user's uploaded filename) not stored filename
+// Performance: May be slow on large tables without full-text search index
 func (q *Queries) SearchMediaFiles(ctx context.Context, arg SearchMediaFilesParams) ([]MediaFile, error) {
 	rows, err := q.db.QueryContext(ctx, searchMediaFiles, arg.Search, arg.PageOffset, arg.PageLimit)
 	if err != nil {
@@ -365,6 +495,17 @@ type UpdateMediaFileAltTextParams struct {
 	ID      int64          `json:"id"`
 }
 
+// Updates the alt text for an existing media file (accessibility).
+//
+// Parameters:
+//
+//	$1 (TEXT) - alt_text: Updated accessibility description
+//	$2 (INTEGER) - id: Media file ID to update
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Adding or editing alt text for screen readers and SEO
+// Note: Only updates alt_text, not other file metadata
 func (q *Queries) UpdateMediaFileAltText(ctx context.Context, arg UpdateMediaFileAltTextParams) error {
 	_, err := q.db.ExecContext(ctx, updateMediaFileAltText, arg.AltText, arg.ID)
 	return err

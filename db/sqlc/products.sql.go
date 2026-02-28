@@ -15,6 +15,13 @@ const countProducts = `-- name: CountProducts :one
 SELECT COUNT(*) FROM products WHERE status = 'published'
 `
 
+// Returns the total count of published products.
+//
+// Parameters: none
+// Returns: INTEGER - Total number of published products
+//
+// Filtering: status = 'published' - Only counts public products
+// Use case: Pagination calculations, site statistics
 func (q *Queries) CountProducts(ctx context.Context) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countProducts)
 	var count int64
@@ -36,6 +43,13 @@ type CountProductsAdminFilteredParams struct {
 	FilterSearch   interface{} `json:"filter_search"`
 }
 
+// Returns count of products matching admin filters (for pagination).
+//
+// Parameters: Same as ListProductsAdminFiltered (@filter_status, @filter_category, @filter_search)
+// Returns: INTEGER - Count of products matching filter criteria
+//
+// Note: Uses identical WHERE clause as ListProductsAdminFiltered for consistent counts
+// Use case: Calculating total pages for filtered admin product listing
 func (q *Queries) CountProductsAdminFiltered(ctx context.Context, arg CountProductsAdminFilteredParams) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countProductsAdminFiltered, arg.FilterStatus, arg.FilterCategory, arg.FilterSearch)
 	var count int64
@@ -47,6 +61,15 @@ const countProductsByCategory = `-- name: CountProductsByCategory :one
 SELECT COUNT(*) FROM products WHERE category_id = ? AND status = 'published'
 `
 
+// Returns the count of published products in a specific category.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - category_id: Category to count products in
+//
+// Returns: INTEGER - Number of published products in the category
+//
+// Use case: Category page pagination, category statistics
 func (q *Queries) CountProductsByCategory(ctx context.Context, categoryID int64) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countProductsByCategory, categoryID)
 	var count int64
@@ -55,6 +78,7 @@ func (q *Queries) CountProductsByCategory(ctx context.Context, categoryID int64)
 }
 
 const createProduct = `-- name: CreateProduct :one
+
 
 INSERT INTO products (
     sku, slug, name, tagline, description, overview,
@@ -83,8 +107,53 @@ type CreateProductParams struct {
 }
 
 // ====================================================================
-// PRODUCTS
+// PRODUCTS QUERY FILE
 // ====================================================================
+// This file contains all SQL queries for managing products and related entities.
+//
+// Main entities:
+//   - products: Core product records
+//   - product_specs: Technical specifications (grouped by section)
+//   - product_images: Gallery images for product detail pages
+//   - product_features: Bullet-point feature lists
+//   - product_certifications: Compliance badges (UL, CE, ISO, etc.)
+//   - product_downloads: Datasheets, manuals, CAD files, etc.
+//
+// Product status values: "published", "draft", "archived"
+// Features:
+//   - Multi-status workflow (draft/published/archived)
+//   - Featured products for homepage highlights
+//   - Rich metadata for SEO (meta_title, meta_description)
+//   - Category-based organization
+//   - Search and filtering capabilities
+//
+// ====================================================================
+// ====================================================================
+// PRODUCTS - CORE CRUD OPERATIONS
+// ====================================================================
+// Creates a new product record with all core fields.
+//
+// Parameters:
+//
+//	$1 (TEXT) - sku: Stock Keeping Unit / product code
+//	$2 (TEXT) - slug: URL-safe identifier for product page
+//	$3 (TEXT) - name: Product display name
+//	$4 (TEXT) - tagline: Short marketing tagline
+//	$5 (TEXT) - description: Full product description (HTML/Markdown)
+//	$6 (TEXT) - overview: Brief product overview
+//	$7 (INTEGER) - category_id: Foreign key to product_categories
+//	$8 (TEXT) - status: "published", "draft", or "archived"
+//	$9 (BOOLEAN) - is_featured: Whether product appears in featured listings
+//	$10 (INTEGER) - featured_order: Display position for featured products
+//	$11 (TEXT) - meta_title: SEO page title
+//	$12 (TEXT) - meta_description: SEO meta description
+//	$13 (TEXT) - primary_image: Main product image path
+//	$14 (TEXT) - video_url: Product demo/promo video URL (optional)
+//	$15 (TIMESTAMP) - published_at: Publication date/time
+//
+// Returns: Product - The newly created product with auto-generated ID and timestamps
+//
+// Note: Related entities (specs, images, features) are created separately after product creation
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {
 	row := q.db.QueryRowContext(ctx, createProduct,
 		arg.Sku,
@@ -145,8 +214,23 @@ type CreateProductCertificationParams struct {
 }
 
 // ====================================================================
-// PRODUCT CERTIFICATIONS
+// PRODUCT CERTIFICATIONS (Compliance Badges & Standards)
 // ====================================================================
+// Adds a certification/compliance badge to a product.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Foreign key to parent product
+//	$2 (TEXT) - certification_name: Display name (e.g., "UL Listed", "CE Certified")
+//	$3 (TEXT) - certification_code: Official code/number (e.g., "UL 508", "CE 2014/35/EU")
+//	$4 (TEXT) - icon_type: Icon source type ("upload", "library", "font-icon")
+//	$5 (TEXT) - icon_path: Path to icon file or icon class name
+//	$6 (INTEGER) - display_order: Position in certifications list
+//
+// Returns: ProductCertification - The newly created certification with auto-generated ID
+//
+// Use case: Adding compliance badges during product creation/editing
+// Note: Common certifications include UL, CE, FCC, RoHS, ISO, CSA
 func (q *Queries) CreateProductCertification(ctx context.Context, arg CreateProductCertificationParams) (ProductCertification, error) {
 	row := q.db.QueryRowContext(ctx, createProductCertification,
 		arg.ProductID,
@@ -189,8 +273,25 @@ type CreateProductDownloadParams struct {
 }
 
 // ====================================================================
-// PRODUCT DOWNLOADS
+// PRODUCT DOWNLOADS (Datasheets, Manuals, CAD Files, etc.)
 // ====================================================================
+// Adds a downloadable file (datasheet, manual, CAD, etc.) to a product.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Foreign key to parent product
+//	$2 (TEXT) - title: Download display name (e.g., "Product Datasheet", "User Manual")
+//	$3 (TEXT) - description: Download description or notes (optional)
+//	$4 (TEXT) - file_type: File type label (e.g., "PDF", "DWG", "STEP", "ZIP")
+//	$5 (TEXT) - file_path: Path to downloadable file
+//	$6 (INTEGER) - file_size: File size in bytes
+//	$7 (TEXT) - version: Document/file version (e.g., "v2.1", "Rev A")
+//	$8 (INTEGER) - display_order: Position in downloads list
+//
+// Returns: ProductDownload - The newly created download with auto-generated ID
+//
+// Use case: Adding technical documents during product creation/editing
+// Note: download_count initializes to 0 via database schema default
 func (q *Queries) CreateProductDownload(ctx context.Context, arg CreateProductDownloadParams) (ProductDownload, error) {
 	row := q.db.QueryRowContext(ctx, createProductDownload,
 		arg.ProductID,
@@ -234,8 +335,20 @@ type CreateProductFeatureParams struct {
 }
 
 // ====================================================================
-// PRODUCT FEATURES
+// PRODUCT FEATURES (Bullet-Point Feature Lists)
 // ====================================================================
+// Adds a single feature bullet point to a product.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Foreign key to parent product
+//	$2 (TEXT) - feature_text: Feature description (e.g., "IP67 waterproof rating")
+//	$3 (INTEGER) - display_order: Position in features list
+//
+// Returns: ProductFeature - The newly created feature with auto-generated ID
+//
+// Use case: Building key features list during product creation/editing
+// Note: Features are typically short, marketing-focused bullet points
 func (q *Queries) CreateProductFeature(ctx context.Context, arg CreateProductFeatureParams) (ProductFeature, error) {
 	row := q.db.QueryRowContext(ctx, createProductFeature, arg.ProductID, arg.FeatureText, arg.DisplayOrder)
 	var i ProductFeature
@@ -266,8 +379,23 @@ type CreateProductImageParams struct {
 }
 
 // ====================================================================
-// PRODUCT IMAGES
+// PRODUCT IMAGES (Gallery Images)
 // ====================================================================
+// Adds a gallery image to a product.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Foreign key to parent product
+//	$2 (TEXT) - image_path: Path to image file
+//	$3 (TEXT) - alt_text: Accessibility alt text for screen readers
+//	$4 (TEXT) - caption: Optional image caption for display
+//	$5 (INTEGER) - display_order: Position in image gallery
+//	$6 (BOOLEAN) - is_thumbnail: Whether this image is the thumbnail (usually first image)
+//
+// Returns: ProductImage - The newly created image record with auto-generated ID
+//
+// Use case: Building product image gallery during product creation/editing
+// Note: Typically only one image should have is_thumbnail=1 per product
 func (q *Queries) CreateProductImage(ctx context.Context, arg CreateProductImageParams) (ProductImage, error) {
 	row := q.db.QueryRowContext(ctx, createProductImage,
 		arg.ProductID,
@@ -307,8 +435,22 @@ type CreateProductSpecParams struct {
 }
 
 // ====================================================================
-// PRODUCT SPECS
+// PRODUCT SPECS (Technical Specifications)
 // ====================================================================
+// Creates a single technical specification for a product.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Foreign key to parent product
+//	$2 (TEXT) - section_name: Grouping label (e.g., "Electrical", "Physical", "Environmental")
+//	$3 (TEXT) - spec_key: Specification label (e.g., "Voltage", "Weight", "Operating Temp")
+//	$4 (TEXT) - spec_value: Specification value (e.g., "24V DC", "2.5 kg", "-40C to 85C")
+//	$5 (INTEGER) - display_order: Position within product specs list
+//
+// Returns: ProductSpec - The newly created spec with auto-generated ID
+//
+// Use case: Adding technical specifications during product creation/editing
+// Note: Specs can be grouped by section_name for tabbed or sectioned display
 func (q *Queries) CreateProductSpec(ctx context.Context, arg CreateProductSpecParams) (ProductSpec, error) {
 	row := q.db.QueryRowContext(ctx, createProductSpec,
 		arg.ProductID,
@@ -334,8 +476,37 @@ const deleteProduct = `-- name: DeleteProduct :exec
 DELETE FROM products WHERE id = ?
 `
 
+// Permanently deletes a product record.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// WARNING: Should cascade delete related records (specs, images, features, etc.)
+// Note: Ensure foreign key constraints are configured for CASCADE DELETE
+// Alternative: Set status='archived' for soft delete instead
 func (q *Queries) DeleteProduct(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteProduct, id)
+	return err
+}
+
+const deleteProductCertification = `-- name: DeleteProductCertification :exec
+DELETE FROM product_certifications WHERE id = ?
+`
+
+// Deletes a single certification by its ID.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - id: The certification record ID to delete
+//
+// Returns: (none)
+//
+// Use case: Removing an individual certification from the product detail page
+func (q *Queries) DeleteProductCertification(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteProductCertification, id)
 	return err
 }
 
@@ -343,6 +514,16 @@ const deleteProductCertifications = `-- name: DeleteProductCertifications :exec
 DELETE FROM product_certifications WHERE product_id = ?
 `
 
+// Deletes all certifications for a product (bulk delete).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product whose certifications to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Clearing all certifications before re-importing or deleting product
+// WARNING: Deletes ALL certifications for the product in one operation
 func (q *Queries) DeleteProductCertifications(ctx context.Context, productID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteProductCertifications, productID)
 	return err
@@ -352,6 +533,16 @@ const deleteProductDownload = `-- name: DeleteProductDownload :exec
 DELETE FROM product_downloads WHERE id = ?
 `
 
+// Deletes a single product download.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - download ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Removing individual downloads from product
+// WARNING: Only deletes database record; application should delete physical file
 func (q *Queries) DeleteProductDownload(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteProductDownload, id)
 	return err
@@ -361,8 +552,36 @@ const deleteProductDownloads = `-- name: DeleteProductDownloads :exec
 DELETE FROM product_downloads WHERE product_id = ?
 `
 
+// Deletes all downloads for a product (bulk delete).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product whose downloads to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Clearing all downloads before re-importing or deleting product
+// WARNING: Deletes ALL downloads for the product; physical files should also be removed
 func (q *Queries) DeleteProductDownloads(ctx context.Context, productID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteProductDownloads, productID)
+	return err
+}
+
+const deleteProductFeature = `-- name: DeleteProductFeature :exec
+DELETE FROM product_features WHERE id = ?
+`
+
+// Deletes a single feature by its ID.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - id: The feature record ID to delete
+//
+// Returns: (none)
+//
+// Use case: Removing an individual feature from the product detail page
+func (q *Queries) DeleteProductFeature(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteProductFeature, id)
 	return err
 }
 
@@ -370,6 +589,16 @@ const deleteProductFeatures = `-- name: DeleteProductFeatures :exec
 DELETE FROM product_features WHERE product_id = ?
 `
 
+// Deletes all features for a product (bulk delete).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product whose features to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Clearing all features before re-importing or rebuilding features list
+// WARNING: Deletes ALL features for the product in one operation
 func (q *Queries) DeleteProductFeatures(ctx context.Context, productID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteProductFeatures, productID)
 	return err
@@ -379,6 +608,16 @@ const deleteProductImage = `-- name: DeleteProductImage :exec
 DELETE FROM product_images WHERE id = ?
 `
 
+// Deletes a single product gallery image.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - image ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Removing individual images from product gallery
+// WARNING: Only deletes database record; application should delete physical file
 func (q *Queries) DeleteProductImage(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteProductImage, id)
 	return err
@@ -388,8 +627,36 @@ const deleteProductImages = `-- name: DeleteProductImages :exec
 DELETE FROM product_images WHERE product_id = ?
 `
 
+// Deletes all gallery images for a product (bulk delete).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product whose images to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Clearing all images before re-importing or deleting product
+// WARNING: Deletes ALL images for the product; physical files should also be removed
 func (q *Queries) DeleteProductImages(ctx context.Context, productID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteProductImages, productID)
+	return err
+}
+
+const deleteProductSpec = `-- name: DeleteProductSpec :exec
+DELETE FROM product_specs WHERE id = ?
+`
+
+// Deletes a single specification by its ID.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - id: The spec record ID to delete
+//
+// Returns: (none)
+//
+// Use case: Removing an individual spec from the product detail page
+func (q *Queries) DeleteProductSpec(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteProductSpec, id)
 	return err
 }
 
@@ -397,6 +664,16 @@ const deleteProductSpecs = `-- name: DeleteProductSpecs :exec
 DELETE FROM product_specs WHERE product_id = ?
 `
 
+// Deletes all technical specifications for a product (bulk delete).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product whose specs to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Clearing all specs before re-importing or rebuilding spec list
+// WARNING: Deletes ALL specs for the product in one operation
 func (q *Queries) DeleteProductSpecs(ctx context.Context, productID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteProductSpecs, productID)
 	return err
@@ -406,6 +683,16 @@ const getProduct = `-- name: GetProduct :one
 SELECT id, sku, slug, name, tagline, description, overview, category_id, status, is_featured, featured_order, meta_title, meta_description, primary_image, video_url, created_at, updated_at, published_at, og_image FROM products WHERE id = ? LIMIT 1
 `
 
+// Retrieves a single product by its primary key ID (all statuses).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product ID
+//
+// Returns: Product - Single product record or error if not found
+//
+// Use case: Admin editing, fetching product for update regardless of status
+// Note: Does NOT filter by status, returns draft/archived products
 func (q *Queries) GetProduct(ctx context.Context, id int64) (Product, error) {
 	row := q.db.QueryRowContext(ctx, getProduct, id)
 	var i Product
@@ -437,6 +724,16 @@ const getProductBySKU = `-- name: GetProductBySKU :one
 SELECT id, sku, slug, name, tagline, description, overview, category_id, status, is_featured, featured_order, meta_title, meta_description, primary_image, video_url, created_at, updated_at, published_at, og_image FROM products WHERE sku = ? LIMIT 1
 `
 
+// Retrieves a single product by its SKU/product code.
+//
+// Parameters:
+//
+//	$1 (TEXT) - sku: Stock Keeping Unit (e.g., "PROD-12345")
+//
+// Returns: Product - Single product record or error if not found
+//
+// Use case: SKU lookup, validation during data import, order processing
+// Note: SKUs should be unique (enforced by database constraint)
 func (q *Queries) GetProductBySKU(ctx context.Context, sku string) (Product, error) {
 	row := q.db.QueryRowContext(ctx, getProductBySKU, sku)
 	var i Product
@@ -468,6 +765,16 @@ const getProductBySlug = `-- name: GetProductBySlug :one
 SELECT id, sku, slug, name, tagline, description, overview, category_id, status, is_featured, featured_order, meta_title, meta_description, primary_image, video_url, created_at, updated_at, published_at, og_image FROM products WHERE slug = ? LIMIT 1
 `
 
+// Retrieves a single product by its URL-safe slug (all statuses).
+//
+// Parameters:
+//
+//	$1 (TEXT) - product slug (e.g., "industrial-sensor-x200")
+//
+// Returns: Product - Single product record or error if not found
+//
+// Use case: Frontend product detail page, preview mode
+// Note: Does NOT filter by status; application should check status before displaying
 func (q *Queries) GetProductBySlug(ctx context.Context, slug string) (Product, error) {
 	row := q.db.QueryRowContext(ctx, getProductBySlug, slug)
 	var i Product
@@ -499,6 +806,15 @@ const getProductDownload = `-- name: GetProductDownload :one
 SELECT id, product_id, title, description, file_type, file_path, file_size, version, download_count, display_order, created_at, updated_at FROM product_downloads WHERE id = ? LIMIT 1
 `
 
+// Retrieves a single product download by its ID.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - download ID
+//
+// Returns: ProductDownload - Single download record or error if not found
+//
+// Use case: Fetching download metadata before serving file, tracking analytics
 func (q *Queries) GetProductDownload(ctx context.Context, id int64) (ProductDownload, error) {
 	row := q.db.QueryRowContext(ctx, getProductDownload, id)
 	var i ProductDownload
@@ -525,16 +841,38 @@ SET download_count = download_count + 1
 WHERE id = ?
 `
 
+// Increments the download counter for analytics tracking.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - download ID
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Tracking download analytics when user downloads a file
+// Note: Uses download_count + 1 to atomically increment without race conditions
 func (q *Queries) IncrementDownloadCount(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, incrementDownloadCount, id)
 	return err
 }
 
 const listAllProductsAdmin = `-- name: ListAllProductsAdmin :many
+
 SELECT id, sku, slug, name, tagline, description, overview, category_id, status, is_featured, featured_order, meta_title, meta_description, primary_image, video_url, created_at, updated_at, published_at, og_image FROM products
 ORDER BY created_at DESC
 `
 
+// ====================================================================
+// PRODUCTS - ADMIN QUERIES
+// ====================================================================
+// Retrieves all products (any status) for admin dashboard.
+//
+// Parameters: none
+// Returns: []Product - Array of all products including drafts and archived
+//
+// Sorting: created_at DESC - Newest products first
+// Use case: Admin product management dashboard
+// Note: No status filtering - shows published, draft, and archived products
 func (q *Queries) ListAllProductsAdmin(ctx context.Context) ([]Product, error) {
 	rows, err := q.db.QueryContext(ctx, listAllProductsAdmin)
 	if err != nil {
@@ -610,6 +948,26 @@ type ListFeaturedProductsRow struct {
 	CategorySlug    string         `json:"category_slug"`
 }
 
+// Retrieves a limited number of featured products with category slug.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - LIMIT: Maximum number of featured products to return
+//
+// Returns: []Product - Array of featured products with category_slug
+//
+// JOIN logic:
+//   - INNER JOIN product_categories pc ON p.category_id = pc.id
+//     Adds category_slug for building product URLs
+//
+// Filtering:
+//   - p.is_featured = 1 - Only featured products
+//   - p.status = 'published' - Only public products
+//
+// Sorting: p.featured_order ASC - Featured products in custom order (1, 2, 3...)
+// LIMIT: Controls homepage featured products count (e.g., 4 or 6)
+//
+// Use case: Homepage featured products section, product highlights carousel
 func (q *Queries) ListFeaturedProducts(ctx context.Context, limit int64) ([]ListFeaturedProductsRow, error) {
 	rows, err := q.db.QueryContext(ctx, listFeaturedProducts, limit)
 	if err != nil {
@@ -660,6 +1018,16 @@ WHERE product_id = ?
 ORDER BY display_order ASC
 `
 
+// Retrieves all certifications for a product in display order.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product to fetch certifications for
+//
+// Returns: []ProductCertification - Array of certifications ordered by display_order
+//
+// Sorting: display_order ASC - Certifications appear in admin-configured order
+// Use case: Displaying compliance badges on product detail page
 func (q *Queries) ListProductCertifications(ctx context.Context, productID int64) ([]ProductCertification, error) {
 	rows, err := q.db.QueryContext(ctx, listProductCertifications, productID)
 	if err != nil {
@@ -698,6 +1066,16 @@ WHERE product_id = ?
 ORDER BY display_order ASC
 `
 
+// Retrieves all downloadable files for a product in display order.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product to fetch downloads for
+//
+// Returns: []ProductDownload - Array of downloads ordered by display_order
+//
+// Sorting: display_order ASC - Downloads appear in admin-configured order
+// Use case: Displaying downloads list on product detail page
 func (q *Queries) ListProductDownloads(ctx context.Context, productID int64) ([]ProductDownload, error) {
 	rows, err := q.db.QueryContext(ctx, listProductDownloads, productID)
 	if err != nil {
@@ -740,6 +1118,16 @@ WHERE product_id = ?
 ORDER BY display_order ASC
 `
 
+// Retrieves all features for a product in display order.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product to fetch features for
+//
+// Returns: []ProductFeature - Array of features ordered by display_order
+//
+// Sorting: display_order ASC - Features appear in admin-configured order
+// Use case: Displaying key features list on product detail page
 func (q *Queries) ListProductFeatures(ctx context.Context, productID int64) ([]ProductFeature, error) {
 	rows, err := q.db.QueryContext(ctx, listProductFeatures, productID)
 	if err != nil {
@@ -775,6 +1163,16 @@ WHERE product_id = ?
 ORDER BY display_order ASC
 `
 
+// Retrieves all gallery images for a product in display order.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product to fetch images for
+//
+// Returns: []ProductImage - Array of images ordered by display_order
+//
+// Sorting: display_order ASC - Images appear in admin-configured order
+// Use case: Rendering product image gallery, lightbox, thumbnails
 func (q *Queries) ListProductImages(ctx context.Context, productID int64) ([]ProductImage, error) {
 	rows, err := q.db.QueryContext(ctx, listProductImages, productID)
 	if err != nil {
@@ -813,6 +1211,17 @@ WHERE product_id = ?
 ORDER BY display_order ASC
 `
 
+// Retrieves all technical specifications for a product in display order.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - product_id: Product to fetch specs for
+//
+// Returns: []ProductSpec - Array of specifications ordered by display_order
+//
+// Sorting: display_order ASC - Specs appear in admin-configured order
+// Use case: Displaying specs table on product detail page
+// Note: Application code should group by section_name for organized display
 func (q *Queries) ListProductSpecs(ctx context.Context, productID int64) ([]ProductSpec, error) {
 	rows, err := q.db.QueryContext(ctx, listProductSpecs, productID)
 	if err != nil {
@@ -858,6 +1267,24 @@ type ListProductsParams struct {
 	Offset int64 `json:"offset"`
 }
 
+// Retrieves paginated published products with featured products first.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - LIMIT: Number of products per page
+//	$2 (INTEGER) - OFFSET: Pagination offset
+//
+// Returns: []Product - Array of published products
+//
+// Filtering: status = 'published' - Only live, public products
+//
+// Sorting logic (complex CASE statement):
+//  1. Featured products (is_featured = 1) ordered by featured_order (1, 2, 3...)
+//  2. Non-featured products ordered by published_at DESC (newest first)
+//     - CASE WHEN is_featured = 1 THEN featured_order ELSE 999999 END
+//     This ensures featured products (orders 1-100) appear before non-featured (999999)
+//
+// Use case: Main products catalog page, products listing
 func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]Product, error) {
 	rows, err := q.db.QueryContext(ctx, listProducts, arg.Limit, arg.Offset)
 	if err != nil {
@@ -919,6 +1346,28 @@ type ListProductsAdminFilteredParams struct {
 	PageLimit      int64       `json:"page_limit"`
 }
 
+// Retrieves paginated products with optional filters for admin interface.
+//
+// Parameters (named parameters with @):
+//
+//	@filter_status (TEXT) - Filter by status ("published", "draft", "archived", or "" for all)
+//	@filter_category (INTEGER) - Filter by category_id (0 for all categories)
+//	@filter_search (TEXT) - Search term for name/SKU (empty string for no search)
+//	@page_limit (INTEGER) - Results per page
+//	@page_offset (INTEGER) - Pagination offset
+//
+// Returns: []Product - Array of filtered products
+//
+// Complex WHERE clause with CASE statements for optional filters:
+//  1. Status filter: CASE WHEN @filter_status = ” THEN 1 (all) ELSE match status
+//  2. Category filter: CASE WHEN @filter_category = 0 THEN 1 (all) ELSE match category_id
+//  3. Search filter: CASE WHEN @filter_search = ” THEN 1 (all) ELSE LIKE match on name/SKU
+//
+// The CASE WHEN pattern allows filters to be "turned off" by passing default values
+// ("" for strings, 0 for category ID)
+//
+// Sorting: p.created_at DESC - Newest products first
+// Use case: Admin product listing with filter dropdowns and search bar
 func (q *Queries) ListProductsAdminFiltered(ctx context.Context, arg ListProductsAdminFilteredParams) ([]Product, error) {
 	rows, err := q.db.QueryContext(ctx, listProductsAdminFiltered,
 		arg.FilterStatus,
@@ -983,6 +1432,23 @@ type ListProductsByCategoryParams struct {
 	Offset     int64 `json:"offset"`
 }
 
+// Retrieves paginated published products for a specific category.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - category_id: Filter by this product category
+//	$2 (INTEGER) - LIMIT: Number of products per page
+//	$3 (INTEGER) - OFFSET: Pagination offset
+//
+// Returns: []Product - Array of published products in the category
+//
+// Filtering:
+//   - category_id = ? - Specific category only
+//   - status = 'published' - Only public products
+//
+// Sorting: Same complex ordering as ListProducts (featured first, then by date)
+//
+// Use case: Category-specific product listing pages
 func (q *Queries) ListProductsByCategory(ctx context.Context, arg ListProductsByCategoryParams) ([]Product, error) {
 	rows, err := q.db.QueryContext(ctx, listProductsByCategory, arg.CategoryID, arg.Limit, arg.Offset)
 	if err != nil {
@@ -1026,6 +1492,52 @@ func (q *Queries) ListProductsByCategory(ctx context.Context, arg ListProductsBy
 	return items, nil
 }
 
+const listProductsForSitemap = `-- name: ListProductsForSitemap :many
+
+SELECT p.slug, pc.slug AS category_slug, p.updated_at
+FROM products p
+INNER JOIN product_categories pc ON p.category_id = pc.id
+WHERE p.status = 'published'
+ORDER BY p.updated_at DESC
+`
+
+type ListProductsForSitemapRow struct {
+	Slug         string    `json:"slug"`
+	CategorySlug string    `json:"category_slug"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
+// ====================================================================
+// PRODUCTS - PUBLIC LISTING QUERIES
+// ====================================================================
+// Retrieves all published products with category slug for sitemap generation.
+//
+// Returns: []ListProductsForSitemapRow - slug, category_slug, updated_at
+//
+// Use case: Generating sitemap.xml with product detail page URLs
+func (q *Queries) ListProductsForSitemap(ctx context.Context) ([]ListProductsForSitemapRow, error) {
+	rows, err := q.db.QueryContext(ctx, listProductsForSitemap)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListProductsForSitemapRow{}
+	for rows.Next() {
+		var i ListProductsForSitemapRow
+		if err := rows.Scan(&i.Slug, &i.CategorySlug, &i.UpdatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const searchProducts = `-- name: SearchProducts :many
 SELECT id, sku, slug, name, tagline, description, overview, category_id, status, is_featured, featured_order, meta_title, meta_description, primary_image, video_url, created_at, updated_at, published_at, og_image FROM products
 WHERE status = 'published'
@@ -1042,6 +1554,24 @@ type SearchProductsParams struct {
 	Offset      int64          `json:"offset"`
 }
 
+// Searches published products by name, description, or tagline.
+//
+// Parameters:
+//
+//	$1 (TEXT) - Search term for name (LIKE pattern, e.g., "%sensor%")
+//	$2 (TEXT) - Search term for description (same pattern as $1)
+//	$3 (TEXT) - Search term for tagline (same pattern as $1)
+//	$4 (INTEGER) - LIMIT: Results per page
+//	$5 (INTEGER) - OFFSET: Pagination offset
+//
+// Returns: []Product - Array of matching published products
+//
+// Search logic: OR condition across three fields (name, description, tagline)
+// Note: Caller must add wildcards (%) to search term for partial matching
+// Example: SearchProducts("%industrial%", "%industrial%", "%industrial%", 20, 0)
+//
+// Performance: May be slow without full-text search index on large datasets
+// Sorting: published_at DESC - Newest matching products first
 func (q *Queries) SearchProducts(ctx context.Context, arg SearchProductsParams) ([]Product, error) {
 	rows, err := q.db.QueryContext(ctx, searchProducts,
 		arg.Name,
@@ -1118,6 +1648,17 @@ type UpdateProductParams struct {
 	ID              int64          `json:"id"`
 }
 
+// Updates all core fields of an existing product.
+//
+// Parameters:
+//
+//	$1-$15 - Same as CreateProduct parameters (sku through published_at)
+//	$16 (INTEGER) - id: Product ID to update
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Note: This updates the main product record only, not related entities
+// Separate queries handle specs, images, features, certifications, downloads
 func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) error {
 	_, err := q.db.ExecContext(ctx, updateProduct,
 		arg.Sku,

@@ -173,6 +173,21 @@ func (h *ProductDetailsHandler) DeleteSpecs(c echo.Context) error {
 	return h.ListSpecs(c)
 }
 
+// DeleteSpec handles DELETE requests to /admin/products/:id/specs/:spec_id
+// Deletes a single specification and returns the updated specs list.
+func (h *ProductDetailsHandler) DeleteSpec(c echo.Context) error {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	specID, _ := strconv.ParseInt(c.Param("spec_id"), 10, 64)
+
+	if err := h.queries.DeleteProductSpec(c.Request().Context(), specID); err != nil {
+		h.logger.Error("failed to delete spec", "error", err)
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	logActivity(c, "updated", "product", id, "", "Deleted spec from Product #%d", id)
+	return h.ListSpecs(c)
+}
+
 // --- Product Features Section ---
 // Features are bullet points highlighting product capabilities
 
@@ -256,6 +271,21 @@ func (h *ProductDetailsHandler) DeleteFeatures(c echo.Context) error {
 	logActivity(c, "updated", "product", id, "", "Deleted features from Product #%d", id)
 
 	// Return the refreshed (now empty) features list
+	return h.ListFeatures(c)
+}
+
+// DeleteFeature handles DELETE requests to /admin/products/:id/features/:feature_id
+// Deletes a single feature and returns the updated features list.
+func (h *ProductDetailsHandler) DeleteFeature(c echo.Context) error {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	featureID, _ := strconv.ParseInt(c.Param("feature_id"), 10, 64)
+
+	if err := h.queries.DeleteProductFeature(c.Request().Context(), featureID); err != nil {
+		h.logger.Error("failed to delete feature", "error", err)
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	logActivity(c, "updated", "product", id, "", "Deleted feature from Product #%d", id)
 	return h.ListFeatures(c)
 }
 
@@ -353,6 +383,21 @@ func (h *ProductDetailsHandler) DeleteCertifications(c echo.Context) error {
 	logActivity(c, "updated", "product", id, "", "Deleted certifications from Product #%d", id)
 
 	// Return the refreshed (now empty) certifications list
+	return h.ListCertifications(c)
+}
+
+// DeleteCertification handles DELETE requests to /admin/products/:id/certifications/:cert_id
+// Deletes a single certification and returns the updated certifications list.
+func (h *ProductDetailsHandler) DeleteCertification(c echo.Context) error {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	certID, _ := strconv.ParseInt(c.Param("cert_id"), 10, 64)
+
+	if err := h.queries.DeleteProductCertification(c.Request().Context(), certID); err != nil {
+		h.logger.Error("failed to delete certification", "error", err)
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	logActivity(c, "updated", "product", id, "", "Deleted certification from Product #%d", id)
 	return h.ListCertifications(c)
 }
 

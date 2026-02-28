@@ -26,6 +26,19 @@ type CreateBlogAuthorParams struct {
 	SortOrder   int64          `json:"sort_order"`
 }
 
+// sqlc annotation: :one returns the created author row
+// Purpose: Creates a new blog author profile
+// Parameters (8 positional):
+//  1. name (TEXT): author's full name
+//  2. slug (TEXT): URL-safe identifier (must be unique)
+//  3. title (TEXT): job title or role (e.g., "Senior Editor")
+//  4. bio (TEXT): author biography for byline display
+//  5. avatar_url (TEXT): profile image URL
+//  6. linkedin_url (TEXT): LinkedIn profile link (optional)
+//  7. email (TEXT): contact email (optional, may not be publicly displayed)
+//  8. sort_order (INTEGER): display order in author lists
+//
+// Return type: complete inserted row with generated ID and timestamps
 func (q *Queries) CreateBlogAuthor(ctx context.Context, arg CreateBlogAuthorParams) (BlogAuthor, error) {
 	row := q.db.QueryRowContext(ctx, createBlogAuthor,
 		arg.Name,
@@ -58,6 +71,15 @@ const deleteBlogAuthor = `-- name: DeleteBlogAuthor :exec
 DELETE FROM blog_authors WHERE id = ?
 `
 
+// sqlc annotation: :exec returns no data, only error or success
+// Purpose: Permanently removes a blog author
+// Parameters:
+//  1. id (INTEGER): author to delete
+//
+// Return type: none
+// Warning: This will fail if author has associated blog posts (foreign key constraint)
+//
+//	Consider soft-delete or reassigning posts before deletion
 func (q *Queries) DeleteBlogAuthor(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteBlogAuthor, id)
 	return err
@@ -67,6 +89,12 @@ const getBlogAuthor = `-- name: GetBlogAuthor :one
 SELECT id, name, slug, title, bio, avatar_url, linkedin_url, email, sort_order, created_at, updated_at FROM blog_authors WHERE id = ? LIMIT 1
 `
 
+// sqlc annotation: :one returns single blog_authors row or error
+// Purpose: Retrieves specific author by ID for editing
+// Parameters:
+//  1. id (INTEGER): author primary key
+//
+// Return type: single complete blog_authors row
 func (q *Queries) GetBlogAuthor(ctx context.Context, id int64) (BlogAuthor, error) {
 	row := q.db.QueryRowContext(ctx, getBlogAuthor, id)
 	var i BlogAuthor
@@ -90,6 +118,13 @@ const getBlogAuthorBySlug = `-- name: GetBlogAuthorBySlug :one
 SELECT id, name, slug, title, bio, avatar_url, linkedin_url, email, sort_order, created_at, updated_at FROM blog_authors WHERE slug = ? LIMIT 1
 `
 
+// sqlc annotation: :one returns single blog_authors row or error
+// Purpose: Retrieves author by URL slug for public author archive pages
+// Parameters:
+//  1. slug (TEXT): URL-safe author identifier (e.g., "john-doe")
+//
+// Return type: single blog_authors row
+// Note: slug should be UNIQUE via database constraint to prevent duplicates
 func (q *Queries) GetBlogAuthorBySlug(ctx context.Context, slug string) (BlogAuthor, error) {
 	row := q.db.QueryRowContext(ctx, getBlogAuthorBySlug, slug)
 	var i BlogAuthor
@@ -110,9 +145,28 @@ func (q *Queries) GetBlogAuthorBySlug(ctx context.Context, slug string) (BlogAut
 }
 
 const listBlogAuthors = `-- name: ListBlogAuthors :many
+
 SELECT id, name, slug, title, bio, avatar_url, linkedin_url, email, sort_order, created_at, updated_at FROM blog_authors ORDER BY sort_order ASC, name ASC
 `
 
+// ====================================================================
+// BLOG AUTHORS QUERIES
+// ====================================================================
+// This file manages blog author profiles used for article attribution.
+// Authors can be team members, guest writers, or external contributors.
+//
+// Managed entity:
+// - blog_authors: author profiles with bio, avatar, social links
+//
+// Note: slug field is used for author archive pages (e.g., /blog/author/{slug})
+// ====================================================================
+// sqlc annotation: :many returns slice of blog_authors rows
+// Purpose: Lists all blog authors for admin management or author selection
+// Parameters: none
+// Return type: slice of all blog_authors rows
+// ORDER BY logic:
+//   - Primary sort: sort_order ASC (allows manual ordering)
+//   - Secondary sort: name ASC (alphabetical fallback if sort_order is same)
 func (q *Queries) ListBlogAuthors(ctx context.Context) ([]BlogAuthor, error) {
 	rows, err := q.db.QueryContext(ctx, listBlogAuthors)
 	if err != nil {
@@ -164,6 +218,15 @@ type UpdateBlogAuthorParams struct {
 	ID          int64          `json:"id"`
 }
 
+// sqlc annotation: :one returns the updated author row
+// Purpose: Updates an existing blog author profile
+// Parameters (9 positional):
+//
+//	1-8. updated field values (name, slug, title, bio, avatar_url, linkedin_url, email, sort_order)
+//	9. id (INTEGER): which author to update (WHERE clause)
+//
+// Return type: updated blog_authors row
+// Note: updated_at explicitly set to CURRENT_TIMESTAMP to track modifications
 func (q *Queries) UpdateBlogAuthor(ctx context.Context, arg UpdateBlogAuthorParams) (BlogAuthor, error) {
 	row := q.db.QueryRowContext(ctx, updateBlogAuthor,
 		arg.Name,

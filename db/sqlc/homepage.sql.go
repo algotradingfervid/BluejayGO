@@ -31,6 +31,18 @@ type CreateCTAParams struct {
 	IsActive         int64          `json:"is_active"`
 }
 
+// Purpose: Creates a new CTA block variant
+// Parameters (8 positional):
+//  1. headline (TEXT): CTA section headline
+//  2. description (TEXT): supporting description/pitch
+//  3. primary_cta_text (TEXT): primary button text
+//  4. primary_cta_url (TEXT): primary button link
+//  5. secondary_cta_text (TEXT): optional secondary button text
+//  6. secondary_cta_url (TEXT): secondary button link
+//  7. background_style (TEXT): visual style ('gradient', 'solid', 'image', etc.)
+//  8. is_active (BOOLEAN): whether this CTA is currently displayed
+//
+// Note: Only one CTA should have is_active = 1 at a time
 func (q *Queries) CreateCTA(ctx context.Context, arg CreateCTAParams) (HomepageCtum, error) {
 	row := q.db.QueryRowContext(ctx, createCTA,
 		arg.Headline,
@@ -82,6 +94,20 @@ type CreateHeroParams struct {
 	DisplayOrder     int64          `json:"display_order"`
 }
 
+// Purpose: Creates a new hero banner variant
+// Parameters (10 positional):
+//  1. headline (TEXT): main hero headline
+//  2. subheadline (TEXT): supporting text
+//  3. badge_text (TEXT): optional badge/announcement text
+//  4. primary_cta_text (TEXT): primary button text
+//  5. primary_cta_url (TEXT): primary button link
+//  6. secondary_cta_text (TEXT): optional secondary button text
+//  7. secondary_cta_url (TEXT): secondary button link
+//  8. background_image (TEXT): hero background/featured image URL
+//  9. is_active (BOOLEAN): whether this hero is currently displayed
+//  10. display_order (INTEGER): sort position
+//
+// Note: Only one hero should have is_active = 1 at a time
 func (q *Queries) CreateHero(ctx context.Context, arg CreateHeroParams) (HomepageHero, error) {
 	row := q.db.QueryRowContext(ctx, createHero,
 		arg.Headline,
@@ -127,6 +153,12 @@ type CreateStatParams struct {
 	IsActive     int64  `json:"is_active"`
 }
 
+// Purpose: Creates a new homepage statistic
+// Parameters (4 positional):
+//  1. stat_value (TEXT): numeric value with unit (e.g., "500+", "10 Years")
+//  2. stat_label (TEXT): description (e.g., "Happy Clients", "Experience")
+//  3. display_order (INTEGER): sort position (left to right typically)
+//  4. is_active (BOOLEAN): whether to display on homepage
 func (q *Queries) CreateStat(ctx context.Context, arg CreateStatParams) (HomepageStat, error) {
 	row := q.db.QueryRowContext(ctx, createStat,
 		arg.StatValue,
@@ -165,6 +197,16 @@ type CreateTestimonialHomepageParams struct {
 	IsActive      int64          `json:"is_active"`
 }
 
+// Purpose: Creates a new homepage testimonial
+// Parameters (8 positional):
+//  1. quote (TEXT): testimonial text/content
+//  2. author_name (TEXT): customer name
+//  3. author_title (TEXT): job title
+//  4. author_company (TEXT): company/organization name
+//  5. author_image (TEXT): headshot/avatar URL
+//  6. rating (INTEGER): star rating (typically 1-5)
+//  7. display_order (INTEGER): carousel slide order
+//  8. is_active (BOOLEAN): whether to display on homepage
 func (q *Queries) CreateTestimonialHomepage(ctx context.Context, arg CreateTestimonialHomepageParams) (HomepageTestimonial, error) {
 	row := q.db.QueryRowContext(ctx, createTestimonialHomepage,
 		arg.Quote,
@@ -196,6 +238,7 @@ const deleteCTA = `-- name: DeleteCTA :exec
 DELETE FROM homepage_cta WHERE id = ?
 `
 
+// Purpose: Removes a CTA block variant
 func (q *Queries) DeleteCTA(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteCTA, id)
 	return err
@@ -205,6 +248,7 @@ const deleteHero = `-- name: DeleteHero :exec
 DELETE FROM homepage_hero WHERE id = ?
 `
 
+// Purpose: Removes a hero banner variant
 func (q *Queries) DeleteHero(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteHero, id)
 	return err
@@ -214,6 +258,7 @@ const deleteStat = `-- name: DeleteStat :exec
 DELETE FROM homepage_stats WHERE id = ?
 `
 
+// Purpose: Removes a homepage statistic
 func (q *Queries) DeleteStat(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteStat, id)
 	return err
@@ -223,6 +268,7 @@ const deleteTestimonialHomepage = `-- name: DeleteTestimonialHomepage :exec
 DELETE FROM homepage_testimonials WHERE id = ?
 `
 
+// Purpose: Removes a homepage testimonial
 func (q *Queries) DeleteTestimonialHomepage(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteTestimonialHomepage, id)
 	return err
@@ -236,8 +282,13 @@ LIMIT 1
 `
 
 // ====================================================================
-// HOMEPAGE CTA
+// HOMEPAGE CALL-TO-ACTION (CTA)
 // ====================================================================
+// Purpose: Retrieves the currently active CTA block for public homepage
+// Parameters: none
+// Return type: single homepage_cta row
+// WHERE: is_active = 1 (only one CTA should be active at a time)
+// LIMIT 1: safety fallback if multiple CTAs accidentally marked active
 func (q *Queries) GetActiveCTA(ctx context.Context) (HomepageCtum, error) {
 	row := q.db.QueryRowContext(ctx, getActiveCTA)
 	var i HomepageCtum
@@ -259,6 +310,7 @@ func (q *Queries) GetActiveCTA(ctx context.Context) (HomepageCtum, error) {
 
 const getActiveHero = `-- name: GetActiveHero :one
 
+
 SELECT id, headline, subheadline, badge_text, primary_cta_text, primary_cta_url, secondary_cta_text, secondary_cta_url, background_image, is_active, display_order, created_at, updated_at FROM homepage_hero
 WHERE is_active = 1
 ORDER BY display_order ASC
@@ -266,8 +318,33 @@ LIMIT 1
 `
 
 // ====================================================================
+// HOMEPAGE CONTENT QUERIES
+// ====================================================================
+// This file manages all homepage content sections including:
+// - Hero banner (headline, CTAs, background image)
+// - Statistics/metrics display
+// - Testimonials carousel
+// - Call-to-action (CTA) blocks
+//
+// Managed entities:
+// - homepage_hero: hero banner variations (only one active at a time)
+// - homepage_stats: key metrics/statistics
+// - homepage_testimonials: customer testimonials
+// - homepage_cta: call-to-action sections
+//
+// Key concepts:
+// - is_active: controls which variant is currently displayed
+// - display_order: custom sort sequence for multi-item sections
+// ====================================================================
+// ====================================================================
 // HOMEPAGE HERO
 // ====================================================================
+// sqlc annotation: :one returns the currently active hero banner
+// Purpose: Retrieves hero content displayed on public homepage
+// Parameters: none
+// Return type: single homepage_hero row
+// WHERE: is_active = 1 (only one hero should be active at a time)
+// ORDER BY display_order ASC LIMIT 1: safety fallback if multiple are accidentally active
 func (q *Queries) GetActiveHero(ctx context.Context) (HomepageHero, error) {
 	row := q.db.QueryRowContext(ctx, getActiveHero)
 	var i HomepageHero
@@ -293,6 +370,7 @@ const getCTA = `-- name: GetCTA :one
 SELECT id, headline, description, primary_cta_text, primary_cta_url, secondary_cta_text, secondary_cta_url, background_style, is_active, created_at, updated_at FROM homepage_cta WHERE id = ?
 `
 
+// Purpose: Retrieves specific CTA by ID for editing
 func (q *Queries) GetCTA(ctx context.Context, id int64) (HomepageCtum, error) {
 	row := q.db.QueryRowContext(ctx, getCTA, id)
 	var i HomepageCtum
@@ -316,6 +394,7 @@ const getHero = `-- name: GetHero :one
 SELECT id, headline, subheadline, badge_text, primary_cta_text, primary_cta_url, secondary_cta_text, secondary_cta_url, background_image, is_active, display_order, created_at, updated_at FROM homepage_hero WHERE id = ?
 `
 
+// Purpose: Retrieves specific hero by ID for editing
 func (q *Queries) GetHero(ctx context.Context, id int64) (HomepageHero, error) {
 	row := q.db.QueryRowContext(ctx, getHero, id)
 	var i HomepageHero
@@ -341,6 +420,7 @@ const getStat = `-- name: GetStat :one
 SELECT id, stat_value, stat_label, display_order, is_active, created_at FROM homepage_stats WHERE id = ?
 `
 
+// Purpose: Retrieves specific stat by ID for editing
 func (q *Queries) GetStat(ctx context.Context, id int64) (HomepageStat, error) {
 	row := q.db.QueryRowContext(ctx, getStat, id)
 	var i HomepageStat
@@ -359,6 +439,7 @@ const getTestimonialHomepage = `-- name: GetTestimonialHomepage :one
 SELECT id, quote, author_name, author_title, author_company, author_image, rating, display_order, is_active, created_at FROM homepage_testimonials WHERE id = ?
 `
 
+// Purpose: Retrieves specific testimonial by ID for editing
 func (q *Queries) GetTestimonialHomepage(ctx context.Context, id int64) (HomepageTestimonial, error) {
 	row := q.db.QueryRowContext(ctx, getTestimonialHomepage, id)
 	var i HomepageTestimonial
@@ -385,8 +466,12 @@ ORDER BY display_order ASC
 `
 
 // ====================================================================
-// HOMEPAGE STATS
+// HOMEPAGE STATS / METRICS
 // ====================================================================
+// Purpose: Retrieves active statistics for public homepage display
+// WHERE: is_active = 1 (allows hiding stats without deleting them)
+// ORDER BY display_order: custom presentation sequence
+// Example stats: "500+ Clients", "10 Years Experience", "99% Satisfaction"
 func (q *Queries) ListActiveStats(ctx context.Context) ([]HomepageStat, error) {
 	rows, err := q.db.QueryContext(ctx, listActiveStats)
 	if err != nil {
@@ -427,6 +512,9 @@ ORDER BY display_order ASC
 // ====================================================================
 // HOMEPAGE TESTIMONIALS
 // ====================================================================
+// Purpose: Retrieves active testimonials for public homepage carousel/display
+// WHERE: is_active = 1 (allows managing testimonial rotation)
+// ORDER BY display_order: custom sequence for carousel slides
 func (q *Queries) ListActiveTestimonialsHomepage(ctx context.Context) ([]HomepageTestimonial, error) {
 	rows, err := q.db.QueryContext(ctx, listActiveTestimonialsHomepage)
 	if err != nil {
@@ -465,6 +553,8 @@ const listAllCTAs = `-- name: ListAllCTAs :many
 SELECT id, headline, description, primary_cta_text, primary_cta_url, secondary_cta_text, secondary_cta_url, background_style, is_active, created_at, updated_at FROM homepage_cta ORDER BY id ASC
 `
 
+// Purpose: Lists all CTA variants (active + inactive) for admin management
+// ORDER BY id: chronological order (oldest first)
 func (q *Queries) ListAllCTAs(ctx context.Context) ([]HomepageCtum, error) {
 	rows, err := q.db.QueryContext(ctx, listAllCTAs)
 	if err != nil {
@@ -504,6 +594,8 @@ const listAllHeroes = `-- name: ListAllHeroes :many
 SELECT id, headline, subheadline, badge_text, primary_cta_text, primary_cta_url, secondary_cta_text, secondary_cta_url, background_image, is_active, display_order, created_at, updated_at FROM homepage_hero ORDER BY display_order ASC
 `
 
+// Purpose: Lists all hero variants (active + inactive) for admin management
+// ORDER BY display_order: custom sort for A/B testing or scheduling
 func (q *Queries) ListAllHeroes(ctx context.Context) ([]HomepageHero, error) {
 	rows, err := q.db.QueryContext(ctx, listAllHeroes)
 	if err != nil {
@@ -545,6 +637,7 @@ const listAllStats = `-- name: ListAllStats :many
 SELECT id, stat_value, stat_label, display_order, is_active, created_at FROM homepage_stats ORDER BY display_order ASC
 `
 
+// Purpose: Lists all stats (active + inactive) for admin management
 func (q *Queries) ListAllStats(ctx context.Context) ([]HomepageStat, error) {
 	rows, err := q.db.QueryContext(ctx, listAllStats)
 	if err != nil {
@@ -579,6 +672,7 @@ const listAllTestimonialsHomepage = `-- name: ListAllTestimonialsHomepage :many
 SELECT id, quote, author_name, author_title, author_company, author_image, rating, display_order, is_active, created_at FROM homepage_testimonials ORDER BY display_order ASC
 `
 
+// Purpose: Lists all testimonials (active + inactive) for admin management
 func (q *Queries) ListAllTestimonialsHomepage(ctx context.Context) ([]HomepageTestimonial, error) {
 	rows, err := q.db.QueryContext(ctx, listAllTestimonialsHomepage)
 	if err != nil {
@@ -635,6 +729,8 @@ type UpdateCTAParams struct {
 	ID               int64          `json:"id"`
 }
 
+// Purpose: Updates an existing CTA block
+// Parameters (9 positional): same as CreateCTA + id (WHERE clause)
 func (q *Queries) UpdateCTA(ctx context.Context, arg UpdateCTAParams) error {
 	_, err := q.db.ExecContext(ctx, updateCTA,
 		arg.Headline,
@@ -674,6 +770,8 @@ type UpdateHeroParams struct {
 	ID               int64          `json:"id"`
 }
 
+// Purpose: Updates an existing hero banner
+// Parameters (11 positional): same as CreateHero + id (WHERE clause)
 func (q *Queries) UpdateHero(ctx context.Context, arg UpdateHeroParams) error {
 	_, err := q.db.ExecContext(ctx, updateHero,
 		arg.Headline,
@@ -705,6 +803,8 @@ type UpdateStatParams struct {
 	ID           int64  `json:"id"`
 }
 
+// Purpose: Updates an existing homepage statistic
+// Parameters (5 positional): same as CreateStat + id
 func (q *Queries) UpdateStat(ctx context.Context, arg UpdateStatParams) error {
 	_, err := q.db.ExecContext(ctx, updateStat,
 		arg.StatValue,
@@ -735,6 +835,8 @@ type UpdateTestimonialHomepageParams struct {
 	ID            int64          `json:"id"`
 }
 
+// Purpose: Updates an existing homepage testimonial
+// Parameters (9 positional): same as CreateTestimonialHomepage + id
 func (q *Queries) UpdateTestimonialHomepage(ctx context.Context, arg UpdateTestimonialHomepageParams) error {
 	_, err := q.db.ExecContext(ctx, updateTestimonialHomepage,
 		arg.Quote,

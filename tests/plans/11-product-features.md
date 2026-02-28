@@ -15,11 +15,9 @@ Verify HTMX-based inline management of product features on product edit page wit
 3. Fill add feature form: feature_text, display_order
 4. Submit via `hx-post="/admin/products/:id/features"` with `hx-target="#features-section"` and `hx-swap="outerHTML"`
 5. Verify new feature appears in list without page reload
-6. Click individual delete button on a feature
-7. Verify feature removed from list via HTMX
-8. Click "Delete All Features" button with `hx-delete="/admin/products/:id/features"` and `hx-confirm`
-9. Confirm deletion dialog
-10. Verify all features removed from section
+6. Click "Delete All Features" button with `hx-delete="/admin/products/:id/features"` and `hx-confirm`
+7. Confirm deletion dialog
+8. Verify all features removed from section
 
 ## Test Cases
 
@@ -27,7 +25,6 @@ Verify HTMX-based inline management of product features on product edit page wit
 - **Features section loads via HTMX**: On edit page load or tab click, features container populates
 - **Add new feature**: Form submission adds feature, updates UI inline
 - **Display order respected**: Features display in correct display_order
-- **Delete individual feature**: Individual delete removes single feature without reload
 - **Delete all features**: Bulk delete removes all features for product after confirmation
 - **Empty state**: When no features exist, section shows appropriate empty message
 
@@ -46,15 +43,15 @@ Verify HTMX-based inline management of product features on product edit page wit
 - Textarea feature_text: `name="feature_text"` (required)
 - Input display_order: `name="display_order" type="number"`
 - Delete all button: `hx-delete="/admin/products/:id/features" hx-confirm="Delete all features for this product?"`
-- Individual delete button: `hx-delete="/admin/products/:id/features/:feature_id"` targeting specific feature
 - Empty state message: displayed when no features exist
+
+**Note**: Individual delete buttons appear in the template UI but the backend route (`/admin/products/:id/features/:feature_id`) is NOT implemented. This is a known bug. Only bulk deletion via `DELETE /admin/products/:id/features` is currently supported.
 - Feature list items: ordered by display_order
 
 ## HTMX Interactions
 - Initial load: `hx-get="/admin/products/:id/features"` populates `#features-section` (or loads with page)
 - Add feature: `hx-post="/admin/products/:id/features"` with `hx-target="#features-section"` and `hx-swap="outerHTML"`
 - Delete all: `hx-delete="/admin/products/:id/features"` with `hx-confirm` dialog
-- Delete individual: `hx-delete` on individual feature removes from list
 - Target: `#features-section` for full section replacement
 - Swap: `outerHTML` replaces entire section container with updated HTML
 

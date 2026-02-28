@@ -23,6 +23,9 @@ type CreateFooterColumnItemParams struct {
 	SortOrder   int64  `json:"sort_order"`
 }
 
+// Purpose: Creates new content block in footer column
+// Parameters: column_index, type, heading, content, sort_order
+// type examples: 'text', 'links', 'newsletter'
 func (q *Queries) CreateFooterColumnItem(ctx context.Context, arg CreateFooterColumnItemParams) (FooterColumnItem, error) {
 	row := q.db.QueryRowContext(ctx, createFooterColumnItem,
 		arg.ColumnIndex,
@@ -55,6 +58,8 @@ type CreateFooterLegalLinkParams struct {
 	SortOrder int64  `json:"sort_order"`
 }
 
+// Purpose: Creates a new legal link in footer bottom bar
+// Parameters: label (link text), url, sort_order
 func (q *Queries) CreateFooterLegalLink(ctx context.Context, arg CreateFooterLegalLinkParams) (FooterLegalLink, error) {
 	row := q.db.QueryRowContext(ctx, createFooterLegalLink, arg.Label, arg.Url, arg.SortOrder)
 	var i FooterLegalLink
@@ -80,6 +85,8 @@ type CreateFooterLinkParams struct {
 	SortOrder    int64  `json:"sort_order"`
 }
 
+// Purpose: Creates a new link within a footer column item
+// Parameters: column_item_id (parent), label (link text), url, sort_order
 func (q *Queries) CreateFooterLink(ctx context.Context, arg CreateFooterLinkParams) (FooterLink, error) {
 	row := q.db.QueryRowContext(ctx, createFooterLink,
 		arg.ColumnItemID,
@@ -102,6 +109,8 @@ const deleteAllFooterLegalLinks = `-- name: DeleteAllFooterLegalLinks :exec
 DELETE FROM footer_legal_links
 `
 
+// Purpose: Removes all legal links (used when rebuilding legal link set)
+// Note: No WHERE clause - deletes entire table contents
 func (q *Queries) DeleteAllFooterLegalLinks(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, deleteAllFooterLegalLinks)
 	return err
@@ -111,6 +120,7 @@ const deleteFooterColumnItem = `-- name: DeleteFooterColumnItem :exec
 DELETE FROM footer_column_items WHERE id = ?
 `
 
+// Purpose: Removes specific footer column item
 func (q *Queries) DeleteFooterColumnItem(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteFooterColumnItem, id)
 	return err
@@ -120,6 +130,10 @@ const deleteFooterColumnItemsByIndex = `-- name: DeleteFooterColumnItemsByIndex 
 DELETE FROM footer_column_items WHERE column_index >= ?
 `
 
+// Purpose: Bulk delete all items in columns >= specified index
+// Use case: When reducing number of footer columns, remove excess column content
+// Parameters:
+//  1. min_column_index (INTEGER): delete all items with column_index >= this
 func (q *Queries) DeleteFooterColumnItemsByIndex(ctx context.Context, columnIndex int64) error {
 	_, err := q.db.ExecContext(ctx, deleteFooterColumnItemsByIndex, columnIndex)
 	return err
@@ -129,6 +143,10 @@ const deleteFooterLinksByColumnItem = `-- name: DeleteFooterLinksByColumnItem :e
 DELETE FROM footer_links WHERE column_item_id = ?
 `
 
+// Purpose: Bulk delete all links belonging to a column item
+// Use case: When deleting or rebuilding a footer column's links
+// Parameters:
+//  1. column_item_id (INTEGER): delete all links for this column item
 func (q *Queries) DeleteFooterLinksByColumnItem(ctx context.Context, columnItemID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteFooterLinksByColumnItem, columnItemID)
 	return err
@@ -138,6 +156,7 @@ const getFooterColumnItem = `-- name: GetFooterColumnItem :one
 SELECT id, column_index, type, heading, content, sort_order FROM footer_column_items WHERE id = ? LIMIT 1
 `
 
+// Purpose: Retrieves specific footer column item for editing
 func (q *Queries) GetFooterColumnItem(ctx context.Context, id int64) (FooterColumnItem, error) {
 	row := q.db.QueryRowContext(ctx, getFooterColumnItem, id)
 	var i FooterColumnItem
@@ -156,6 +175,8 @@ const listAllFooterLinks = `-- name: ListAllFooterLinks :many
 SELECT id, column_item_id, label, url, sort_order FROM footer_links ORDER BY column_item_id, sort_order
 `
 
+// Purpose: Lists all footer links across all column items
+// ORDER BY: groups by column_item_id, then sort_order within each group
 func (q *Queries) ListAllFooterLinks(ctx context.Context) ([]FooterLink, error) {
 	rows, err := q.db.QueryContext(ctx, listAllFooterLinks)
 	if err != nil {
@@ -186,9 +207,15 @@ func (q *Queries) ListAllFooterLinks(ctx context.Context) ([]FooterLink, error) 
 }
 
 const listFooterColumnItems = `-- name: ListFooterColumnItems :many
+
 SELECT id, column_index, type, heading, content, sort_order FROM footer_column_items ORDER BY column_index, sort_order
 `
 
+// ====================================================================
+// FOOTER COLUMN ITEMS
+// ====================================================================
+// Purpose: Lists all footer column content blocks
+// ORDER BY: column_index (left to right), then sort_order (top to bottom)
 func (q *Queries) ListFooterColumnItems(ctx context.Context) ([]FooterColumnItem, error) {
 	rows, err := q.db.QueryContext(ctx, listFooterColumnItems)
 	if err != nil {
@@ -220,9 +247,16 @@ func (q *Queries) ListFooterColumnItems(ctx context.Context) ([]FooterColumnItem
 }
 
 const listFooterLegalLinks = `-- name: ListFooterLegalLinks :many
+
 SELECT id, label, url, sort_order FROM footer_legal_links ORDER BY sort_order
 `
 
+// ====================================================================
+// FOOTER LEGAL LINKS (bottom bar)
+// ====================================================================
+// Purpose: Lists legal/policy links shown in footer bottom bar
+// Examples: "Privacy Policy", "Terms of Service", "Accessibility"
+// ORDER BY sort_order: custom display sequence
 func (q *Queries) ListFooterLegalLinks(ctx context.Context) ([]FooterLegalLink, error) {
 	rows, err := q.db.QueryContext(ctx, listFooterLegalLinks)
 	if err != nil {
@@ -252,9 +286,18 @@ func (q *Queries) ListFooterLegalLinks(ctx context.Context) ([]FooterLegalLink, 
 }
 
 const listFooterLinks = `-- name: ListFooterLinks :many
+
 SELECT id, column_item_id, label, url, sort_order FROM footer_links WHERE column_item_id = ? ORDER BY sort_order
 `
 
+// ====================================================================
+// FOOTER LINKS (within column items)
+// ====================================================================
+// Purpose: Lists links belonging to a specific footer column item
+// Parameters:
+//  1. column_item_id (INTEGER): parent column item
+//
+// Use case: Getting links for a "Quick Links" or "Resources" column block
 func (q *Queries) ListFooterLinks(ctx context.Context, columnItemID int64) ([]FooterLink, error) {
 	rows, err := q.db.QueryContext(ctx, listFooterLinks, columnItemID)
 	if err != nil {
@@ -299,6 +342,7 @@ type UpdateFooterColumnItemParams struct {
 	ID          int64  `json:"id"`
 }
 
+// Purpose: Updates existing footer column item
 func (q *Queries) UpdateFooterColumnItem(ctx context.Context, arg UpdateFooterColumnItemParams) error {
 	_, err := q.db.ExecContext(ctx, updateFooterColumnItem,
 		arg.ColumnIndex,
@@ -312,6 +356,8 @@ func (q *Queries) UpdateFooterColumnItem(ctx context.Context, arg UpdateFooterCo
 }
 
 const updateFooterSettings = `-- name: UpdateFooterSettings :exec
+
+
 UPDATE settings
 SET footer_columns = ?,
     footer_bg_style = ?,
@@ -330,6 +376,40 @@ type UpdateFooterSettingsParams struct {
 	FooterCopyright   string `json:"footer_copyright"`
 }
 
+// ====================================================================
+// FOOTER CONFIGURATION QUERIES
+// ====================================================================
+// This file manages footer content and structure including:
+// - Global footer settings (columns layout, social links, copyright)
+// - Footer column items (text blocks, link groups per column)
+// - Footer links (navigation links within column items)
+// - Footer legal links (bottom legal/policy links)
+//
+// Managed entities:
+// - settings: global footer configuration (single row, id=1)
+// - footer_column_items: content blocks in footer columns
+// - footer_links: individual links within column items
+// - footer_legal_links: bottom legal/policy links
+//
+// Key concepts:
+// - column_index: which footer column (0, 1, 2, etc.)
+// - sort_order: display order within column
+// - type: 'text', 'links', 'newsletter', etc.
+// ====================================================================
+// ====================================================================
+// FOOTER SETTINGS
+// ====================================================================
+// sqlc annotation: :exec returns no data
+// Purpose: Updates global footer configuration settings
+// Parameters (5 positional):
+//  1. footer_columns (INTEGER): number of footer columns (2, 3, 4, etc.)
+//  2. footer_bg_style (TEXT): background style ('dark', 'light', 'gradient', etc.)
+//  3. footer_show_social (BOOLEAN): whether to display social media links
+//  4. footer_social_style (TEXT): social links style ('icons', 'text', etc.)
+//  5. footer_copyright (TEXT): copyright text
+//
+// Return type: none
+// Note: Always updates row with id=1 (single settings row pattern)
 func (q *Queries) UpdateFooterSettings(ctx context.Context, arg UpdateFooterSettingsParams) error {
 	_, err := q.db.ExecContext(ctx, updateFooterSettings,
 		arg.FooterColumns,

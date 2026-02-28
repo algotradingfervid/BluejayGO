@@ -36,9 +36,12 @@ Verify complete CRUD operations for product categories including list, create, u
 - **Duplicate name validation**: Creating category with existing name shows UNIQUE constraint error
 - **Required name field**: Submitting without name shows validation error
 - **Delete confirmation cancel**: Canceling hx-confirm dialog does not delete category
-- **Delete in-use category**: Deleting category assigned to products shows foreign key error or prevents deletion
+- **Delete in-use category**: Deleting category assigned to products returns HTTP 409 Conflict due to foreign key violation
 - **Invalid sort_order**: Non-numeric sort_order shows validation error
 - **Long description**: Very long description text truncates or wraps correctly in list view
+- **Special characters in name**: Name like "Products & Services" auto-generates slug "products-services" (alphanumeric + hyphens only)
+- **Empty image_url field**: image_url is optional (sql.NullString) — test both empty and populated values
+- **Populated image_url field**: Valid URL stored and displayed correctly
 
 ## Selectors & Elements
 - List page: http://localhost:28090/admin/product-categories
@@ -55,6 +58,7 @@ Verify complete CRUD operations for product categories including list, create, u
 
 ## HTMX Interactions
 - Delete action: `hx-delete="/admin/product-categories/:id"` with `hx-confirm` dialog
+- Delete response: Handler returns `c.NoContent(http.StatusOK)` (200 OK, not 204)
 - Target: `hx-target="closest tr"` removes table row on successful delete
 - Swap: `hx-swap="outerHTML"` (or similar) replaces row element
 - No HTMX on create/edit forms (standard POST with redirect)

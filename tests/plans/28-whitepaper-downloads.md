@@ -16,7 +16,7 @@ Testing the read-only analytics view for whitepaper download lead capture data w
 5. Apply date range filters: date_from and date_to
 6. Navigate through pagination
 7. Verify this is read-only view with no edit/delete actions
-8. Navigate to specific whitepaper downloads via /admin/whitepapers/:id/downloads
+8. Navigate to specific whitepaper downloads via /admin/whitepapers/downloads?whitepaper=:id
 
 ## Test Cases
 
@@ -25,9 +25,9 @@ Testing the read-only analytics view for whitepaper download lead capture data w
 - **Whitepaper filter**: Select specific whitepaper from dropdown, list filtered to show only that whitepaper's downloads
 - **Date range filter**: Set date_from "2024-01-01", date_to "2024-12-31", see downloads in that range
 - **Combined filters**: Apply whitepaper + date range filters together, see filtered results
-- **Pagination**: Navigate through pages if more than 15 records per page
+- **Pagination**: Navigate through pages if more than 25 records per page
 - **Download details**: Each record shows name, email, company, designation, marketing_consent boolean, download timestamp
-- **Whitepaper-specific view**: Navigate to /admin/whitepapers/:id/downloads, see downloads for that whitepaper only
+- **Whitepaper-specific view**: Navigate to /admin/whitepapers/downloads?whitepaper=:id, see downloads for that whitepaper only
 - **Read-only view**: No edit or delete buttons present, only view capability
 
 ### Edge Cases / Error States
@@ -42,7 +42,7 @@ Testing the read-only analytics view for whitepaper download lead capture data w
 
 ## Selectors & Elements
 - List route: GET /admin/whitepapers/downloads
-- Whitepaper-specific route: GET /admin/whitepapers/:id/downloads
+- Whitepaper-specific route: GET /admin/whitepapers/downloads?whitepaper=:id
 - Query params: whitepaper (filter by whitepaper ID), date_from (date filter), date_to (date filter), page (pagination)
 - Display columns: name, email, company, designation, marketing_consent, download_date
 - Filter form: whitepaper (select dropdown), date_from (date input), date_to (date input)

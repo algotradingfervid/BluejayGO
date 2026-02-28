@@ -17,42 +17,45 @@
 package e2e_test
 
 import (
-	// Standard library imports
-	"context"           // Context for database operations and request cancellation
-	"database/sql"      // SQL error types like ErrNoRows for assertion checks
-	"encoding/json"     // JSON decoding for validating API response payloads
-	"fmt"               // String formatting for constructing dynamic URLs
-	"io"                // I/O interfaces for the stub template renderer
-	"log/slog"          // Structured logging for handlers (error-level in tests)
-	"net/http"          // HTTP constants and types (StatusOK, StatusSeeOther, etc.)
-	"net/http/httptest" // HTTP testing utilities for creating requests and recording responses
-	"net/url"           // URL encoding for form data
-	"os"                // File system access for logger output (stderr)
-	"strings"           // String manipulation for request body creation
-	"testing"           // Go testing framework
+	"context"
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"io"
+	"log/slog"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
+	"strings"
+	"testing"
+	"time"
 
-	// Third-party imports
-	"github.com/labstack/echo/v4"    // Echo web framework - the HTTP router and context
-	"golang.org/x/crypto/bcrypt"     // Password hashing for creating test admin users
+	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 
-	// Project imports
-	"github.com/narendhupati/bluejay-cms/db/sqlc"                      // sqlc generated database queries
-	adminHandlers "github.com/narendhupati/bluejay-cms/internal/handlers/admin"   // Admin panel HTTP handlers
-	publicHandlers "github.com/narendhupati/bluejay-cms/internal/handlers/public" // Public-facing HTTP handlers
-	customMiddleware "github.com/narendhupati/bluejay-cms/internal/middleware"    // Session and auth middleware
-	"github.com/narendhupati/bluejay-cms/internal/services"            // Business logic layer (products, uploads, cache)
-	"github.com/narendhupati/bluejay-cms/internal/testutil"            // Test database setup utilities
+	"github.com/narendhupati/bluejay-cms/db/sqlc"
+	adminHandlers "github.com/narendhupati/bluejay-cms/internal/handlers/admin"
+	publicHandlers "github.com/narendhupati/bluejay-cms/internal/handlers/public"
+	customMiddleware "github.com/narendhupati/bluejay-cms/internal/middleware"
+	"github.com/narendhupati/bluejay-cms/internal/services"
+	"github.com/narendhupati/bluejay-cms/internal/testutil"
 )
 
 // Package-level variables
 
 var (
-	// testLogger is a structured logger configured for e2e tests.
-	// It outputs to stderr and is set to ERROR level to reduce noise during test runs.
-	// Only errors and critical issues will be logged, making test output cleaner
-	// while still capturing important diagnostic information if tests fail.
 	testLogger = slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelError}))
 )
+
+func TestMain(m *testing.M) {
+	// Change to project root so template files can be found
+	if err := os.Chdir("../../"); err != nil {
+		fmt.Fprintf(os.Stderr, "chdir to project root: %v\n", err)
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
 
 // stubRenderer is a minimal template renderer implementation for e2e tests.
 //
@@ -116,75 +119,368 @@ func (r *stubRenderer) Render(w io.Writer, name string, data interface{}, c echo
 //	    // Create test data with queries, make requests to app
 //	}
 func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
-	// Mark this as a test helper for better error reporting
 	t.Helper()
 
-	// Create a fresh test database with all migrations applied
 	db, queries, cleanup := testutil.SetupTestDB(t)
-
-	// Initialize the session store with a test-specific secret key.
-	// This key must be at least 32 characters for secure cookie encryption.
-	// Using a fixed key in tests ensures consistent session behavior across test runs.
 	customMiddleware.InitSessionStore("e2e-test-secret-at-least-32-characters-long")
 
-	// Create a new Echo instance
 	e := echo.New()
-	e.HideBanner = true        // Suppress Echo startup banner in test output
-	e.Renderer = &stubRenderer{} // Use stub renderer to avoid template file dependencies
-
-	// Apply session middleware globally so all routes can access session data
+	e.HideBanner = true
+	e.Renderer = &stubRenderer{}
+	e.Use(customMiddleware.SecurityHeaders())
 	e.Use(customMiddleware.SessionMiddleware())
 
-	// Initialize services that handlers depend on
+	// Services
 	productSvc := services.NewProductService(queries)
-	uploadSvc := services.NewUploadService(t.TempDir()) // Use temp directory for file uploads
+	uploadSvc := services.NewUploadService(t.TempDir())
+	appCache := services.NewCache()
+	activitySvc := services.NewActivityLogService(queries, testLogger)
+	adminHandlers.SetActivityLogService(activitySvc)
 
-	// Register public routes (no authentication required)
+	// Public routes
 	homeHandler := publicHandlers.NewHomeHandler(queries, testLogger)
 	e.GET("/", homeHandler.ShowHomePage)
 
-	// Health check endpoint for monitoring
 	e.GET("/health", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
+		return c.JSON(http.StatusOK, map[string]string{
+			"status": "ok",
+			"time":   time.Now().Format(time.RFC3339),
+		})
 	})
 
-	// Product catalog public routes
-	cache := services.NewCache()
-	productsHandler := publicHandlers.NewProductsHandler(queries, testLogger, productSvc, cache)
+	productsHandler := publicHandlers.NewProductsHandler(queries, testLogger, productSvc, appCache)
 	e.GET("/products", productsHandler.ProductsList)
+	e.GET("/products/search", productsHandler.ProductSearch)
 	e.GET("/products/:category", productsHandler.ProductsByCategory)
 	e.GET("/products/:category/:slug", productsHandler.ProductDetail)
 
-	// Admin authentication routes (no auth middleware - these handle login/logout)
+	solutionsHandler := publicHandlers.NewSolutionsHandler(queries, testLogger, appCache)
+	e.GET("/solutions", solutionsHandler.SolutionsList)
+	e.GET("/solutions/:slug", solutionsHandler.SolutionDetail)
+
+	blogHandler := publicHandlers.NewBlogHandler(queries, testLogger, appCache)
+	e.GET("/blog", blogHandler.BlogListing)
+	e.GET("/blog/:slug", blogHandler.BlogPost)
+
+	whitepapersHandler := publicHandlers.NewWhitepapersHandler(queries, testLogger, appCache)
+	e.GET("/whitepapers", whitepapersHandler.WhitepapersList)
+	e.GET("/whitepapers/:slug", whitepapersHandler.WhitepaperDetail)
+	e.POST("/whitepapers/:slug/download", whitepapersHandler.WhitepaperDownload)
+
+	contactHandler := publicHandlers.NewContactHandler(queries, testLogger, appCache)
+	contactLimiter := customMiddleware.NewRateLimiter(5, time.Hour)
+	e.GET("/contact", contactHandler.ShowContactPage)
+	e.POST("/contact/submit", contactHandler.SubmitContactForm, contactLimiter.Middleware())
+
+	aboutHandler := publicHandlers.NewAboutHandler(queries, testLogger, appCache)
+	e.GET("/about", aboutHandler.AboutPage)
+
+	partnersPageHandler := publicHandlers.NewPartnersHandler(queries, testLogger, appCache)
+	e.GET("/partners", partnersPageHandler.PartnersPage)
+
+	searchHandler := publicHandlers.NewSearchHandler(db, testLogger)
+	e.GET("/search", searchHandler.SearchPage)
+	e.GET("/search/suggest", searchHandler.SearchSuggest)
+
+	sitemapHandler := publicHandlers.NewSitemapHandler(queries, testLogger, "https://bluejaylabs.com")
+	e.GET("/sitemap.xml", sitemapHandler.Sitemap)
+	e.GET("/robots.txt", sitemapHandler.RobotsTxt)
+
+	caseStudiesHandler := publicHandlers.NewCaseStudiesHandler(queries, testLogger, appCache)
+	e.GET("/case-studies", caseStudiesHandler.CaseStudiesList)
+	e.GET("/case-studies/:slug", caseStudiesHandler.CaseStudyDetail)
+
+	// Admin auth routes
 	authHandler := adminHandlers.NewAuthHandler(queries, testLogger)
 	e.GET("/admin/login", authHandler.ShowLoginPage)
 	e.POST("/admin/login", authHandler.LoginSubmit)
 	e.POST("/admin/logout", authHandler.Logout)
 
-	// Admin routes group with authentication middleware
-	// All routes in this group require a valid session with admin privileges
+	// Admin protected routes
 	adminGroup := e.Group("/admin", customMiddleware.RequireAuth())
 
-	// Dashboard route
 	dashHandler := adminHandlers.NewDashboardHandler(queries, testLogger)
 	adminGroup.GET("/dashboard", dashHandler.ShowDashboard)
 
-	// Product categories CRUD routes
+	// Product categories
 	pcHandler := adminHandlers.NewProductCategoriesHandler(queries, testLogger)
 	adminGroup.GET("/product-categories", pcHandler.List)
+	adminGroup.GET("/product-categories/new", pcHandler.New)
 	adminGroup.POST("/product-categories", pcHandler.Create)
 	adminGroup.GET("/product-categories/:id/edit", pcHandler.Edit)
 	adminGroup.POST("/product-categories/:id", pcHandler.Update)
 	adminGroup.DELETE("/product-categories/:id", pcHandler.Delete)
 
-	// Products CRUD routes
-	adminProductsHandler := adminHandlers.NewProductsHandler(queries, testLogger, uploadSvc, cache)
+	// Blog categories
+	bcHandler := adminHandlers.NewBlogCategoriesHandler(queries, testLogger)
+	adminGroup.GET("/blog-categories", bcHandler.List)
+	adminGroup.GET("/blog-categories/new", bcHandler.New)
+	adminGroup.POST("/blog-categories", bcHandler.Create)
+	adminGroup.GET("/blog-categories/:id/edit", bcHandler.Edit)
+	adminGroup.POST("/blog-categories/:id", bcHandler.Update)
+	adminGroup.DELETE("/blog-categories/:id", bcHandler.Delete)
+
+	// Blog authors
+	baHandler := adminHandlers.NewBlogAuthorsHandler(queries, testLogger)
+	adminGroup.GET("/blog-authors", baHandler.List)
+	adminGroup.GET("/blog-authors/new", baHandler.New)
+	adminGroup.POST("/blog-authors", baHandler.Create)
+	adminGroup.GET("/blog-authors/:id/edit", baHandler.Edit)
+	adminGroup.POST("/blog-authors/:id", baHandler.Update)
+	adminGroup.DELETE("/blog-authors/:id", baHandler.Delete)
+
+	// Industries
+	indHandler := adminHandlers.NewIndustriesHandler(queries, testLogger)
+	adminGroup.GET("/industries", indHandler.List)
+	adminGroup.GET("/industries/new", indHandler.New)
+	adminGroup.POST("/industries", indHandler.Create)
+	adminGroup.GET("/industries/:id/edit", indHandler.Edit)
+	adminGroup.POST("/industries/:id", indHandler.Update)
+	adminGroup.DELETE("/industries/:id", indHandler.Delete)
+
+	// Partner tiers
+	ptHandler := adminHandlers.NewPartnerTiersHandler(queries, testLogger)
+	adminGroup.GET("/partner-tiers", ptHandler.List)
+	adminGroup.GET("/partner-tiers/new", ptHandler.New)
+	adminGroup.POST("/partner-tiers", ptHandler.Create)
+	adminGroup.GET("/partner-tiers/:id/edit", ptHandler.Edit)
+	adminGroup.POST("/partner-tiers/:id", ptHandler.Update)
+	adminGroup.DELETE("/partner-tiers/:id", ptHandler.Delete)
+
+	// Whitepaper topics
+	wtHandler := adminHandlers.NewWhitepaperTopicsHandler(queries, testLogger)
+	adminGroup.GET("/whitepaper-topics", wtHandler.List)
+	adminGroup.GET("/whitepaper-topics/new", wtHandler.New)
+	adminGroup.POST("/whitepaper-topics", wtHandler.Create)
+	adminGroup.GET("/whitepaper-topics/:id/edit", wtHandler.Edit)
+	adminGroup.POST("/whitepaper-topics/:id", wtHandler.Update)
+	adminGroup.DELETE("/whitepaper-topics/:id", wtHandler.Delete)
+
+	// Header, footer, settings
+	headerHandler := adminHandlers.NewHeaderHandler(queries, testLogger)
+	adminGroup.GET("/header", headerHandler.Edit)
+	adminGroup.POST("/header", headerHandler.Update)
+
+	footerHandler := adminHandlers.NewFooterHandler(queries, testLogger)
+	adminGroup.GET("/footer", footerHandler.Edit)
+	adminGroup.POST("/footer", footerHandler.Update)
+
+	settingsHandler := adminHandlers.NewSettingsHandler(queries, testLogger)
+	adminGroup.GET("/settings", settingsHandler.Edit)
+	adminGroup.POST("/settings", settingsHandler.Update)
+
+	// Page sections
+	psHandler := adminHandlers.NewPageSectionsHandler(queries, testLogger)
+	adminGroup.GET("/page-sections", psHandler.List)
+	adminGroup.GET("/page-sections/:id/edit", psHandler.Edit)
+	adminGroup.POST("/page-sections/:id", psHandler.Update)
+
+	// Products
+	adminProductsHandler := adminHandlers.NewProductsHandler(queries, testLogger, uploadSvc, appCache)
 	adminGroup.GET("/products", adminProductsHandler.List)
+	adminGroup.GET("/products/new", adminProductsHandler.New)
 	adminGroup.POST("/products", adminProductsHandler.Create)
+	adminGroup.GET("/products/:id/edit", adminProductsHandler.Edit)
+	adminGroup.POST("/products/:id", adminProductsHandler.Update)
 	adminGroup.DELETE("/products/:id", adminProductsHandler.Delete)
 
-	// Keep db reference to avoid unused variable error, though cleanup handles closing
-	_ = db
+	// Product details (specs, features, certs, downloads, images)
+	pdHandler := adminHandlers.NewProductDetailsHandler(queries, testLogger, uploadSvc)
+	adminGroup.GET("/products/:id/specs", pdHandler.ListSpecs)
+	adminGroup.POST("/products/:id/specs", pdHandler.AddSpec)
+	adminGroup.DELETE("/products/:id/specs", pdHandler.DeleteSpecs)
+	adminGroup.DELETE("/products/:id/specs/:spec_id", pdHandler.DeleteSpec)
+	adminGroup.GET("/products/:id/features", pdHandler.ListFeatures)
+	adminGroup.POST("/products/:id/features", pdHandler.AddFeature)
+	adminGroup.DELETE("/products/:id/features", pdHandler.DeleteFeatures)
+	adminGroup.DELETE("/products/:id/features/:feature_id", pdHandler.DeleteFeature)
+	adminGroup.GET("/products/:id/certifications", pdHandler.ListCertifications)
+	adminGroup.POST("/products/:id/certifications", pdHandler.AddCertification)
+	adminGroup.DELETE("/products/:id/certifications", pdHandler.DeleteCertifications)
+	adminGroup.DELETE("/products/:id/certifications/:cert_id", pdHandler.DeleteCertification)
+	adminGroup.GET("/products/:id/downloads", pdHandler.ListDownloads)
+	adminGroup.POST("/products/:id/downloads", pdHandler.AddDownload)
+	adminGroup.DELETE("/products/:id/downloads/:download_id", pdHandler.DeleteDownload)
+	adminGroup.GET("/products/:id/images", pdHandler.ListImages)
+	adminGroup.POST("/products/:id/images", pdHandler.AddImage)
+	adminGroup.DELETE("/products/:id/images/:image_id", pdHandler.DeleteImage)
+
+	// Blog posts
+	adminBlogPostsHandler := adminHandlers.NewBlogPostsHandler(queries, testLogger, appCache)
+	adminGroup.GET("/blog/posts", adminBlogPostsHandler.List)
+	adminGroup.GET("/blog/posts/new", adminBlogPostsHandler.New)
+	adminGroup.POST("/blog/posts", adminBlogPostsHandler.Create)
+	adminGroup.GET("/blog/posts/:id/edit", adminBlogPostsHandler.Edit)
+	adminGroup.POST("/blog/posts/:id", adminBlogPostsHandler.Update)
+	adminGroup.DELETE("/blog/posts/:id", adminBlogPostsHandler.Delete)
+	adminGroup.GET("/blog/products/search", adminBlogPostsHandler.SearchProducts)
+
+	// Blog tags
+	adminBlogTagsHandler := adminHandlers.NewBlogTagsHandler(queries, testLogger)
+	adminGroup.GET("/blog/tags", adminBlogTagsHandler.List)
+	adminGroup.POST("/blog/tags", adminBlogTagsHandler.Create)
+	adminGroup.GET("/blog/tags/search", adminBlogTagsHandler.Search)
+	adminGroup.POST("/blog/tags/quick-create", adminBlogTagsHandler.QuickCreate)
+	adminGroup.DELETE("/blog/tags/:id", adminBlogTagsHandler.Delete)
+
+	// Solutions
+	adminSolutionsHandler := adminHandlers.NewSolutionsHandler(queries, testLogger, appCache)
+	adminGroup.GET("/solutions", adminSolutionsHandler.List)
+	adminGroup.GET("/solutions/new", adminSolutionsHandler.New)
+	adminGroup.POST("/solutions", adminSolutionsHandler.Create)
+	adminGroup.GET("/solutions/:id/edit", adminSolutionsHandler.Edit)
+	adminGroup.POST("/solutions/:id", adminSolutionsHandler.Update)
+	adminGroup.DELETE("/solutions/:id", adminSolutionsHandler.Delete)
+	adminGroup.POST("/solutions/:id/stats", adminSolutionsHandler.AddStat)
+	adminGroup.DELETE("/solutions/:id/stats/:statId", adminSolutionsHandler.DeleteStat)
+	adminGroup.POST("/solutions/:id/challenges", adminSolutionsHandler.AddChallenge)
+	adminGroup.DELETE("/solutions/:id/challenges/:challengeId", adminSolutionsHandler.DeleteChallenge)
+	adminGroup.POST("/solutions/:id/products", adminSolutionsHandler.AddProduct)
+	adminGroup.DELETE("/solutions/:id/products/:productId", adminSolutionsHandler.RemoveProduct)
+	adminGroup.POST("/solutions/:id/ctas", adminSolutionsHandler.AddCTA)
+	adminGroup.DELETE("/solutions/:id/ctas/:ctaId", adminSolutionsHandler.DeleteCTA)
+
+	// Whitepapers admin
+	adminWhitepapersHandler := adminHandlers.NewWhitepapersHandler(queries, testLogger, appCache)
+	adminGroup.GET("/whitepapers", adminWhitepapersHandler.List)
+	adminGroup.GET("/whitepapers/new", adminWhitepapersHandler.New)
+	adminGroup.POST("/whitepapers", adminWhitepapersHandler.Create)
+	adminGroup.GET("/whitepapers/:id/edit", adminWhitepapersHandler.Edit)
+	adminGroup.POST("/whitepapers/:id", adminWhitepapersHandler.Update)
+	adminGroup.DELETE("/whitepapers/:id", adminWhitepapersHandler.Delete)
+	adminGroup.GET("/whitepapers/:id/downloads", adminWhitepapersHandler.Downloads)
+
+	// Homepage admin
+	homepageAdminHandler := adminHandlers.NewHomepageHandler(queries, testLogger)
+	adminGroup.GET("/homepage/heroes", homepageAdminHandler.HeroesList)
+	adminGroup.GET("/homepage/heroes/new", homepageAdminHandler.HeroNew)
+	adminGroup.POST("/homepage/heroes", homepageAdminHandler.HeroCreate)
+	adminGroup.GET("/homepage/heroes/:id/edit", homepageAdminHandler.HeroEdit)
+	adminGroup.POST("/homepage/heroes/:id", homepageAdminHandler.HeroUpdate)
+	adminGroup.DELETE("/homepage/heroes/:id", homepageAdminHandler.HeroDelete)
+	adminGroup.GET("/homepage/stats", homepageAdminHandler.StatsList)
+	adminGroup.GET("/homepage/stats/new", homepageAdminHandler.StatNew)
+	adminGroup.POST("/homepage/stats", homepageAdminHandler.StatCreate)
+	adminGroup.GET("/homepage/stats/:id/edit", homepageAdminHandler.StatEdit)
+	adminGroup.POST("/homepage/stats/:id", homepageAdminHandler.StatUpdate)
+	adminGroup.DELETE("/homepage/stats/:id", homepageAdminHandler.StatDelete)
+	adminGroup.GET("/homepage/testimonials", homepageAdminHandler.TestimonialsList)
+	adminGroup.GET("/homepage/testimonials/new", homepageAdminHandler.TestimonialNew)
+	adminGroup.POST("/homepage/testimonials", homepageAdminHandler.TestimonialCreate)
+	adminGroup.GET("/homepage/testimonials/:id/edit", homepageAdminHandler.TestimonialEdit)
+	adminGroup.POST("/homepage/testimonials/:id", homepageAdminHandler.TestimonialUpdate)
+	adminGroup.DELETE("/homepage/testimonials/:id", homepageAdminHandler.TestimonialDelete)
+	adminGroup.GET("/homepage/cta", homepageAdminHandler.CTAList)
+	adminGroup.GET("/homepage/cta/new", homepageAdminHandler.CTANew)
+	adminGroup.POST("/homepage/cta", homepageAdminHandler.CTACreate)
+	adminGroup.GET("/homepage/cta/:id/edit", homepageAdminHandler.CTAEdit)
+	adminGroup.POST("/homepage/cta/:id", homepageAdminHandler.CTAUpdate)
+	adminGroup.DELETE("/homepage/cta/:id", homepageAdminHandler.CTADelete)
+	adminGroup.GET("/homepage/settings", homepageAdminHandler.Settings)
+	adminGroup.POST("/homepage/settings", homepageAdminHandler.UpdateSettings)
+
+	// Section settings
+	sectionSettingsHandler := adminHandlers.NewSectionSettingsHandler(queries, testLogger)
+	adminGroup.GET("/about/settings", sectionSettingsHandler.AboutSettings)
+	adminGroup.POST("/about/settings", sectionSettingsHandler.UpdateAboutSettings)
+	adminGroup.GET("/products/settings", sectionSettingsHandler.ProductsSettings)
+	adminGroup.POST("/products/settings", sectionSettingsHandler.UpdateProductsSettings)
+	adminGroup.GET("/solutions/settings", sectionSettingsHandler.SolutionsSettings)
+	adminGroup.POST("/solutions/settings", sectionSettingsHandler.UpdateSolutionsSettings)
+	adminGroup.GET("/blog/settings", sectionSettingsHandler.BlogSettings)
+	adminGroup.POST("/blog/settings", sectionSettingsHandler.UpdateBlogSettings)
+
+	// About admin
+	adminAboutHandler := adminHandlers.NewAboutHandler(queries, testLogger, appCache)
+	adminGroup.GET("/about/overview", adminAboutHandler.OverviewEdit)
+	adminGroup.POST("/about/overview", adminAboutHandler.OverviewUpdate)
+	adminGroup.GET("/about/mvv", adminAboutHandler.MVVEdit)
+	adminGroup.POST("/about/mvv", adminAboutHandler.MVVUpdate)
+	adminGroup.GET("/about/values", adminAboutHandler.CoreValuesList)
+	adminGroup.GET("/about/values/new", adminAboutHandler.CoreValueNew)
+	adminGroup.POST("/about/values", adminAboutHandler.CoreValueCreate)
+	adminGroup.GET("/about/values/:id/edit", adminAboutHandler.CoreValueEdit)
+	adminGroup.POST("/about/values/:id", adminAboutHandler.CoreValueUpdate)
+	adminGroup.DELETE("/about/values/:id", adminAboutHandler.CoreValueDelete)
+	adminGroup.GET("/about/milestones", adminAboutHandler.MilestonesList)
+	adminGroup.GET("/about/milestones/new", adminAboutHandler.MilestoneNew)
+	adminGroup.POST("/about/milestones", adminAboutHandler.MilestoneCreate)
+	adminGroup.GET("/about/milestones/:id/edit", adminAboutHandler.MilestoneEdit)
+	adminGroup.POST("/about/milestones/:id", adminAboutHandler.MilestoneUpdate)
+	adminGroup.DELETE("/about/milestones/:id", adminAboutHandler.MilestoneDelete)
+	adminGroup.GET("/about/certifications", adminAboutHandler.CertificationsList)
+	adminGroup.GET("/about/certifications/new", adminAboutHandler.CertificationNew)
+	adminGroup.POST("/about/certifications", adminAboutHandler.CertificationCreate)
+	adminGroup.GET("/about/certifications/:id/edit", adminAboutHandler.CertificationEdit)
+	adminGroup.POST("/about/certifications/:id", adminAboutHandler.CertificationUpdate)
+	adminGroup.DELETE("/about/certifications/:id", adminAboutHandler.CertificationDelete)
+
+	// Partners admin
+	adminPartnersHandler := adminHandlers.NewPartnersHandler(queries, testLogger, appCache)
+	adminGroup.GET("/partners", adminPartnersHandler.List)
+	adminGroup.GET("/partners/new", adminPartnersHandler.New)
+	adminGroup.POST("/partners", adminPartnersHandler.Create)
+	adminGroup.GET("/partners/:id/edit", adminPartnersHandler.Edit)
+	adminGroup.POST("/partners/:id", adminPartnersHandler.Update)
+	adminGroup.DELETE("/partners/:id", adminPartnersHandler.Delete)
+	adminGroup.GET("/partners/testimonials", adminPartnersHandler.TestimonialsList)
+	adminGroup.GET("/partners/testimonials/new", adminPartnersHandler.TestimonialNew)
+	adminGroup.POST("/partners/testimonials", adminPartnersHandler.TestimonialCreate)
+	adminGroup.GET("/partners/testimonials/:id/edit", adminPartnersHandler.TestimonialEdit)
+	adminGroup.POST("/partners/testimonials/:id", adminPartnersHandler.TestimonialUpdate)
+	adminGroup.DELETE("/partners/testimonials/:id", adminPartnersHandler.TestimonialDelete)
+
+	// Media library
+	mediaHandler := adminHandlers.NewMediaHandler(queries, testLogger, t.TempDir())
+	adminGroup.GET("/media", mediaHandler.List)
+	adminGroup.POST("/media/upload", mediaHandler.Upload)
+	adminGroup.GET("/media/browse", mediaHandler.Browse)
+	adminGroup.GET("/media/:id", mediaHandler.GetFile)
+	adminGroup.PUT("/media/:id", mediaHandler.UpdateAltText)
+	adminGroup.DELETE("/media/:id", mediaHandler.Delete)
+
+	// Navigation
+	navHandler := adminHandlers.NewNavigationHandler(queries, testLogger)
+	adminGroup.GET("/navigation", navHandler.List)
+	adminGroup.POST("/navigation", navHandler.Create)
+	adminGroup.GET("/navigation/:id", navHandler.Edit)
+	adminGroup.POST("/navigation/:id/settings", navHandler.UpdateMenu)
+	adminGroup.POST("/navigation/:id/items", navHandler.AddItem)
+	adminGroup.POST("/navigation/items/:id", navHandler.UpdateItem)
+	adminGroup.DELETE("/navigation/items/:id", navHandler.DeleteItem)
+	adminGroup.DELETE("/navigation/:id", navHandler.DeleteMenu)
+	adminGroup.POST("/navigation/:id/reorder", navHandler.Reorder)
+
+	// Activity log
+	activityHandler := adminHandlers.NewActivityHandler(queries, testLogger)
+	adminGroup.GET("/activity", activityHandler.List)
+
+	// Contact admin
+	adminContactHandler := adminHandlers.NewAdminContactHandler(queries, testLogger, appCache)
+	adminGroup.GET("/contact/submissions", adminContactHandler.ListSubmissions)
+	adminGroup.GET("/contact/submissions/:id", adminContactHandler.ViewSubmission)
+	adminGroup.POST("/contact/submissions/:id/status", adminContactHandler.UpdateSubmissionStatus)
+	adminGroup.POST("/contact/submissions/bulk-mark-read", adminContactHandler.BulkMarkRead)
+	adminGroup.DELETE("/contact/submissions/:id", adminContactHandler.DeleteSubmission)
+	adminGroup.GET("/contact/offices", adminContactHandler.ListOffices)
+	adminGroup.GET("/contact/offices/new", adminContactHandler.NewOffice)
+	adminGroup.POST("/contact/offices", adminContactHandler.CreateOffice)
+	adminGroup.GET("/contact/offices/:id/edit", adminContactHandler.EditOffice)
+	adminGroup.POST("/contact/offices/:id", adminContactHandler.UpdateOffice)
+	adminGroup.DELETE("/contact/offices/:id", adminContactHandler.DeleteOffice)
+
+	// Case studies admin
+	adminCaseStudiesHandler := adminHandlers.NewCaseStudiesHandler(queries, testLogger, appCache)
+	adminGroup.GET("/case-studies", adminCaseStudiesHandler.List)
+	adminGroup.GET("/case-studies/new", adminCaseStudiesHandler.New)
+	adminGroup.POST("/case-studies", adminCaseStudiesHandler.Create)
+	adminGroup.GET("/case-studies/:id/edit", adminCaseStudiesHandler.Edit)
+	adminGroup.POST("/case-studies/:id", adminCaseStudiesHandler.Update)
+	adminGroup.DELETE("/case-studies/:id", adminCaseStudiesHandler.Delete)
+	adminGroup.POST("/case-studies/:id/products", adminCaseStudiesHandler.AddProduct)
+	adminGroup.DELETE("/case-studies/:id/products/:productId", adminCaseStudiesHandler.RemoveProduct)
+	adminGroup.POST("/case-studies/:id/metrics", adminCaseStudiesHandler.AddMetric)
+	adminGroup.DELETE("/case-studies/:id/metrics/:metricId", adminCaseStudiesHandler.DeleteMetric)
 
 	return e, queries, cleanup
 }

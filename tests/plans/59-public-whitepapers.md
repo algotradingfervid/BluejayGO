@@ -34,10 +34,9 @@ Verify whitepapers listing, detail pages, and lead capture download flow with fo
 - **Description displays**: Verify whitepaper description text
 - **Learning points display**: Verify learning points/benefits listed
 - **Download form displays**: Verify form with name, email, company, designation, marketing_consent fields
-- **Form validation - required fields**: Verify name and email are required
+- **Form validation - required fields**: Verify name, email, and company are required
 - **Form submission**: Fill all required fields, submit, verify POST /whitepapers/:slug/download
-- **Success page**: Verify redirect to /whitepapers/:slug/success
-- **Download link available**: Verify success page (whitepaper_success.html) contains download link
+- **Success response**: Verify HTMX response returns success HTML fragment with download link
 - **Download file**: Click download link, verify file downloads
 
 ### Edge Cases / Error States
@@ -45,11 +44,10 @@ Verify whitepapers listing, detail pages, and lead capture download flow with fo
 - **Form validation - missing name**: Submit without name, verify validation error
 - **Form validation - missing email**: Submit without email, verify validation error
 - **Form validation - invalid email**: Submit with invalid email format, verify error
+- **Form validation - missing company**: Submit without company, verify validation error
 - **Marketing consent checkbox**: Verify checkbox is optional (can submit unchecked)
-- **Company field optional**: Verify form submits without company
 - **Designation field optional**: Verify form submits without designation
 - **Form resubmission**: Submit form twice for same whitepaper, verify handling
-- **Success page direct access**: Navigate directly to /whitepapers/:slug/success, verify behavior
 
 ## Selectors & Elements
 - Listing page:
@@ -59,19 +57,20 @@ Verify whitepapers listing, detail pages, and lead capture download flow with fo
 - Detail page:
   - Whitepaper description text
   - Learning points list
-  - Download form with fields:
+  - Download form with HTMX attributes (hx-post, hx-swap) and fields:
     - `input[name="name"]` (required)
     - `input[name="email"]` (required)
-    - `input[name="company"]` (optional)
+    - `input[name="company"]` (required)
     - `input[name="designation"]` (optional)
     - `input[type="checkbox"][name="marketing_consent"]` (optional)
   - Submit button
-- Success page:
+- Success response (HTMX fragment):
   - Success message
   - Download link to whitepaper file
 
 ## HTMX Interactions
-- None (traditional form submission with POST and redirect)
+- Download form: hx-post="/whitepapers/:slug/download", hx-swap replaces form with success fragment
+- Response: HTML fragment with success message and download link (not a redirect)
 
 ## Dependencies
 - Template: whitepaper_success.html

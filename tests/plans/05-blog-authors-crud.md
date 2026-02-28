@@ -35,6 +35,8 @@ Verify complete CRUD operations for blog authors including profile fields, socia
 
 ### Edge Cases / Error States
 - **Required name field**: Submitting without name shows validation error
+- **Empty name submission**: Name has no explicit server-side validation in handler — relies on database constraints or HTML5 required attribute
+- **Title field is optional**: title field uses sql.NullString and is not required (can be empty)
 - **Invalid email format**: Entering invalid email shows validation error
 - **Invalid URL format**: Entering invalid avatar_url or linkedin_url shows validation error
 - **Delete confirmation cancel**: Canceling hx-confirm dialog does not delete author
@@ -48,7 +50,7 @@ Verify complete CRUD operations for blog authors including profile fields, socia
 - Edit form: `action="/admin/blog-authors/:id" method="POST"`
 - Input name: `name="name" type="text"` (required)
 - Input slug: `name="slug" type="text"` (auto-generated)
-- Input title: `name="title" type="text"`
+- Input title: `name="title" type="text"` (optional)
 - Textarea bio: `name="bio"`
 - Input avatar_url: `name="avatar_url" type="url"`
 - Input linkedin_url: `name="linkedin_url" type="url"`

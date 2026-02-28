@@ -3,6 +3,9 @@
 ## Summary
 Testing HTMX-driven addition and removal of product associations to case studies with UNIQUE constraint enforcement and confirmation dialog.
 
+## KNOWN BUGS
+- **Hardcoded case study ID in template**: Template line 7 has hardcoded case study ID `0` in delete URL (`/admin/case-studies/0/products/{{.ProductID}}`). Should be dynamic `{{.CaseStudyID}}`.
+
 ## Preconditions
 - Server running on localhost:28090
 - Logged in as admin@bluejaylabs.com / password
@@ -15,20 +18,19 @@ Testing HTMX-driven addition and removal of product associations to case studies
 3. Select product from product_id dropdown (select from all products)
 4. Set display_order number
 5. Click add button with hx-post="/admin/case-studies/:id/products"
-6. Verify hx-target="#products-section" hx-swap="outerHTML" replaces entire section
-7. Verify new product association appears in updated section
-8. Click remove button on existing product with hx-delete="/admin/case-studies/:id/products/:productId"
-9. Verify hx-confirm="Remove this product?" dialog appears
-10. Confirm deletion, verify product removed from #products-section without page reload
+6. Verify new product association appears in updated list (AddProduct returns partial HTML)
+7. Click remove button on existing product with hx-delete="/admin/case-studies/:id/products/:productId"
+8. Verify hx-confirm="Remove this product?" dialog appears
+9. Confirm deletion, verify product removed (RemoveProduct returns 204 No Content)
 
 ## Test Cases
 
 ### Happy Path
-- **Add product**: Select product from dropdown, set display_order 1, submit, product added
+- **Add product**: Select product from dropdown, set display_order 1, submit, product added (AddProduct returns partial HTML)
 - **Multiple products**: Add 3 different products with different display_order values, verify all appear
 - **Display order**: Products display in order based on display_order field
-- **Remove product**: Click remove button, confirm dialog appears, confirm, product removed from section
-- **Section swap**: After add/remove, entire #products-section swapped with updated HTML
+- **Remove product**: Click remove button, confirm dialog appears, confirm, product removed (returns 204 No Content)
+- **Individual item removal**: Delete uses hx-target="closest div" hx-swap="outerHTML" to remove individual product item
 - **No page reload**: All operations via HTMX, no full page refresh
 
 ### Edge Cases / Error States
@@ -41,15 +43,15 @@ Testing HTMX-driven addition and removal of product associations to case studies
 
 ## Selectors & Elements
 - Section container: id="products-section"
-- Add form action: hx-post="/admin/case-studies/:id/products" hx-target="#products-section" hx-swap="outerHTML"
+- Add form action: hx-post="/admin/case-studies/:id/products"
 - Input names: product_id (select required), display_order (number)
-- Remove button: hx-delete="/admin/case-studies/:id/products/:productId" hx-target="#products-section" hx-swap="outerHTML" hx-confirm="Remove this product?"
+- Remove button: hx-delete="/admin/case-studies/:id/products/:productId" hx-target="closest div" hx-swap="outerHTML" hx-confirm="Remove this product?"
 - Add button: text "Add Product"
 
 ## HTMX Interactions
-- **Add product**: hx-post="/admin/case-studies/:id/products" hx-target="#products-section" hx-swap="outerHTML" (returns updated products_section.html partial)
-- **Remove product**: hx-delete="/admin/case-studies/:id/products/:productId" hx-target="#products-section" hx-swap="outerHTML" hx-confirm="Remove this product?" (returns updated products_section.html partial)
-- Both operations swap entire #products-section to reflect current state
+- **Add product**: hx-post="/admin/case-studies/:id/products" (returns partial HTML for the new product item)
+- **Remove product**: hx-delete="/admin/case-studies/:id/products/:productId" hx-target="closest div" hx-swap="outerHTML" hx-confirm="Remove this product?" (returns 204 No Content, no HTML)
+- Delete removes individual product items using closest div targeting
 
 ## Dependencies
 - 24-case-studies-crud.md (parent case study edit page)

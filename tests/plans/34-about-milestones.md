@@ -71,3 +71,8 @@ Tests the complete CRUD operations for company milestones timeline including yea
 - Template: templates/admin/pages/about-milestones-list.html, about-milestones-form.html
 - Handler: internal/handlers/about.go (ListMilestones, NewMilestone, CreateMilestone, EditMilestone, UpdateMilestone, DeleteMilestone)
 - HTMX library loaded
+
+## Implementation Notes
+- **Year field**: Stored as TEXT in database but form uses `type="number"` — handler converts via `strconv.ParseInt`
+- **Multiple current milestones**: There is NO database constraint preventing multiple `is_current=true` milestones
+- **HTMX delete target**: Actual template uses `hx-target="closest div.flex.gap-6"` not a generic selector

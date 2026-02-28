@@ -118,6 +118,26 @@ func (h *SitemapHandler) Sitemap(c echo.Context) error {
 		})
 	}
 
+	// Products: individual product detail pages
+	// URL format: /products/{category_slug}/{product_slug}
+	// Only includes published products with valid categories
+	products, err := h.queries.ListProductsForSitemap(c.Request().Context())
+	if err != nil {
+		h.logger.Error("sitemap: failed to list products", "error", err)
+	} else {
+		for _, p := range products {
+			u := URL{
+				Loc:        fmt.Sprintf("%s/products/%s/%s", h.baseURL, p.CategorySlug, p.Slug),
+				ChangeFreq: "weekly",
+				Priority:   "0.8",
+			}
+			if !p.UpdatedAt.IsZero() {
+				u.LastMod = p.UpdatedAt.Format("2006-01-02")
+			}
+			urlset.URLs = append(urlset.URLs, u)
+		}
+	}
+
 	// Solutions: individual solution detail pages
 	// URL format: /solutions/{slug}
 	// Only includes published solutions (status filtering in query)

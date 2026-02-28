@@ -27,6 +27,26 @@ type CreateNavigationItemParams struct {
 	SortOrder      sql.NullInt64  `json:"sort_order"`
 }
 
+// Creates a new navigation item (link) within a menu.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - menu_id: Parent menu container ID
+//	$2 (INTEGER) - parent_id: Parent item ID for nested items (NULL for top-level)
+//	$3 (TEXT) - label: Display text for the link
+//	$4 (TEXT) - link_type: Type of link ("url", "page", "custom")
+//	$5 (TEXT) - url: External or custom URL (NULL if using page_identifier)
+//	$6 (TEXT) - page_identifier: Internal page slug/ID (NULL if using url)
+//	$7 (BOOLEAN) - open_new_tab: Whether link opens in new window
+//	$8 (BOOLEAN) - is_active: Whether item is visible (soft delete alternative)
+//	$9 (INTEGER) - sort_order: Display position within menu
+//
+// Returns: NavigationItem - The newly created item with auto-generated ID and timestamps
+//
+// Link type logic:
+//   - "url": Uses the url field for external/custom links
+//   - "page": Uses page_identifier to reference internal content
+//   - Application code resolves page_identifier to actual URL
 func (q *Queries) CreateNavigationItem(ctx context.Context, arg CreateNavigationItemParams) (NavigationItem, error) {
 	row := q.db.QueryRowContext(ctx, createNavigationItem,
 		arg.MenuID,
@@ -65,6 +85,16 @@ type CreateNavigationMenuParams struct {
 	Location string `json:"location"`
 }
 
+// Creates a new navigation menu container.
+//
+// Parameters:
+//
+//	$1 (TEXT) - name: Display name for admin (e.g., "Main Navigation")
+//	$2 (TEXT) - location: Identifier for template placement (e.g., "header", "footer")
+//
+// Returns: NavigationMenu - The newly created menu with auto-generated ID and timestamps
+//
+// Use case: Setting up a new menu location (header, footer, sidebar, etc.)
 func (q *Queries) CreateNavigationMenu(ctx context.Context, arg CreateNavigationMenuParams) (NavigationMenu, error) {
 	row := q.db.QueryRowContext(ctx, createNavigationMenu, arg.Name, arg.Location)
 	var i NavigationMenu
@@ -82,6 +112,16 @@ const deleteNavigationItem = `-- name: DeleteNavigationItem :exec
 DELETE FROM navigation_items WHERE id = ?
 `
 
+// Permanently deletes a single navigation item.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - navigation item ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// WARNING: If this is a parent item, child items may become orphaned or cascade delete
+// Note: Consider setting is_active=0 for soft delete instead
 func (q *Queries) DeleteNavigationItem(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteNavigationItem, id)
 	return err
@@ -91,6 +131,16 @@ const deleteNavigationItemsByMenu = `-- name: DeleteNavigationItemsByMenu :exec
 DELETE FROM navigation_items WHERE menu_id = ?
 `
 
+// Permanently deletes all navigation items belonging to a specific menu.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - menu_id: Parent menu ID
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Clearing all items from a menu before rebuilding, cleanup after menu deletion
+// WARNING: This is a bulk hard delete operation
 func (q *Queries) DeleteNavigationItemsByMenu(ctx context.Context, menuID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteNavigationItemsByMenu, menuID)
 	return err
@@ -100,6 +150,16 @@ const deleteNavigationMenu = `-- name: DeleteNavigationMenu :exec
 DELETE FROM navigation_menus WHERE id = ?
 `
 
+// Permanently deletes a navigation menu container.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - menu ID to delete
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// WARNING: This is a hard delete. Should cascade delete all navigation_items in this menu
+// Note: Ensure foreign key constraints are configured for cascading deletes
 func (q *Queries) DeleteNavigationMenu(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteNavigationMenu, id)
 	return err
@@ -109,6 +169,15 @@ const getNavigationItem = `-- name: GetNavigationItem :one
 SELECT id, menu_id, parent_id, label, link_type, url, page_identifier, open_new_tab, is_active, sort_order, created_at FROM navigation_items WHERE id = ? LIMIT 1
 `
 
+// Retrieves a single navigation item by its primary key ID.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - navigation item ID
+//
+// Returns: NavigationItem - Single item record or error if not found
+//
+// Use case: Editing a specific menu item
 func (q *Queries) GetNavigationItem(ctx context.Context, id int64) (NavigationItem, error) {
 	row := q.db.QueryRowContext(ctx, getNavigationItem, id)
 	var i NavigationItem
@@ -132,6 +201,15 @@ const getNavigationMenu = `-- name: GetNavigationMenu :one
 SELECT id, name, location, created_at, updated_at FROM navigation_menus WHERE id = ? LIMIT 1
 `
 
+// Retrieves a single navigation menu by its primary key ID.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - menu ID
+//
+// Returns: NavigationMenu - Single menu record or error if not found
+//
+// Use case: Editing a specific menu, fetching menu details
 func (q *Queries) GetNavigationMenu(ctx context.Context, id int64) (NavigationMenu, error) {
 	row := q.db.QueryRowContext(ctx, getNavigationMenu, id)
 	var i NavigationMenu
@@ -146,9 +224,24 @@ func (q *Queries) GetNavigationMenu(ctx context.Context, id int64) (NavigationMe
 }
 
 const listNavigationItems = `-- name: ListNavigationItems :many
+
 SELECT id, menu_id, parent_id, label, link_type, url, page_identifier, open_new_tab, is_active, sort_order, created_at FROM navigation_items WHERE menu_id = ? ORDER BY sort_order ASC
 `
 
+// ====================================================================
+// NAVIGATION ITEMS
+// ====================================================================
+// Retrieves all navigation items for a specific menu, sorted by display order.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - menu_id: Parent menu ID
+//
+// Returns: []NavigationItem - Array of menu items in display order
+//
+// Sorting: sort_order ASC - Items appear in manually configured order
+// Use case: Rendering menu items in templates, admin item listing
+// Note: Returns both parent and child items; application must build hierarchy
 func (q *Queries) ListNavigationItems(ctx context.Context, menuID int64) ([]NavigationItem, error) {
 	rows, err := q.db.QueryContext(ctx, listNavigationItems, menuID)
 	if err != nil {
@@ -185,9 +278,36 @@ func (q *Queries) ListNavigationItems(ctx context.Context, menuID int64) ([]Navi
 }
 
 const listNavigationMenus = `-- name: ListNavigationMenus :many
+
+
 SELECT id, name, location, created_at, updated_at FROM navigation_menus ORDER BY created_at DESC
 `
 
+// ====================================================================
+// NAVIGATION QUERY FILE
+// ====================================================================
+// This file contains all SQL queries for managing navigation menus and menu items.
+//
+// Entities:
+//   - navigation_menus: Container for menu items (e.g., "Main Menu", "Footer Menu")
+//   - navigation_items: Individual links/items within a menu (supports nesting)
+//
+// Features:
+//   - Multiple menus per site (header, footer, sidebar, etc.)
+//   - Hierarchical navigation (parent/child items for dropdowns)
+//   - Flexible link types (URL, page identifier, custom)
+//   - Drag-and-drop reordering via sort_order
+//
+// ====================================================================
+// ====================================================================
+// NAVIGATION MENUS
+// ====================================================================
+// Retrieves all navigation menus sorted by creation date (newest first).
+//
+// Parameters: none
+// Returns: []NavigationMenu - Array of all menu containers
+//
+// Use case: Admin panel menu management, displaying available menus
 func (q *Queries) ListNavigationMenus(ctx context.Context) ([]NavigationMenu, error) {
 	rows, err := q.db.QueryContext(ctx, listNavigationMenus)
 	if err != nil {
@@ -235,6 +355,23 @@ type UpdateNavigationItemParams struct {
 	ID             int64          `json:"id"`
 }
 
+// Updates an existing navigation item's properties.
+//
+// Parameters:
+//
+//	$1 (TEXT) - label: Updated link text
+//	$2 (TEXT) - link_type: Updated link type
+//	$3 (TEXT) - url: Updated URL
+//	$4 (TEXT) - page_identifier: Updated page reference
+//	$5 (BOOLEAN) - open_new_tab: Updated target behavior
+//	$6 (BOOLEAN) - is_active: Updated visibility status
+//	$7 (INTEGER) - parent_id: Updated parent (for moving in hierarchy)
+//	$8 (INTEGER) - sort_order: Updated display position
+//	$9 (INTEGER) - id: Item ID to update
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Editing menu items, changing hierarchy, reordering
 func (q *Queries) UpdateNavigationItem(ctx context.Context, arg UpdateNavigationItemParams) error {
 	_, err := q.db.ExecContext(ctx, updateNavigationItem,
 		arg.Label,
@@ -260,6 +397,18 @@ type UpdateNavigationItemOrderParams struct {
 	ID        int64         `json:"id"`
 }
 
+// Updates a navigation item's sort order and parent (for drag-and-drop reordering).
+//
+// Parameters:
+//
+//	$1 (INTEGER) - sort_order: New display position
+//	$2 (INTEGER) - parent_id: New parent ID (NULL for top-level, or parent item ID)
+//	$3 (INTEGER) - id: Item ID to update
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Use case: Drag-and-drop reordering in admin interface
+// Note: Application should handle recalculating sort_order for all affected items
 func (q *Queries) UpdateNavigationItemOrder(ctx context.Context, arg UpdateNavigationItemOrderParams) error {
 	_, err := q.db.ExecContext(ctx, updateNavigationItemOrder, arg.SortOrder, arg.ParentID, arg.ID)
 	return err
@@ -275,6 +424,17 @@ type UpdateNavigationMenuParams struct {
 	ID       int64  `json:"id"`
 }
 
+// Updates an existing navigation menu's metadata.
+//
+// Parameters:
+//
+//	$1 (TEXT) - name: Updated menu display name
+//	$2 (TEXT) - location: Updated location identifier
+//	$3 (INTEGER) - id: Menu ID to update
+//
+// Returns: (none) - sqlc annotation :exec returns only row count
+//
+// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 func (q *Queries) UpdateNavigationMenu(ctx context.Context, arg UpdateNavigationMenuParams) error {
 	_, err := q.db.ExecContext(ctx, updateNavigationMenu, arg.Name, arg.Location, arg.ID)
 	return err

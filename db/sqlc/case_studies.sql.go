@@ -26,7 +26,19 @@ type AdminAddCaseStudyProductParams struct {
 	DisplayOrder int64 `json:"display_order"`
 }
 
-// Case study products management
+// ====================================================================
+// CASE STUDY PRODUCTS MANAGEMENT
+// ====================================================================
+// sqlc annotation: :one returns the association row (new or updated)
+// Purpose: Associates a product with a case study (many-to-many relationship)
+// Parameters:
+//  1. case_study_id (INTEGER)
+//  2. product_id (INTEGER)
+//  3. display_order (INTEGER): sort position for this product in this case study
+//
+// Return type: case_study_products row
+// ON CONFLICT: If association already exists, update the display_order
+// Note: Assumes UNIQUE constraint on (case_study_id, product_id)
 func (q *Queries) AdminAddCaseStudyProduct(ctx context.Context, arg AdminAddCaseStudyProductParams) (CaseStudyProduct, error) {
 	row := q.db.QueryRowContext(ctx, adminAddCaseStudyProduct, arg.CaseStudyID, arg.ProductID, arg.DisplayOrder)
 	var i CaseStudyProduct
@@ -76,6 +88,28 @@ type AdminCreateCaseStudyParams struct {
 	DisplayOrder     int64          `json:"display_order"`
 }
 
+// sqlc annotation: :one returns the created case study
+// Purpose: Creates a new case study (draft or published)
+// Parameters (17 positional):
+//  1. slug (TEXT): URL-safe identifier (must be unique)
+//  2. title (TEXT): case study headline
+//  3. client_name (TEXT): client/company name
+//  4. industry_id (INTEGER): foreign key to industries table
+//  5. hero_image_url (TEXT): hero/header image
+//  6. summary (TEXT): brief overview for listing pages
+//  7. challenge_title (TEXT): "Challenge" section heading
+//  8. challenge_content (TEXT): challenge description (HTML)
+//  9. challenge_bullets (TEXT): bullet points for challenge (JSON/text)
+//  10. solution_title (TEXT): "Solution" section heading
+//  11. solution_content (TEXT): solution description (HTML)
+//  12. outcome_title (TEXT): "Outcome" section heading
+//  13. outcome_content (TEXT): results/outcome description (HTML)
+//  14. meta_title (TEXT): SEO page title
+//  15. meta_description (TEXT): SEO meta description
+//  16. is_published (BOOLEAN): 1 = published, 0 = draft
+//  17. display_order (INTEGER): featured sort position
+//
+// Return type: complete inserted case study with ID and timestamps
 func (q *Queries) AdminCreateCaseStudy(ctx context.Context, arg AdminCreateCaseStudyParams) (CaseStudy, error) {
 	row := q.db.QueryRowContext(ctx, adminCreateCaseStudy,
 		arg.Slug,
@@ -137,7 +171,19 @@ type AdminCreateMetricParams struct {
 	DisplayOrder int64  `json:"display_order"`
 }
 
-// Metrics management
+// ====================================================================
+// CASE STUDY METRICS MANAGEMENT
+// ====================================================================
+// sqlc annotation: :one returns the created metric
+// Purpose: Creates a new performance metric for a case study
+// Parameters (4 positional):
+//  1. case_study_id (INTEGER): foreign key to case_studies
+//  2. metric_value (TEXT): numeric value with unit (e.g., "50%", "2x")
+//  3. metric_label (TEXT): description (e.g., "reduction in costs")
+//  4. display_order (INTEGER): sort position in metrics list
+//
+// Return type: complete inserted case_study_metrics row
+// Example: metric_value="75%", metric_label="faster deployment time"
 func (q *Queries) AdminCreateMetric(ctx context.Context, arg AdminCreateMetricParams) (CaseStudyMetric, error) {
 	row := q.db.QueryRowContext(ctx, adminCreateMetric,
 		arg.CaseStudyID,
@@ -161,6 +207,13 @@ const adminDeleteCaseStudy = `-- name: AdminDeleteCaseStudy :exec
 DELETE FROM case_studies WHERE id = ?
 `
 
+// sqlc annotation: :exec returns no data
+// Purpose: Permanently removes a case study
+// Parameters:
+//  1. id (INTEGER): case study to delete
+//
+// Return type: none
+// Note: May cascade delete related case_study_products and case_study_metrics
 func (q *Queries) AdminDeleteCaseStudy(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, adminDeleteCaseStudy, id)
 	return err
@@ -170,6 +223,12 @@ const adminDeleteMetric = `-- name: AdminDeleteMetric :exec
 DELETE FROM case_study_metrics WHERE id = ?
 `
 
+// sqlc annotation: :exec returns no data
+// Purpose: Removes a metric from a case study
+// Parameters:
+//  1. id (INTEGER): metric to delete
+//
+// Return type: none
 func (q *Queries) AdminDeleteMetric(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, adminDeleteMetric, id)
 	return err
@@ -179,6 +238,12 @@ const adminGetCaseStudy = `-- name: AdminGetCaseStudy :one
 SELECT id, slug, title, client_name, industry_id, hero_image_url, summary, challenge_title, challenge_content, challenge_bullets, solution_title, solution_content, outcome_title, outcome_content, meta_title, meta_description, is_published, display_order, created_at, updated_at, og_image FROM case_studies WHERE id = ?
 `
 
+// sqlc annotation: :one returns single case study by ID for admin editing
+// Purpose: Retrieves complete case study for admin edit form
+// Parameters:
+//  1. id (INTEGER): case study primary key
+//
+// Return type: complete case_studies row with all fields
 func (q *Queries) AdminGetCaseStudy(ctx context.Context, id int64) (CaseStudy, error) {
 	row := q.db.QueryRowContext(ctx, adminGetCaseStudy, id)
 	var i CaseStudy
@@ -230,7 +295,14 @@ type AdminListCaseStudiesRow struct {
 	IndustryName string    `json:"industry_name"`
 }
 
-// Admin queries
+// ====================================================================
+// ADMIN CASE STUDY QUERIES
+// ====================================================================
+// sqlc annotation: :many returns all case studies for admin
+// Purpose: Simple list of all case studies (drafts + published) for admin table
+// Parameters: none
+// Return type: slice of case studies with minimal fields
+// Note: No filtering or pagination; includes all statuses
 func (q *Queries) AdminListCaseStudies(ctx context.Context) ([]AdminListCaseStudiesRow, error) {
 	rows, err := q.db.QueryContext(ctx, adminListCaseStudies)
 	if err != nil {
@@ -272,7 +344,9 @@ SELECT
 FROM case_studies cs
 INNER JOIN industries i ON cs.industry_id = i.id
 WHERE
+    -- Optional search filter: '' = all, otherwise LIKE match in title or client_name
     (CASE WHEN ?1 = '' THEN 1 ELSE (cs.title LIKE '%' || ?1 || '%' OR cs.client_name LIKE '%' || ?1 || '%') END)
+    -- Optional status filter: 'published' = 1, 'draft' = 0, '' = all
     AND (CASE WHEN ?2 = '' THEN 1
          WHEN ?2 = 'published' THEN cs.is_published = 1
          WHEN ?2 = 'draft' THEN cs.is_published = 0
@@ -300,6 +374,22 @@ type AdminListCaseStudiesFilteredRow struct {
 	IndustryName string         `json:"industry_name"`
 }
 
+// sqlc annotation: :many returns filtered/paginated case studies for admin
+// Purpose: Advanced admin list with search and status filtering
+// Parameters (named using @ prefix):
+//
+//	@filter_search (TEXT): search term for title/client_name ('' = no filter)
+//	@filter_status (TEXT): 'published', 'draft', or '' for all
+//	@page_limit (INTEGER): case studies per page
+//	@page_offset (INTEGER): pagination offset
+//
+// Return type: slice of case studies with display metadata
+// Complex WHERE using CASE statements:
+//   - filter_search: LIKE match in title OR client_name fields
+//   - filter_status: maps text values to is_published boolean (1/0)
+//     'published' -> is_published = 1
+//     'draft' -> is_published = 0
+//     ” -> all statuses (condition always true)
 func (q *Queries) AdminListCaseStudiesFiltered(ctx context.Context, arg AdminListCaseStudiesFilteredParams) ([]AdminListCaseStudiesFilteredRow, error) {
 	rows, err := q.db.QueryContext(ctx, adminListCaseStudiesFiltered,
 		arg.FilterSearch,
@@ -356,6 +446,14 @@ type AdminListCaseStudyProductsRow struct {
 	ProductSlug  string `json:"product_slug"`
 }
 
+// sqlc annotation: :many returns products linked to a case study (admin view)
+// Purpose: Lists products associated with a case study for admin management
+// Parameters:
+//  1. case_study_id (INTEGER): case study to list products for
+//
+// Return type: slice of products with association metadata
+// JOIN: Gets product name/slug for display in admin UI
+// ORDER BY display_order: shows custom sort order for this case study
 func (q *Queries) AdminListCaseStudyProducts(ctx context.Context, caseStudyID int64) ([]AdminListCaseStudyProductsRow, error) {
 	rows, err := q.db.QueryContext(ctx, adminListCaseStudyProducts, caseStudyID)
 	if err != nil {
@@ -400,6 +498,13 @@ type AdminListMetricsRow struct {
 	DisplayOrder int64  `json:"display_order"`
 }
 
+// sqlc annotation: :many returns all metrics for a case study
+// Purpose: Lists metrics for admin editing interface
+// Parameters:
+//  1. case_study_id (INTEGER): case study to list metrics for
+//
+// Return type: slice of case_study_metrics rows
+// ORDER BY display_order: shows custom presentation sequence
 func (q *Queries) AdminListMetrics(ctx context.Context, caseStudyID int64) ([]AdminListMetricsRow, error) {
 	rows, err := q.db.QueryContext(ctx, adminListMetrics, caseStudyID)
 	if err != nil {
@@ -439,6 +544,13 @@ type AdminRemoveCaseStudyProductParams struct {
 	ProductID   int64 `json:"product_id"`
 }
 
+// sqlc annotation: :exec returns no data
+// Purpose: Removes a specific product association from a case study
+// Parameters:
+//  1. case_study_id (INTEGER)
+//  2. product_id (INTEGER)
+//
+// Return type: none
 func (q *Queries) AdminRemoveCaseStudyProduct(ctx context.Context, arg AdminRemoveCaseStudyProductParams) error {
 	_, err := q.db.ExecContext(ctx, adminRemoveCaseStudyProduct, arg.CaseStudyID, arg.ProductID)
 	return err
@@ -489,6 +601,15 @@ type AdminUpdateCaseStudyParams struct {
 	ID               int64          `json:"id"`
 }
 
+// sqlc annotation: :one returns the updated case study
+// Purpose: Updates an existing case study (all fields except ID/created_at)
+// Parameters (18 positional):
+//
+//	1-17. updated field values (same order as AdminCreateCaseStudy)
+//	18. id (INTEGER): which case study to update (WHERE clause)
+//
+// Return type: updated case_studies row
+// Note: updated_at explicitly set to CURRENT_TIMESTAMP
 func (q *Queries) AdminUpdateCaseStudy(ctx context.Context, arg AdminUpdateCaseStudyParams) (CaseStudy, error) {
 	row := q.db.QueryRowContext(ctx, adminUpdateCaseStudy,
 		arg.Slug,
@@ -553,6 +674,14 @@ type AdminUpdateMetricParams struct {
 	ID           int64  `json:"id"`
 }
 
+// sqlc annotation: :one returns the updated metric
+// Purpose: Updates an existing case study metric
+// Parameters (4 positional):
+//
+//	1-3. updated field values (metric_value, metric_label, display_order)
+//	4. id (INTEGER): which metric to update (WHERE clause)
+//
+// Return type: updated case_study_metrics row
 func (q *Queries) AdminUpdateMetric(ctx context.Context, arg AdminUpdateMetricParams) (CaseStudyMetric, error) {
 	row := q.db.QueryRowContext(ctx, adminUpdateMetric,
 		arg.MetricValue,
@@ -576,6 +705,10 @@ const countCaseStudies = `-- name: CountCaseStudies :one
 SELECT COUNT(*) FROM case_studies WHERE is_published = 1
 `
 
+// sqlc annotation: :one returns total published case studies count
+// Purpose: Counts published case studies for stats/pagination
+// Parameters: none
+// Return type: integer count
 func (q *Queries) CountCaseStudies(ctx context.Context) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countCaseStudies)
 	var count int64
@@ -586,6 +719,7 @@ func (q *Queries) CountCaseStudies(ctx context.Context) (int64, error) {
 const countCaseStudiesAdminFiltered = `-- name: CountCaseStudiesAdminFiltered :one
 SELECT COUNT(*) FROM case_studies cs
 WHERE
+    -- Exact same filter logic as AdminListCaseStudiesFiltered
     (CASE WHEN ?1 = '' THEN 1 ELSE (cs.title LIKE '%' || ?1 || '%' OR cs.client_name LIKE '%' || ?1 || '%') END)
     AND (CASE WHEN ?2 = '' THEN 1
          WHEN ?2 = 'published' THEN cs.is_published = 1
@@ -598,6 +732,11 @@ type CountCaseStudiesAdminFilteredParams struct {
 	FilterStatus interface{} `json:"filter_status"`
 }
 
+// sqlc annotation: :one returns count for filtered case studies
+// Purpose: Counts case studies matching admin filters (for pagination)
+// Parameters: same filters as AdminListCaseStudiesFiltered (except pagination)
+// Return type: integer count
+// Note: WHERE clause MUST match AdminListCaseStudiesFiltered exactly
 func (q *Queries) CountCaseStudiesAdminFiltered(ctx context.Context, arg CountCaseStudiesAdminFilteredParams) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countCaseStudiesAdminFiltered, arg.FilterSearch, arg.FilterStatus)
 	var count int64
@@ -609,6 +748,12 @@ const countCaseStudiesByIndustry = `-- name: CountCaseStudiesByIndustry :one
 SELECT COUNT(*) FROM case_studies WHERE is_published = 1 AND industry_id = ?
 `
 
+// sqlc annotation: :one returns count for specific industry
+// Purpose: Counts published case studies in an industry
+// Parameters:
+//  1. industry_id (INTEGER): industry to count
+//
+// Return type: integer count
 func (q *Queries) CountCaseStudiesByIndustry(ctx context.Context, industryID int64) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countCaseStudiesByIndustry, industryID)
 	var count int64
@@ -653,6 +798,20 @@ type GetCaseStudyBySlugRow struct {
 	IndustrySlug     string         `json:"industry_slug"`
 }
 
+// sqlc annotation: :one returns single case study by slug
+// Purpose: Retrieves full published case study for public detail page
+// Parameters:
+//  1. slug (TEXT): URL-safe case study identifier
+//
+// Return type: complete case study with all content sections
+// SELECT fields:
+//   - All case study sections (challenge, solution, outcome)
+//   - SEO metadata (meta_title, meta_description, og_image)
+//   - Industry details for breadcrumbs/categorization
+//
+// WHERE:
+//   - slug = ?: exact slug match
+//   - is_published = 1: published only (hide drafts from public)
 func (q *Queries) GetCaseStudyBySlug(ctx context.Context, slug string) (GetCaseStudyBySlugRow, error) {
 	row := q.db.QueryRowContext(ctx, getCaseStudyBySlug, slug)
 	var i GetCaseStudyBySlugRow
@@ -718,6 +877,13 @@ type GetCaseStudyBySlugIncludeDraftsRow struct {
 	IndustrySlug     string         `json:"industry_slug"`
 }
 
+// sqlc annotation: :one returns case study including drafts
+// Purpose: Retrieves case study for admin preview (allows viewing unpublished)
+// Parameters:
+//  1. slug (TEXT): case study slug
+//
+// Return type: same as GetCaseStudyBySlug but without publish filter
+// Note: Used for admin preview functionality; no is_published filter
 func (q *Queries) GetCaseStudyBySlugIncludeDrafts(ctx context.Context, slug string) (GetCaseStudyBySlugIncludeDraftsRow, error) {
 	row := q.db.QueryRowContext(ctx, getCaseStudyBySlugIncludeDrafts, slug)
 	var i GetCaseStudyBySlugIncludeDraftsRow
@@ -760,6 +926,14 @@ type GetCaseStudyMetricsRow struct {
 	DisplayOrder int64  `json:"display_order"`
 }
 
+// sqlc annotation: :many returns key metrics/results for a case study
+// Purpose: Retrieves performance metrics showcasing case study results
+// Parameters:
+//  1. case_study_id (INTEGER): case study to get metrics for
+//
+// Return type: slice of metrics (value + label pairs)
+// Example metrics: "50% reduction in costs", "2x faster deployment"
+// ORDER BY display_order: custom presentation order
 func (q *Queries) GetCaseStudyMetrics(ctx context.Context, caseStudyID int64) ([]GetCaseStudyMetricsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getCaseStudyMetrics, caseStudyID)
 	if err != nil {
@@ -808,6 +982,22 @@ type GetCaseStudyProductsRow struct {
 	CategoryName string         `json:"category_name"`
 }
 
+// sqlc annotation: :many returns products featured in a case study
+// Purpose: Retrieves products associated with/featured in a case study
+// Parameters:
+//  1. case_study_id (INTEGER): case study to get products for
+//
+// Return type: slice of products with category info
+// JOINs:
+//   - case_study_products: junction table with display_order
+//   - products: product details
+//   - product_categories: for category name
+//
+// WHERE:
+//   - csp.case_study_id = ?: filter to specific case study
+//   - p.status = 'published': only show published products
+//
+// ORDER BY csp.display_order: custom sort order per case study
 func (q *Queries) GetCaseStudyProducts(ctx context.Context, caseStudyID int64) ([]GetCaseStudyProductsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getCaseStudyProducts, caseStudyID)
 	if err != nil {
@@ -840,6 +1030,7 @@ func (q *Queries) GetCaseStudyProducts(ctx context.Context, caseStudyID int64) (
 
 const listCaseStudies = `-- name: ListCaseStudies :many
 
+
 SELECT
     cs.id, cs.slug, cs.title, cs.client_name, cs.summary,
     cs.hero_image_url, cs.display_order,
@@ -864,8 +1055,38 @@ type ListCaseStudiesRow struct {
 }
 
 // ====================================================================
-// CASE STUDIES
+// CASE STUDIES QUERIES
 // ====================================================================
+// This file manages case study content showcasing client success stories.
+// Case studies demonstrate real-world applications of products/services
+// and include challenge, solution, and outcome sections.
+//
+// Managed entities:
+// - case_studies: main case study content with sections
+// - case_study_products: many-to-many link to featured products
+// - case_study_metrics: key performance indicators/results
+//
+// Key concepts:
+// - is_published: controls public visibility (1 = published, 0 = draft)
+// - display_order: custom sorting for featured case studies
+// - industry_id: categorizes by client industry vertical
+// ====================================================================
+// ====================================================================
+// PUBLIC CASE STUDY QUERIES
+// ====================================================================
+// sqlc annotation: :many returns slice of published case studies
+// Purpose: Lists all published case studies for public case studies index page
+// Parameters: none
+// Return type: slice of case studies with industry details
+// JOIN:
+//   - INNER JOIN industries: gets industry name/slug for categorization
+//
+// WHERE:
+//   - is_published = 1: only show published case studies, hide drafts
+//
+// ORDER BY:
+//   - Primary: display_order ASC (manual featured ordering)
+//   - Secondary: created_at DESC (newest first as fallback)
 func (q *Queries) ListCaseStudies(ctx context.Context) ([]ListCaseStudiesRow, error) {
 	rows, err := q.db.QueryContext(ctx, listCaseStudies)
 	if err != nil {
@@ -924,6 +1145,15 @@ type ListCaseStudiesByIndustryRow struct {
 	IndustrySlug string         `json:"industry_slug"`
 }
 
+// sqlc annotation: :many returns case studies filtered by industry
+// Purpose: Lists published case studies for specific industry vertical
+// Parameters:
+//  1. industry_id (INTEGER): industry to filter by
+//
+// Return type: slice of case studies for that industry
+// WHERE:
+//   - is_published = 1: published only
+//   - industry_id = ?: filter to specific industry
 func (q *Queries) ListCaseStudiesByIndustry(ctx context.Context, industryID int64) ([]ListCaseStudiesByIndustryRow, error) {
 	rows, err := q.db.QueryContext(ctx, listCaseStudiesByIndustry, industryID)
 	if err != nil {

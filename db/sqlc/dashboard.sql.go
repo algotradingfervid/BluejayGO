@@ -13,6 +13,11 @@ const countDraftBlogPosts = `-- name: CountDraftBlogPosts :one
 SELECT COUNT(*) FROM blog_posts WHERE status = 'draft'
 `
 
+// sqlc annotation: :one returns integer count
+// Purpose: Counts unpublished blog posts (status = 'draft')
+// Parameters: none
+// Return type: integer count
+// Used for: Dashboard alert showing draft blog posts needing review
 func (q *Queries) CountDraftBlogPosts(ctx context.Context) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countDraftBlogPosts)
 	var count int64
@@ -24,6 +29,11 @@ const countDraftProducts = `-- name: CountDraftProducts :one
 SELECT COUNT(*) FROM products WHERE status = 'draft'
 `
 
+// sqlc annotation: :one returns integer count
+// Purpose: Counts unpublished products (status = 'draft')
+// Parameters: none
+// Return type: integer count
+// Used for: Dashboard alert showing draft products needing review
 func (q *Queries) CountDraftProducts(ctx context.Context) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countDraftProducts)
 	var count int64
@@ -32,9 +42,27 @@ func (q *Queries) CountDraftProducts(ctx context.Context) (int64, error) {
 }
 
 const countNewContactSubmissions = `-- name: CountNewContactSubmissions :one
+
 SELECT COUNT(*) FROM contact_submissions WHERE status = 'new'
 `
 
+// ====================================================================
+// DASHBOARD STATISTICS QUERIES
+// ====================================================================
+// This file contains simple COUNT queries used to populate admin dashboard
+// widgets showing key metrics and pending items requiring attention.
+//
+// All queries return single integer counts for dashboard cards/badges.
+// These queries help admins quickly see:
+// - Pending contact submissions needing response
+// - Total partner count
+// - Draft content needing review/publication
+// ====================================================================
+// sqlc annotation: :one returns integer count
+// Purpose: Counts unread contact form submissions (status = 'new')
+// Parameters: none
+// Return type: integer count
+// Used for: Dashboard alert badge showing pending inquiries
 func (q *Queries) CountNewContactSubmissions(ctx context.Context) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countNewContactSubmissions)
 	var count int64
@@ -46,6 +74,11 @@ const countPartners = `-- name: CountPartners :one
 SELECT COUNT(*) FROM partners
 `
 
+// sqlc annotation: :one returns integer count
+// Purpose: Counts total partners in the system
+// Parameters: none
+// Return type: integer count
+// Used for: Dashboard "Total Partners" statistic card
 func (q *Queries) CountPartners(ctx context.Context) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countPartners)
 	var count int64

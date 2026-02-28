@@ -3,6 +3,9 @@
 ## Summary
 Testing HTMX-driven addition and deletion of metrics within case study edit page without full page reloads.
 
+## KNOWN BUGS
+- **Hardcoded case study ID in template**: Template has hardcoded case study ID `0` in delete URL (same bug as plan 25). Should be dynamic `{{.CaseStudyID}}`.
+
 ## Preconditions
 - Server running on localhost:28090
 - Logged in as admin@bluejaylabs.com / password
@@ -11,23 +14,22 @@ Testing HTMX-driven addition and deletion of metrics within case study edit page
 
 ## User Journey Steps
 1. Navigate to http://localhost:28090/admin/case-studies/:id/edit
-2. Locate #metrics-section container
+2. Locate #metrics-list container
 3. Fill add metrics form: metric_value (required, e.g. "40%"), metric_label (required, e.g. "Cost Reduction"), display_order
 4. Click add button with hx-post="/admin/case-studies/:id/metrics"
-5. Verify hx-target="#metrics-section" hx-swap="outerHTML" replaces entire section
-6. Verify new metric appears in updated section
-7. Click delete button on existing metric with hx-delete="/admin/case-studies/:id/metrics/:metricId"
-8. Verify metric removed from #metrics-section without page reload
+5. Verify new metric appears in updated list (AddMetric returns partial HTML)
+6. Click delete button on existing metric with hx-delete="/admin/case-studies/:id/metrics/:metricId"
+7. Verify metric removed (DeleteMetric returns 204 No Content)
 
 ## Test Cases
 
 ### Happy Path
-- **Add metric**: Fill metric_value "40%", metric_label "Cost Reduction", display_order 1, submit, metric added to #metrics-section
+- **Add metric**: Fill metric_value "40%", metric_label "Cost Reduction", display_order 1, submit, metric added (AddMetric returns partial HTML)
 - **Multiple metrics**: Add 3 metrics with different display_order values, verify all appear
 - **Display order**: Metrics display in order based on display_order field
 - **Various value formats**: metric_value "50%", "2x faster", "$1M saved", "99.9% uptime" all accepted
-- **Delete metric**: Click delete button on metric, hx-delete removes it from section
-- **Section swap**: After add/delete, entire #metrics-section swapped with updated HTML
+- **Delete metric**: Click delete button on metric, hx-delete removes it (returns 204 No Content, no HTML)
+- **Individual item removal**: Delete uses hx-target="closest div" hx-swap="outerHTML" to remove individual metric item
 - **No page reload**: All operations via HTMX, no full page refresh
 
 ### Edge Cases / Error States
@@ -41,16 +43,16 @@ Testing HTMX-driven addition and deletion of metrics within case study edit page
 - **HTMX error handling**: Server error on add/delete shows error message in section
 
 ## Selectors & Elements
-- Section container: id="metrics-section"
-- Add form action: hx-post="/admin/case-studies/:id/metrics" hx-target="#metrics-section" hx-swap="outerHTML"
+- Section container: id="metrics-list"
+- Add form action: hx-post="/admin/case-studies/:id/metrics"
 - Input names: metric_value (required), metric_label (required), display_order (number)
-- Delete button: hx-delete="/admin/case-studies/:id/metrics/:metricId" hx-target="#metrics-section" hx-swap="outerHTML"
+- Delete button: hx-delete="/admin/case-studies/:id/metrics/:metricId" hx-target="closest div" hx-swap="outerHTML"
 - Add button: text "Add Metric"
 
 ## HTMX Interactions
-- **Add metric**: hx-post="/admin/case-studies/:id/metrics" hx-target="#metrics-section" hx-swap="outerHTML" (returns updated metrics_section.html partial)
-- **Delete metric**: hx-delete="/admin/case-studies/:id/metrics/:metricId" hx-target="#metrics-section" hx-swap="outerHTML" (returns updated metrics_section.html partial)
-- Both operations swap entire #metrics-section to reflect current state
+- **Add metric**: hx-post="/admin/case-studies/:id/metrics" (returns partial HTML for the new metric item)
+- **Delete metric**: hx-delete="/admin/case-studies/:id/metrics/:metricId" hx-target="closest div" hx-swap="outerHTML" (returns 204 No Content, no HTML)
+- Delete removes individual metric items using closest div targeting
 
 ## Dependencies
 - 24-case-studies-crud.md (parent case study edit page)

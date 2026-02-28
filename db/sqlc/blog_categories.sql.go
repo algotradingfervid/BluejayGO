@@ -23,6 +23,16 @@ type CreateBlogCategoryParams struct {
 	SortOrder   int64          `json:"sort_order"`
 }
 
+// sqlc annotation: :one returns the created category row
+// Purpose: Creates a new blog category
+// Parameters (5 positional):
+//  1. name (TEXT): category display name
+//  2. slug (TEXT): URL-safe identifier (must be unique)
+//  3. color_hex (TEXT): hex color for UI badges (e.g., "#3B82F6")
+//  4. description (TEXT): category description for archive page
+//  5. sort_order (INTEGER): display order in category lists
+//
+// Return type: complete inserted row with generated ID and timestamps
 func (q *Queries) CreateBlogCategory(ctx context.Context, arg CreateBlogCategoryParams) (BlogCategory, error) {
 	row := q.db.QueryRowContext(ctx, createBlogCategory,
 		arg.Name,
@@ -49,6 +59,15 @@ const deleteBlogCategory = `-- name: DeleteBlogCategory :exec
 DELETE FROM blog_categories WHERE id = ?
 `
 
+// sqlc annotation: :exec returns no data, only error or success
+// Purpose: Permanently removes a blog category
+// Parameters:
+//  1. id (INTEGER): category to delete
+//
+// Return type: none
+// Warning: This will fail if category has associated blog posts (foreign key constraint)
+//
+//	Consider reassigning posts before deletion
 func (q *Queries) DeleteBlogCategory(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteBlogCategory, id)
 	return err
@@ -58,6 +77,12 @@ const getBlogCategory = `-- name: GetBlogCategory :one
 SELECT id, name, slug, color_hex, description, sort_order, created_at, updated_at FROM blog_categories WHERE id = ? LIMIT 1
 `
 
+// sqlc annotation: :one returns single blog_categories row or error
+// Purpose: Retrieves specific category by ID for editing
+// Parameters:
+//  1. id (INTEGER): category primary key
+//
+// Return type: single complete blog_categories row
 func (q *Queries) GetBlogCategory(ctx context.Context, id int64) (BlogCategory, error) {
 	row := q.db.QueryRowContext(ctx, getBlogCategory, id)
 	var i BlogCategory
@@ -78,6 +103,13 @@ const getBlogCategoryBySlug = `-- name: GetBlogCategoryBySlug :one
 SELECT id, name, slug, color_hex, description, sort_order, created_at, updated_at FROM blog_categories WHERE slug = ? LIMIT 1
 `
 
+// sqlc annotation: :one returns single blog_categories row or error
+// Purpose: Retrieves category by URL slug for public category archive pages
+// Parameters:
+//  1. slug (TEXT): URL-safe category identifier (e.g., "technology")
+//
+// Return type: single blog_categories row
+// Note: slug should be UNIQUE via database constraint
 func (q *Queries) GetBlogCategoryBySlug(ctx context.Context, slug string) (BlogCategory, error) {
 	row := q.db.QueryRowContext(ctx, getBlogCategoryBySlug, slug)
 	var i BlogCategory
@@ -95,9 +127,31 @@ func (q *Queries) GetBlogCategoryBySlug(ctx context.Context, slug string) (BlogC
 }
 
 const listBlogCategories = `-- name: ListBlogCategories :many
+
 SELECT id, name, slug, color_hex, description, sort_order, created_at, updated_at FROM blog_categories ORDER BY sort_order ASC, name ASC
 `
 
+// ====================================================================
+// BLOG CATEGORIES QUERIES
+// ====================================================================
+// This file manages blog category taxonomy for organizing posts into
+// distinct content verticals (e.g., "Technology", "Industry News", "Tutorials").
+//
+// Managed entity:
+// - blog_categories: post classification with color coding for UI
+//
+// Note: slug field enables category archive pages (e.g., /blog/category/{slug})
+//
+//	color_hex allows color-coded category badges in UI
+//
+// ====================================================================
+// sqlc annotation: :many returns slice of blog_categories rows
+// Purpose: Lists all blog categories for admin management or post categorization
+// Parameters: none
+// Return type: slice of all blog_categories rows
+// ORDER BY logic:
+//   - Primary sort: sort_order ASC (custom display order)
+//   - Secondary sort: name ASC (alphabetical fallback)
 func (q *Queries) ListBlogCategories(ctx context.Context) ([]BlogCategory, error) {
 	rows, err := q.db.QueryContext(ctx, listBlogCategories)
 	if err != nil {
@@ -143,6 +197,15 @@ type UpdateBlogCategoryParams struct {
 	ID          int64          `json:"id"`
 }
 
+// sqlc annotation: :one returns the updated category row
+// Purpose: Updates an existing blog category
+// Parameters (6 positional):
+//
+//	1-5. updated field values (name, slug, color_hex, description, sort_order)
+//	6. id (INTEGER): which category to update (WHERE clause)
+//
+// Return type: updated blog_categories row
+// Note: updated_at explicitly set to CURRENT_TIMESTAMP
 func (q *Queries) UpdateBlogCategory(ctx context.Context, arg UpdateBlogCategoryParams) (BlogCategory, error) {
 	row := q.db.QueryRowContext(ctx, updateBlogCategory,
 		arg.Name,

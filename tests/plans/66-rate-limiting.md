@@ -3,6 +3,11 @@
 ## Summary
 Verify contact form rate limiting restricts to 5 submissions per hour per IP address.
 
+**IMPLEMENTATION NOTES**:
+- Rate limit error returns JSON (`{"error": "Too many requests. Please try again later."}`) with Content-Type `application/json`, but contact form expects HTML fragments via HTMX — potential UX issue
+- Rate limiting middleware runs BEFORE handler validation, so invalid form submissions also count toward the limit
+- GET requests to `/contact` do NOT count toward rate limit (limiter only applied to POST route)
+
 ## Preconditions
 - Server running on localhost:28090
 - contactLimiter middleware configured: 5 requests per hour per IP
@@ -27,9 +32,10 @@ Verify contact form rate limiting restricts to 5 submissions per hour per IP add
 
 ### Error Cases - Rate Limited
 - **Sixth submission blocked**: Submit 6th time within same hour, verify rate limit error
-- **Rate limit status code**: Verify response status is 429 (Too Many Requests) or similar error code
-- **Rate limit error message**: Verify error message indicates rate limit exceeded
-- **User feedback**: Verify user-friendly error message displayed on page
+- **Rate limit status code**: Verify response status is 429 (Too Many Requests)
+- **Rate limit response format**: Response is JSON: `{"error": "Too many requests. Please try again later."}` with Content-Type `application/json`
+- **HTMX compatibility issue**: HTMX form expects HTML fragment, but gets JSON — may not display error properly
+- **User feedback**: Verify error message handling (JSON response may not integrate with HTMX UI)
 - **Seventh submission also blocked**: Attempt 7th submission, verify still blocked
 
 ### Rate Limit Reset
@@ -40,7 +46,8 @@ Verify contact form rate limiting restricts to 5 submissions per hour per IP add
 ### Edge Cases
 - **Rapid submissions**: Submit 5 times rapidly in succession, verify all 5 succeed before rate limit kicks in
 - **Partial form data**: Verify incomplete form submissions still count toward rate limit
-- **Failed validations**: Verify failed validation attempts count (or don't count) toward limit appropriately
+- **Failed validations**: Middleware runs BEFORE handler validation, so invalid submissions DO count toward limit
+- **GET requests not limited**: GET /contact does NOT count toward rate limit (only POST /contact/submit is limited)
 - **Rate limit persistence**: Restart server (if applicable), verify rate limit counters persist or reset as designed
 
 ## Selectors & Elements

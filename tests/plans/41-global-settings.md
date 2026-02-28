@@ -15,24 +15,27 @@ Tests the tabbed global settings interface including general site settings, SEO 
 2. View general settings tab with site info and contact details
 3. Fill in site_name, site_tagline, contact_email, contact_phone
 4. Fill in address (textarea) and business_hours (textarea)
-5. Switch to SEO tab using switchTab() JavaScript
-6. Fill in meta_keywords (max 100 chars), meta_description (max 250 chars)
-7. Fill in google_analytics_id
-8. Observe character counters update
-9. Switch to social media tab
-10. Fill in social media URLs (Facebook, Twitter, LinkedIn, Instagram, YouTube)
-11. Validate URLs using validateUrl() function
-12. Submit form with hidden field active_tab
-13. Verify redirect to /admin/settings?saved=1&tab=X
-14. Confirm success banner appears
-15. Test unsaved changes warning when navigating away
+5. Switch to contact tab using switchTab() JavaScript
+6. Fill in contact-specific fields
+7. Switch to social media tab
+8. Fill in social media URLs (Facebook, Twitter, LinkedIn, Instagram, YouTube)
+9. Validate URLs using validateUrl() function
+10. Switch to SEO tab using switchTab() JavaScript
+11. Fill in meta_keywords (max 100 chars with counter limit 70), meta_description (max 250 chars)
+12. Fill in google_analytics_id
+13. Observe character counters update
+14. Submit form with hidden field active_tab
+15. Verify redirect to /admin/settings?saved=1&tab=X
+16. Confirm success banner appears
+17. Test unsaved changes warning when navigating away
 
 ## Test Cases
 
 ### Happy Path
 - **Load general tab**: Verifies GET /admin/settings?tab=general shows general settings
-- **Load SEO tab**: Verifies GET /admin/settings?tab=seo shows SEO settings
+- **Load contact tab**: Verifies GET /admin/settings?tab=contact shows contact settings
 - **Load social tab**: Verifies GET /admin/settings?tab=social shows social media settings
+- **Load SEO tab**: Verifies GET /admin/settings?tab=seo shows SEO settings
 - **Default tab**: Navigates to /admin/settings without tab param, verifies general tab active
 - **Update general settings**: Changes site_name and contact_email, verifies save
 - **Update address**: Fills multi-line address textarea, verifies save
@@ -49,7 +52,7 @@ Tests the tabbed global settings interface including general site settings, SEO 
 - **Empty site_name**: Tests required field validation
 - **Invalid email format**: Enters malformed contact_email, checks validation
 - **Invalid phone format**: Enters invalid contact_phone, checks validation
-- **Meta keywords over 100**: Enters 150 chars, verifies truncation or validation
+- **Meta keywords over 100**: Enters 150 chars, verifies truncation or validation (NOTE: template shows `maxlength="100"` with counter limit of 70)
 - **Meta description over 250**: Enters 300 chars, verifies truncation or validation
 - **Invalid Google Analytics ID**: Enters malformed GA ID, checks validation
 - **Invalid social URLs**: Enters non-URL text in social fields, verifies validateUrl() error
@@ -63,9 +66,9 @@ Tests the tabbed global settings interface including general site settings, SEO 
 ## Selectors & Elements
 - Form: `form[action="/admin/settings"][method="POST"]`
 - Hidden active tab: `input[name="active_tab"][type="hidden"]`
-- Tab buttons: `.tab-button[data-tab="general"]`, `[data-tab="seo"]`, `[data-tab="social"]`
+- Tab buttons: `.tab-button[data-tab="general"]`, `[data-tab="contact"]`, `[data-tab="social"]`, `[data-tab="seo"]`
 - Active tab indicator: `.tab-button.active`
-- Tab content: `#general-tab`, `#seo-tab`, `#social-tab`
+- Tab content: `#general-tab`, `#contact-tab`, `#social-tab`, `#seo-tab`
 - Site name: `input[name="site_name"]`
 - Site tagline: `input[name="site_tagline"]`
 - Contact email: `input[name="contact_email"][type="email"]`
@@ -98,3 +101,8 @@ Tests the tabbed global settings interface including general site settings, SEO 
 - Template: templates/admin/pages/global-settings.html
 - Handler: internal/handlers/settings.go (GetGlobalSettings, PostGlobalSettings)
 - URL validation for social media fields
+
+## Implementation Notes
+- **Tab structure**: Implementation has 4 tabs (general, contact, social, seo), NOT 3 tabs
+- **Meta keywords character limit**: Template shows `maxlength="100"` with counter limit of 70
+- **Branding section**: Template includes logo upload areas that exist but may not be fully covered in this test plan

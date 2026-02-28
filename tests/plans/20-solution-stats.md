@@ -11,22 +11,23 @@ Testing HTMX-driven addition and deletion of stats within solution edit page wit
 
 ## User Journey Steps
 1. Navigate to http://localhost:28090/admin/solutions/:id/edit
-2. Locate #stats-section container
+2. Locate #stats-list container
 3. Fill add stats form: value (required), label (required), display_order
 4. Click add button with hx-post="/admin/solutions/:id/stats"
-5. Verify hx-target="#stats-section" hx-swap="outerHTML" replaces entire section
-6. Verify new stat appears in updated section
+5. Verify hx-target="#stats-list" hx-swap="innerHTML" adds new stat to list
+6. Verify new stat appears in list
 7. Click delete button on existing stat with hx-delete="/admin/solutions/:id/stats/:statId"
-8. Verify stat removed from #stats-section without page reload
+8. Verify stat removed (hx-target="closest div" hx-swap="outerHTML swap:0.3s") without page reload
 
 ## Test Cases
 
 ### Happy Path
-- **Add stat**: Fill value "99%", label "Uptime", display_order 1, submit, stat added to #stats-section
+- **Add stat**: Fill value "99%", label "Uptime", display_order 1, submit, stat added to #stats-list (innerHTML swap adds partial)
 - **Multiple stats**: Add 3 stats with different display_order values, verify all appear
 - **Display order**: Stats display in order based on display_order field
-- **Delete stat**: Click delete button on stat, hx-delete removes it from section
-- **Section swap**: After add/delete, entire #stats-section swapped with updated HTML
+- **Delete stat**: Click delete button on stat, hx-delete removes individual div (returns 200 NoContent with no HTML)
+- **Add returns HTML**: Add handler returns solution_stats.html partial
+- **Delete returns no content**: Delete handler returns c.NoContent(http.StatusOK) with no HTML
 - **No page reload**: All operations via HTMX, no full page refresh
 
 ### Edge Cases / Error States
@@ -39,16 +40,16 @@ Testing HTMX-driven addition and deletion of stats within solution edit page wit
 - **HTMX error handling**: Server error on add/delete shows error message in section
 
 ## Selectors & Elements
-- Section container: id="stats-section"
-- Add form action: hx-post="/admin/solutions/:id/stats" hx-target="#stats-section" hx-swap="outerHTML"
+- Section container: id="stats-list"
+- Add form action: hx-post="/admin/solutions/:id/stats" hx-target="#stats-list" hx-swap="innerHTML"
 - Input names: value (required), label (required), display_order (number)
-- Delete button: hx-delete="/admin/solutions/:id/stats/:statId" hx-target="#stats-section" hx-swap="outerHTML"
+- Delete button: hx-delete="/admin/solutions/:id/stats/:statId" hx-target="closest div" hx-swap="outerHTML swap:0.3s"
 - Add button: text "Add Stat"
 
 ## HTMX Interactions
-- **Add stat**: hx-post="/admin/solutions/:id/stats" hx-target="#stats-section" hx-swap="outerHTML" (returns updated stats_section.html partial)
-- **Delete stat**: hx-delete="/admin/solutions/:id/stats/:statId" hx-target="#stats-section" hx-swap="outerHTML" (returns updated stats_section.html partial)
-- Both operations swap entire #stats-section to reflect current state
+- **Add stat**: hx-post="/admin/solutions/:id/stats" hx-target="#stats-list" hx-swap="innerHTML" (returns solution_stats.html partial)
+- **Delete stat**: hx-delete="/admin/solutions/:id/stats/:statId" hx-target="closest div" hx-swap="outerHTML swap:0.3s" (returns c.NoContent(http.StatusOK) with no HTML content)
+- Add operation inserts new stat HTML into list, delete operation removes individual item div
 
 ## Dependencies
 - 19-solutions-crud.md (parent solution edit page)

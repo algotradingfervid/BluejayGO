@@ -14,12 +14,12 @@ Testing solution creation, editing, listing with filters, deletion, and HTMX-dri
 3. Verify pagination shows 15 solutions per page
 4. Click "New Solution" button to navigate to /admin/solutions/new
 5. Fill required field: title
-6. Auto-generate slug on title blur
+6. Slug will be auto-generated server-side on form submission via makeSlug(title)
 7. Fill optional fields: icon (Material icon name), short_description, hero fields, overview_content, meta_description, reference_code
 8. Set is_published checkbox and display_order number
 9. Submit form via POST /admin/solutions
 10. Navigate to edit form at /admin/solutions/:id/edit
-11. Interact with HTMX sections: #stats-section, #challenges-section, #products-section, #ctas-section
+11. Interact with HTMX sections: #stats-list, #challenges-list, #products-list, #ctas-list
 12. Delete solution using hx-delete with hx-target="closest tr"
 13. Verify cache invalidation for page:solutions
 
@@ -29,14 +29,14 @@ Testing solution creation, editing, listing with filters, deletion, and HTMX-dri
 - **List solutions with filters**: Verify search by title, filter by status/page work correctly
 - **Pagination**: Verify 15 solutions per page and navigation works
 - **Create new solution**: Required title filled, slug auto-generated, solution saved
-- **Auto-slug generation**: Title "IoT Platform" generates slug "iot-platform" on blur
+- **Auto-slug generation**: Title "IoT Platform" generates slug "iot-platform" server-side on form submission
 - **Material icon field**: Enter "cloud_upload" as icon name, saved successfully
 - **Hero section fields**: Fill hero_title, hero_description, hero_image_url
 - **Overview content**: Enter rich text or textarea content for overview_content
 - **Display order**: Set numeric display_order for solution positioning
 - **Publish checkbox**: Toggle is_published checkbox, solution visibility changes
 - **Edit solution**: Navigate to edit form, modify fields, save successfully
-- **Delete solution**: hx-delete removes row from table without page reload
+- **Delete solution**: hx-delete removes row from table without page reload, returns 204 NoContent
 - **Cache invalidation**: After create/update/delete, page:solutions cache cleared
 
 ### Edge Cases / Error States
@@ -45,7 +45,7 @@ Testing solution creation, editing, listing with filters, deletion, and HTMX-dri
 - **Invalid Material icon**: Non-existent icon name saved but may not render on frontend
 - **Long short_description**: Very long text in short_description textarea accepted
 - **Negative display_order**: Entering negative number in display_order field
-- **Empty slug auto-generation**: Blank title doesn't generate slug until filled
+- **Empty slug auto-generation**: Blank title doesn't generate slug on form submission
 - **Delete with sub-resources**: Deleting solution with stats/challenges/products may cascade delete or show warning
 
 ## Selectors & Elements
@@ -55,11 +55,11 @@ Testing solution creation, editing, listing with filters, deletion, and HTMX-dri
 - Input names: title, slug, icon, short_description, hero_image_url, hero_title, hero_description, overview_content, meta_description, reference_code, is_published (checkbox), display_order (number)
 - Delete button: hx-delete="/admin/solutions/:id" hx-target="closest tr"
 - Submit button: text "Create Solution" or "Update Solution"
-- HTMX sections: id="stats-section", id="challenges-section", id="products-section", id="ctas-section"
+- HTMX sections: id="stats-list", id="challenges-list", id="products-list", id="ctas-list"
 
 ## HTMX Interactions
-- **Slug auto-generation**: hx-get="/admin/solutions/generate-slug" hx-trigger="blur from:#title" hx-target="#slug"
-- **Delete solution**: hx-delete="/admin/solutions/:id" hx-target="closest tr" hx-swap="outerHTML"
+- **Slug auto-generation**: Slug is auto-generated server-side in Create handler via makeSlug(title) on form submission, not via separate HTMX endpoint
+- **Delete solution**: hx-delete="/admin/solutions/:id" hx-target="closest tr" hx-swap="outerHTML" (returns 204 NoContent)
 - **Sub-resource sections**: Each section loaded/updated via HTMX (see dependent test plans)
 
 ## Dependencies

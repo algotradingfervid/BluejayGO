@@ -3,6 +3,8 @@
 ## Summary
 Verify dynamic XML sitemap lists all public pages and robots.txt provides crawl directives.
 
+**KNOWN GAP**: Individual product detail pages (e.g., /products/{category}/{slug}) are NOT included in the sitemap — only the /products index page is included as a static page. This is a known SEO limitation. Solution URLs ARE included.
+
 ## Preconditions
 - Server running on localhost:28090
 - Database seeded with all public content types
@@ -24,7 +26,7 @@ Verify dynamic XML sitemap lists all public pages and robots.txt provides crawl 
 - **Sitemap namespace**: Verify xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
 - **Base URL correct**: Verify all URLs use base https://bluejaylabs.com
 - **Static pages included**: Verify URLs for /, /products, /solutions, /blog, /case-studies, /whitepapers, /about, /contact, /partners
-- **Product URLs included**: Verify all published products have URLs in format /products/{category}/{slug}
+- **Product URLs included**: NOT IMPLEMENTED — individual product detail URLs (/products/{category}/{slug}) are not in sitemap
 - **Solution URLs included**: Verify all published solutions have URLs in format /solutions/{slug}
 - **Blog post URLs included**: Verify all published blog posts have URLs in format /blog/{slug}
 - **Case study URLs included**: Verify all published case studies have URLs in format /case-studies/{slug}

@@ -31,7 +31,7 @@ Comprehensive testing of blog post creation, editing, listing with filters, and 
 - **List posts with filters**: Verify search by title, filter by status/category/author work correctly
 - **Pagination**: Verify 15 posts per page and navigation works
 - **Create new post**: Required fields (title, category, author) filled, slug auto-generated, post saved
-- **Auto-slug generation**: Title "My Blog Post" generates slug "my-blog-post" on blur
+- **Auto-slug generation**: Title "My Blog Post" generates slug "my-blog-post" via client-side JavaScript on title blur
 - **Trix editor integration**: Body content entered via Trix, stored in hidden input
 - **Tag picker HTMX**: Search tags, select existing, quick-create new, chips added to #selected-tags
 - **Product picker HTMX**: Search products, select, chips added to #selected-products
@@ -65,7 +65,7 @@ Comprehensive testing of blog post creation, editing, listing with filters, and 
 - Status select: options "draft", "published"
 
 ## HTMX Interactions
-- **Slug auto-generation**: hx-get="/admin/blog/posts/generate-slug" hx-trigger="blur from:#title" hx-target="#slug"
+- **Slug auto-generation**: Slug is auto-generated via client-side JavaScript on title blur (no HTMX endpoint)
 - **Tag search**: hx-get="/admin/blog/tags/search" hx-trigger="input changed delay:200ms, focus" hx-target="#tag-suggestions" (returns tag_suggestions.html partial)
 - **Tag quick-create**: hx-post="/admin/blog/tags/quick-create" hx-vals='{"name":"..."}' hx-target="#selected-tags" hx-swap="beforeend" (returns tag_chip.html partial)
 - **Product search**: hx-get="/admin/blog/products/search" hx-trigger="input changed delay:200ms, focus" hx-target="#product-suggestions" (returns product_suggestions.html partial)

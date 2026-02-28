@@ -12,24 +12,24 @@ Testing the HTMX-driven product search, selection, and removal flow within blog 
 ## User Journey Steps
 1. Navigate to http://localhost:28090/admin/blog/posts/new
 2. Locate product-search input in "Related Products" card
-3. Type product name or SKU to trigger hx-get="/admin/blog/products/search"
+3. Type product name or SKU to trigger hx-get="/admin/blog/products/search" with _product_search parameter
 4. Verify product suggestions appear in #product-suggestions after 200ms delay
-5. Click a product suggestion to add product chip
-6. Verify product chip with hidden product_ids[] input added to #selected-products
-7. Click X on product chip to remove product
-8. Verify hidden product_ids[] input removed from #selected-products
+5. Click a product suggestion to add product chip (uses inline onclick handler)
+6. Verify product chip with hidden product_ids input added to #selected-products
+7. Click X on product chip to remove product (uses this.parentElement.remove())
+8. Verify hidden product_ids input removed from #selected-products
 9. Submit post form with linked products
 
 ## Test Cases
 
 ### Happy Path
-- **Search products**: Type "sensor", see matching products in dropdown within 200ms
-- **Select product from suggestions**: Click "Temperature Sensor XL" suggestion, chip added to #selected-products with hidden input product_ids[]=:id
+- **Search products**: Type "sensor", see matching published products in dropdown within 200ms (limited to published products only)
+- **Select product from suggestions**: Click "Temperature Sensor XL" suggestion, chip added to #selected-products with hidden input product_ids=:id
 - **Multiple product selection**: Add 3 different products, verify 3 chips and 3 hidden inputs exist
 - **Product chip display**: Chip shows product name and SKU/image if available
-- **Remove product**: Click X on product chip, chip and hidden input removed from DOM
-- **Focus trigger**: Focusing product-search input shows recent products or all products
-- **Form submission**: Submit post form with 2 linked products, verify product_ids[] array sent to server
+- **Remove product**: Click X on product chip, chip and hidden input removed from DOM via this.parentElement.remove()
+- **Focus trigger**: Focusing product-search input shows recent published products
+- **Form submission**: Submit post form with 2 linked products, verify product_ids array sent to server
 
 ### Edge Cases / Error States
 - **Input delay**: Typing rapidly waits 200ms after last keystroke before HTMX request
@@ -44,13 +44,13 @@ Testing the HTMX-driven product search, selection, and removal flow within blog 
 - Product search input: id="product-search", hx-get="/admin/blog/products/search", hx-trigger="input changed delay:200ms, focus", hx-target="#product-suggestions"
 - Suggestions container: id="product-suggestions" (receives product_suggestions.html partial)
 - Selected products container: id="selected-products" (contains product chips)
-- Product chip structure: <div class="product-chip">Product Name <button onclick="removeProduct(id)">X</button><input type="hidden" name="product_ids[]" value=":id"></div>
-- JavaScript functions: addProduct(id, name), removeProduct(id)
+- Product chip structure: <div class="product-chip">Product Name <button onclick="this.parentElement.remove()">X</button><input type="hidden" name="product_ids" value=":id"></div>
+- JavaScript: Suggestion clicks use inline onclick handlers, removal uses this.parentElement.remove(), removeProduct(id)
 
 ## HTMX Interactions
-- **Product search**: hx-get="/admin/blog/products/search?q=keyword" hx-trigger="input changed delay:200ms, focus" hx-target="#product-suggestions" (returns product_suggestions.html partial with clickable suggestions)
-- **Chip addition**: Clicking suggestion triggers addProduct() JS which manually creates chip HTML and appends to #selected-products
-- **Chip removal**: Clicking X button calls removeProduct() JS which removes chip element from DOM
+- **Product search**: hx-get="/admin/blog/products/search?_product_search=keyword" hx-trigger="input changed delay:200ms, focus" hx-target="#product-suggestions" (returns product_suggestions.html partial with clickable suggestions; limited to published products only via SearchPublishedProducts query)
+- **Chip addition**: Clicking suggestion uses inline onclick handler which manually creates chip HTML and appends to #selected-products
+- **Chip removal**: Clicking X button uses inline onclick="this.parentElement.remove()" which removes chip element from DOM
 
 ## Dependencies
 - Products table must be seeded with data

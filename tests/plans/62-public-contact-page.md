@@ -25,8 +25,9 @@ Verify contact page displays form with validation and rate limiting, plus office
 - **Office locations display**: Verify 6 office locations with addresses/details
 - **Form field validation - name required**: Verify name field is required
 - **Form field validation - email required**: Verify email field is required
+- **Form field validation - phone required**: Verify phone field is required
+- **Form field validation - company required**: Verify company field is required
 - **Form field validation - message required**: Verify message textarea is required
-- **Form field validation - optional fields**: Verify phone and company are optional
 - **Inquiry type select**: Verify inquiry_type dropdown with options
 - **Form submission success**: Fill all required fields, submit, verify success feedback
 - **Success message displays**: Verify success feedback after POST /contact/submit
@@ -35,6 +36,8 @@ Verify contact page displays form with validation and rate limiting, plus office
 - **Form validation - missing name**: Submit without name, verify validation error
 - **Form validation - missing email**: Submit without email, verify validation error
 - **Form validation - invalid email**: Submit with invalid email format, verify error
+- **Form validation - missing phone**: Submit without phone, verify validation error
+- **Form validation - missing company**: Submit without company, verify validation error
 - **Form validation - missing message**: Submit without message, verify validation error
 - **Rate limiting - 5 submissions succeed**: Submit form 5 times within an hour, verify all succeed
 - **Rate limiting - 6th submission blocked**: Submit 6th time, verify rate limit error response
@@ -46,11 +49,11 @@ Verify contact page displays form with validation and rate limiting, plus office
 
 ## Selectors & Elements
 - Contact form:
-  - `form[action="/contact/submit"][method="POST"]`
+  - Form with HTMX attributes: `hx-post="/contact/submit"`
   - `input[name="name"][required]`
   - `input[name="email"][required]`
-  - `input[name="phone"]` (optional)
-  - `input[name="company"]` (optional)
+  - `input[name="phone"][required]`
+  - `input[name="company"][required]`
   - `select[name="inquiry_type"]` with options
   - `textarea[name="message"][required]`
   - Submit button
@@ -60,7 +63,7 @@ Verify contact page displays form with validation and rate limiting, plus office
   - 6 office location cards with address details
 
 ## HTMX Interactions
-- Possible HTMX form submission for dynamic feedback (or traditional POST with redirect)
+- Contact form: hx-post="/contact/submit" for dynamic feedback without page reload
 
 ## Dependencies
 - Form handler: POST /contact/submit
