@@ -3369,6 +3369,11 @@ type Querier interface {
 	//
 	// Note: updated_at is automatically set to CURRENT_TIMESTAMP
 	UpdateProductCategory(ctx context.Context, arg UpdateProductCategoryParams) (ProductCategory, error)
+	UpdateProductCertification(ctx context.Context, arg UpdateProductCertificationParams) error
+	UpdateProductDownload(ctx context.Context, arg UpdateProductDownloadParams) error
+	UpdateProductFeature(ctx context.Context, arg UpdateProductFeatureParams) error
+	UpdateProductImage(ctx context.Context, arg UpdateProductImageParams) error
+	UpdateProductSpec(ctx context.Context, arg UpdateProductSpecParams) error
 	// Updates Products page display and filter settings.
 	//
 	// Parameters:

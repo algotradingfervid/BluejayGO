@@ -1680,3 +1680,122 @@ func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) er
 	)
 	return err
 }
+
+const updateProductCertification = `-- name: UpdateProductCertification :exec
+UPDATE product_certifications
+SET certification_name = ?, certification_code = ?, icon_type = ?, icon_path = ?, display_order = ?
+WHERE id = ?
+`
+
+type UpdateProductCertificationParams struct {
+	CertificationName string         `json:"certification_name"`
+	CertificationCode sql.NullString `json:"certification_code"`
+	IconType          sql.NullString `json:"icon_type"`
+	IconPath          sql.NullString `json:"icon_path"`
+	DisplayOrder      int64          `json:"display_order"`
+	ID                int64          `json:"id"`
+}
+
+func (q *Queries) UpdateProductCertification(ctx context.Context, arg UpdateProductCertificationParams) error {
+	_, err := q.db.ExecContext(ctx, updateProductCertification,
+		arg.CertificationName,
+		arg.CertificationCode,
+		arg.IconType,
+		arg.IconPath,
+		arg.DisplayOrder,
+		arg.ID,
+	)
+	return err
+}
+
+const updateProductDownload = `-- name: UpdateProductDownload :exec
+UPDATE product_downloads
+SET title = ?, description = ?, file_type = ?, version = ?, display_order = ?
+WHERE id = ?
+`
+
+type UpdateProductDownloadParams struct {
+	Title        string         `json:"title"`
+	Description  sql.NullString `json:"description"`
+	FileType     string         `json:"file_type"`
+	Version      sql.NullString `json:"version"`
+	DisplayOrder int64          `json:"display_order"`
+	ID           int64          `json:"id"`
+}
+
+func (q *Queries) UpdateProductDownload(ctx context.Context, arg UpdateProductDownloadParams) error {
+	_, err := q.db.ExecContext(ctx, updateProductDownload,
+		arg.Title,
+		arg.Description,
+		arg.FileType,
+		arg.Version,
+		arg.DisplayOrder,
+		arg.ID,
+	)
+	return err
+}
+
+const updateProductFeature = `-- name: UpdateProductFeature :exec
+UPDATE product_features
+SET feature_text = ?, display_order = ?
+WHERE id = ?
+`
+
+type UpdateProductFeatureParams struct {
+	FeatureText  string `json:"feature_text"`
+	DisplayOrder int64  `json:"display_order"`
+	ID           int64  `json:"id"`
+}
+
+func (q *Queries) UpdateProductFeature(ctx context.Context, arg UpdateProductFeatureParams) error {
+	_, err := q.db.ExecContext(ctx, updateProductFeature, arg.FeatureText, arg.DisplayOrder, arg.ID)
+	return err
+}
+
+const updateProductImage = `-- name: UpdateProductImage :exec
+UPDATE product_images
+SET alt_text = ?, caption = ?, display_order = ?
+WHERE id = ?
+`
+
+type UpdateProductImageParams struct {
+	AltText      sql.NullString `json:"alt_text"`
+	Caption      sql.NullString `json:"caption"`
+	DisplayOrder int64          `json:"display_order"`
+	ID           int64          `json:"id"`
+}
+
+func (q *Queries) UpdateProductImage(ctx context.Context, arg UpdateProductImageParams) error {
+	_, err := q.db.ExecContext(ctx, updateProductImage,
+		arg.AltText,
+		arg.Caption,
+		arg.DisplayOrder,
+		arg.ID,
+	)
+	return err
+}
+
+const updateProductSpec = `-- name: UpdateProductSpec :exec
+UPDATE product_specs
+SET section_name = ?, spec_key = ?, spec_value = ?, display_order = ?
+WHERE id = ?
+`
+
+type UpdateProductSpecParams struct {
+	SectionName  string `json:"section_name"`
+	SpecKey      string `json:"spec_key"`
+	SpecValue    string `json:"spec_value"`
+	DisplayOrder int64  `json:"display_order"`
+	ID           int64  `json:"id"`
+}
+
+func (q *Queries) UpdateProductSpec(ctx context.Context, arg UpdateProductSpecParams) error {
+	_, err := q.db.ExecContext(ctx, updateProductSpec,
+		arg.SectionName,
+		arg.SpecKey,
+		arg.SpecValue,
+		arg.DisplayOrder,
+		arg.ID,
+	)
+	return err
+}

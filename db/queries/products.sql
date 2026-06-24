@@ -614,3 +614,28 @@ DELETE FROM product_downloads WHERE id = ?;
 -- Use case: Clearing all downloads before re-importing or deleting product
 -- WARNING: Deletes ALL downloads for the product; physical files should also be removed
 DELETE FROM product_downloads WHERE product_id = ?;
+
+-- name: UpdateProductFeature :exec
+UPDATE product_features
+SET feature_text = ?, display_order = ?
+WHERE id = ?;
+
+-- name: UpdateProductSpec :exec
+UPDATE product_specs
+SET section_name = ?, spec_key = ?, spec_value = ?, display_order = ?
+WHERE id = ?;
+
+-- name: UpdateProductCertification :exec
+UPDATE product_certifications
+SET certification_name = ?, certification_code = ?, icon_type = ?, icon_path = ?, display_order = ?
+WHERE id = ?;
+
+-- name: UpdateProductDownload :exec
+UPDATE product_downloads
+SET title = ?, description = ?, file_type = ?, version = ?, display_order = ?
+WHERE id = ?;
+
+-- name: UpdateProductImage :exec
+UPDATE product_images
+SET alt_text = ?, caption = ?, display_order = ?
+WHERE id = ?;
