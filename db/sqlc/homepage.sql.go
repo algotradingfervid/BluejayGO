@@ -458,6 +458,56 @@ func (q *Queries) GetTestimonialHomepage(ctx context.Context, id int64) (Homepag
 	return i, err
 }
 
+const listActiveHeroes = `-- name: ListActiveHeroes :many
+SELECT id, headline, subheadline, badge_text, primary_cta_text, primary_cta_url, secondary_cta_text, secondary_cta_url, background_image, is_active, display_order, created_at, updated_at FROM homepage_hero
+WHERE is_active = 1
+ORDER BY display_order ASC
+LIMIT ?
+`
+
+// Purpose: Returns the active heroes that make up the public homepage carousel.
+// Every active hero becomes a rotating slide (image + message + CTAs), ordered by
+// display_order. The limit is the homepage_max_heroes setting, capping how many
+// slides render in the banner rotation.
+// Parameters:
+//  1. limit (INTEGER): maximum number of slides (homepage_max_heroes)
+func (q *Queries) ListActiveHeroes(ctx context.Context, limit int64) ([]HomepageHero, error) {
+	rows, err := q.db.QueryContext(ctx, listActiveHeroes, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []HomepageHero{}
+	for rows.Next() {
+		var i HomepageHero
+		if err := rows.Scan(
+			&i.ID,
+			&i.Headline,
+			&i.Subheadline,
+			&i.BadgeText,
+			&i.PrimaryCtaText,
+			&i.PrimaryCtaUrl,
+			&i.SecondaryCtaText,
+			&i.SecondaryCtaUrl,
+			&i.BackgroundImage,
+			&i.IsActive,
+			&i.DisplayOrder,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listActiveStats = `-- name: ListActiveStats :many
 
 SELECT id, stat_value, stat_label, display_order, is_active, created_at FROM homepage_stats

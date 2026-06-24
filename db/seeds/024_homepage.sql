@@ -1,6 +1,9 @@
--- Homepage Hero
-INSERT INTO homepage_hero (headline, subheadline, badge_text, primary_cta_text, primary_cta_url, secondary_cta_text, secondary_cta_url, is_active, display_order) VALUES
-('Innovative Solutions With Unmatched Support', 'Transforming spaces with cutting-edge interactive technology and dedicated customer excellence.', 'System Status: Operational', 'Explore Products', '/products', 'Request a Demo', '/contact', 1, 1);
+-- Homepage Hero — multiple ACTIVE slides drive the homepage carousel.
+-- Each row is one slide with its own image, message, and CTAs; display_order sets rotation order.
+INSERT INTO homepage_hero (headline, subheadline, badge_text, primary_cta_text, primary_cta_url, secondary_cta_text, secondary_cta_url, background_image, is_active, display_order) VALUES
+('Innovative Solutions With Unmatched Support', 'Transforming spaces with cutting-edge interactive technology and dedicated customer excellence.', 'System Status: Operational', 'Explore Products', '/products', 'Request a Demo', '/contact', '/uploads/categories/ops-modules.jpg', 1, 1),
+('Interactive Displays Built To Endure', 'Industrial-grade panels engineered for boardrooms, classrooms, and command centers worldwide.', 'New: BJ-IFP75 Series', 'View Displays', '/products', 'Talk to Sales', '/contact', '/uploads/categories/interactive-flat-panels.jpg', 1, 2),
+('360-Degree Capture For Every Room', 'Intelligent cameras and IoT hubs that turn any space into a connected collaboration environment.', 'Now Shipping', 'Explore Cameras', '/products', 'Book a Demo', '/contact', '/uploads/categories/iot-products.jpg', 1, 3);
 
 -- Homepage Stats
 INSERT INTO homepage_stats (stat_value, stat_label, display_order, is_active) VALUES

@@ -213,10 +213,12 @@ SELECT COUNT(*) FROM products WHERE category_id = ? AND status = 'published';
 --
 -- Performance: May be slow without full-text search index on large datasets
 -- Sorting: published_at DESC - Newest matching products first
-SELECT * FROM products
-WHERE status = 'published'
-    AND (name LIKE ? OR description LIKE ? OR tagline LIKE ?)
-ORDER BY published_at DESC
+SELECT p.*, pc.slug AS category_slug
+FROM products p
+INNER JOIN product_categories pc ON p.category_id = pc.id
+WHERE p.status = 'published'
+    AND (p.name LIKE ? OR p.description LIKE ? OR p.tagline LIKE ?)
+ORDER BY p.published_at DESC
 LIMIT ? OFFSET ?;
 
 -- name: UpdateProduct :exec

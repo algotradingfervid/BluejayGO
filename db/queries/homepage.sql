@@ -39,6 +39,18 @@ LIMIT 1;
 -- ORDER BY display_order: custom sort for A/B testing or scheduling
 SELECT * FROM homepage_hero ORDER BY display_order ASC;
 
+-- name: ListActiveHeroes :many
+-- Purpose: Returns the active heroes that make up the public homepage carousel.
+-- Every active hero becomes a rotating slide (image + message + CTAs), ordered by
+-- display_order. The limit is the homepage_max_heroes setting, capping how many
+-- slides render in the banner rotation.
+-- Parameters:
+--   1. limit (INTEGER): maximum number of slides (homepage_max_heroes)
+SELECT * FROM homepage_hero
+WHERE is_active = 1
+ORDER BY display_order ASC
+LIMIT ?;
+
 -- name: GetHero :one
 -- Purpose: Retrieves specific hero by ID for editing
 SELECT * FROM homepage_hero WHERE id = ?;

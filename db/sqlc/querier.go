@@ -1979,6 +1979,13 @@ type Querier interface {
 	// Use case: Tracking download popularity metrics
 	// Note: Uses download_count + 1 for atomic increment without race conditions
 	IncrementWhitepaperDownloadCount(ctx context.Context, id int64) error
+	// Purpose: Returns the active heroes that make up the public homepage carousel.
+	// Every active hero becomes a rotating slide (image + message + CTAs), ordered by
+	// display_order. The limit is the homepage_max_heroes setting, capping how many
+	// slides render in the banner rotation.
+	// Parameters:
+	//   1. limit (INTEGER): maximum number of slides (homepage_max_heroes)
+	ListActiveHeroes(ctx context.Context, limit int64) ([]HomepageHero, error)
 	// ====================================================================
 	// HOMEPAGE STATS / METRICS
 	// ====================================================================
@@ -3047,7 +3054,7 @@ type Querier interface {
 	//
 	// Performance: May be slow without full-text search index on large datasets
 	// Sorting: published_at DESC - Newest matching products first
-	SearchProducts(ctx context.Context, arg SearchProductsParams) ([]Product, error)
+	SearchProducts(ctx context.Context, arg SearchProductsParams) ([]SearchProductsRow, error)
 	// sqlc annotation: :many returns slice of products for search autocomplete
 	// Purpose: Searches published products by name for adding to blog posts
 	// Parameters:

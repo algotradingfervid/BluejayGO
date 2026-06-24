@@ -514,7 +514,7 @@ func (h *ProductsHandler) ProductSearch(c echo.Context) error {
 	ctx := c.Request().Context()
 	q := c.QueryParam("q") // Extract search query from URL parameter
 
-	var products []sqlc.Product
+	var products []sqlc.SearchProductsRow
 	if q != "" {
 		// Add SQL wildcards for partial matching
 		wildcard := "%" + q + "%"

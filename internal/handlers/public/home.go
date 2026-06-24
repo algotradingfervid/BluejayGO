@@ -93,7 +93,19 @@ func (h *HomeHandler) ShowHomePage(c echo.Context) error {
 
 	// Homepage-specific tables
 	// These are non-critical - errors are ignored to allow graceful degradation
-	hero, _ := h.queries.GetActiveHero(ctx)                          // Main hero section with headline and CTA
+
+	// Hero carousel: every active hero becomes a rotating slide. The number of slides
+	// is capped by the homepage_max_heroes setting, and the section can be hidden
+	// entirely via homepage_show_heroes. Autoplay/interval drive the front-end rotation.
+	heroLimit := settings.HomepageMaxHeroes
+	if heroLimit <= 0 {
+		heroLimit = 5 // Safety fallback if the setting is unset/zero
+	}
+	var heroes []sqlc.HomepageHero
+	if settings.HomepageShowHeroes != 0 {
+		heroes, _ = h.queries.ListActiveHeroes(ctx, heroLimit) // All active heroes, ordered for the carousel
+	}
+
 	stats, _ := h.queries.ListActiveStats(ctx)                       // Statistics section (e.g., "500+ Customers")
 	testimonials, _ := h.queries.ListActiveTestimonialsHomepage(ctx) // Customer testimonials for homepage
 	cta, _ := h.queries.GetActiveCTA(ctx)                            // Call-to-action banner
@@ -116,10 +128,12 @@ func (h *HomeHandler) ShowHomePage(c echo.Context) error {
 
 	// Assemble template data with all homepage content
 	data := map[string]interface{}{
-		"Title":            settings.SiteName, // Browser tab title
-		"Settings":         settings,          // Global site settings
-		"Hero":             hero,              // Hero section content
-		"Stats":            stats,             // Statistics section
+		"Title":            settings.SiteName,                   // Browser tab title
+		"Settings":         settings,                            // Global site settings
+		"Heroes":           heroes,                              // Active hero slides for the carousel
+		"HeroAutoplay":     settings.HomepageHeroAutoplay != 0,  // Auto-rotate the carousel
+		"HeroInterval":     settings.HomepageHeroInterval,       // Seconds each slide is shown
+		"Stats":            stats,                               // Statistics section
 		"Testimonials":     testimonials,      // Customer testimonials
 		"CTA":              cta,               // Call-to-action banner
 		"FeaturedProducts": featuredProducts,  // Featured products grid

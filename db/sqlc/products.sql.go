@@ -1539,10 +1539,12 @@ func (q *Queries) ListProductsForSitemap(ctx context.Context) ([]ListProductsFor
 }
 
 const searchProducts = `-- name: SearchProducts :many
-SELECT id, sku, slug, name, tagline, description, overview, category_id, status, is_featured, featured_order, meta_title, meta_description, primary_image, video_url, created_at, updated_at, published_at, og_image FROM products
-WHERE status = 'published'
-    AND (name LIKE ? OR description LIKE ? OR tagline LIKE ?)
-ORDER BY published_at DESC
+SELECT p.id, p.sku, p.slug, p.name, p.tagline, p.description, p.overview, p.category_id, p.status, p.is_featured, p.featured_order, p.meta_title, p.meta_description, p.primary_image, p.video_url, p.created_at, p.updated_at, p.published_at, p.og_image, pc.slug AS category_slug
+FROM products p
+INNER JOIN product_categories pc ON p.category_id = pc.id
+WHERE p.status = 'published'
+    AND (p.name LIKE ? OR p.description LIKE ? OR p.tagline LIKE ?)
+ORDER BY p.published_at DESC
 LIMIT ? OFFSET ?
 `
 
@@ -1552,6 +1554,29 @@ type SearchProductsParams struct {
 	Tagline     sql.NullString `json:"tagline"`
 	Limit       int64          `json:"limit"`
 	Offset      int64          `json:"offset"`
+}
+
+type SearchProductsRow struct {
+	ID              int64          `json:"id"`
+	Sku             string         `json:"sku"`
+	Slug            string         `json:"slug"`
+	Name            string         `json:"name"`
+	Tagline         sql.NullString `json:"tagline"`
+	Description     string         `json:"description"`
+	Overview        sql.NullString `json:"overview"`
+	CategoryID      int64          `json:"category_id"`
+	Status          string         `json:"status"`
+	IsFeatured      bool           `json:"is_featured"`
+	FeaturedOrder   sql.NullInt64  `json:"featured_order"`
+	MetaTitle       sql.NullString `json:"meta_title"`
+	MetaDescription sql.NullString `json:"meta_description"`
+	PrimaryImage    sql.NullString `json:"primary_image"`
+	VideoUrl        sql.NullString `json:"video_url"`
+	CreatedAt       time.Time      `json:"created_at"`
+	UpdatedAt       time.Time      `json:"updated_at"`
+	PublishedAt     sql.NullTime   `json:"published_at"`
+	OgImage         string         `json:"og_image"`
+	CategorySlug    string         `json:"category_slug"`
 }
 
 // Searches published products by name, description, or tagline.
@@ -1572,7 +1597,7 @@ type SearchProductsParams struct {
 //
 // Performance: May be slow without full-text search index on large datasets
 // Sorting: published_at DESC - Newest matching products first
-func (q *Queries) SearchProducts(ctx context.Context, arg SearchProductsParams) ([]Product, error) {
+func (q *Queries) SearchProducts(ctx context.Context, arg SearchProductsParams) ([]SearchProductsRow, error) {
 	rows, err := q.db.QueryContext(ctx, searchProducts,
 		arg.Name,
 		arg.Description,
@@ -1584,9 +1609,9 @@ func (q *Queries) SearchProducts(ctx context.Context, arg SearchProductsParams) 
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Product{}
+	items := []SearchProductsRow{}
 	for rows.Next() {
-		var i Product
+		var i SearchProductsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Sku,
@@ -1607,6 +1632,7 @@ func (q *Queries) SearchProducts(ctx context.Context, arg SearchProductsParams) 
 			&i.UpdatedAt,
 			&i.PublishedAt,
 			&i.OgImage,
+			&i.CategorySlug,
 		); err != nil {
 			return nil, err
 		}

@@ -19,9 +19,9 @@
             <p class="text-xs opacity-60 mb-3">{{.Tagline.String}}</p>
             {{end}}
             <p class="text-sm opacity-70 mb-4 line-clamp-2">{{.Description}}</p>
-            <span class="manual-border bg-white text-black px-4 py-2 text-xs font-bold uppercase manual-shadow btn-press group-hover:bg-[#0066CC] group-hover:text-white transition-colors inline-block">
+            <a href="/products/{{.CategorySlug}}/{{.Slug}}" class="manual-border bg-white text-black px-4 py-2 text-xs font-bold uppercase manual-shadow btn-press group-hover:bg-[#0066CC] group-hover:text-white transition-colors inline-block">
                 View Details
-            </span>
+            </a>
         </div>
         {{end}}
     </div>

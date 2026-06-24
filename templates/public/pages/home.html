@@ -1,64 +1,129 @@
 {{define "content"}}
 <div class="min-h-screen">
 
-    <!-- ==================== HERO BANNER ==================== -->
-    {{if .Hero.ID}}
-    <section class="relative min-h-[600px] manual-border-thick mx-4 md:mx-10 mt-8 bg-white manual-shadow-lg overflow-hidden">
-        <div class="absolute inset-0 grid-dotted pointer-events-none"></div>
-        <div class="absolute top-4 right-4 font-mono text-[10px] opacity-50 uppercase">Ref. Manual v2026.01</div>
+    <!-- ==================== HERO BANNER (CAROUSEL) ==================== -->
+    {{if .Heroes}}
+    <section class="relative min-h-[600px] manual-border-thick mx-4 md:mx-10 mt-8 bg-white manual-shadow-lg overflow-hidden"
+             data-hero-carousel
+             data-autoplay="{{if .HeroAutoplay}}1{{else}}0{{end}}"
+             data-interval="{{.HeroInterval}}">
+        <div class="absolute inset-0 grid-dotted pointer-events-none z-0"></div>
+        <div class="absolute top-4 right-4 font-mono text-[10px] opacity-50 uppercase z-20">Ref. Manual v2026.01</div>
 
-        <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]">
-            <div class="space-y-8 relative z-10">
-                {{if .Hero.BadgeText.Valid}}
-                <div class="inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase">
-                    {{.Hero.BadgeText.String}}
-                </div>
-                {{end}}
-                <h1 class="text-4xl md:text-6xl font-black font-mono leading-none uppercase">
-                    {{.Hero.Headline}}
-                </h1>
-                <p class="text-lg font-mono opacity-80 border-l-4 border-primary pl-4 max-w-xl">
-                    {{.Hero.Subheadline}}
-                </p>
-                <div class="flex flex-wrap gap-4">
-                    <a href="{{.Hero.PrimaryCtaUrl}}" class="manual-border bg-primary text-white px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
-                        {{.Hero.PrimaryCtaText}}
-                    </a>
-                    {{if .Hero.SecondaryCtaText.Valid}}
-                    <a href="{{.Hero.SecondaryCtaUrl.String}}" class="manual-border bg-white text-black px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
-                        {{.Hero.SecondaryCtaText.String}}
-                    </a>
-                    {{end}}
-                </div>
-                <!-- Slide Indicators -->
-                <div class="flex gap-2 pt-4">
-                    <div class="w-8 h-2 bg-primary manual-border"></div>
-                    <div class="w-8 h-2 bg-gray-200 manual-border"></div>
-                    <div class="w-8 h-2 bg-gray-200 manual-border"></div>
-                    <div class="w-8 h-2 bg-gray-200 manual-border"></div>
-                    <div class="w-8 h-2 bg-gray-200 manual-border"></div>
-                </div>
-            </div>
-            <div class="manual-border bg-gray-200 aspect-square relative group overflow-hidden">
-                {{if .Hero.BackgroundImage.Valid}}
-                <div class="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
-                <img class="w-full h-full object-cover grayscale contrast-125" alt="Interactive display technology" src="{{.Hero.BackgroundImage.String}}">
-                {{else}}
-                <div class="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
-                <div class="w-full h-full flex items-center justify-center">
-                    <div class="bg-white p-8 manual-border manual-shadow">
-                        <div class="aspect-square w-48 bg-gradient-to-br from-[#0066CC] to-[#004499] manual-border flex items-center justify-center">
-                            <span class="material-symbols-outlined text-white text-6xl">memory</span>
+        <!-- Sliding track: one slide per active hero -->
+        <div class="flex transition-transform duration-500 ease-out relative z-10" data-hero-track style="will-change: transform;">
+            {{range $i, $hero := .Heroes}}
+            <div class="w-full flex-shrink-0" data-hero-slide="{{$i}}" aria-hidden="{{if ne $i 0}}true{{else}}false{{end}}">
+                <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]">
+                    <div class="space-y-8 relative z-10">
+                        {{if $hero.BadgeText.Valid}}
+                        <div class="inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase">
+                            {{$hero.BadgeText.String}}
+                        </div>
+                        {{end}}
+                        <h1 class="text-4xl md:text-6xl font-black font-mono leading-none uppercase">
+                            {{$hero.Headline}}
+                        </h1>
+                        <p class="text-lg font-mono opacity-80 border-l-4 border-primary pl-4 max-w-xl">
+                            {{$hero.Subheadline}}
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="{{$hero.PrimaryCtaUrl}}" class="manual-border bg-primary text-white px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                                {{$hero.PrimaryCtaText}}
+                            </a>
+                            {{if $hero.SecondaryCtaText.Valid}}
+                            <a href="{{$hero.SecondaryCtaUrl.String}}" class="manual-border bg-white text-black px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                                {{$hero.SecondaryCtaText.String}}
+                            </a>
+                            {{end}}
+                        </div>
+                    </div>
+                    <div class="manual-border bg-gray-200 aspect-square relative group overflow-hidden">
+                        {{if $hero.BackgroundImage.Valid}}
+                        <div class="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
+                        <img class="w-full h-full object-cover grayscale contrast-125" alt="{{$hero.Headline}}" src="{{$hero.BackgroundImage.String}}">
+                        {{else}}
+                        <div class="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
+                        <div class="w-full h-full flex items-center justify-center">
+                            <div class="bg-white p-8 manual-border manual-shadow">
+                                <div class="aspect-square w-48 bg-gradient-to-br from-[#0066CC] to-[#004499] manual-border flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-white text-6xl">memory</span>
+                                </div>
+                            </div>
+                        </div>
+                        {{end}}
+                        <div class="absolute bottom-4 left-4 right-4 bg-white/90 manual-border p-2 font-mono text-[10px]">
+                            FIG 0{{add $i 1}}: {{upper $.Settings.SiteName}} INTERACTIVE DISPLAY SYSTEM v4.0
                         </div>
                     </div>
                 </div>
-                {{end}}
-                <div class="absolute bottom-4 left-4 right-4 bg-white/90 manual-border p-2 font-mono text-[10px]">
-                    FIG 01: {{upper .Settings.SiteName}} INTERACTIVE DISPLAY SYSTEM v4.0
-                </div>
             </div>
+            {{end}}
         </div>
+
+        <!-- Navigation: only shown when there is more than one slide -->
+        {{if gt (len .Heroes) 1}}
+        <button type="button" data-hero-prev aria-label="Previous slide"
+                class="absolute left-4 top-1/2 -translate-y-1/2 z-20 manual-border bg-white text-black w-10 h-10 flex items-center justify-center manual-shadow btn-press">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <button type="button" data-hero-next aria-label="Next slide"
+                class="absolute right-4 top-1/2 -translate-y-1/2 z-20 manual-border bg-white text-black w-10 h-10 flex items-center justify-center manual-shadow btn-press">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+        <!-- Slide indicators (one per slide) -->
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2" data-hero-dots>
+            {{range $i, $hero := .Heroes}}
+            <button type="button" data-hero-dot="{{$i}}" aria-label="Go to slide {{add $i 1}}"
+                    class="w-8 h-2 manual-border {{if eq $i 0}}bg-primary{{else}}bg-gray-200{{end}}"></button>
+            {{end}}
+        </div>
+        {{end}}
     </section>
+
+    <script>
+    (function () {
+        var root = document.querySelector('[data-hero-carousel]');
+        if (!root) return;
+        var track = root.querySelector('[data-hero-track]');
+        var slides = root.querySelectorAll('[data-hero-slide]');
+        var dots = root.querySelectorAll('[data-hero-dot]');
+        if (slides.length < 2) return; // Single slide: nothing to rotate
+
+        var idx = 0, timer = null;
+        var autoplay = root.getAttribute('data-autoplay') === '1';
+        var interval = Math.max(2, parseInt(root.getAttribute('data-interval'), 10) || 5) * 1000;
+
+        function show(n) {
+            idx = (n + slides.length) % slides.length;
+            track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+            for (var i = 0; i < slides.length; i++) {
+                slides[i].setAttribute('aria-hidden', i === idx ? 'false' : 'true');
+            }
+            for (var j = 0; j < dots.length; j++) {
+                dots[j].classList.toggle('bg-primary', j === idx);
+                dots[j].classList.toggle('bg-gray-200', j !== idx);
+            }
+        }
+        function next() { show(idx + 1); }
+        function prev() { show(idx - 1); }
+        function start() { if (autoplay) { stop(); timer = setInterval(next, interval); } }
+        function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+        var nextBtn = root.querySelector('[data-hero-next]');
+        var prevBtn = root.querySelector('[data-hero-prev]');
+        if (nextBtn) nextBtn.addEventListener('click', function () { next(); start(); });
+        if (prevBtn) prevBtn.addEventListener('click', function () { prev(); start(); });
+        for (var k = 0; k < dots.length; k++) {
+            (function (i) { dots[i].addEventListener('click', function () { show(i); start(); }); })(k);
+        }
+        root.addEventListener('mouseenter', stop);
+        root.addEventListener('mouseleave', start);
+
+        show(0);
+        start();
+    })();
+    </script>
     {{end}}
 
     <!-- ==================== FEATURED PRODUCTS ==================== -->
