@@ -380,6 +380,7 @@ func main() {
 	adminGroup.GET("/products/:id/images", pdHandler.ListImages)               // HTMX: render image gallery
 	adminGroup.POST("/products/:id/images", pdHandler.AddImage)                // HTMX: upload new image
 	adminGroup.DELETE("/products/:id/images/:image_id", pdHandler.DeleteImage) // HTMX: delete specific image
+	adminGroup.POST("/products/:id/images/:image_id", pdHandler.UpdateImage)   // HTMX: update image metadata
 
 	// ─────────────────────────────────────────────────────────────────────────
 	// Admin Blog Management Routes (Phase 5)

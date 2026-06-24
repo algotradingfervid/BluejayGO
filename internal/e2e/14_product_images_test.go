@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -241,5 +242,88 @@ func TestProductImages_OptionalFields(t *testing.T) {
 	}
 	if images[0].Caption.Valid {
 		t.Error("expected caption to be null when not provided")
+	}
+}
+
+func TestProductImagesEditForm_E2E(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	createTestAdmin(t, queries)
+	cookie := loginAndGetCookie(t, e)
+
+	ctx := context.Background()
+	cat, _ := queries.CreateProductCategory(ctx, sqlc.CreateProductCategoryParams{
+		Name: "ImgEditCat", Slug: "img-edit-cat", Description: "d", Icon: "i", SortOrder: 1,
+	})
+	product, _ := queries.CreateProduct(ctx, sqlc.CreateProductParams{
+		Sku: "IMG-EDIT-1", Slug: "img-edit", Name: "Image Edit Product",
+		Description: "Test", CategoryID: cat.ID, Status: "draft",
+	})
+	img, _ := queries.CreateProductImage(ctx, sqlc.CreateProductImageParams{
+		ProductID: product.ID, ImagePath: "/uploads/products/img.jpg", DisplayOrder: 1,
+	})
+
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/admin/products/%d/images?edit=%d", product.ID, img.ID), nil)
+	req.AddCookie(cookie)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+	body := rec.Body.String()
+	if !strings.Contains(body, fmt.Sprintf(`hx-post="/admin/products/%d/images/%d"`, product.ID, img.ID)) {
+		t.Errorf("expected inline edit form for image %d, body: %s", img.ID, body)
+	}
+	if !strings.Contains(body, `name="alt_text"`) {
+		t.Errorf("expected alt_text input in edit form, body: %s", body)
+	}
+}
+
+func TestProductImagesUpdate_E2E(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	createTestAdmin(t, queries)
+	cookie := loginAndGetCookie(t, e)
+
+	ctx := context.Background()
+	cat, _ := queries.CreateProductCategory(ctx, sqlc.CreateProductCategoryParams{
+		Name: "ImgUpdCat", Slug: "img-upd-cat", Description: "d", Icon: "i", SortOrder: 1,
+	})
+	product, _ := queries.CreateProduct(ctx, sqlc.CreateProductParams{
+		Sku: "IMG-UPD-1", Slug: "img-upd", Name: "Image Update Product",
+		Description: "Test", CategoryID: cat.ID, Status: "draft",
+	})
+	img, _ := queries.CreateProductImage(ctx, sqlc.CreateProductImageParams{
+		ProductID: product.ID, ImagePath: "/uploads/products/img.jpg", DisplayOrder: 1,
+	})
+
+	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/admin/products/%d/images/%d", product.ID, img.ID), strings.NewReader(url.Values{
+		"alt_text":      {"Front view"},
+		"caption":       {"Product front"},
+		"display_order": {"7"},
+	}.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(cookie)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+
+	images, _ := queries.ListProductImages(ctx, product.ID)
+	if len(images) != 1 {
+		t.Fatalf("expected 1 image, got %d", len(images))
+	}
+	if !images[0].AltText.Valid || images[0].AltText.String != "Front view" {
+		t.Errorf("expected alt text 'Front view', got %+v", images[0].AltText)
+	}
+	if images[0].DisplayOrder != 7 {
+		t.Errorf("expected display_order 7, got %d", images[0].DisplayOrder)
+	}
+	// Metadata-only edit must preserve the uploaded image path.
+	if images[0].ImagePath != "/uploads/products/img.jpg" {
+		t.Errorf("expected image path preserved, got %q", images[0].ImagePath)
 	}
 }

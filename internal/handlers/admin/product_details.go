@@ -648,6 +648,7 @@ func (h *ProductDetailsHandler) UpdateDownload(c echo.Context) error {
 // HTMX: Returns HTML fragment that replaces the images container
 func (h *ProductDetailsHandler) ListImages(c echo.Context) error {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	editingID, _ := strconv.ParseInt(c.QueryParam("edit"), 10, 64)
 
 	// Fetch all gallery images for this product
 	images, err := h.queries.ListProductImages(c.Request().Context(), id)
@@ -660,6 +661,7 @@ func (h *ProductDetailsHandler) ListImages(c echo.Context) error {
 	return h.renderPartial(c, "product_images", map[string]interface{}{
 		"ProductID": id,
 		"Images":    images,
+		"EditingID": editingID,
 	})
 }
 
@@ -750,5 +752,31 @@ func (h *ProductDetailsHandler) DeleteImage(c echo.Context) error {
 	logActivity(c, "updated", "product", id, "", "Deleted image from Product #%d", id)
 
 	// Return the refreshed images gallery
+	return h.ListImages(c)
+}
+
+// UpdateImage handles POST requests to /admin/products/:id/images/:image_id
+// Updates an image's alt text, caption, and display order (NOT the file or thumbnail flag),
+// then returns the refreshed gallery.
+func (h *ProductDetailsHandler) UpdateImage(c echo.Context) error {
+	ctx := c.Request().Context()
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	imageID, _ := strconv.ParseInt(c.Param("image_id"), 10, 64)
+	order, _ := strconv.ParseInt(c.FormValue("display_order"), 10, 64)
+
+	altText := c.FormValue("alt_text")
+	caption := c.FormValue("caption")
+
+	if err := h.queries.UpdateProductImage(ctx, sqlc.UpdateProductImageParams{
+		AltText:      sql.NullString{String: altText, Valid: altText != ""},
+		Caption:      sql.NullString{String: caption, Valid: caption != ""},
+		DisplayOrder: order,
+		ID:           imageID,
+	}); err != nil {
+		h.logger.Error("failed to update image", "error", err)
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	logActivity(c, "updated", "product", id, "", "Updated image for Product #%d", id)
 	return h.ListImages(c)
 }

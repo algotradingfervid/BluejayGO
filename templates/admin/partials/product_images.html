@@ -16,6 +16,37 @@
     {{if .Images}}
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         {{range $i, $img := .Images}}
+        {{if eq $img.ID $.EditingID}}
+        <form hx-post="/admin/products/{{$.ProductID}}/images/{{$img.ID}}"
+              hx-target="#images-section"
+              hx-swap="outerHTML"
+              class="border-2 border-black bg-yellow-50 p-3 space-y-2" style="box-shadow: 3px 3px 0px #000;">
+            <img src="{{$img.ImagePath}}" alt="" class="w-full h-24 object-cover border-2 border-black">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Alt Text</label>
+                <input type="text" name="alt_text" value="{{if $img.AltText.Valid}}{{$img.AltText.String}}{{end}}"
+                       class="w-full border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Caption</label>
+                <input type="text" name="caption" value="{{if $img.Caption.Valid}}{{$img.Caption.String}}{{end}}"
+                       class="w-full border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
+                <input type="number" name="display_order" value="{{$img.DisplayOrder}}"
+                       class="w-full border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div class="flex gap-2">
+                <button type="submit"
+                        class="flex-1 bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 border-black hover:bg-white hover:text-black transition-colors">Save</button>
+                <a hx-get="/admin/products/{{$.ProductID}}/images"
+                   hx-target="#images-section"
+                   hx-swap="outerHTML"
+                   class="flex-1 text-center px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 border-black cursor-pointer hover:bg-gray-100 transition-colors">Cancel</a>
+            </div>
+        </form>
+        {{else}}
         <div class="border-2 border-black bg-white relative group" style="box-shadow: 3px 3px 0px #000;">
             {{if $img.IsThumbnail}}
             <div class="absolute top-0 left-0 z-10 bg-yellow-300 border-b-2 border-r-2 border-black px-2 py-1">
@@ -34,6 +65,12 @@
                         Set Primary
                     </button>
                     {{end}}
+                    <button hx-get="/admin/products/{{$.ProductID}}/images?edit={{$img.ID}}"
+                            hx-target="#images-section"
+                            hx-swap="outerHTML"
+                            class="bg-white border-2 border-black px-3 py-1 text-xs font-bold uppercase hover:bg-gray-100" style="box-shadow: 2px 2px 0px #000;">
+                        Edit
+                    </button>
                     <button hx-delete="/admin/products/{{$.ProductID}}/images/{{$img.ID}}"
                             hx-target="#images-section"
                             hx-swap="outerHTML"
@@ -48,6 +85,7 @@
                 <div class="text-xs text-gray-400 font-bold">#{{$img.DisplayOrder}}</div>
             </div>
         </div>
+        {{end}}
         {{end}}
     </div>
     {{else}}

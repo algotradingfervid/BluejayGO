@@ -308,6 +308,7 @@ func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
 	adminGroup.GET("/products/:id/images", pdHandler.ListImages)
 	adminGroup.POST("/products/:id/images", pdHandler.AddImage)
 	adminGroup.DELETE("/products/:id/images/:image_id", pdHandler.DeleteImage)
+	adminGroup.POST("/products/:id/images/:image_id", pdHandler.UpdateImage)
 
 	// Blog posts
 	adminBlogPostsHandler := adminHandlers.NewBlogPostsHandler(queries, testLogger, appCache)
