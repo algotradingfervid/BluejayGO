@@ -38,17 +38,47 @@
                     </button>
                     <div class="border-t-2 border-black">
             {{end}}
+            {{if eq .ID $.EditingID}}
+            <form hx-post="/admin/products/{{$.ProductID}}/specs/{{.ID}}"
+                  hx-target="#specs-section"
+                  hx-swap="outerHTML"
+                  class="px-4 py-3 border-b border-gray-300 last:border-b-0 bg-yellow-50 space-y-2">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <input type="text" name="section_name" value="{{.SectionName}}" required placeholder="Section"
+                           class="border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                    <input type="text" name="spec_key" value="{{.SpecKey}}" required placeholder="Label"
+                           class="border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                    <input type="text" name="spec_value" value="{{.SpecValue}}" required placeholder="Value"
+                           class="border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                    <input type="number" name="display_order" value="{{.DisplayOrder}}" placeholder="Order"
+                           class="border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit"
+                            class="text-xs uppercase font-bold tracking-wider px-3 py-1 border-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors">Save</button>
+                    <a hx-get="/admin/products/{{$.ProductID}}/specs"
+                       hx-target="#specs-section"
+                       hx-swap="outerHTML"
+                       class="text-xs uppercase font-bold tracking-wider px-3 py-1 border-2 border-black cursor-pointer hover:bg-gray-100 transition-colors">Cancel</a>
+                </div>
+            </form>
+            {{else}}
             <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-300 last:border-b-0 group">
                 <div class="flex-1 grid grid-cols-2 gap-3">
                     <div class="text-sm font-bold">{{.SpecKey}}</div>
                     <div class="text-sm text-gray-700">{{.SpecValue}}</div>
                 </div>
+                <button hx-get="/admin/products/{{$.ProductID}}/specs?edit={{.ID}}"
+                        hx-target="#specs-section"
+                        hx-swap="outerHTML"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-600 hover:text-black text-xs font-bold uppercase">&#9998;</button>
                 <button hx-delete="/admin/products/{{$.ProductID}}/specs/{{.ID}}"
                         hx-target="#specs-section"
                         hx-swap="outerHTML"
                         hx-confirm="Delete this spec?"
                         class="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase">&#x2715;</button>
             </div>
+            {{end}}
         {{end}}
         {{if .Specs}}
             </div></div>

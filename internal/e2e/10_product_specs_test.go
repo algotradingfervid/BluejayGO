@@ -241,3 +241,86 @@ func TestProductSpecsGroupedBySections_E2E(t *testing.T) {
 		t.Errorf("expected 1 Electrical spec, got %d", electricalCount)
 	}
 }
+
+func TestProductSpecsEditForm_E2E(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	createTestAdmin(t, queries)
+	cookie := loginAndGetCookie(t, e)
+
+	ctx := context.Background()
+	cat, _ := queries.CreateProductCategory(ctx, sqlc.CreateProductCategoryParams{
+		Name: "SpecEditCat", Slug: "spec-edit-cat", Description: "d", Icon: "i", SortOrder: 1,
+	})
+	product, _ := queries.CreateProduct(ctx, sqlc.CreateProductParams{
+		Sku: "SPEC-EDIT-1", Slug: "spec-edit", Name: "Spec Edit Product",
+		Description: "Test", CategoryID: cat.ID, Status: "draft",
+	})
+	spec, _ := queries.CreateProductSpec(ctx, sqlc.CreateProductSpecParams{
+		ProductID: product.ID, SectionName: "Motor", SpecKey: "Voltage", SpecValue: "24V", DisplayOrder: 1,
+	})
+
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/admin/products/%d/specs?edit=%d", product.ID, spec.ID), nil)
+	req.AddCookie(cookie)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+	body := rec.Body.String()
+	if !strings.Contains(body, fmt.Sprintf(`hx-post="/admin/products/%d/specs/%d"`, product.ID, spec.ID)) {
+		t.Errorf("expected inline edit form for spec %d, body: %s", spec.ID, body)
+	}
+	if !strings.Contains(body, `value="Voltage"`) {
+		t.Errorf("expected pre-filled spec key, body: %s", body)
+	}
+}
+
+func TestProductSpecsUpdate_E2E(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	createTestAdmin(t, queries)
+	cookie := loginAndGetCookie(t, e)
+
+	ctx := context.Background()
+	cat, _ := queries.CreateProductCategory(ctx, sqlc.CreateProductCategoryParams{
+		Name: "SpecUpdCat", Slug: "spec-upd-cat", Description: "d", Icon: "i", SortOrder: 1,
+	})
+	product, _ := queries.CreateProduct(ctx, sqlc.CreateProductParams{
+		Sku: "SPEC-UPD-1", Slug: "spec-upd", Name: "Spec Update Product",
+		Description: "Test", CategoryID: cat.ID, Status: "draft",
+	})
+	spec, _ := queries.CreateProductSpec(ctx, sqlc.CreateProductSpecParams{
+		ProductID: product.ID, SectionName: "Motor", SpecKey: "Voltage", SpecValue: "24V", DisplayOrder: 1,
+	})
+
+	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/admin/products/%d/specs/%d", product.ID, spec.ID), strings.NewReader(url.Values{
+		"section_name":  {"Power"},
+		"spec_key":      {"Voltage"},
+		"spec_value":    {"48V"},
+		"display_order": {"3"},
+	}.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(cookie)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+
+	specs, _ := queries.ListProductSpecs(ctx, product.ID)
+	if len(specs) != 1 {
+		t.Fatalf("expected 1 spec, got %d", len(specs))
+	}
+	if specs[0].SpecValue != "48V" {
+		t.Errorf("expected spec value '48V', got %q", specs[0].SpecValue)
+	}
+	if specs[0].SectionName != "Power" {
+		t.Errorf("expected section 'Power', got %q", specs[0].SectionName)
+	}
+	if specs[0].DisplayOrder != 3 {
+		t.Errorf("expected display_order 3, got %d", specs[0].DisplayOrder)
+	}
+}
