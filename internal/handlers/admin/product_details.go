@@ -350,6 +350,7 @@ func (h *ProductDetailsHandler) UpdateFeature(c echo.Context) error {
 // HTMX: Returns HTML fragment that replaces the certifications container
 func (h *ProductDetailsHandler) ListCertifications(c echo.Context) error {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	editingID, _ := strconv.ParseInt(c.QueryParam("edit"), 10, 64)
 
 	// Fetch all certifications for this product
 	certs, err := h.queries.ListProductCertifications(c.Request().Context(), id)
@@ -362,6 +363,7 @@ func (h *ProductDetailsHandler) ListCertifications(c echo.Context) error {
 	return h.renderPartial(c, "product_certifications", map[string]interface{}{
 		"ProductID":      id,
 		"Certifications": certs,
+		"EditingID":      editingID,
 	})
 }
 
@@ -446,6 +448,34 @@ func (h *ProductDetailsHandler) DeleteCertification(c echo.Context) error {
 	}
 
 	logActivity(c, "updated", "product", id, "", "Deleted certification from Product #%d", id)
+	return h.ListCertifications(c)
+}
+
+// UpdateCertification handles POST requests to /admin/products/:id/certifications/:cert_id
+// Updates a single certification's fields and display order, then returns the refreshed list.
+func (h *ProductDetailsHandler) UpdateCertification(c echo.Context) error {
+	ctx := c.Request().Context()
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	certID, _ := strconv.ParseInt(c.Param("cert_id"), 10, 64)
+	order, _ := strconv.ParseInt(c.FormValue("display_order"), 10, 64)
+
+	certCode := c.FormValue("certification_code")
+	iconType := c.FormValue("icon_type")
+	iconPath := c.FormValue("icon_path")
+
+	if err := h.queries.UpdateProductCertification(ctx, sqlc.UpdateProductCertificationParams{
+		CertificationName: c.FormValue("certification_name"),
+		CertificationCode: sql.NullString{String: certCode, Valid: certCode != ""},
+		IconType:          sql.NullString{String: iconType, Valid: iconType != ""},
+		IconPath:          sql.NullString{String: iconPath, Valid: iconPath != ""},
+		DisplayOrder:      order,
+		ID:                certID,
+	}); err != nil {
+		h.logger.Error("failed to update certification", "error", err)
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	logActivity(c, "updated", "product", id, "", "Updated certification for Product #%d", id)
 	return h.ListCertifications(c)
 }
 

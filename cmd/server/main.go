@@ -368,6 +368,7 @@ func main() {
 	adminGroup.POST("/products/:id/certifications", pdHandler.AddCertification)               // HTMX: add new cert
 	adminGroup.DELETE("/products/:id/certifications", pdHandler.DeleteCertifications)         // HTMX: bulk delete certs
 	adminGroup.DELETE("/products/:id/certifications/:cert_id", pdHandler.DeleteCertification) // HTMX: delete single cert
+	adminGroup.POST("/products/:id/certifications/:cert_id", pdHandler.UpdateCertification)   // HTMX: update single cert
 
 	// Downloads - datasheets, manuals, CAD files
 	adminGroup.GET("/products/:id/downloads", pdHandler.ListDownloads)                  // HTMX: render downloads list

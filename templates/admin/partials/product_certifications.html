@@ -23,6 +23,48 @@
     {{if .Certifications}}
     <div class="space-y-2 mb-6">
         {{range .Certifications}}
+        {{if eq .ID $.EditingID}}
+        <form hx-post="/admin/products/{{$.ProductID}}/certifications/{{.ID}}"
+              hx-target="#certifications-section"
+              hx-swap="outerHTML"
+              class="border-2 border-black p-4 space-y-3 bg-yellow-50" style="box-shadow: 2px 2px 0px #000;">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider mb-1">Name *</label>
+                    <input type="text" name="certification_name" value="{{.CertificationName}}" required
+                           class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider mb-1">Code</label>
+                    <input type="text" name="certification_code" value="{{if .CertificationCode.Valid}}{{.CertificationCode.String}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider mb-1">Icon Type</label>
+                    <input type="text" name="icon_type" value="{{if .IconType.Valid}}{{.IconType.String}}{{end}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
+                    <input type="number" name="display_order" value="{{.DisplayOrder}}"
+                           class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1">Icon Path</label>
+                <input type="text" name="icon_path" value="{{if .IconPath.Valid}}{{.IconPath.String}}{{end}}"
+                       class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            </div>
+            <div class="flex gap-2">
+                <button type="submit"
+                        class="bg-black text-white px-6 py-2 text-sm font-bold uppercase tracking-wider border-2 border-black hover:bg-white hover:text-black transition-colors" style="box-shadow: 3px 3px 0px #000;">Save</button>
+                <a hx-get="/admin/products/{{$.ProductID}}/certifications"
+                   hx-target="#certifications-section"
+                   hx-swap="outerHTML"
+                   class="px-6 py-2 text-sm font-bold uppercase tracking-wider border-2 border-black cursor-pointer hover:bg-gray-100 transition-colors">Cancel</a>
+            </div>
+        </form>
+        {{else}}
         <div class="flex items-center gap-4 border-2 border-black px-4 py-3 bg-white group" style="box-shadow: 2px 2px 0px #000;">
             <div class="w-10 h-10 border-2 border-black bg-green-100 flex items-center justify-center flex-shrink-0">
                 <span class="text-green-700 font-bold text-sm">&#x2713;</span>
@@ -35,12 +77,17 @@
                 </div>
             </div>
             <span class="text-xs text-gray-400 font-bold">#{{.DisplayOrder}}</span>
+            <button hx-get="/admin/products/{{$.ProductID}}/certifications?edit={{.ID}}"
+                    hx-target="#certifications-section"
+                    hx-swap="outerHTML"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-600 hover:text-black text-xs font-bold uppercase">&#9998;</button>
             <button hx-delete="/admin/products/{{$.ProductID}}/certifications/{{.ID}}"
                     hx-target="#certifications-section"
                     hx-swap="outerHTML"
                     hx-confirm="Delete this certification?"
                     class="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase">&#x2715;</button>
         </div>
+        {{end}}
         {{end}}
     </div>
     {{else}}

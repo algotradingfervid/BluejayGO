@@ -224,6 +224,91 @@ func TestProductCertificationsDeleteAll_E2E(t *testing.T) {
 	}
 }
 
+func TestProductCertificationsEditForm_E2E(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	createTestAdmin(t, queries)
+	cookie := loginAndGetCookie(t, e)
+
+	ctx := context.Background()
+	cat, _ := queries.CreateProductCategory(ctx, sqlc.CreateProductCategoryParams{
+		Name: "CertEditCat", Slug: "cert-edit-cat", Description: "d", Icon: "i", SortOrder: 1,
+	})
+	product, _ := queries.CreateProduct(ctx, sqlc.CreateProductParams{
+		Sku: "CERT-EDIT-1", Slug: "cert-edit", Name: "Cert Edit Product",
+		Description: "Test", CategoryID: cat.ID, Status: "draft",
+	})
+	cert, _ := queries.CreateProductCertification(ctx, sqlc.CreateProductCertificationParams{
+		ProductID: product.ID, CertificationName: "CE",
+		CertificationCode: sql.NullString{String: "EN60950", Valid: true}, DisplayOrder: 1,
+	})
+
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/admin/products/%d/certifications?edit=%d", product.ID, cert.ID), nil)
+	req.AddCookie(cookie)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+	body := rec.Body.String()
+	if !strings.Contains(body, fmt.Sprintf(`hx-post="/admin/products/%d/certifications/%d"`, product.ID, cert.ID)) {
+		t.Errorf("expected inline edit form for cert %d, body: %s", cert.ID, body)
+	}
+	if !strings.Contains(body, `value="CE"`) {
+		t.Errorf("expected pre-filled cert name, body: %s", body)
+	}
+}
+
+func TestProductCertificationsUpdate_E2E(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	createTestAdmin(t, queries)
+	cookie := loginAndGetCookie(t, e)
+
+	ctx := context.Background()
+	cat, _ := queries.CreateProductCategory(ctx, sqlc.CreateProductCategoryParams{
+		Name: "CertUpdCat", Slug: "cert-upd-cat", Description: "d", Icon: "i", SortOrder: 1,
+	})
+	product, _ := queries.CreateProduct(ctx, sqlc.CreateProductParams{
+		Sku: "CERT-UPD-1", Slug: "cert-upd", Name: "Cert Update Product",
+		Description: "Test", CategoryID: cat.ID, Status: "draft",
+	})
+	cert, _ := queries.CreateProductCertification(ctx, sqlc.CreateProductCertificationParams{
+		ProductID: product.ID, CertificationName: "CE", DisplayOrder: 1,
+	})
+
+	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/admin/products/%d/certifications/%d", product.ID, cert.ID), strings.NewReader(url.Values{
+		"certification_name": {"UL"},
+		"certification_code": {"UL-123"},
+		"icon_type":          {"shield"},
+		"icon_path":          {"/icons/ul.svg"},
+		"display_order":      {"2"},
+	}.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(cookie)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+
+	certs, _ := queries.ListProductCertifications(ctx, product.ID)
+	if len(certs) != 1 {
+		t.Fatalf("expected 1 cert, got %d", len(certs))
+	}
+	if certs[0].CertificationName != "UL" {
+		t.Errorf("expected cert name 'UL', got %q", certs[0].CertificationName)
+	}
+	if !certs[0].CertificationCode.Valid || certs[0].CertificationCode.String != "UL-123" {
+		t.Errorf("expected cert code 'UL-123', got %+v", certs[0].CertificationCode)
+	}
+	if certs[0].DisplayOrder != 2 {
+		t.Errorf("expected display_order 2, got %d", certs[0].DisplayOrder)
+	}
+}
+
 func TestProductCertificationsDisplayOrder_E2E(t *testing.T) {
 	e, queries, cleanup := setupApp(t)
 	defer cleanup()
