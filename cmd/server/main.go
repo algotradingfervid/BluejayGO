@@ -374,6 +374,7 @@ func main() {
 	adminGroup.GET("/products/:id/downloads", pdHandler.ListDownloads)                  // HTMX: render downloads list
 	adminGroup.POST("/products/:id/downloads", pdHandler.AddDownload)                   // HTMX: upload new file
 	adminGroup.DELETE("/products/:id/downloads/:download_id", pdHandler.DeleteDownload) // HTMX: delete specific file
+	adminGroup.POST("/products/:id/downloads/:download_id", pdHandler.UpdateDownload)   // HTMX: update download metadata
 
 	// Product Images - photo gallery for product detail pages
 	adminGroup.GET("/products/:id/images", pdHandler.ListImages)               // HTMX: render image gallery

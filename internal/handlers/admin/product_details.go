@@ -492,6 +492,7 @@ func (h *ProductDetailsHandler) UpdateCertification(c echo.Context) error {
 // HTMX: Returns HTML fragment that replaces the downloads container
 func (h *ProductDetailsHandler) ListDownloads(c echo.Context) error {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	editingID, _ := strconv.ParseInt(c.QueryParam("edit"), 10, 64)
 
 	// Fetch all downloadable files for this product
 	downloads, err := h.queries.ListProductDownloads(c.Request().Context(), id)
@@ -504,6 +505,7 @@ func (h *ProductDetailsHandler) ListDownloads(c echo.Context) error {
 	return h.renderPartial(c, "product_downloads", map[string]interface{}{
 		"ProductID": id,
 		"Downloads": downloads,
+		"EditingID": editingID,
 	})
 }
 
@@ -602,6 +604,34 @@ func (h *ProductDetailsHandler) DeleteDownload(c echo.Context) error {
 	logActivity(c, "updated", "product", id, "", "Deleted download from Product #%d", id)
 
 	// Return the refreshed downloads list
+	return h.ListDownloads(c)
+}
+
+// UpdateDownload handles POST requests to /admin/products/:id/downloads/:download_id
+// Updates a download's metadata and display order (NOT the file), then returns the refreshed list.
+func (h *ProductDetailsHandler) UpdateDownload(c echo.Context) error {
+	ctx := c.Request().Context()
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	downloadID, _ := strconv.ParseInt(c.Param("download_id"), 10, 64)
+	order, _ := strconv.ParseInt(c.FormValue("display_order"), 10, 64)
+
+	desc := c.FormValue("description")
+	version := c.FormValue("version")
+	fileType := c.FormValue("file_type")
+
+	if err := h.queries.UpdateProductDownload(ctx, sqlc.UpdateProductDownloadParams{
+		Title:        c.FormValue("title"),
+		Description:  sql.NullString{String: desc, Valid: desc != ""},
+		FileType:     fileType,
+		Version:      sql.NullString{String: version, Valid: version != ""},
+		DisplayOrder: order,
+		ID:           downloadID,
+	}); err != nil {
+		h.logger.Error("failed to update download", "error", err)
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	logActivity(c, "updated", "product", id, "", "Updated download for Product #%d", id)
 	return h.ListDownloads(c)
 }
 
