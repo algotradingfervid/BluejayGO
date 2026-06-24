@@ -295,7 +295,7 @@ func TestProductImagesUpdate_E2E(t *testing.T) {
 		Description: "Test", CategoryID: cat.ID, Status: "draft",
 	})
 	img, _ := queries.CreateProductImage(ctx, sqlc.CreateProductImageParams{
-		ProductID: product.ID, ImagePath: "/uploads/products/img.jpg", DisplayOrder: 1,
+		ProductID: product.ID, ImagePath: "/uploads/products/img.jpg", DisplayOrder: 1, IsThumbnail: true,
 	})
 
 	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/admin/products/%d/images/%d", product.ID, img.ID), strings.NewReader(url.Values{
@@ -325,5 +325,9 @@ func TestProductImagesUpdate_E2E(t *testing.T) {
 	// Metadata-only edit must preserve the uploaded image path.
 	if images[0].ImagePath != "/uploads/products/img.jpg" {
 		t.Errorf("expected image path preserved, got %q", images[0].ImagePath)
+	}
+	// Metadata-only edit must preserve the thumbnail flag.
+	if !images[0].IsThumbnail {
+		t.Errorf("expected is_thumbnail preserved (true), got false")
 	}
 }
