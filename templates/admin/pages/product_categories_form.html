@@ -19,7 +19,8 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                    <input type="url" name="image_url" value="{{if .Item}}{{.Item.ImageUrl.String}}{{end}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                    <input type="text" name="image_url" value="{{if .Item}}{{.Item.ImageUrl.String}}{{end}}" placeholder="/uploads/categories/example.jpg" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                    <p class="text-xs text-gray-500 mt-1">Relative upload path (e.g. /uploads/categories/desktops.jpg) or a full https:// URL. JPG/PNG/WebP/SVG/GIF.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>

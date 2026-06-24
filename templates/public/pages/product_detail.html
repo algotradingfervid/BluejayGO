@@ -36,7 +36,7 @@
             <div>
                 <div class="manual-border-thick bg-gray-100 aspect-square mb-4 overflow-hidden relative" id="main-image-container">
                     {{if .Product.PrimaryImage.Valid}}
-                    <img alt="{{.Product.Name}}" class="w-full h-full object-cover" id="main-image" src="{{.Product.PrimaryImage.String}}">
+                    <img alt="{{.Product.Name}}" class="w-full h-full object-contain" id="main-image" src="{{.Product.PrimaryImage.String}}">
                     {{else}}
                     <div class="w-full h-full flex items-center justify-center" id="main-image-placeholder">
                         <span class="material-symbols-outlined text-8xl opacity-20">desktop_windows</span>
@@ -221,7 +221,7 @@ function switchImage(thumb) {
         mainImg.src = src;
     } else if (placeholder) {
         var container = document.getElementById('main-image-container');
-        container.innerHTML = '<img alt="Product image" class="w-full h-full object-cover" id="main-image" src="' + src + '">';
+        container.innerHTML = '<img alt="Product image" class="w-full h-full object-contain" id="main-image" src="' + src + '">';
     }
     document.querySelectorAll('.gallery-thumb').forEach(function(t) {
         t.classList.remove('ring-2', 'ring-[#0066CC]');
