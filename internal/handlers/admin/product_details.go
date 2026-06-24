@@ -201,6 +201,7 @@ func (h *ProductDetailsHandler) DeleteSpec(c echo.Context) error {
 // HTMX: Returns HTML fragment that replaces the features container
 func (h *ProductDetailsHandler) ListFeatures(c echo.Context) error {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	editingID, _ := strconv.ParseInt(c.QueryParam("edit"), 10, 64)
 
 	// Fetch all features for this product
 	features, err := h.queries.ListProductFeatures(c.Request().Context(), id)
@@ -213,6 +214,7 @@ func (h *ProductDetailsHandler) ListFeatures(c echo.Context) error {
 	return h.renderPartial(c, "product_features", map[string]interface{}{
 		"ProductID": id,
 		"Features":  features,
+		"EditingID": editingID,
 	})
 }
 
@@ -286,6 +288,27 @@ func (h *ProductDetailsHandler) DeleteFeature(c echo.Context) error {
 	}
 
 	logActivity(c, "updated", "product", id, "", "Deleted feature from Product #%d", id)
+	return h.ListFeatures(c)
+}
+
+// UpdateFeature handles POST requests to /admin/products/:id/features/:feature_id
+// Updates a single feature's text and display order, then returns the refreshed list.
+func (h *ProductDetailsHandler) UpdateFeature(c echo.Context) error {
+	ctx := c.Request().Context()
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	featureID, _ := strconv.ParseInt(c.Param("feature_id"), 10, 64)
+	order, _ := strconv.ParseInt(c.FormValue("display_order"), 10, 64)
+
+	if err := h.queries.UpdateProductFeature(ctx, sqlc.UpdateProductFeatureParams{
+		FeatureText:  c.FormValue("feature_text"),
+		DisplayOrder: order,
+		ID:           featureID,
+	}); err != nil {
+		h.logger.Error("failed to update feature", "error", err)
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	logActivity(c, "updated", "product", id, "", "Updated feature for Product #%d", id)
 	return h.ListFeatures(c)
 }
 

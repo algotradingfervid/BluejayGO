@@ -294,6 +294,7 @@ func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
 	adminGroup.POST("/products/:id/features", pdHandler.AddFeature)
 	adminGroup.DELETE("/products/:id/features", pdHandler.DeleteFeatures)
 	adminGroup.DELETE("/products/:id/features/:feature_id", pdHandler.DeleteFeature)
+		adminGroup.POST("/products/:id/features/:feature_id", pdHandler.UpdateFeature)
 	adminGroup.GET("/products/:id/certifications", pdHandler.ListCertifications)
 	adminGroup.POST("/products/:id/certifications", pdHandler.AddCertification)
 	adminGroup.DELETE("/products/:id/certifications", pdHandler.DeleteCertifications)

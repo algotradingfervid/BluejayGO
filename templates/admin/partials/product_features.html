@@ -28,16 +28,39 @@
     {{if .Features}}
     <div class="space-y-2 mb-6">
         {{range .Features}}
+        {{if eq .ID $.EditingID}}
+        <!-- Inline edit form (only the row being edited) -->
+        <form hx-post="/admin/products/{{$.ProductID}}/features/{{.ID}}"
+              hx-target="#features-section"
+              hx-swap="outerHTML"
+              class="flex items-center gap-3 border-2 border-black px-4 py-3 bg-yellow-50" style="box-shadow: 2px 2px 0px #000;">
+            <input type="text" name="feature_text" value="{{.FeatureText}}" required
+                   class="flex-1 border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            <input type="number" name="display_order" value="{{.DisplayOrder}}"
+                   class="w-20 border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
+            <button type="submit"
+                    class="text-xs uppercase font-bold tracking-wider px-3 py-1 border-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors">Save</button>
+            <a hx-get="/admin/products/{{$.ProductID}}/features"
+               hx-target="#features-section"
+               hx-swap="outerHTML"
+               class="text-xs uppercase font-bold tracking-wider px-3 py-1 border-2 border-black cursor-pointer hover:bg-gray-100 transition-colors">Cancel</a>
+        </form>
+        {{else}}
         <div class="flex items-center gap-3 border-2 border-black px-4 py-3 bg-white group" style="box-shadow: 2px 2px 0px #000;">
             <span class="text-lg font-bold text-gray-400">&#x2022;</span>
             <span class="flex-1 text-sm">{{.FeatureText}}</span>
             <span class="text-xs text-gray-400 font-bold">#{{.DisplayOrder}}</span>
+            <button hx-get="/admin/products/{{$.ProductID}}/features?edit={{.ID}}"
+                    hx-target="#features-section"
+                    hx-swap="outerHTML"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-600 hover:text-black text-xs font-bold uppercase">&#9998;</button>
             <button hx-delete="/admin/products/{{$.ProductID}}/features/{{.ID}}"
                     hx-target="#features-section"
                     hx-swap="outerHTML"
                     hx-confirm="Delete this feature?"
                     class="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase">&#x2715;</button>
         </div>
+        {{end}}
         {{end}}
     </div>
     {{else}}
