@@ -46,7 +46,7 @@
             <a href="/products/{{$.Category.Slug}}/{{.Slug}}" class="manual-border bg-white p-4 manual-shadow group flex flex-col hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer">
                 <div class="manual-border bg-gray-100 aspect-square mb-4 overflow-hidden relative">
                     {{if .PrimaryImage.Valid}}
-                    <img alt="{{.Name}}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" src="{{.PrimaryImage.String}}">
+                    <img alt="{{.Name}}" class="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300" src="{{.PrimaryImage.String}}">
                     {{else}}
                     <div class="w-full h-full flex items-center justify-center">
                         <span class="material-symbols-outlined text-6xl opacity-20">desktop_windows</span>

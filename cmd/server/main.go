@@ -308,7 +308,7 @@ func main() {
 	// Global settings affecting header, footer, and general site behavior
 
 	// Header Management - configure logo, navigation, and header content
-	headerHandler := adminHandlers.NewHeaderHandler(queries, logger)
+	headerHandler := adminHandlers.NewHeaderHandler(queries, logger, uploadSvc)
 	adminGroup.GET("/header", headerHandler.Edit)
 	adminGroup.POST("/header", headerHandler.Update)
 
@@ -490,13 +490,19 @@ func main() {
 	// ─────────────────────────────────────────────────────────────────────────
 	// Solution editor with stats, challenges, products, and CTAs
 
-	adminSolutionsHandler := adminHandlers.NewSolutionsHandler(queries, logger, appCache)
+	adminSolutionsHandler := adminHandlers.NewSolutionsHandler(queries, logger, appCache, uploadSvc)
 	adminGroup.GET("/solutions", adminSolutionsHandler.List)          // List solutions
 	adminGroup.GET("/solutions/new", adminSolutionsHandler.New)       // Create form
 	adminGroup.POST("/solutions", adminSolutionsHandler.Create)       // Process creation
 	adminGroup.GET("/solutions/:id/edit", adminSolutionsHandler.Edit) // Edit form
 	adminGroup.POST("/solutions/:id", adminSolutionsHandler.Update)   // Process update
 	adminGroup.DELETE("/solutions/:id", adminSolutionsHandler.Delete) // Delete (HTMX)
+
+	// Detail sub-tabs (HTMX): loaded into #detail-content on the edit form
+	adminGroup.GET("/solutions/:id/challenges-tab", adminSolutionsHandler.ChallengesTab) // Challenges tab partial
+	adminGroup.GET("/solutions/:id/products-tab", adminSolutionsHandler.ProductsTab)     // Products tab partial
+	adminGroup.GET("/solutions/:id/stats-tab", adminSolutionsHandler.StatsTab)           // Stats tab partial
+	adminGroup.GET("/solutions/:id/ctas-tab", adminSolutionsHandler.CTAsTab)             // CTAs tab partial
 
 	// Sub-entity management via HTMX
 	adminGroup.POST("/solutions/:id/stats", adminSolutionsHandler.AddStat)                             // Add statistic
@@ -507,6 +513,12 @@ func main() {
 	adminGroup.DELETE("/solutions/:id/products/:productId", adminSolutionsHandler.RemoveProduct)       // Unlink product
 	adminGroup.POST("/solutions/:id/ctas", adminSolutionsHandler.AddCTA)                               // Add CTA button
 	adminGroup.DELETE("/solutions/:id/ctas/:ctaId", adminSolutionsHandler.DeleteCTA)                   // Delete CTA
+
+	// Inline edit of sub-entities via HTMX
+	adminGroup.POST("/solutions/:id/challenges/:challengeId", adminSolutionsHandler.UpdateChallenge) // Edit challenge
+	adminGroup.POST("/solutions/:id/stats/:statId", adminSolutionsHandler.UpdateStat)                // Edit stat
+	adminGroup.POST("/solutions/:id/ctas/:ctaId", adminSolutionsHandler.UpdateCTA)                   // Edit CTA
+	adminGroup.POST("/solutions/:id/products/:productId", adminSolutionsHandler.UpdateProduct)       // Edit product link
 
 	// ─────────────────────────────────────────────────────────────────────────
 	// Admin Whitepaper Management Routes (Phase 8)

@@ -1,3 +1,5 @@
+{{define "base"}}
+<div id="products-section">
 <div class="mb-3">
     <p class="text-xs text-gray-500 mb-3" title="Products used in this solution. Links to product pages.">
         <span class="inline-block cursor-help text-gray-400 mr-1">ⓘ</span>
@@ -6,6 +8,46 @@
 </div>
 <div id="products-list">
 {{range .Products}}
+{{if eq .ProductID $.EditingID}}
+<form hx-post="/admin/solutions/{{$.SolutionID}}/products/{{.ProductID}}"
+      hx-target="#products-section" hx-swap="outerHTML"
+      class="mb-3 p-3 border-2 border-black bg-yellow-50 space-y-3" style="box-shadow: 2px 2px 0px #000;">
+    <div class="flex items-center gap-3">
+        {{if .ProductImage.Valid}}
+        <img src="{{.ProductImage.String}}" alt="{{.ProductName}}" class="w-12 h-12 object-cover border-2 border-black shrink-0">
+        {{else}}
+        <div class="w-12 h-12 bg-gray-200 border-2 border-black flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-gray-400 text-sm">inventory_2</span>
+        </div>
+        {{end}}
+        <div class="min-w-0">
+            <div class="font-bold text-sm">{{.ProductName}}</div>
+            <div class="text-xs text-gray-500 font-mono">/{{.ProductSlug}}</div>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+            <label class="block text-xs font-bold uppercase mb-1">Order</label>
+            <input type="number" name="display_order" value="{{if .DisplayOrder.Valid}}{{.DisplayOrder.Int64}}{{else}}0{{end}}"
+                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   style="font-family: 'JetBrains Mono', monospace;">
+        </div>
+        <div class="flex items-end">
+            <div class="flex items-center gap-2 pb-2">
+                <input type="checkbox" name="is_featured" value="1" class="w-5 h-5 border-2 border-black"{{if .IsFeatured.Bool}} checked{{end}}>
+                <label class="text-xs font-bold uppercase">Featured</label>
+            </div>
+        </div>
+    </div>
+    <div class="flex gap-2">
+        <button type="submit"
+                class="bg-black text-white px-4 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-white hover:text-black">Save</button>
+        <a hx-get="/admin/solutions/{{$.SolutionID}}/products-tab"
+           hx-target="#products-section" hx-swap="outerHTML"
+           class="px-4 py-2 text-xs font-bold uppercase border-2 border-black cursor-pointer hover:bg-gray-100">Cancel</a>
+    </div>
+</form>
+{{else}}
 <div class="flex items-center gap-4 mb-3 p-3 border-2 border-black bg-white" style="box-shadow: 2px 2px 0px #000;">
     {{if .ProductImage.Valid}}
     <img src="{{.ProductImage.String}}" alt="{{.ProductName}}" class="w-12 h-12 object-cover border-2 border-black shrink-0">
@@ -22,7 +64,13 @@
     {{if .IsFeatured.Bool}}
     <span class="bg-yellow-300 text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black shrink-0">Featured</span>
     {{end}}
-    <button hx-delete="/admin/solutions/{{.SolutionID}}/products/{{.ProductID}}"
+    <button hx-get="/admin/solutions/{{$.SolutionID}}/products-tab?edit={{.ProductID}}"
+            hx-target="#products-section" hx-swap="outerHTML"
+            class="bg-white text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black hover:bg-gray-100 shrink-0"
+            style="box-shadow: 2px 2px 0px #000;">
+        Edit
+    </button>
+    <button hx-delete="/admin/solutions/{{$.SolutionID}}/products/{{.ProductID}}"
             hx-target="closest div"
             hx-swap="outerHTML swap:0.3s"
             hx-confirm="Remove this product?"
@@ -32,6 +80,7 @@
     </button>
 </div>
 {{end}}
+{{end}}
 {{if not .Products}}
 <div class="py-8 text-center border-2 border-dashed border-gray-300 mb-3">
     <span class="material-symbols-outlined text-4xl text-gray-300 block mb-2">inventory_2</span>
@@ -39,7 +88,7 @@
 </div>
 {{end}}
 </div>
-<form hx-post="/admin/solutions/{{.SolutionID}}/products" hx-target="#products-list" hx-swap="innerHTML" class="mt-4 border-t-2 border-black pt-4">
+<form hx-post="/admin/solutions/{{.SolutionID}}/products" hx-target="#products-section" hx-swap="outerHTML" class="mt-4 border-t-2 border-black pt-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Product ID</label>
@@ -68,3 +117,5 @@
         </button>
     </div>
 </form>
+</div>
+{{end}}

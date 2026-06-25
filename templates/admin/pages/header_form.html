@@ -15,7 +15,13 @@
             </div>
             {{end}}
 
-            <form id="header-form" method="POST" action="/admin/header" class="space-y-6">
+            {{if .Error}}
+            <div class="bg-red-100 border-2 border-black text-red-900 px-4 py-3 mb-6 font-bold uppercase text-sm" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+                ✕ {{.Error}}
+            </div>
+            {{end}}
+
+            <form id="header-form" method="POST" action="/admin/header" enctype="multipart/form-data" class="space-y-6">
 
                 <!-- Section 1: Logo -->
                 <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
@@ -36,8 +42,14 @@
                             <p class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">No logo set. Enter path below.</p>
                         </div>
                         {{end}}
+                        <input type="file" name="header_logo_file" accept=".jpg,.jpeg,.png,.webp,.svg,image/*" class="w-full border-2 border-black px-3 py-2 text-sm bg-white file:mr-3 file:border-2 file:border-black file:bg-gray-100 file:px-3 file:py-1 file:text-xs file:font-bold file:uppercase focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        <p class="text-xs text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">Upload a logo (max 5MB). Recommended: 240×60px, PNG or SVG.</p>
+
+                        <div class="flex items-center gap-2 mt-3 mb-1">
+                            <label class="block text-xs font-bold text-gray-600 uppercase" style="font-family: 'JetBrains Mono', monospace;">Or paste a path</label>
+                            <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Use an existing image path instead of uploading. Uploading a file above overrides this.">info</span>
+                        </div>
                         <input type="text" name="header_logo_path" value="{{.Settings.HeaderLogoPath}}" placeholder="/uploads/logo.png" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
-                        <p class="text-xs text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">Recommended: 240×60px, PNG or SVG</p>
                     </div>
 
                     <div>

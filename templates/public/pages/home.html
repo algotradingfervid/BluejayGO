@@ -141,7 +141,7 @@
             <a href="/products/{{.CategorySlug}}/{{.Slug}}" class="manual-border bg-white p-4 manual-shadow flex flex-col group hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer">
                 <div class="manual-border bg-gray-100 aspect-video mb-4 overflow-hidden relative">
                     {{if .PrimaryImage.Valid}}
-                    <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" alt="{{.Name}}" src="{{.PrimaryImage.String}}">
+                    <img class="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300" alt="{{.Name}}" src="{{.PrimaryImage.String}}">
                     {{else}}
                     <div class="w-full h-full flex items-center justify-center">
                         <span class="material-symbols-outlined text-4xl text-gray-400">devices</span>

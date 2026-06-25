@@ -3443,6 +3443,17 @@ type Querier interface {
 	//   $6 (INTEGER) - id: Feature ID to update
 	// Returns: (none)
 	UpdateSolutionPageFeature(ctx context.Context, arg UpdateSolutionPageFeatureParams) error
+	// Updates the solution-specific metadata for an existing product association.
+	//
+	// Parameters:
+	//   $1 (INTEGER) - display_order: Updated position in product list
+	//   $2 (BOOLEAN) - is_featured: Whether product is highlighted
+	//   $3 (INTEGER) - solution_id: Solution the association belongs to
+	//   $4 (INTEGER) - product_id: Product whose association to update
+	// Returns: (none)
+	//
+	// Note: The linked product_id itself is not editable here, only its metadata.
+	UpdateSolutionProduct(ctx context.Context, arg UpdateSolutionProductParams) error
 	// Updates an existing solution stat.
 	//
 	// Parameters:

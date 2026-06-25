@@ -8,7 +8,7 @@
             <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
         </div>
 
-        <form action="{{.FormAction}}" method="POST" class="max-w-4xl space-y-4" id="solution-form">
+        <form action="{{.FormAction}}" method="POST" enctype="multipart/form-data" class="max-w-4xl space-y-4" id="solution-form">
 
             <!-- Section 1: Basic Info (open) -->
             <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section>
@@ -103,18 +103,24 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase mb-1">
-                            Hero Image URL
+                            Hero Image
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Main banner image for the solution page. Recommended 1200x600.">ⓘ</span>
                         </label>
+                        {{if .Item}}{{if .Item.HeroImageUrl.Valid}}
+                        <div class="mb-2">
+                            <img src="{{.Item.HeroImageUrl.String}}" alt="Hero preview" class="w-48 h-24 object-contain border-2 border-black bg-gray-50">
+                        </div>
+                        {{end}}{{end}}
+                        <input type="file" name="hero_image_file" accept=".jpg,.jpeg,.png,.webp,.svg,image/*"
+                               class="w-full border-2 border-black px-3 py-2 text-sm bg-white file:mr-3 file:border-2 file:border-black file:bg-gray-100 file:px-3 file:py-1 file:text-xs file:font-bold file:uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               style="font-family: 'JetBrains Mono', monospace;">
+                        <p class="text-xs text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">Upload an image (max 5MB, recommended 1200×600). Uploading overrides the URL below.</p>
+
+                        <label class="block text-xs font-bold uppercase mt-3 mb-1 text-gray-600">Or paste an image URL</label>
                         <input type="text" name="hero_image_url" value="{{if .Item}}{{.Item.HeroImageUrl.String}}{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;"
-                               placeholder="https://...">
-                        {{if .Item}}{{if .Item.HeroImageUrl.Valid}}
-                        <div class="mt-2">
-                            <img src="{{.Item.HeroImageUrl.String}}" alt="Hero preview" class="w-48 h-24 object-cover border-2 border-black">
-                        </div>
-                        {{end}}{{end}}
+                               placeholder="https://... or /uploads/solutions/...">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>

@@ -1,5 +1,4 @@
 {{define "content"}}
-{{template "header" .}}
 
 <!-- Breadcrumb -->
 <nav class="bg-white manual-border-b">
@@ -137,7 +136,7 @@
           <a href="/products/{{.Slug}}" class="group bg-white manual-border manual-shadow hover:manual-shadow-lg transition-all hover:-translate-y-1">
             {{if .PrimaryImage.Valid}}
             <div class="aspect-video overflow-hidden manual-border-b">
-              <img src="{{.PrimaryImage.String}}" alt="{{.Name}}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+              <img src="{{.PrimaryImage.String}}" alt="{{.Name}}" class="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all">
             </div>
             {{else}}
             <div class="aspect-video bg-gray-200 manual-border-b flex items-center justify-center">
@@ -244,5 +243,4 @@
   </div>
 </section>
 
-{{template "footer" .}}
 {{end}}

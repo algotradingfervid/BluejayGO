@@ -111,7 +111,7 @@
                 <a href="/products/{{.CategorySlug}}/{{.Slug}}" class="block">
                     <div class="aspect-[16/10] relative overflow-hidden">
                         {{if .PrimaryImage.Valid}}
-                        <img src="{{.PrimaryImage.String}}" alt="{{.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500">
+                        <img src="{{.PrimaryImage.String}}" alt="{{.Name}}" class="w-full h-full object-contain grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500">
                         {{else}}
                         <div class="w-full h-full bg-gray-100 flex items-center justify-center">
                             <span class="material-symbols-outlined text-4xl opacity-20">inventory_2</span>

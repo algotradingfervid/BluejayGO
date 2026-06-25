@@ -3,6 +3,8 @@ bin/
 bluejay-cms
 /bluejay-server
 /server
+/bluejay-cms-linux
+*.test
 *.db
 *.db-shm
 *.db-wal

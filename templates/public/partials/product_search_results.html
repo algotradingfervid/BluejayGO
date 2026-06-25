@@ -11,7 +11,7 @@
         <div class="manual-border-thick bg-white p-4 manual-shadow-lg group hover:-translate-y-1 transition-transform">
             {{if .PrimaryImage.Valid}}
             <div class="manual-border bg-gray-100 aspect-[4/3] mb-4 overflow-hidden">
-                <img alt="{{.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="{{.PrimaryImage.String}}">
+                <img alt="{{.Name}}" class="w-full h-full object-contain grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="{{.PrimaryImage.String}}">
             </div>
             {{end}}
             <h3 class="text-lg font-black uppercase mb-1">{{.Name}}</h3>

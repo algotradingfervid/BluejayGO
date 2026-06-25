@@ -373,6 +373,21 @@ INSERT INTO solution_products (solution_id, product_id, display_order, is_featur
 VALUES (?, ?, ?, ?)
 ON CONFLICT(solution_id, product_id) DO UPDATE SET display_order = excluded.display_order, is_featured = excluded.is_featured;
 
+-- name: UpdateSolutionProduct :exec
+-- Updates the solution-specific metadata for an existing product association.
+--
+-- Parameters:
+--   $1 (INTEGER) - display_order: Updated position in product list
+--   $2 (BOOLEAN) - is_featured: Whether product is highlighted
+--   $3 (INTEGER) - solution_id: Solution the association belongs to
+--   $4 (INTEGER) - product_id: Product whose association to update
+-- Returns: (none)
+--
+-- Note: The linked product_id itself is not editable here, only its metadata.
+UPDATE solution_products
+SET display_order = ?, is_featured = ?
+WHERE solution_id = ? AND product_id = ?;
+
 -- name: RemoveProductFromSolution :exec
 -- Removes a product association from a solution.
 --

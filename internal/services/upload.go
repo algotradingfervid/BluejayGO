@@ -107,6 +107,124 @@ func (s *UploadService) UploadProductImage(file *multipart.FileHeader) (string, 
 	return "/uploads/products/" + filename, nil
 }
 
+// UploadLogo handles the upload of the site logo image with validation and storage.
+// It mirrors UploadProductImage but additionally allows SVG (the recommended logo
+// format) and stores files in a dedicated "branding" subdirectory so logos are kept
+// separate from product imagery.
+//
+// Allowed types: jpg, jpeg, png, webp, svg. Max size: 5MB.
+// File naming convention: {unix_timestamp}_{sanitized_original_filename}
+//
+// Parameters:
+//   - file: Multipart file header from HTTP form upload
+//
+// Returns:
+//   - string: Public URL path to the uploaded logo (e.g., "/uploads/branding/1234567890_logo.svg")
+//   - error: Non-nil if validation fails or file cannot be saved
+func (s *UploadService) UploadLogo(file *multipart.FileHeader) (string, error) {
+	// Validate file type: web image formats plus SVG, which is the recommended
+	// logo format and is safe to serve as a static asset.
+	ext := strings.ToLower(filepath.Ext(file.Filename))
+	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".webp" && ext != ".svg" {
+		return "", fmt.Errorf("invalid file type: %s", ext)
+	}
+
+	// Enforce size limit to prevent storage abuse. Logos are small, so 5MB is ample.
+	if file.Size > 5*1024*1024 {
+		return "", fmt.Errorf("file too large (max 5MB)")
+	}
+
+	// Generate a unique, collision-free filename using a Unix timestamp prefix.
+	timestamp := time.Now().Unix()
+	filename := fmt.Sprintf("%d_%s", timestamp, sanitizeFilename(file.Filename))
+
+	// Ensure the branding subdirectory exists.
+	brandingDir := filepath.Join(s.uploadDir, "branding")
+	if err := os.MkdirAll(brandingDir, 0755); err != nil {
+		return "", fmt.Errorf("failed to create upload directory: %w", err)
+	}
+
+	// Open the uploaded file for reading.
+	src, err := file.Open()
+	if err != nil {
+		return "", fmt.Errorf("failed to open file: %w", err)
+	}
+	defer src.Close()
+
+	// Create the destination file on disk and stream the contents into it.
+	dstPath := filepath.Join(brandingDir, filename)
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to create destination file: %w", err)
+	}
+	defer dst.Close()
+
+	if _, err = io.Copy(dst, src); err != nil {
+		return "", fmt.Errorf("failed to copy file: %w", err)
+	}
+
+	// Return the public URL path for accessing the uploaded logo.
+	return "/uploads/branding/" + filename, nil
+}
+
+// UploadSolutionImage handles the upload of a solution's hero image. It mirrors
+// UploadLogo (same allowed types and size limit) but stores files in a dedicated
+// "solutions" subdirectory, keeping solution imagery separate from logos/products.
+//
+// Allowed types: jpg, jpeg, png, webp, svg. Max size: 5MB.
+// File naming convention: {unix_timestamp}_{sanitized_original_filename}
+//
+// Parameters:
+//   - file: Multipart file header from HTTP form upload
+//
+// Returns:
+//   - string: Public URL path to the uploaded image (e.g., "/uploads/solutions/1234567890_hero.jpg")
+//   - error: Non-nil if validation fails or file cannot be saved
+func (s *UploadService) UploadSolutionImage(file *multipart.FileHeader) (string, error) {
+	// Validate file type: standard web image formats plus SVG.
+	ext := strings.ToLower(filepath.Ext(file.Filename))
+	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".webp" && ext != ".svg" {
+		return "", fmt.Errorf("invalid file type: %s", ext)
+	}
+
+	// Enforce size limit to prevent storage abuse.
+	if file.Size > 5*1024*1024 {
+		return "", fmt.Errorf("file too large (max 5MB)")
+	}
+
+	// Generate a unique, collision-free filename using a Unix timestamp prefix.
+	timestamp := time.Now().Unix()
+	filename := fmt.Sprintf("%d_%s", timestamp, sanitizeFilename(file.Filename))
+
+	// Ensure the solutions subdirectory exists.
+	solutionsDir := filepath.Join(s.uploadDir, "solutions")
+	if err := os.MkdirAll(solutionsDir, 0755); err != nil {
+		return "", fmt.Errorf("failed to create upload directory: %w", err)
+	}
+
+	// Open the uploaded file for reading.
+	src, err := file.Open()
+	if err != nil {
+		return "", fmt.Errorf("failed to open file: %w", err)
+	}
+	defer src.Close()
+
+	// Create the destination file on disk and stream the contents into it.
+	dstPath := filepath.Join(solutionsDir, filename)
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to create destination file: %w", err)
+	}
+	defer dst.Close()
+
+	if _, err = io.Copy(dst, src); err != nil {
+		return "", fmt.Errorf("failed to copy file: %w", err)
+	}
+
+	// Return the public URL path for accessing the uploaded image.
+	return "/uploads/solutions/" + filename, nil
+}
+
 // UploadProductDownload handles the upload of downloadable product resources such
 // as datasheets, manuals, CAD files, and other technical documents. Unlike image
 // uploads, this function does not restrict file types, allowing various document

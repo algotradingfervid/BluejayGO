@@ -1468,6 +1468,41 @@ func (q *Queries) UpdateSolutionPageFeature(ctx context.Context, arg UpdateSolut
 	return err
 }
 
+const updateSolutionProduct = `-- name: UpdateSolutionProduct :exec
+UPDATE solution_products
+SET display_order = ?, is_featured = ?
+WHERE solution_id = ? AND product_id = ?
+`
+
+type UpdateSolutionProductParams struct {
+	DisplayOrder sql.NullInt64 `json:"display_order"`
+	IsFeatured   sql.NullBool  `json:"is_featured"`
+	SolutionID   int64         `json:"solution_id"`
+	ProductID    int64         `json:"product_id"`
+}
+
+// Updates the solution-specific metadata for an existing product association.
+//
+// Parameters:
+//
+//	$1 (INTEGER) - display_order: Updated position in product list
+//	$2 (BOOLEAN) - is_featured: Whether product is highlighted
+//	$3 (INTEGER) - solution_id: Solution the association belongs to
+//	$4 (INTEGER) - product_id: Product whose association to update
+//
+// Returns: (none)
+//
+// Note: The linked product_id itself is not editable here, only its metadata.
+func (q *Queries) UpdateSolutionProduct(ctx context.Context, arg UpdateSolutionProductParams) error {
+	_, err := q.db.ExecContext(ctx, updateSolutionProduct,
+		arg.DisplayOrder,
+		arg.IsFeatured,
+		arg.SolutionID,
+		arg.ProductID,
+	)
+	return err
+}
+
 const updateSolutionStat = `-- name: UpdateSolutionStat :exec
 UPDATE solution_stats
 SET value = ?, label = ?, display_order = ?

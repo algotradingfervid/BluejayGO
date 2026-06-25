@@ -117,7 +117,7 @@
             <div class="manual-border bg-white p-4 manual-shadow flex flex-col group">
                 {{if .ProductImage.Valid}}
                 <div class="manual-border bg-gray-100 aspect-video mb-4 overflow-hidden relative">
-                    <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" alt="{{.ProductName}}" src="{{.ProductImage.String}}"/>
+                    <img class="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300" alt="{{.ProductName}}" src="{{.ProductImage.String}}"/>
                     {{if .IsFeatured.Bool}}
                     <div class="absolute top-2 left-2 bg-[#0066CC] text-white text-[9px] font-bold px-2 py-0.5 uppercase">Featured</div>
                     {{end}}

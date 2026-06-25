@@ -1,5 +1,5 @@
 // Package public provides HTTP handlers for public-facing website features.
-// This file implements full-text search functionality across products, blog posts, and case studies.
+// This file implements full-text search functionality across products and blog posts.
 package public
 
 import (
@@ -15,7 +15,7 @@ import (
 // SearchResult represents a single search result from any content type.
 // Used to unify results from products, blog posts, and case studies into a consistent format.
 type SearchResult struct {
-	Type    string // Content type: "Product", "Article", or "Case Study"
+	Type    string // Content type: "Product" or "Article"
 	Title   string // Display title of the content
 	URL     string // Relative URL path to the content detail page
 	Excerpt string // Short preview text (tagline for products, excerpt for blog posts)
@@ -83,7 +83,7 @@ func sanitizeQuery(q string) string {
 	return strings.Join(words, " ")
 }
 
-// search executes full-text search queries across products, blog posts, and case studies.
+// search executes full-text search queries across products and blog posts.
 // Returns a unified list of results from all content types, limited by the limit parameter.
 //
 // FTS5 Implementation:
@@ -155,30 +155,6 @@ func (h *SearchHandler) search(query string, limit int) []SearchResult {
 					Title:   title,
 					URL:     "/blog/" + slug,
 					Excerpt: excerpt, // Blog excerpt used as search result preview
-				})
-			}
-		}
-	}
-
-	// Search case studies across title and content fields
-	// FTS5 index: case_studies_fts includes title and HTML content
-	// URL format: /case-studies/{study-slug}
-	rows3, err := h.db.Query(
-		`SELECT cs.title, cs.slug FROM case_studies_fts f JOIN case_studies cs ON f.rowid = cs.id WHERE case_studies_fts MATCH ? AND cs.status = 'published' LIMIT ?`,
-		ftsQuery, limit,
-	)
-	if err != nil {
-		h.logger.Error("case_studies fts query failed", "error", err)
-	} else {
-		defer rows3.Close()
-		for rows3.Next() {
-			var title, slug string
-			if err := rows3.Scan(&title, &slug); err == nil {
-				// Case studies have no excerpt field, only title is returned
-				results = append(results, SearchResult{
-					Type:  "Case Study",
-					Title: title,
-					URL:   "/case-studies/" + slug,
 				})
 			}
 		}

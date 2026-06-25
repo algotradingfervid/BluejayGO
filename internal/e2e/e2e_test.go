@@ -257,7 +257,7 @@ func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
 	adminGroup.DELETE("/whitepaper-topics/:id", wtHandler.Delete)
 
 	// Header, footer, settings
-	headerHandler := adminHandlers.NewHeaderHandler(queries, testLogger)
+	headerHandler := adminHandlers.NewHeaderHandler(queries, testLogger, uploadSvc)
 	adminGroup.GET("/header", headerHandler.Edit)
 	adminGroup.POST("/header", headerHandler.Update)
 
@@ -329,11 +329,15 @@ func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
 	adminGroup.DELETE("/blog/tags/:id", adminBlogTagsHandler.Delete)
 
 	// Solutions
-	adminSolutionsHandler := adminHandlers.NewSolutionsHandler(queries, testLogger, appCache)
+	adminSolutionsHandler := adminHandlers.NewSolutionsHandler(queries, testLogger, appCache, uploadSvc)
 	adminGroup.GET("/solutions", adminSolutionsHandler.List)
 	adminGroup.GET("/solutions/new", adminSolutionsHandler.New)
 	adminGroup.POST("/solutions", adminSolutionsHandler.Create)
 	adminGroup.GET("/solutions/:id/edit", adminSolutionsHandler.Edit)
+	adminGroup.GET("/solutions/:id/challenges-tab", adminSolutionsHandler.ChallengesTab)
+	adminGroup.GET("/solutions/:id/products-tab", adminSolutionsHandler.ProductsTab)
+	adminGroup.GET("/solutions/:id/stats-tab", adminSolutionsHandler.StatsTab)
+	adminGroup.GET("/solutions/:id/ctas-tab", adminSolutionsHandler.CTAsTab)
 	adminGroup.POST("/solutions/:id", adminSolutionsHandler.Update)
 	adminGroup.DELETE("/solutions/:id", adminSolutionsHandler.Delete)
 	adminGroup.POST("/solutions/:id/stats", adminSolutionsHandler.AddStat)
@@ -344,6 +348,10 @@ func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
 	adminGroup.DELETE("/solutions/:id/products/:productId", adminSolutionsHandler.RemoveProduct)
 	adminGroup.POST("/solutions/:id/ctas", adminSolutionsHandler.AddCTA)
 	adminGroup.DELETE("/solutions/:id/ctas/:ctaId", adminSolutionsHandler.DeleteCTA)
+	adminGroup.POST("/solutions/:id/challenges/:challengeId", adminSolutionsHandler.UpdateChallenge)
+	adminGroup.POST("/solutions/:id/stats/:statId", adminSolutionsHandler.UpdateStat)
+	adminGroup.POST("/solutions/:id/ctas/:ctaId", adminSolutionsHandler.UpdateCTA)
+	adminGroup.POST("/solutions/:id/products/:productId", adminSolutionsHandler.UpdateProduct)
 
 	// Whitepapers admin
 	adminWhitepapersHandler := adminHandlers.NewWhitepapersHandler(queries, testLogger, appCache)

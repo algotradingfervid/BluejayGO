@@ -47,7 +47,7 @@
                 <div class="grid grid-cols-5 gap-2">
                     {{range .Images}}
                     <button class="manual-border bg-gray-100 aspect-square overflow-hidden hover:opacity-80 transition-opacity gallery-thumb" data-src="{{.ImagePath}}" onclick="switchImage(this)">
-                        <img alt="{{if .AltText.Valid}}{{.AltText.String}}{{else}}Product image{{end}}" class="w-full h-full object-cover" src="{{.ImagePath}}">
+                        <img alt="{{if .AltText.Valid}}{{.AltText.String}}{{else}}Product image{{end}}" class="w-full h-full object-contain" src="{{.ImagePath}}">
                     </button>
                     {{end}}
                 </div>

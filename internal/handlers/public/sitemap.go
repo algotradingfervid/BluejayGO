@@ -101,8 +101,6 @@ func (h *SitemapHandler) Sitemap(c echo.Context) error {
 		{"/products", "weekly", "0.9"},      // Product catalog index
 		{"/solutions", "weekly", "0.9"},     // Solutions index
 		{"/blog", "daily", "0.8"},           // Blog index: updated daily with new posts
-		{"/case-studies", "weekly", "0.8"},  // Case studies index
-		{"/whitepapers", "weekly", "0.8"},   // Whitepapers index
 		{"/about", "monthly", "0.7"},        // About page: rarely changes
 		{"/contact", "monthly", "0.6"},      // Contact page: lowest priority
 		{"/partners", "monthly", "0.7"},     // Partners page
@@ -177,40 +175,6 @@ func (h *SitemapHandler) Sitemap(c echo.Context) error {
 				Loc:        fmt.Sprintf("%s/blog/%s", h.baseURL, p.Slug),
 				ChangeFreq: "monthly",  // Blog posts rarely updated after publication
 				Priority:   "0.7",      // Medium priority - good for SEO but not conversion pages
-			})
-		}
-	}
-
-	// Case studies: customer success stories
-	// URL format: /case-studies/{slug}
-	// Important for B2B SEO - shows proof of value
-	caseStudies, err := h.queries.ListCaseStudies(c.Request().Context())
-	if err != nil {
-		// Log error but continue generating sitemap with remaining content
-		h.logger.Error("sitemap: failed to list case studies", "error", err)
-	} else {
-		for _, cs := range caseStudies {
-			urlset.URLs = append(urlset.URLs, URL{
-				Loc:        fmt.Sprintf("%s/case-studies/%s", h.baseURL, cs.Slug),
-				ChangeFreq: "monthly",  // Case studies updated monthly with new metrics
-				Priority:   "0.7",      // Medium-high priority - good for conversion
-			})
-		}
-	}
-
-	// Whitepapers: downloadable content/lead magnets
-	// URL format: /whitepapers/{slug}
-	// Often gated content for lead generation
-	whitepapers, err := h.queries.ListPublishedWhitepapers(c.Request().Context())
-	if err != nil {
-		// Log error but continue generating sitemap with remaining content
-		h.logger.Error("sitemap: failed to list whitepapers", "error", err)
-	} else {
-		for _, w := range whitepapers {
-			urlset.URLs = append(urlset.URLs, URL{
-				Loc:        fmt.Sprintf("%s/whitepapers/%s", h.baseURL, w.Slug),
-				ChangeFreq: "monthly",  // Whitepapers rarely change after publication
-				Priority:   "0.7",      // Medium priority - valuable for lead gen
 			})
 		}
 	}

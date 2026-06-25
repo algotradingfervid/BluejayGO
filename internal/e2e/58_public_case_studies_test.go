@@ -4,13 +4,147 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strconv"
+	"strings"
 	"testing"
 
+	"github.com/labstack/echo/v4"
+
 	"github.com/narendhupati/bluejay-cms/db/sqlc"
+	publicHandlers "github.com/narendhupati/bluejay-cms/internal/handlers/public"
+	"github.com/narendhupati/bluejay-cms/internal/services"
+	"github.com/narendhupati/bluejay-cms/internal/templates"
+	"github.com/narendhupati/bluejay-cms/internal/testutil"
 )
+
+// setupRealRendererCaseStudies builds a minimal Echo instance wiring only the
+// public case studies routes with the REAL template renderer (not the shared
+// stub renderer used by setupApp). This is required to exercise the actual
+// template output so we can assert on the rendered HTML body. TestMain has
+// already chdir'd to the project root, so "templates" resolves correctly.
+func setupRealRendererCaseStudies(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
+	t.Helper()
+
+	_, queries, cleanup := testutil.SetupTestDB(t)
+	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelError}))
+
+	e := echo.New()
+	e.HideBanner = true
+	e.Renderer = templates.NewRenderer("templates")
+
+	appCache := services.NewCache()
+	h := publicHandlers.NewCaseStudiesHandler(queries, logger, appCache)
+	e.GET("/case-studies", h.CaseStudiesList)
+	e.GET("/case-studies/:slug", h.CaseStudyDetail)
+
+	return e, queries, cleanup
+}
+
+// TestPublicCaseStudiesListing_SingleHeaderFooter verifies the listing page
+// renders the site header and footer exactly once each. The base layout already
+// wraps content with the header/footer partials, so the page content block must
+// NOT include them again.
+func TestPublicCaseStudiesListing_SingleHeaderFooter(t *testing.T) {
+	e, queries, cleanup := setupRealRendererCaseStudies(t)
+	defer cleanup()
+	ctx := context.Background()
+
+	ind, _ := queries.CreateIndustry(ctx, sqlc.CreateIndustryParams{
+		Name: "Manufacturing",
+		Slug: "manufacturing",
+	})
+	_, err := queries.AdminCreateCaseStudy(ctx, sqlc.AdminCreateCaseStudyParams{
+		Slug:             "success-story",
+		Title:            "Success Story",
+		ClientName:       "Acme Corp",
+		IndustryID:       ind.ID,
+		HeroImageUrl:     sql.NullString{},
+		Summary:          "Great results achieved",
+		ChallengeTitle:   "Challenge",
+		ChallengeContent: "Business challenge",
+		ChallengeBullets: sql.NullString{},
+		SolutionTitle:    "Solution",
+		SolutionContent:  "Our solution",
+		OutcomeTitle:     "Outcome",
+		OutcomeContent:   "Positive outcome",
+		MetaTitle:        sql.NullString{},
+		MetaDescription:  sql.NullString{},
+		IsPublished:      1,
+		DisplayOrder:     0,
+	})
+	if err != nil {
+		t.Fatalf("create case study: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/case-studies", nil)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d; body: %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	if got := strings.Count(body, "<header"); got != 1 {
+		t.Errorf("expected exactly 1 <header tag on listing, got %d", got)
+	}
+	if got := strings.Count(body, "<footer"); got != 1 {
+		t.Errorf("expected exactly 1 <footer tag on listing, got %d", got)
+	}
+}
+
+// TestPublicCaseStudyDetail_SingleHeaderFooter verifies the detail page renders
+// the site header and footer exactly once each.
+func TestPublicCaseStudyDetail_SingleHeaderFooter(t *testing.T) {
+	e, queries, cleanup := setupRealRendererCaseStudies(t)
+	defer cleanup()
+	ctx := context.Background()
+
+	ind, _ := queries.CreateIndustry(ctx, sqlc.CreateIndustryParams{
+		Name: "Retail",
+		Slug: "retail",
+	})
+	_, err := queries.AdminCreateCaseStudy(ctx, sqlc.AdminCreateCaseStudyParams{
+		Slug:             "retail-transformation",
+		Title:            "Retail Transformation",
+		ClientName:       "Super Mart",
+		IndustryID:       ind.ID,
+		HeroImageUrl:     sql.NullString{},
+		Summary:          "Digital transformation",
+		ChallengeTitle:   "Challenge",
+		ChallengeContent: "Legacy systems",
+		ChallengeBullets: sql.NullString{},
+		SolutionTitle:    "Solution",
+		SolutionContent:  "Modern platform",
+		OutcomeTitle:     "Outcome",
+		OutcomeContent:   "Increased sales",
+		MetaTitle:        sql.NullString{},
+		MetaDescription:  sql.NullString{},
+		IsPublished:      1,
+		DisplayOrder:     0,
+	})
+	if err != nil {
+		t.Fatalf("create case study: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/case-studies/retail-transformation", nil)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d; body: %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	if got := strings.Count(body, "<header"); got != 1 {
+		t.Errorf("expected exactly 1 <header tag on detail, got %d", got)
+	}
+	if got := strings.Count(body, "<footer"); got != 1 {
+		t.Errorf("expected exactly 1 <footer tag on detail, got %d", got)
+	}
+}
 
 func TestPublicCaseStudiesListing(t *testing.T) {
 	e, queries, cleanup := setupApp(t)

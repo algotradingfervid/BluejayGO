@@ -1,7 +1,9 @@
 package e2e_test
 
 import (
+	"bytes"
 	"context"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -138,5 +140,59 @@ func TestHeaderCTAStyles_E2E(t *testing.T) {
 		if settings.HeaderCtaStyle != style {
 			t.Errorf("expected header_cta_style %q, got %q", style, settings.HeaderCtaStyle)
 		}
+	}
+}
+
+// TestHeaderLogoUpload_E2E verifies that uploading a logo file via the header
+// settings form persists the file to disk and stores its public /uploads/branding/
+// path as the header logo, overriding any pasted text path.
+func TestHeaderLogoUpload_E2E(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	ctx := context.Background()
+
+	createTestAdmin(t, queries)
+	cookie := loginAndGetCookie(t, e)
+
+	// Build a multipart form with an uploaded logo file plus a (different) pasted
+	// path; the uploaded file must win.
+	var body bytes.Buffer
+	w := multipart.NewWriter(&body)
+	if err := w.WriteField("header_logo_path", "/should/be/overridden.png"); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.WriteField("header_logo_alt", "Bluejay Logo"); err != nil {
+		t.Fatal(err)
+	}
+	part, err := w.CreateFormFile("header_logo_file", "my-logo.svg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := part.Write([]byte(`<svg xmlns="http://www.w3.org/2000/svg"></svg>`)); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/admin/header", &body)
+	req.Header.Set("Content-Type", w.FormDataContentType())
+	req.AddCookie(cookie)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusSeeOther {
+		t.Fatalf("upload: expected 303, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+
+	settings, _ := queries.GetSettings(ctx)
+	if !strings.HasPrefix(settings.HeaderLogoPath, "/uploads/branding/") {
+		t.Errorf("expected uploaded logo path under /uploads/branding/, got %q", settings.HeaderLogoPath)
+	}
+	if !strings.HasSuffix(settings.HeaderLogoPath, "_my-logo.svg") {
+		t.Errorf("expected saved path to keep original filename, got %q", settings.HeaderLogoPath)
+	}
+	if settings.HeaderLogoAlt != "Bluejay Logo" {
+		t.Errorf("expected header_logo_alt 'Bluejay Logo', got %q", settings.HeaderLogoAlt)
 	}
 }
