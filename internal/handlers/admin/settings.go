@@ -9,21 +9,23 @@ import (
 	"github.com/labstack/echo/v4" // Echo web framework for HTTP routing and context management
 
 	// Internal dependencies
-	"github.com/narendhupati/bluejay-cms/db/sqlc" // sqlc-generated database queries and models
+	"github.com/narendhupati/bluejay-cms/db/sqlc"           // sqlc-generated database queries and models
+	"github.com/narendhupati/bluejay-cms/internal/services" // Cache service for invalidating page-level caches
 )
 
 // SettingsHandler handles global site settings management.
 // Manages site-wide configuration including contact info, SEO metadata,
 // analytics integration, and social media links.
 type SettingsHandler struct {
-	queries *sqlc.Queries // Database query interface for settings CRUD operations
-	logger  *slog.Logger  // Structured logger for error tracking
+	queries *sqlc.Queries   // Database query interface for settings CRUD operations
+	logger  *slog.Logger    // Structured logger for error tracking
+	cache   *services.Cache // Cache service for invalidating page-level caches
 }
 
 // NewSettingsHandler creates and initializes a new SettingsHandler instance.
-// Dependencies are injected to support database access and logging.
-func NewSettingsHandler(queries *sqlc.Queries, logger *slog.Logger) *SettingsHandler {
-	return &SettingsHandler{queries: queries, logger: logger}
+// Dependencies are injected to support database access, logging, and cache invalidation.
+func NewSettingsHandler(queries *sqlc.Queries, logger *slog.Logger, cache *services.Cache) *SettingsHandler {
+	return &SettingsHandler{queries: queries, logger: logger, cache: cache}
 }
 
 // Edit renders the global settings form page with current settings data.
@@ -148,6 +150,13 @@ func (h *SettingsHandler) Update(c echo.Context) error {
 	if err != nil {
 		h.logger.Error("failed to update settings", "error", err)
 		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	// Invalidate ALL cached public pages. Global settings (contact info, site name,
+	// etc.) render site-wide via the footer/header, so every "page:" cache entry is
+	// potentially stale after a settings change.
+	if h.cache != nil {
+		h.cache.DeleteByPrefix("page:")
 	}
 
 	// Log settings update to activity_log for audit trail
