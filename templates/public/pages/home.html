@@ -128,13 +128,14 @@
 
     <!-- ==================== FEATURED PRODUCTS ==================== -->
     {{if .FeaturedProducts}}
+    {{$ps := index .Sections "products_section"}}
     <section class="max-w-[1200px] mx-auto px-4 py-20">
         <div class="flex items-center gap-4 mb-8">
-            <h2 class="font-mono font-black text-2xl uppercase">Featured Products</h2>
+            <h2 class="font-mono font-black text-2xl uppercase">{{if $ps.Heading}}{{$ps.Heading}}{{else}}Featured Products{{end}}</h2>
             <div class="flex-grow h-[2px] bg-black/20"></div>
             <span class="font-mono text-xs">Section 02</span>
         </div>
-        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">Discover our most popular interactive solutions</p>
+        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">{{if $ps.Subheading}}{{$ps.Subheading}}{{else}}Discover our most popular interactive solutions{{end}}</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {{range .FeaturedProducts}}
@@ -169,13 +170,14 @@
 
     <!-- ==================== INDUSTRY SOLUTIONS ==================== -->
     {{if .Solutions}}
+    {{$ps := index .Sections "solutions_section"}}
     <section class="max-w-[1200px] mx-auto px-4 py-20">
         <div class="flex items-center gap-4 mb-8">
-            <h2 class="font-mono font-black text-2xl uppercase">Solutions By Industry</h2>
+            <h2 class="font-mono font-black text-2xl uppercase">{{if $ps.Heading}}{{$ps.Heading}}{{else}}Solutions By Industry{{end}}</h2>
             <div class="flex-grow h-[2px] bg-black/20"></div>
             <span class="font-mono text-xs">Section 03</span>
         </div>
-        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">Tailored technology solutions for every sector</p>
+        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">{{if $ps.Subheading}}{{$ps.Subheading}}{{else}}Tailored technology solutions for every sector{{end}}</p>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {{range .Solutions}}
@@ -194,8 +196,9 @@
 
     <!-- ==================== COMPANY STATISTICS ==================== -->
     {{if .Stats}}
+    {{$ps := index .Sections "stats_section"}}
     <section class="bg-black text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg">
-        <h2 class="font-mono font-black text-3xl uppercase mb-12 text-center tracking-widest">{{.Settings.SiteName}} By The Numbers</h2>
+        <h2 class="font-mono font-black text-3xl uppercase mb-12 text-center tracking-widest">{{if $ps.Heading}}{{$ps.Heading}}{{else}}{{.Settings.SiteName}} By The Numbers{{end}}</h2>
         <div class="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             {{range .Stats}}
             <div class="border-2 border-white/30 p-6 flex flex-col items-center text-center">
@@ -209,13 +212,14 @@
 
     <!-- ==================== CLIENT TESTIMONIALS ==================== -->
     {{if .Testimonials}}
+    {{$ps := index .Sections "testimonials_section"}}
     <section class="max-w-[1200px] mx-auto px-4 py-20">
         <div class="flex items-center gap-4 mb-8">
-            <h2 class="font-mono font-black text-2xl uppercase">What Our Clients Say</h2>
+            <h2 class="font-mono font-black text-2xl uppercase">{{if $ps.Heading}}{{$ps.Heading}}{{else}}What Our Clients Say{{end}}</h2>
             <div class="flex-grow h-[2px] bg-black/20"></div>
             <span class="font-mono text-xs">Section 05</span>
         </div>
-        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">Trusted by organizations worldwide</p>
+        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">{{if $ps.Subheading}}{{$ps.Subheading}}{{else}}Trusted by organizations worldwide{{end}}</p>
 
         <div id="testimonial-container" class="relative">
             {{range $i, $t := .Testimonials}}
@@ -286,9 +290,10 @@
 
     <!-- ==================== TRUSTED PARTNERS ==================== -->
     {{if .FeaturedPartners}}
+    {{$ps := index .Sections "partners_section"}}
     <section class="bg-[#F8F9FA] py-16 px-4">
         <div class="max-w-[1200px] mx-auto">
-            <h2 class="font-mono font-black text-2xl uppercase mb-12 text-center">Trusted Partners</h2>
+            <h2 class="font-mono font-black text-2xl uppercase mb-12 text-center">{{if $ps.Heading}}{{$ps.Heading}}{{else}}Trusted Partners{{end}}</h2>
 
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6">
                 {{range .FeaturedPartners}}
@@ -314,13 +319,14 @@
 
     <!-- ==================== LATEST NEWS & INSIGHTS ==================== -->
     {{if .LatestPosts}}
+    {{$ps := index .Sections "blog_section"}}
     <section class="max-w-[1200px] mx-auto px-4 py-20">
         <div class="flex items-center gap-4 mb-8">
-            <h2 class="font-mono font-black text-2xl uppercase">Latest News & Insights</h2>
+            <h2 class="font-mono font-black text-2xl uppercase">{{if $ps.Heading}}{{$ps.Heading}}{{else}}Latest News & Insights{{end}}</h2>
             <div class="flex-grow h-[2px] bg-black/20"></div>
             <span class="font-mono text-xs">Section 07</span>
         </div>
-        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">Stay updated with industry trends</p>
+        <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">{{if $ps.Subheading}}{{$ps.Subheading}}{{else}}Stay updated with industry trends{{end}}</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {{range .LatestPosts}}
