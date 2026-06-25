@@ -318,7 +318,7 @@ func main() {
 	adminGroup.POST("/footer", footerHandler.Update)
 
 	// Global Settings - site name, SEO defaults, contact info, analytics
-	settingsHandler := adminHandlers.NewSettingsHandler(queries, logger)
+	settingsHandler := adminHandlers.NewSettingsHandler(queries, logger, appCache)
 	adminGroup.GET("/settings", settingsHandler.Edit)
 	adminGroup.POST("/settings", settingsHandler.Update)
 

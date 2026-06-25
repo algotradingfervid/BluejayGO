@@ -265,7 +265,7 @@ func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
 	adminGroup.GET("/footer", footerHandler.Edit)
 	adminGroup.POST("/footer", footerHandler.Update)
 
-	settingsHandler := adminHandlers.NewSettingsHandler(queries, testLogger)
+	settingsHandler := adminHandlers.NewSettingsHandler(queries, testLogger, appCache)
 	adminGroup.GET("/settings", settingsHandler.Edit)
 	adminGroup.POST("/settings", settingsHandler.Update)
 
