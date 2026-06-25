@@ -44,7 +44,7 @@ func TestHeaderLogoUpload_UnsupportedType_RerendersFormWithError(t *testing.T) {
 	e.HideBanner = true
 	e.Renderer = templates.NewRenderer("templates")
 
-	h := adminHandlers.NewHeaderHandler(queries, logger, uploadSvc)
+	h := adminHandlers.NewHeaderHandler(queries, logger, uploadSvc, services.NewCache())
 	e.POST("/admin/header", h.Update)
 
 	// Build a multipart form with an unsupported logo file extension.
