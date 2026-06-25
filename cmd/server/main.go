@@ -308,7 +308,7 @@ func main() {
 	// Global settings affecting header, footer, and general site behavior
 
 	// Header Management - configure logo, navigation, and header content
-	headerHandler := adminHandlers.NewHeaderHandler(queries, logger, uploadSvc)
+	headerHandler := adminHandlers.NewHeaderHandler(queries, logger, uploadSvc, appCache)
 	adminGroup.GET("/header", headerHandler.Edit)
 	adminGroup.POST("/header", headerHandler.Update)
 

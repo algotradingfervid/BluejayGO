@@ -257,7 +257,7 @@ func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
 	adminGroup.DELETE("/whitepaper-topics/:id", wtHandler.Delete)
 
 	// Header, footer, settings
-	headerHandler := adminHandlers.NewHeaderHandler(queries, testLogger, uploadSvc)
+	headerHandler := adminHandlers.NewHeaderHandler(queries, testLogger, uploadSvc, appCache)
 	adminGroup.GET("/header", headerHandler.Edit)
 	adminGroup.POST("/header", headerHandler.Update)
 

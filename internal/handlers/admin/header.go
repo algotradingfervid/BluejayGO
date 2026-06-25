@@ -26,6 +26,7 @@ type HeaderHandler struct {
 	queries   *sqlc.Queries           // Database query interface for settings operations
 	logger    *slog.Logger            // Structured logger for error tracking
 	uploadSvc *services.UploadService // Handles logo file uploads to disk
+	cache     *services.Cache         // Cache service for invalidating page-level caches
 }
 
 // NewHeaderHandler creates and initializes a new HeaderHandler instance.
@@ -35,10 +36,11 @@ type HeaderHandler struct {
 //   - queries: Database query layer for executing header settings operations
 //   - logger: Structured logger for error and activity logging
 //   - uploadSvc: Service used to persist uploaded logo files to disk
+//   - cache: Cache service used to invalidate rendered public pages on update
 //
 // Returns a fully initialized HeaderHandler ready to handle HTTP requests.
-func NewHeaderHandler(queries *sqlc.Queries, logger *slog.Logger, uploadSvc *services.UploadService) *HeaderHandler {
-	return &HeaderHandler{queries: queries, logger: logger, uploadSvc: uploadSvc}
+func NewHeaderHandler(queries *sqlc.Queries, logger *slog.Logger, uploadSvc *services.UploadService, cache *services.Cache) *HeaderHandler {
+	return &HeaderHandler{queries: queries, logger: logger, uploadSvc: uploadSvc, cache: cache}
 }
 
 // Edit renders the header configuration form page.
@@ -185,6 +187,13 @@ func (h *HeaderHandler) Update(c echo.Context) error {
 	if err != nil {
 		h.logger.Error("failed to update header settings", "error", err)
 		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	// Invalidate ALL cached public pages. Header settings (logo, nav labels,
+	// contact-info visibility toggles) render site-wide via the header partial,
+	// so every "page:" cache entry is potentially stale after a header change.
+	if h.cache != nil {
+		h.cache.DeleteByPrefix("page:")
 	}
 
 	// Log the update activity for audit trail (uses helper function from activity.go)

@@ -14,6 +14,21 @@
                 <span class="text-xl font-bold">{{.Settings.SiteName}}</span>
                 {{end}}
             </a>
+            {{if and .Settings (or (and .Settings.HeaderShowPhone .Settings.ContactPhone) (and .Settings.HeaderShowEmail .Settings.ContactEmail) (and .Settings.HeaderShowSocial (or .Settings.SocialLinkedin .Settings.SocialTwitter .Settings.SocialFacebook .Settings.SocialYoutube .Settings.SocialInstagram)))}}
+            <div class="hidden md:flex items-center gap-4 text-xs font-medium">
+                {{if and .Settings.HeaderShowPhone .Settings.ContactPhone}}<a href="tel:{{.Settings.ContactPhone}}" class="hover:text-[#0066CC] transition-colors">{{.Settings.ContactPhone}}</a>{{end}}
+                {{if and .Settings.HeaderShowEmail .Settings.ContactEmail}}<a href="mailto:{{.Settings.ContactEmail}}" class="hover:text-[#0066CC] transition-colors">{{.Settings.ContactEmail}}</a>{{end}}
+                {{if and .Settings.HeaderShowSocial (or .Settings.SocialLinkedin .Settings.SocialTwitter .Settings.SocialFacebook .Settings.SocialYoutube .Settings.SocialInstagram)}}
+                <span class="flex items-center gap-3 border-l-2 border-black pl-4">
+                    {{if .Settings.SocialLinkedin}}<a href="{{.Settings.SocialLinkedin}}" class="hover:text-[#0066CC] transition-colors uppercase">LinkedIn</a>{{end}}
+                    {{if .Settings.SocialTwitter}}<a href="{{.Settings.SocialTwitter}}" class="hover:text-[#0066CC] transition-colors uppercase">Twitter</a>{{end}}
+                    {{if .Settings.SocialFacebook}}<a href="{{.Settings.SocialFacebook}}" class="hover:text-[#0066CC] transition-colors uppercase">Facebook</a>{{end}}
+                    {{if .Settings.SocialYoutube}}<a href="{{.Settings.SocialYoutube}}" class="hover:text-[#0066CC] transition-colors uppercase">YouTube</a>{{end}}
+                    {{if .Settings.SocialInstagram}}<a href="{{.Settings.SocialInstagram}}" class="hover:text-[#0066CC] transition-colors uppercase">Instagram</a>{{end}}
+                </span>
+                {{end}}
+            </div>
+            {{end}}
             <nav class="hidden md:flex items-center gap-8">
                 {{if and .Settings .Settings.ShowNavHome}}<a href="/" class="text-sm font-medium hover:text-[#0066CC] transition-colors">{{.Settings.NavLabelHome}}</a>{{end}}
                 {{if and .Settings .Settings.ShowNavAbout}}<a href="/about" class="text-sm font-medium hover:text-[#0066CC] transition-colors">{{.Settings.NavLabelAbout}}</a>{{end}}
