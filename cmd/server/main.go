@@ -453,7 +453,13 @@ func main() {
 	// ─────────────────────────────────────────────────────────────────────────
 	// XML sitemap and robots.txt for search engine optimization
 
-	sitemapHandler := publicHandlers.NewSitemapHandler(queries, logger, "https://bluejaylabs.com")
+	// Base URL used to build absolute links in the sitemap. Configurable via the
+	// SITE_BASE_URL env var (set per-environment); defaults to the production domain.
+	siteBaseURL := "https://newsite.bluejayinnolabs.com"
+	if v := os.Getenv("SITE_BASE_URL"); v != "" {
+		siteBaseURL = v
+	}
+	sitemapHandler := publicHandlers.NewSitemapHandler(queries, logger, siteBaseURL)
 	publicGroup.GET("/sitemap.xml", sitemapHandler.Sitemap)  // Dynamic XML sitemap of all public pages
 	publicGroup.GET("/robots.txt", sitemapHandler.RobotsTxt) // Robots.txt with crawl directives
 
