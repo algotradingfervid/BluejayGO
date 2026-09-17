@@ -18,7 +18,7 @@
 #   SSH_TARGET   (default: root@178.105.217.158)
 #   REMOTE_DIR   (default: /var/www/bluejay-cms)
 #   SERVICE      (default: bluejay-cms)
-#   DOMAIN       (default: newsite.bluejayinnolabs.com)
+#   DOMAIN       (default: bluejayinnolabs.com)
 #
 set -euo pipefail
 
@@ -26,7 +26,7 @@ set -euo pipefail
 SSH_TARGET="${SSH_TARGET:-root@178.105.217.158}"
 REMOTE_DIR="${REMOTE_DIR:-/var/www/bluejay-cms}"
 SERVICE="${SERVICE:-bluejay-cms}"
-DOMAIN="${DOMAIN:-newsite.bluejayinnolabs.com}"
+DOMAIN="${DOMAIN:-bluejayinnolabs.com}"
 SSH_OPTS=(-o StrictHostKeyChecking=accept-new -o BatchMode=yes)
 
 # Always run from the repo root (the directory this script lives in).
