@@ -1,4 +1,7 @@
 {{define "content"}}
+<link rel="stylesheet" href="/public/css/trix.css">
+<script defer src="/public/js/vendor/trix.js"></script>
+<script defer src="/public/js/admin-editors.js"></script>
 <div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
     {{template "admin-sidebar" .}}
     <div class="flex-1 overflow-auto p-8 bg-gray-50">
@@ -8,8 +11,16 @@
             <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
         </div>
 
-        <form action="{{.FormAction}}" method="POST" enctype="multipart/form-data" class="max-w-4xl space-y-4" id="product-form">
+        <form data-dirty-track {{if .FormError}}data-dirty-on-load{{end}} action="{{.FormAction}}" method="POST" enctype="multipart/form-data" class="max-w-4xl space-y-4" id="product-form">
 
+            {{if .FormError}}
+            <div role="alert" tabindex="-1" class="border-2 border-red-700 bg-red-50 p-4" id="product-error-summary">
+                <p class="font-bold">Product was not saved. {{.FormError}}</p>
+                <a class="underline" href="#products_form-{{.ConflictField}}">Correct the {{.ConflictField}}</a>
+                {{if .ConflictID}}· <a class="underline" href="/admin/products/{{.ConflictID}}/edit" target="_blank" rel="noopener">Open the existing product in a new tab</a>{{end}}
+                <p class="text-sm mt-2">Your entered values are preserved. If you selected an image, select it again before saving.</p>
+            </div>
+            {{end}}
             <!-- Section 1: Basic Information (open by default) -->
             <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section>
                 <button type="button" onclick="toggleSection(this)"
@@ -20,35 +31,37 @@
                 <div class="section-body p-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="products_form-name" class="block text-xs font-bold uppercase mb-1">
                                 Product Name *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="The product name as it appears on your site.">ⓘ</span>
                             </label>
-                            <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
+                            <input id="products_form-name" type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="products_form-sku" class="block text-xs font-bold uppercase mb-1">
                                 SKU *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Unique stock-keeping unit code for this product.">ⓘ</span>
                             </label>
-                            <input type="text" name="sku" value="{{if .Item}}{{.Item.Sku}}{{end}}" required
+                            <input id="products_form-sku" type="text" name="sku" {{if eq .ConflictField "sku"}}aria-invalid="true" aria-describedby="sku-error"{{end}} value="{{if .Item}}{{.Item.Sku}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
+                            {{if eq .ConflictField "sku"}}<p id="sku-error" class="text-sm text-red-700 mt-1">{{.FormError}}</p>{{end}}
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="products_form-slug" class="block text-xs font-bold uppercase mb-1">
                                 Slug *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="URL-friendly version of the name. Auto-generated but editable.">ⓘ</span>
                             </label>
-                            <input type="text" name="slug" value="{{if .Item}}{{.Item.Slug}}{{end}}" required
+                            <input id="products_form-slug" type="text" name="slug" pattern="[a-z0-9]([a-z0-9]|-)*" title="Use lowercase letters, numbers and hyphens; start with a letter or number." {{if eq .ConflictField "slug"}}aria-invalid="true" aria-describedby="slug-error"{{end}} value="{{if .Item}}{{.Item.Slug}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
+                            {{if eq .ConflictField "slug"}}<p id="slug-error" class="text-sm text-red-700 mt-1">{{.FormError}}</p>{{end}}
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Category *</label>
-                            <select name="category_id" required
+                            <label for="products_form-category-id" class="block text-xs font-bold uppercase mb-1">Category *</label>
+                            <select id="products_form-category-id" name="category_id" required
                                     class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     style="font-family: 'JetBrains Mono', monospace;">
                                 <option value="">Select Category</option>
@@ -58,8 +71,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Status *</label>
-                            <select name="status" required
+                            <label for="products_form-status" class="block text-xs font-bold uppercase mb-1">Status *</label>
+                            <select id="products_form-status" name="status" required
                                     class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     style="font-family: 'JetBrains Mono', monospace;">
                                 <option value="draft" {{if and .Item (eq .Item.Status "draft")}}selected{{end}}>Draft</option>
@@ -80,31 +93,28 @@
                 </button>
                 <div class="section-body p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="products_form-tagline" class="block text-xs font-bold uppercase mb-1">
                             Tagline
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="A one-line summary shown on product cards. Keep under 100 characters.">ⓘ</span>
                         </label>
-                        <input type="text" name="tagline" maxlength="100"
+                        <input id="products_form-tagline" type="text" name="tagline" maxlength="100"
                                value="{{if .Item}}{{if .Item.Tagline.Valid}}{{.Item.Tagline.String}}{{end}}{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Description *</label>
-                        <textarea name="description" required rows="4"
+                        <label for="products_form-description" class="block text-xs font-bold uppercase mb-1">Description *</label>
+                        <textarea id="products_form-description" name="description" required rows="4"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="overview-input" class="block text-xs font-bold uppercase mb-1">
                             Overview
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Detailed product description with formatting. Shown on the product detail page.">ⓘ</span>
                         </label>
-                        <input id="overview-input" type="hidden" name="overview"
-                               value="{{if .Item}}{{if .Item.Overview.Valid}}{{.Item.Overview.String}}{{end}}{{end}}">
-                        <trix-editor input="overview-input"
-                                     class="border-2 border-black text-sm min-h-[150px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                     style="font-family: 'JetBrains Mono', monospace;"></trix-editor>
+                        <textarea id="overview-input" name="overview" data-rich-editor aria-label="Overview" rows="8" class="w-full border-2 border-black p-3 text-sm">{{if .Item}}{{if .Item.Overview.Valid}}{{.Item.Overview.String}}{{end}}{{end}}</textarea>
+                        <p data-editor-fallback class="text-xs text-gray-600 mt-1">Formatting tools are unavailable. You can edit the HTML here; existing content is preserved.</p>
                     </div>
                 </div>
             </div>
@@ -118,8 +128,8 @@
                 </button>
                 <div class="section-body p-5 space-y-4 hidden">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Primary Image</label>
-                        <input type="file" name="primary_image" accept="image/*"
+                        <label for="products_form-primary-image" class="block text-xs font-bold uppercase mb-1">Primary Image</label>
+                        <input id="products_form-primary-image" type="file" name="primary_image" accept="image/*"
                                class="w-full border-2 border-black px-3 py-2 text-sm"
                                onchange="previewImage(this)">
                         {{if .Item}}{{if .Item.PrimaryImage.Valid}}
@@ -133,11 +143,11 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="products_form-video-url" class="block text-xs font-bold uppercase mb-1">
                             Video URL
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="YouTube or Vimeo embed URL for the product video.">ⓘ</span>
                         </label>
-                        <input type="url" name="video_url"
+                        <input id="products_form-video-url" type="url" name="video_url"
                                value="{{if .Item}}{{if .Item.VideoUrl.Valid}}{{.Item.VideoUrl.String}}{{end}}{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;"
@@ -165,8 +175,8 @@
                         </label>
                     </div>
                     <div id="featured-order-wrapper" class="{{if not .Item}}hidden{{else}}{{if not .Item.IsFeatured}}hidden{{end}}{{end}}">
-                        <label class="block text-xs font-bold uppercase mb-1">Featured Order</label>
-                        <input type="number" name="featured_order" min="0"
+                        <label for="products_form-featured-order" class="block text-xs font-bold uppercase mb-1">Featured Order</label>
+                        <input id="products_form-featured-order" type="number" name="featured_order" min="0"
                                value="{{if .Item}}{{if .Item.FeaturedOrder.Valid}}{{.Item.FeaturedOrder.Int64}}{{end}}{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;"
@@ -184,8 +194,8 @@
                 </button>
                 <div class="section-body p-5 space-y-4 hidden">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Meta Title</label>
-                        <input type="text" name="meta_title" maxlength="70"
+                        <label for="products_form-meta-title" class="block text-xs font-bold uppercase mb-1">Meta Title</label>
+                        <input id="products_form-meta-title" type="text" name="meta_title" maxlength="70"
                                value="{{if .Item}}{{if .Item.MetaTitle.Valid}}{{.Item.MetaTitle.String}}{{end}}{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;"
@@ -193,8 +203,8 @@
                         <p class="text-xs text-gray-500 mt-1"><span id="meta-title-count">0</span>/70 characters</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Meta Description</label>
-                        <textarea name="meta_description" maxlength="160" rows="2"
+                        <label for="products_form-meta-description" class="block text-xs font-bold uppercase mb-1">Meta Description</label>
+                        <textarea id="products_form-meta-description" name="meta_description" maxlength="160" rows="2"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;"
                                   oninput="updateCharCount(this, 'meta-desc-count', 160)">{{if .Item}}{{if .Item.MetaDescription.Valid}}{{.Item.MetaDescription.String}}{{end}}{{end}}</textarea>
@@ -204,25 +214,26 @@
             </div>
 
             <!-- Submit -->
-            <div class="pt-2 flex gap-3 items-center">
+            <div class="pt-2 flex flex-wrap gap-3 items-center">
                 <button type="submit"
                         class="bg-blue-600 text-white px-8 py-3 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
                         style="box-shadow: 4px 4px 0px #000;">
-                    {{if .Item}}Update Product{{else}}Create Product{{end}}
+                    {{if and .Item .Item.ID}}Update Product{{else}}Create Product{{end}}
                 </button>
-                {{if .Item}}
-                <a href="/products/{{.CategorySlug}}/{{.Item.Slug}}?preview=true" target="_blank"
-                   title="Preview how this content will look on the public site."
+                {{if and .Item .Item.ID}}
+                <a href="{{.PreviewURL}}" target="_blank"
+                   title="Shows the last saved version. Save changes before previewing." data-saved-preview aria-describedby="saved-preview-help"
                    class="bg-white text-black px-6 py-3 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px] inline-flex items-center gap-2"
                    style="box-shadow: 4px 4px 0px #000; text-decoration: none;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    Preview
+                    Preview saved version
                 </a>
+                <p id="saved-preview-help" class="text-xs text-gray-600">Preview shows the last saved version. Save your changes first.</p>
                 {{end}}
             </div>
         </form>
 
-        {{if .Item}}
+        {{if and .Item .Item.ID}}
         <!-- Product Details (HTMX sub-pages) -->
         <div class="mt-8 max-w-4xl">
             <h2 class="text-lg font-bold uppercase mb-4">Product Details</h2>

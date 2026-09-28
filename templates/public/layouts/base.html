@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{if .MetaTitle}}{{.MetaTitle}}{{else}}{{.Title}} - BlueJay Innovative Labs{{end}}</title>
+    {{if .NoIndex}}<meta name="robots" content="noindex">{{end}}
     <meta name="description" content="{{if .MetaDescription}}{{.MetaDescription}}{{else if .Settings}}{{.Settings.MetaDescription}}{{end}}">
     <meta property="og:title" content="{{if .MetaTitle}}{{.MetaTitle}}{{else}}{{.Title}} - BlueJay Innovative Labs{{end}}">
     <meta property="og:description" content="{{if .MetaDescription}}{{.MetaDescription}}{{else if .Settings}}{{.Settings.MetaDescription}}{{end}}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bluejaylabs.com{{.CanonicalURL}}">
-    {{if .OGImage}}<meta property="og:image" content="{{.OGImage}}">{{end}}
+    {{if .OGImage}}<meta property="og:image" content="{{.OGImage}}">{{else if .Settings}}{{if .Settings.DefaultOgImage}}<meta property="og:image" content="{{.Settings.DefaultOgImage}}">{{end}}{{end}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{if .MetaTitle}}{{.MetaTitle}}{{else}}{{.Title}} - BlueJay Innovative Labs{{end}}">
     <meta name="twitter:description" content="{{if .MetaDescription}}{{.MetaDescription}}{{else if .Settings}}{{.Settings.MetaDescription}}{{end}}">
-    {{if .OGImage}}<meta name="twitter:image" content="{{.OGImage}}">{{end}}
+    {{if .OGImage}}<meta name="twitter:image" content="{{.OGImage}}">{{else if .Settings}}{{if .Settings.DefaultOgImage}}<meta name="twitter:image" content="{{.Settings.DefaultOgImage}}">{{end}}{{end}}
     <link rel="canonical" href="https://bluejaylabs.com{{.CanonicalURL}}">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>

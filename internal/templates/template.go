@@ -11,7 +11,7 @@
 package templates
 
 import (
-	"fmt"        // For string formatting in error messages and file size display
+	"fmt"           // For string formatting in error messages and file size display
 	"html/template" // Go's HTML templating engine with auto-escaping for XSS protection
 	"io"            // For writing rendered templates to HTTP response writers
 	"path/filepath" // For cross-platform file path construction
@@ -54,8 +54,9 @@ type Renderer struct {
 // ensuring that template problems are caught at startup rather than at request time.
 //
 // Example usage:
-//   renderer := NewRenderer("templates/")
-//   e.Renderer = renderer
+//
+//	renderer := NewRenderer("templates/")
+//	e.Renderer = renderer
 func NewRenderer(basePath string) *Renderer {
 	r := &Renderer{
 		templates: make(map[string]*template.Template),
@@ -111,11 +112,11 @@ func (r *Renderer) loadTemplates() {
 	// Functions provide data formatting, math operations, and string manipulation.
 	// These extend Go's built-in template functions (len, printf, etc.)
 	funcMap := template.FuncMap{
-		"safeHTML":   safeHTML,   // Renders HTML without escaping (use carefully!)
-		"formatDate": formatDate, // Formats time.Time to human-readable string
-		"truncate":   truncate,   // Shortens strings with ellipsis
-		"slugify":    slugify,    // Converts strings to URL-safe slugs
-		"now":        time.Now,   // Returns current timestamp
+		"safeHTML":   safeHTML,                            // Renders HTML without escaping (use carefully!)
+		"formatDate": formatDate,                          // Formats time.Time to human-readable string
+		"truncate":   truncate,                            // Shortens strings with ellipsis
+		"slugify":    slugify,                             // Converts strings to URL-safe slugs
+		"now":        time.Now,                            // Returns current timestamp
 		"add":        func(a, b int) int { return a + b }, // Integer addition for templates
 		"sub":        func(a, b int) int { return a - b }, // Integer subtraction for templates
 		"upper":      strings.ToUpper,                     // Converts string to uppercase
@@ -127,7 +128,7 @@ func (r *Renderer) loadTemplates() {
 			}
 			return s
 		},
-		"int64": func(i int) int64 { return int64(i) },     // Type conversion for int to int64
+		"int64": func(i int) int64 { return int64(i) }, // Type conversion for int to int64
 		// formatFileSize converts bytes to human-readable format (B, KB, MB)
 		"formatFileSize": func(size int64) string {
 			if size < 1024 {
@@ -186,6 +187,7 @@ func (r *Renderer) loadTemplates() {
 			filepath.Join(r.basePath, "public/pages/"+page+".html"),
 			filepath.Join(r.basePath, "partials/header.html"),
 			filepath.Join(r.basePath, "partials/footer.html"),
+			filepath.Join(r.basePath, "public/partials/product_search_content.html"),
 		))
 	}
 
@@ -342,6 +344,7 @@ func (r *Renderer) loadTemplates() {
 	// Returns filtered product grid without page reload.
 	r.templates["public/partials/product_search_results.html"] = template.Must(template.New("base").Funcs(funcMap).ParseFiles(
 		filepath.Join(r.basePath, "public/partials/product_search_results.html"),
+		filepath.Join(r.basePath, "public/partials/product_search_content.html"),
 	))
 
 	// Phase 5: Public blog pages
@@ -415,6 +418,15 @@ func (r *Renderer) loadTemplates() {
 		filepath.Join(r.basePath, "partials/footer.html"),
 	))
 
+	for _, page := range []string{"privacy", "not_found"} {
+		r.templates["public/pages/"+page+".html"] = template.Must(template.New("base").Funcs(funcMap).ParseFiles(
+			filepath.Join(r.basePath, "public/layouts/base.html"),
+			filepath.Join(r.basePath, "public/pages/"+page+".html"),
+			filepath.Join(r.basePath, "partials/header.html"),
+			filepath.Join(r.basePath, "partials/footer.html"),
+		))
+	}
+
 	// Phase 8: Admin whitepaper pages
 	// Uses: admin/layouts/base.html (admin panel structure)
 	// Includes: partials/admin-sidebar.html (admin navigation)
@@ -443,7 +455,7 @@ func (r *Renderer) loadTemplates() {
 	//   - office_locations_form.html: Create/edit form for office location details
 	contactAdminPages := []string{
 		"contact_submissions_list", "contact_submission_detail",
-		"office_locations_list", "office_locations_form",
+		"office_locations_list", "office_locations_form", "activity_log", "operation_error",
 	}
 	for _, page := range contactAdminPages {
 		r.templates["admin/pages/"+page+".html"] = template.Must(template.New("base").Funcs(funcMap).ParseFiles(
@@ -605,7 +617,7 @@ func safeHTML(s string) template.HTML {
 // Parameters:
 //   - t: Time value to format
 //   - format: Go time format string (e.g., "2006-01-02", "Jan 2, 2006")
-//            If empty, defaults to "January 2, 2006"
+//     If empty, defaults to "January 2, 2006"
 //
 // Returns:
 //   - string: Formatted date string

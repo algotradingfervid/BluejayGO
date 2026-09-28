@@ -603,6 +603,7 @@ type Setting struct {
 	SocialThreads            string    `json:"social_threads"`
 	MarketplaceGemUrl        string    `json:"marketplace_gem_url"`
 	MarketplaceAmazonUrl     string    `json:"marketplace_amazon_url"`
+	DefaultOgImage           string    `json:"default_og_image"`
 }
 
 type Solution struct {

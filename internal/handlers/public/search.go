@@ -24,7 +24,7 @@ type SearchResult struct {
 // SearchHandler processes full-text search requests across multiple content types.
 // Uses SQLite FTS5 (Full-Text Search) indexes for fast query performance.
 type SearchHandler struct {
-	db     *sql.DB     // Database connection for executing FTS5 queries
+	db     *sql.DB      // Database connection for executing FTS5 queries
 	logger *slog.Logger // Structured logger for tracking search queries and debugging errors
 }
 
@@ -56,16 +56,16 @@ func sanitizeQuery(q string) string {
 	// These characters have special meaning in FTS5 MATCH queries
 	replacer := strings.NewReplacer(
 		"\"", "", // FTS5 phrase delimiter
-		"*", "",  // FTS5 prefix/wildcard operator
-		"(", "",  // FTS5 grouping operator
-		")", "",  // FTS5 grouping operator
-		"+", "",  // FTS5 AND operator
-		"-", "",  // FTS5 NOT operator
-		"^", "",  // FTS5 initial token operator
-		":", "",  // FTS5 column filter operator
-		"{", "",  // FTS5 NEAR operator delimiter
-		"}", "",  // FTS5 NEAR operator delimiter
-		"~", "",  // FTS5 NOT operator (alternative syntax)
+		"*", "", // FTS5 prefix/wildcard operator
+		"(", "", // FTS5 grouping operator
+		")", "", // FTS5 grouping operator
+		"+", "", // FTS5 AND operator
+		"-", "", // FTS5 NOT operator
+		"^", "", // FTS5 initial token operator
+		":", "", // FTS5 column filter operator
+		"{", "", // FTS5 NEAR operator delimiter
+		"}", "", // FTS5 NEAR operator delimiter
+		"~", "", // FTS5 NOT operator (alternative syntax)
 	)
 	q = replacer.Replace(q)
 	q = strings.TrimSpace(q)
@@ -254,7 +254,7 @@ func (h *SearchHandler) SearchPage(c echo.Context) error {
 //   - FTS5 prefix matching enables "type-ahead" behavior
 //   - Buffer used to render template before returning (error handling)
 func (h *SearchHandler) SearchSuggest(c echo.Context) error {
-	query := c.QueryParam("q")
+	query := strings.TrimSpace(c.QueryParam("q"))
 
 	var results []SearchResult
 	if query != "" {
@@ -265,6 +265,7 @@ func (h *SearchHandler) SearchSuggest(c echo.Context) error {
 	// Build minimal template data - no layout data needed for HTMX fragment
 	data := map[string]interface{}{
 		"Results": results,
+		"Query":   query,
 	}
 
 	// Render template to buffer to catch errors before sending response

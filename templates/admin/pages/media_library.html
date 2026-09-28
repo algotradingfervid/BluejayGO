@@ -181,11 +181,11 @@
 </div>
 
 <!-- Upload Modal -->
-<div id="upload-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+<dialog id="upload-modal" aria-labelledby="upload-modal-title" class="media-dialog">
     <div class="bg-white border-2 border-black w-full max-w-lg" style="box-shadow: 6px 6px 0px #000;">
         <div class="flex items-center justify-between p-4 border-b-2 border-black bg-gray-100">
-            <h2 class="text-lg font-bold uppercase">Upload Files</h2>
-            <button onclick="closeUploadModal()" class="hover:bg-gray-200 p-1">
+            <h2 id="upload-modal-title" class="text-lg font-bold uppercase">Upload Files</h2>
+            <button type="button" aria-label="Close upload files" onclick="closeUploadModal()" class="hover:bg-gray-200 p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
@@ -205,14 +205,14 @@
             <div id="upload-progress" class="space-y-2"></div>
         </div>
     </div>
-</div>
+</dialog>
 
 <!-- Detail Modal -->
-<div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+<dialog id="detail-modal" aria-labelledby="detail-modal-title" class="media-dialog">
     <div class="bg-white border-2 border-black w-full max-w-2xl max-h-[90vh] overflow-auto" style="box-shadow: 6px 6px 0px #000;">
         <div class="flex items-center justify-between p-4 border-b-2 border-black bg-gray-100">
-            <h2 class="text-lg font-bold uppercase">File Details</h2>
-            <button onclick="closeDetailModal()" class="hover:bg-gray-200 p-1">
+            <h2 id="detail-modal-title" class="text-lg font-bold uppercase">File Details</h2>
+            <button type="button" aria-label="Close file details" onclick="closeDetailModal()" class="hover:bg-gray-200 p-1">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
@@ -237,7 +237,7 @@
                 </div>
             </div>
             <div class="mb-4">
-                <label class="block text-xs font-bold uppercase mb-1">
+                <label for="detail-alt-text" class="block text-xs font-bold uppercase mb-1">
                     Alt Text
                     <span class="text-gray-400 normal-case font-normal ml-1" title="Accessibility text for this image. Describe what the image shows.">ⓘ</span>
                 </label>
@@ -247,7 +247,7 @@
                        onchange="updateAltText()">
             </div>
             <div class="mb-4">
-                <label class="block text-xs font-bold uppercase mb-1">File URL</label>
+                <label for="detail-url" class="block text-xs font-bold uppercase mb-1">File URL</label>
                 <div class="flex gap-2">
                     <input type="text" id="detail-url" readonly
                            class="flex-1 border-2 border-black px-3 py-2 text-sm bg-gray-50"
@@ -266,11 +266,36 @@
             </div>
         </div>
     </div>
-</div>
+</dialog>
 
 <script>
 let currentView = 'grid';
 let currentMediaId = null;
+let detailRequest = 0;
+const mediaModalOpeners = new Map();
+function showMediaModal(id, opener) {
+    const dialog = document.getElementById(id);
+    mediaModalOpeners.set(id, opener || document.activeElement);
+    if (!dialog.open) dialog.showModal();
+    dialog.querySelector('button').focus();
+}
+['upload-modal', 'detail-modal'].forEach(id => {
+    const dialog = document.getElementById(id);
+    dialog.addEventListener('close', () => {
+        if (id === 'detail-modal') { currentMediaId = null; detailRequest++; }
+        const opener = mediaModalOpeners.get(id);
+        if (opener && opener.isConnected) opener.focus();
+    });
+    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+    dialog.addEventListener('keydown', event => {
+        if (event.key !== 'Tab') return;
+        const controls = Array.from(dialog.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href]')).filter(el => el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+        const first = controls[0], last = controls[controls.length - 1];
+        if (!first) { event.preventDefault(); return; }
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+});
 
 function setView(view) {
     currentView = view;
@@ -296,12 +321,12 @@ function setView(view) {
 }
 
 function openUploadModal() {
-    document.getElementById('upload-modal').classList.remove('hidden');
+    showMediaModal('upload-modal');
     document.getElementById('upload-progress').innerHTML = '';
 }
 
 function closeUploadModal() {
-    document.getElementById('upload-modal').classList.add('hidden');
+    document.getElementById('upload-modal').close();
 }
 
 function handleDrop(e) {
@@ -356,10 +381,13 @@ function handleFiles(files) {
 }
 
 function openDetailModal(id) {
+    const opener = document.activeElement;
+    const request = ++detailRequest;
     currentMediaId = id;
     fetch('/admin/media/' + id)
-        .then(r => r.json())
+        .then(r => { if (!r.ok) throw new Error('Could not load file details.'); return r.json(); })
         .then(file => {
+            if (request !== detailRequest) return;
             const preview = document.getElementById('detail-preview');
             if (file.mime_type && file.mime_type.startsWith('image/')) {
                 preview.innerHTML = `<img src="${file.file_path}" alt="" class="max-h-64 object-contain">`;
@@ -374,12 +402,14 @@ function openDetailModal(id) {
             document.getElementById('detail-format').textContent = file.mime_type;
             document.getElementById('detail-alt-text').value = (file.alt_text && file.alt_text.Valid) ? file.alt_text.String : '';
             document.getElementById('detail-url').value = file.file_path;
-            document.getElementById('detail-modal').classList.remove('hidden');
+            showMediaModal('detail-modal', opener);
+        }).catch(() => {
+            if (request === detailRequest) { currentMediaId = null; alert('File details could not be loaded. Please try again.'); }
         });
 }
 
 function closeDetailModal() {
-    document.getElementById('detail-modal').classList.add('hidden');
+    document.getElementById('detail-modal').close();
     currentMediaId = null;
 }
 

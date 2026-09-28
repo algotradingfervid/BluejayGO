@@ -134,11 +134,11 @@
   </div>
 </section>
 
-<!-- Certifications -->
+<!-- Certifications: omit the public proof section until evidence is configured. -->
+{{if .Certs}}
 <section class="py-16 bg-white">
   <div class="container mx-auto px-4">
     <h2 class="text-3xl font-bold font-mono uppercase mb-12 text-center">Certifications &amp; Compliance</h2>
-    {{if .Certs}}
     <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
       {{range .Certs}}
       <div class="bg-gray-50 manual-border manual-shadow p-6 text-center hover:-translate-y-1 transition-transform">
@@ -152,14 +152,11 @@
       </div>
       {{end}}
     </div>
-    {{else}}
-    <div class="max-w-2xl mx-auto bg-gray-50 manual-border manual-shadow p-8 text-center">
-      <span class="material-symbols-outlined text-6xl text-gray-300 mb-4 block">verified</span>
-      <p class="font-mono text-gray-600">No certifications configured.</p>
-    </div>
-    {{end}}
+
   </div>
 </section>
+
+{{end}}
 
 <!-- CTA -->
 <section class="py-16 bg-black text-white">

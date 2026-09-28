@@ -23,21 +23,21 @@
                 <p class="text-lg font-mono opacity-80 max-w-2xl mx-auto mb-6">
                     {{.PageHero.Description}}
                 </p>
-                <div class="max-w-md mx-auto">
-                    <input type="text" name="q" placeholder="Search products..."
-                        value="{{if .Query}}{{.Query}}{{end}}"
-                        hx-get="/products/search"
-                        hx-trigger="keyup changed delay:300ms"
-                        hx-target="#product-results"
-                        hx-include="this"
-                        class="w-full border-2 border-black rounded px-4 py-3 text-sm font-mono focus:ring-2 focus:ring-[#0066CC] focus:border-[#0066CC]">
-                </div>
+                <form class="max-w-md mx-auto" action="/products" method="get" role="search"
+                    hx-get="/products/search" hx-trigger="input delay:300ms, submit"
+                    hx-target="#product-results" hx-sync="this:replace">
+                    <label for="catalog-search" class="sr-only">Search products</label>
+                    <input id="catalog-search" type="search" name="q" placeholder="Search products..."
+                        value="{{.Query}}"
+                        class="w-full border-2 border-black px-4 py-3 text-sm font-mono focus:ring-2 focus:ring-[#0066CC] focus:border-[#0066CC]">
+                    <noscript><button type="submit" class="border-2 border-black px-4 py-2 mt-2">Search products</button></noscript>
+                </form>
             </div>
         </div>
     </section>
 
     <!-- Search Results (HTMX target) -->
-    <div id="product-results"></div>
+    <div id="product-results" aria-live="polite">{{template "product-search-content" .}}</div>
 
     <!-- Browse by Product Type -->
     <section class="max-w-[1200px] mx-auto px-4 py-12">

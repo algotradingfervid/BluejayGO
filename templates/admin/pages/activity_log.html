@@ -14,15 +14,15 @@
         <div class="bg-white border-2 border-black p-4 mb-6" style="box-shadow: 4px 4px 0px #000;">
             <form method="GET" action="/admin/activity" class="flex flex-wrap items-end gap-4">
                 <div class="flex-1 min-w-[200px]">
-                    <label class="block text-xs font-bold uppercase mb-1">Search</label>
-                    <input type="text" name="search" value="{{.Search}}" placeholder="Search activity descriptions..."
+                    <label for="activity-search" class="block text-xs font-bold uppercase mb-1">Search</label>
+                    <input id="activity-search" type="text" name="search" value="{{.Search}}" placeholder="Search activity descriptions..."
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            title="Search by description text."
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div class="min-w-[160px]">
-                    <label class="block text-xs font-bold uppercase mb-1">Action Type</label>
-                    <select name="action"
+                    <label for="activity-action" class="block text-xs font-bold uppercase mb-1">Action Type</label>
+                    <select id="activity-action" name="action"
                             class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             title="Filter by the type of action performed."
                             style="font-family: 'JetBrains Mono', monospace;">
@@ -52,7 +52,7 @@
 
         {{if .Logs}}
         <!-- Activity Table -->
-        <div class="bg-white border-2 border-black mb-6" style="box-shadow: 4px 4px 0px #000;">
+        <div class="bg-white border-2 border-black mb-6 overflow-x-auto" style="box-shadow: 4px 4px 0px #000;">
             <table class="w-full">
                 <thead>
                     <tr class="border-b-2 border-black bg-gray-100">
@@ -118,8 +118,13 @@
         <!-- Empty State -->
         <div class="bg-white border-2 border-black p-12 text-center" style="box-shadow: 4px 4px 0px #000;">
             <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">history</span>
+            {{if .HasFilters}}
+            <h2 class="text-lg font-bold uppercase mb-2">No matching activity</h2>
+            <p class="text-sm text-gray-600">Try another search or <a href="/admin/activity" class="underline font-bold">clear the filters</a>.</p>
+            {{else}}
             <h2 class="text-lg font-bold uppercase mb-2">No Activity Recorded Yet</h2>
             <p class="text-sm text-gray-600">Actions will appear here as you use the admin panel.</p>
+            {{end}}
         </div>
         {{end}}
     </div>

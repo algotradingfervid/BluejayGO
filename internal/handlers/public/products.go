@@ -5,19 +5,21 @@ package public
 
 import (
 	// Standard library imports
-	"bytes"       // Buffer for template rendering to enable caching
+	"bytes"        // Buffer for template rendering to enable caching
+	"context"      // Context propagated to database queries
 	"database/sql" // SQL error handling (sql.ErrNoRows for 404 detection)
-	"fmt"         // String formatting for error messages and template data
-	"log/slog"    // Structured logging for debugging and error tracking
-	"net/http"    // HTTP status codes and request/response handling
-	"strconv"     // String to integer conversion for pagination parameters
-	"strings"     // String manipulation for placeholder replacement in CTA text
+	"fmt"          // String formatting for error messages and template data
+	"log/slog"     // Structured logging for debugging and error tracking
+	"net/http"     // HTTP status codes and request/response handling
+	"net/url"      // Encode search and quote query parameters
+	"strconv"      // String to integer conversion for pagination parameters
+	"strings"      // String manipulation for placeholder replacement in CTA text
 
 	// Third-party imports
 	"github.com/labstack/echo/v4" // Echo web framework - routing, context, rendering
 
 	// Internal imports
-	"github.com/narendhupati/bluejay-cms/db/sqlc"          // sqlc-generated database queries
+	"github.com/narendhupati/bluejay-cms/db/sqlc"           // sqlc-generated database queries
 	"github.com/narendhupati/bluejay-cms/internal/services" // Business logic services (ProductService, Cache)
 )
 
@@ -26,10 +28,10 @@ import (
 // It implements caching for improved performance and uses the ProductService
 // for complex product data aggregation.
 type ProductsHandler struct {
-	queries    *sqlc.Queries              // Database query interface for product data
-	logger     *slog.Logger               // Structured logger for errors and debugging
-	productSvc *services.ProductService   // Business logic for product detail aggregation
-	cache      *services.Cache            // In-memory cache for rendered HTML pages
+	queries    *sqlc.Queries            // Database query interface for product data
+	logger     *slog.Logger             // Structured logger for errors and debugging
+	productSvc *services.ProductService // Business logic for product detail aggregation
+	cache      *services.Cache          // In-memory cache for rendered HTML pages
 }
 
 // NewProductsHandler creates a new ProductsHandler with the required dependencies.
@@ -132,9 +134,10 @@ func (h *ProductsHandler) renderAndCache(c echo.Context, cacheKey string, ttlSec
 //   - Page is cached for 10 minutes to reduce database load
 //   - Cache is invalidated when categories or products are modified in admin
 func (h *ProductsHandler) ProductsList(c echo.Context) error {
-	// Check cache first for fast response on repeated requests
+	// Search URLs render their own results and must not use the category-page cache.
+	q := strings.TrimSpace(c.QueryParam("q"))
 	cacheKey := "page:products"
-	if cached, ok := h.cache.Get(cacheKey); ok {
+	if cached, ok := h.cache.Get(cacheKey); ok && q == "" {
 		return c.HTML(http.StatusOK, cached.(string))
 	}
 
@@ -179,6 +182,21 @@ func (h *ProductsHandler) ProductsList(c echo.Context) error {
 		"PageHero":          heroSection,         // Hero section content
 		"CategoriesSection": categoriesSection,   // Categories section heading
 		"PageCTA":           ctaSection,          // CTA section
+	}
+
+	if q != "" {
+		products, err := h.searchProducts(ctx, q)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError)
+		}
+		for key, contextKey := range map[string]string{"Settings": "settings", "FooterCategories": "footer_categories", "FooterSolutions": "footer_solutions", "FooterResources": "footer_resources"} {
+			if value := c.Get(contextKey); value != nil {
+				data[key] = value
+			}
+		}
+		data["Query"] = q
+		data["Products"] = products
+		return c.Render(http.StatusOK, "public/pages/products.html", data)
 	}
 
 	// Render template and cache for 10 minutes
@@ -390,6 +408,11 @@ func (h *ProductsHandler) ProductDetail(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
+	// Drafts are visible only through an authenticated preview, never a public URL.
+	if !preview && detail.Product.Status != "published" {
+		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
+	}
+
 	// Validate that the category slug in the URL matches the product's actual category
 	// This prevents accessing products via incorrect category URLs
 	if detail.Category.Slug != categorySlug {
@@ -410,8 +433,9 @@ func (h *ProductsHandler) ProductDetail(c echo.Context) error {
 	replacer := strings.NewReplacer("{product_name}", detail.Product.Name, "{product_sku}", detail.Product.Sku)
 	detailCTA.Heading = replacer.Replace(detailCTA.Heading)
 	detailCTA.Description = replacer.Replace(detailCTA.Description)
-	detailCTA.PrimaryButtonUrl = replacer.Replace(detailCTA.PrimaryButtonUrl)
-	detailCTA.SecondaryButtonUrl = replacer.Replace(detailCTA.SecondaryButtonUrl)
+	urlReplacer := strings.NewReplacer("{product_name}", url.QueryEscape(detail.Product.Name), "{product_sku}", url.QueryEscape(detail.Product.Sku))
+	detailCTA.PrimaryButtonUrl = urlReplacer.Replace(detailCTA.PrimaryButtonUrl)
+	detailCTA.SecondaryButtonUrl = urlReplacer.Replace(detailCTA.SecondaryButtonUrl)
 
 	// Fetch other editable page sections for admin customization
 	sections, _ := h.queries.ListPageSections(ctx, "product_detail")
@@ -432,25 +456,25 @@ func (h *ProductsHandler) ProductDetail(c echo.Context) error {
 
 	// Assemble template data with all product information
 	data := map[string]interface{}{
-		"Title":           fmt.Sprintf("%s | Products", detail.Product.Name), // Browser tab title
-		"MetaTitle":       metaTitle,                                         // SEO title
-		"MetaDescription": metaDesc,                                          // SEO description
-		"OGImage":         detail.Product.OgImage,                            // Social sharing image
+		"Title":           fmt.Sprintf("%s | Products", detail.Product.Name),                         // Browser tab title
+		"MetaTitle":       metaTitle,                                                                 // SEO title
+		"MetaDescription": metaDesc,                                                                  // SEO description
+		"OGImage":         detail.Product.OgImage,                                                    // Social sharing image
 		"CanonicalURL":    fmt.Sprintf("/products/%s/%s", detail.Category.Slug, detail.Product.Slug), // SEO canonical
-		"Product":         detail.Product,         // Core product data
-		"Category":        detail.Category,        // Parent category
-		"Images":          detail.Images,          // Product image gallery
-		"Features":        detail.Features,        // Features/benefits list
-		"SpecSections":    specSections,           // Specifications grouped by section
-		"Certifications":  detail.Certifications,  // Certifications/compliance
-		"Downloads":       detail.Downloads,       // Downloadable resources
-		"DetailCTA":       detailCTA,              // Personalized CTA
-		"Sections":        sectionMap,             // Other editable sections
+		"Product":         detail.Product,                                                            // Core product data
+		"Category":        detail.Category,                                                           // Parent category
+		"Images":          detail.Images,                                                             // Product image gallery
+		"Features":        detail.Features,                                                           // Features/benefits list
+		"SpecSections":    specSections,                                                              // Specifications grouped by section
+		"Certifications":  detail.Certifications,                                                     // Certifications/compliance
+		"Downloads":       detail.Downloads,                                                          // Downloadable resources
+		"DetailCTA":       detailCTA,                                                                 // Personalized CTA
+		"Sections":        sectionMap,                                                                // Other editable sections
 	}
 
 	// Handle preview mode (for admin to preview unpublished changes)
 	if preview {
-		data["IsPreview"] = true // Show preview banner in template
+		data["IsPreview"] = true                                                    // Show preview banner in template
 		data["EditURL"] = fmt.Sprintf("/admin/products/%d/edit", detail.Product.ID) // Link to admin editor
 		// Don't cache preview pages (TTL=0)
 		return h.renderAndCache(c, "preview:product:"+productSlug, 0, http.StatusOK, "public/pages/product_detail.html", data)
@@ -468,7 +492,9 @@ func (h *ProductsHandler) ProductDetail(c echo.Context) error {
 // Route: /products/search
 // Query Parameters: ?q={search_term} (required)
 // Template: public/partials/product_search_results.html (HTMX fragment)
-//           OR public/pages/products.html (full page for non-HTMX requests)
+//
+//	OR public/pages/products.html (full page for non-HTMX requests)
+//
 // HTMX: Returns HTML fragment when HX-Request header is present
 // Cache: Not cached (search results should be fresh)
 //
@@ -511,52 +537,42 @@ func (h *ProductsHandler) ProductDetail(c echo.Context) error {
 //   - Limited to 24 results to keep response fast
 //   - Database indexes on name/description fields recommended
 func (h *ProductsHandler) ProductSearch(c echo.Context) error {
-	ctx := c.Request().Context()
-	q := c.QueryParam("q") // Extract search query from URL parameter
-
-	var products []sqlc.SearchProductsRow
+	if c.Request().Header.Get("HX-Request") != "true" {
+		return h.ProductsList(c)
+	}
+	q := strings.TrimSpace(c.QueryParam("q"))
+	products, err := h.searchProducts(c.Request().Context(), q)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+	searchURL := "/products"
 	if q != "" {
-		// Add SQL wildcards for partial matching
-		wildcard := "%" + q + "%"
-		var err error
-		products, err = h.queries.SearchProducts(ctx, sqlc.SearchProductsParams{
-			Name:        wildcard, // Search in product name
-			Description: wildcard, // Search in product description
-			Tagline:     sql.NullString{String: wildcard, Valid: true}, // Search in tagline
-			Limit:       24, // Limit results to prevent overwhelming UI and database
-			Offset:      0,  // No pagination for search results
-		})
-		if err != nil {
-			h.logger.Error("failed to search products", "error", err)
-			return echo.NewHTTPError(http.StatusInternalServerError)
-		}
+		searchURL += "?" + url.Values{"q": {q}}.Encode()
 	}
-	// If query is empty, products remains empty slice (don't return all products)
+	// Replace the current search URL instead of adding a history entry per keystroke.
+	c.Response().Header().Set("HX-Replace-Url", searchURL)
+	return c.Render(http.StatusOK, "public/partials/product_search_results.html", map[string]interface{}{
+		"Products": products,
+		"Query":    q,
+	})
+}
 
-	// Assemble template data
-	data := map[string]interface{}{
-		"Title":    fmt.Sprintf("Search: %s | Products", q), // SEO-friendly title
-		"Products": products,                                 // Matching products
-		"Query":    q,                                        // Original query for display
+func (h *ProductsHandler) searchProducts(ctx context.Context, q string) ([]sqlc.SearchProductsRow, error) {
+	if q == "" {
+		return nil, nil
 	}
-
-	// Add settings for non-HTMX requests (needed for full page layout)
-	if settings := c.Get("settings"); settings != nil {
-		data["Settings"] = settings
+	wildcard := "%" + q + "%"
+	products, err := h.queries.SearchProducts(ctx, sqlc.SearchProductsParams{
+		Name:        wildcard,
+		Description: wildcard,
+		Tagline:     sql.NullString{String: wildcard, Valid: true},
+		Limit:       24,
+		Offset:      0,
+	})
+	if err != nil {
+		h.logger.Error("failed to search products", "error", err)
 	}
-
-	// Check if this is an HTMX request (has HX-Request header)
-	if c.Request().Header.Get("HX-Request") == "true" {
-		// Return partial HTML fragment for HTMX live search
-		// Template: templates/public/partials/product_search_results.html
-		// This fragment contains only the results grid, no layout/header/footer
-		return c.Render(http.StatusOK, "public/partials/product_search_results.html", data)
-	}
-
-	// Return full page for regular browser navigation
-	// Template: templates/public/pages/products.html
-	// This includes site layout, header, footer, navigation
-	return c.Render(http.StatusOK, "public/pages/products.html", data)
+	return products, err
 }
 
 // groupSpecsBySection organizes product specifications into sections.
@@ -574,20 +590,21 @@ func (h *ProductsHandler) ProductSearch(c echo.Context) error {
 //   - map[string][]sqlc.ProductSpec: Specifications grouped by section name
 //
 // Example:
-//   Input: [
-//     {SectionName: "Electrical", Label: "Voltage", Value: "24V"},
-//     {SectionName: "Electrical", Label: "Current", Value: "2A"},
-//     {SectionName: "Mechanical", Label: "Weight", Value: "500g"},
-//   ]
-//   Output: {
-//     "Electrical": [
-//       {SectionName: "Electrical", Label: "Voltage", Value: "24V"},
-//       {SectionName: "Electrical", Label: "Current", Value: "2A"},
-//     ],
-//     "Mechanical": [
-//       {SectionName: "Mechanical", Label: "Weight", Value: "500g"},
-//     ],
-//   }
+//
+//	Input: [
+//	  {SectionName: "Electrical", Label: "Voltage", Value: "24V"},
+//	  {SectionName: "Electrical", Label: "Current", Value: "2A"},
+//	  {SectionName: "Mechanical", Label: "Weight", Value: "500g"},
+//	]
+//	Output: {
+//	  "Electrical": [
+//	    {SectionName: "Electrical", Label: "Voltage", Value: "24V"},
+//	    {SectionName: "Electrical", Label: "Current", Value: "2A"},
+//	  ],
+//	  "Mechanical": [
+//	    {SectionName: "Mechanical", Label: "Weight", Value: "500g"},
+//	  ],
+//	}
 func groupSpecsBySection(specs []sqlc.ProductSpec) map[string][]sqlc.ProductSpec {
 	sections := make(map[string][]sqlc.ProductSpec)
 	for _, spec := range specs {

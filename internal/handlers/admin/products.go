@@ -4,16 +4,16 @@
 package admin
 
 import (
-	"database/sql"               // Used for nullable database types (sql.NullString, sql.NullInt64, sql.NullTime)
-	"fmt"                        // Used for string formatting in template paths
-	"log/slog"                   // Structured logging for error and debug messages
-	"math"                       // Used for calculating pagination (math.Ceil)
-	"net/http"                   // HTTP status codes and request/response handling
-	"strconv"                    // String to integer conversion for form values and URL parameters
-	"time"                       // Used for setting published_at timestamps
+	"database/sql" // Used for nullable database types (sql.NullString, sql.NullInt64, sql.NullTime)
+	"fmt"          // Used for string formatting in template paths
+	"log/slog"     // Structured logging for error and debug messages
+	"math"         // Used for calculating pagination (math.Ceil)
+	"net/http"     // HTTP status codes and request/response handling
+	"strconv"      // String to integer conversion for form values and URL parameters
+	"time"         // Used for setting published_at timestamps
 
-	"github.com/labstack/echo/v4"                      // Echo web framework for routing and context
-	"github.com/narendhupati/bluejay-cms/db/sqlc"      // sqlc-generated database queries
+	"github.com/labstack/echo/v4"                           // Echo web framework for routing and context
+	"github.com/narendhupati/bluejay-cms/db/sqlc"           // sqlc-generated database queries
 	"github.com/narendhupati/bluejay-cms/internal/services" // Upload service for image handling and cache service for invalidation
 )
 
@@ -174,9 +174,9 @@ func (h *ProductsHandler) New(c echo.Context) error {
 	// Render the form template with no existing item (Item: nil indicates new product)
 	return c.Render(http.StatusOK, "admin/pages/products_form.html", map[string]interface{}{
 		"Title":      "New Product",
-		"FormAction": "/admin/products",       // POST to this endpoint for creation
-		"Item":       nil,                     // No existing product data
-		"Categories": categories,              // Available categories for dropdown
+		"FormAction": "/admin/products", // POST to this endpoint for creation
+		"Item":       nil,               // No existing product data
+		"Categories": categories,        // Available categories for dropdown
 	})
 }
 
@@ -204,6 +204,12 @@ func (h *ProductsHandler) New(c echo.Context) error {
 //   - Logs activity to audit trail
 func (h *ProductsHandler) Create(c echo.Context) error {
 	ctx := c.Request().Context()
+
+	if field, existingID, err := h.productConflict(c, 0); err != nil {
+		return err
+	} else if field != "" {
+		return h.renderProductConflict(c, sqlc.Product{}, field, existingID)
+	}
 
 	// Parse integer and boolean form values
 	categoryID, _ := strconv.ParseInt(c.FormValue("category_id"), 10, 64)
@@ -240,11 +246,11 @@ func (h *ProductsHandler) Create(c echo.Context) error {
 	// Note: Slug is auto-generated from name using makeSlug helper
 	_, err := h.queries.CreateProduct(ctx, sqlc.CreateProductParams{
 		Sku:             c.FormValue("sku"),
-		Slug:            makeSlug(c.FormValue("name")), // Generate URL-friendly slug from name
+		Slug:            productFormSlug(c), // Honor the editable slug
 		Name:            c.FormValue("name"),
-		Tagline:         sql.NullString{String: tagline, Valid: tagline != ""},         // Only store if not empty
+		Tagline:         sql.NullString{String: tagline, Valid: tagline != ""}, // Only store if not empty
 		Description:     c.FormValue("description"),
-		Overview:        sql.NullString{String: overview, Valid: overview != ""},       // Only store if not empty
+		Overview:        sql.NullString{String: overview, Valid: overview != ""}, // Only store if not empty
 		CategoryID:      categoryID,
 		Status:          status,
 		IsFeatured:      isFeatured,
@@ -252,10 +258,13 @@ func (h *ProductsHandler) Create(c echo.Context) error {
 		MetaTitle:       sql.NullString{String: metaTitle, Valid: metaTitle != ""},     // Only store if not empty
 		MetaDescription: sql.NullString{String: metaDesc, Valid: metaDesc != ""},       // Only store if not empty
 		PrimaryImage:    imagePath,
-		VideoUrl:        sql.NullString{String: videoURL, Valid: videoURL != ""},       // Only store if not empty
+		VideoUrl:        sql.NullString{String: videoURL, Valid: videoURL != ""}, // Only store if not empty
 		PublishedAt:     publishedAt,
 	})
 	if err != nil {
+		if field, existingID, lookupErr := h.productConflict(c, 0); lookupErr == nil && field != "" {
+			return h.renderProductConflict(c, sqlc.Product{}, field, existingID)
+		}
 		h.logger.Error("failed to create product", "error", err)
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
@@ -311,7 +320,8 @@ func (h *ProductsHandler) Edit(c echo.Context) error {
 		"FormAction":   fmt.Sprintf("/admin/products/%d", id), // POST to this URL for update
 		"Item":         product,                               // Pre-fill form with existing data
 		"Categories":   categories,
-		"CategorySlug": categorySlug,                          // For "Preview" button link
+		"CategorySlug": categorySlug,
+		"PreviewURL":   fmt.Sprintf("/products/%s/%s?preview=true", categorySlug, product.Slug), // For "Preview" button link
 	})
 }
 
@@ -342,6 +352,12 @@ func (h *ProductsHandler) Update(c echo.Context) error {
 	existing, err := h.queries.GetProduct(ctx, id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
+	}
+
+	if field, existingID, err := h.productConflict(c, id); err != nil {
+		return err
+	} else if field != "" {
+		return h.renderProductConflict(c, existing, field, existingID)
 	}
 
 	// Parse form values (same as Create)
@@ -378,7 +394,7 @@ func (h *ProductsHandler) Update(c echo.Context) error {
 	// Update the product record with new values
 	err = h.queries.UpdateProduct(ctx, sqlc.UpdateProductParams{
 		Sku:             c.FormValue("sku"),
-		Slug:            makeSlug(c.FormValue("name")), // Regenerate slug in case name changed
+		Slug:            productFormSlug(c), // Preserve the submitted URL when the name changes
 		Name:            c.FormValue("name"),
 		Tagline:         sql.NullString{String: tagline, Valid: tagline != ""},
 		Description:     c.FormValue("description"),
@@ -389,12 +405,15 @@ func (h *ProductsHandler) Update(c echo.Context) error {
 		FeaturedOrder:   sql.NullInt64{Int64: featuredOrder, Valid: featuredOrder > 0},
 		MetaTitle:       sql.NullString{String: metaTitle, Valid: metaTitle != ""},
 		MetaDescription: sql.NullString{String: metaDesc, Valid: metaDesc != ""},
-		PrimaryImage:    imagePath,    // Either new image or existing
+		PrimaryImage:    imagePath, // Either new image or existing
 		VideoUrl:        sql.NullString{String: videoURL, Valid: videoURL != ""},
-		PublishedAt:     publishedAt,  // Either new timestamp or preserved original
+		PublishedAt:     publishedAt, // Either new timestamp or preserved original
 		ID:              id,
 	})
 	if err != nil {
+		if field, existingID, lookupErr := h.productConflict(c, id); lookupErr == nil && field != "" {
+			return h.renderProductConflict(c, existing, field, existingID)
+		}
 		h.logger.Error("failed to update product", "error", err)
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}

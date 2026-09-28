@@ -107,7 +107,7 @@ func (h *AdminContactHandler) ListSubmissions(c echo.Context) error {
 		})
 		if err != nil {
 			h.logger.Error("Failed to search contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
+			return renderOperationError(c, "Contact inbox unavailable", "We could not load the inbox. Try again, or contact your site administrator if this continues.", "/admin/contact/submissions")
 		}
 
 		// Convert sqlc-generated struct to internal list row struct
@@ -131,7 +131,7 @@ func (h *AdminContactHandler) ListSubmissions(c echo.Context) error {
 		})
 		if err != nil {
 			h.logger.Error("Failed to list contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
+			return renderOperationError(c, "Contact inbox unavailable", "We could not load the inbox. Try again, or contact your site administrator if this continues.", "/admin/contact/submissions")
 		}
 		for _, item := range items {
 			submissions = append(submissions, listSubmissionRow{
@@ -151,7 +151,7 @@ func (h *AdminContactHandler) ListSubmissions(c echo.Context) error {
 		})
 		if err != nil {
 			h.logger.Error("Failed to list contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
+			return renderOperationError(c, "Contact inbox unavailable", "We could not load the inbox. Try again, or contact your site administrator if this continues.", "/admin/contact/submissions")
 		}
 		for _, item := range items {
 			submissions = append(submissions, listSubmissionRow{
@@ -169,7 +169,7 @@ func (h *AdminContactHandler) ListSubmissions(c echo.Context) error {
 		})
 		if err != nil {
 			h.logger.Error("Failed to list contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
+			return renderOperationError(c, "Contact inbox unavailable", "We could not load the inbox. Try again, or contact your site administrator if this continues.", "/admin/contact/submissions")
 		}
 		for _, item := range items {
 			submissions = append(submissions, listSubmissionRow{
@@ -187,7 +187,7 @@ func (h *AdminContactHandler) ListSubmissions(c echo.Context) error {
 		})
 		if err != nil {
 			h.logger.Error("Failed to list contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
+			return renderOperationError(c, "Contact inbox unavailable", "We could not load the inbox. Try again, or contact your site administrator if this continues.", "/admin/contact/submissions")
 		}
 		for _, item := range items {
 			submissions = append(submissions, listSubmissionRow{
@@ -206,7 +206,7 @@ func (h *AdminContactHandler) ListSubmissions(c echo.Context) error {
 	return c.Render(http.StatusOK, "admin/pages/contact_submissions_list.html", map[string]interface{}{
 		"Title":        "Contact Submissions",
 		"Submissions":  submissions,    // Filtered and paginated submissions
-		"Page":         page,           // Current page number
+		"Page":         int(page),      // Current page number
 		"TotalPages":   totalPages,     // Total pages for pagination controls
 		"TotalCount":   totalCount,     // Total count of filtered results
 		"Status":       status,         // Active status filter (for UI state)

@@ -92,6 +92,7 @@ func main() {
 	// Templates are loaded from the "templates" directory
 	// Used by both admin panel and public pages
 	e.Renderer = templates.NewRenderer("templates")
+	e.HTTPErrorHandler = publicHandlers.NewPublicHTTPErrorHandler(e, queries)
 
 	// Apply middleware stack (executed in order for each request):
 	// 1. Recovery - catches panics and returns 500 errors gracefully
@@ -423,6 +424,7 @@ func main() {
 	contactHandler := publicHandlers.NewContactHandler(queries, logger, appCache)
 	// Rate limiter: maximum 5 submissions per hour per IP address
 	contactLimiter := customMiddleware.NewRateLimiter(5, time.Hour)
+	publicGroup.GET("/privacy", contactHandler.ShowPrivacyNotice)
 	publicGroup.GET("/contact", contactHandler.ShowContactPage) // Display contact form and offices
 	// Contact form submission with rate limiting middleware applied
 	publicGroup.POST("/contact/submit", contactHandler.SubmitContactForm, contactLimiter.Middleware())

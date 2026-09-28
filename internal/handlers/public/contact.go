@@ -82,7 +82,9 @@ func (h *ContactHandler) renderAndCache(c echo.Context, cacheKey string, ttlSeco
 
 	// Extract rendered HTML from buffer and store in cache for future requests
 	html := buf.String()
-	h.cache.Set(cacheKey, html, ttlSeconds)
+	if cacheKey != "" {
+		h.cache.Set(cacheKey, html, ttlSeconds)
+	}
 
 	// Return the rendered HTML to the client with specified status code
 	return c.HTML(statusCode, html)
@@ -102,10 +104,15 @@ func (h *ContactHandler) renderAndCache(c echo.Context, cacheKey string, ttlSeco
 func (h *ContactHandler) ShowContactPage(c echo.Context) error {
 	// Define cache key for this page
 	cacheKey := "page:contact"
+	productSKU := strings.TrimSpace(c.QueryParam("product"))
+	// Product-specific forms bypass shared cache: context must never leak between visitors.
+	if productSKU != "" {
+		cacheKey = ""
+	}
 
 	// Check if cached version exists and return it immediately to improve performance
 	// Contact page can be cached longer (1 hour) since office locations rarely change
-	if cached, ok := h.cache.Get(cacheKey); ok {
+	if cached, ok := h.cache.Get(cacheKey); cacheKey != "" && ok {
 		return c.HTML(http.StatusOK, cached.(string))
 	}
 
@@ -138,6 +145,16 @@ func (h *ContactHandler) ShowContactPage(c echo.Context) error {
 		"Title":       "Contact Us",  // Page title for <title> tag and H1
 		"Offices":     mappedOffices, // Array of office location objects for display
 		"CurrentPage": "contact",     // Used by navigation to highlight active link
+	}
+
+	if productSKU != "" {
+		product, err := h.queries.GetProductBySKU(ctx, productSKU)
+		if err == nil && product.Status == "published" {
+			data["QuoteProduct"] = product
+			data["InitialMessage"] = "Please send me a quote for " + product.Name + " (SKU: " + product.Sku + ")."
+		} else {
+			data["QuoteUnavailable"] = true
+		}
 	}
 
 	// Render template and cache for 1 hour, return HTML to client
@@ -285,4 +302,11 @@ func validContactPhone(phone string) bool {
 		return false
 	}
 	return strings.Trim(digits, digits[:1]) != ""
+}
+
+// ShowPrivacyNotice explains the actual enquiry fields and their intended use.
+func (h *ContactHandler) ShowPrivacyNotice(c echo.Context) error {
+	return h.renderAndCache(c, "page:privacy", 3600, http.StatusOK, "public/pages/privacy.html", map[string]interface{}{
+		"Title": "Privacy Notice", "CanonicalURL": "/privacy", "CurrentPage": "privacy",
+	})
 }

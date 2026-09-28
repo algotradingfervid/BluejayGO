@@ -5,19 +5,19 @@ package public
 
 import (
 	// Standard library imports
-	"bytes"       // Buffer for template rendering to enable HTML caching
+	"bytes"        // Buffer for template rendering to enable HTML caching
 	"database/sql" // SQL error handling (sql.ErrNoRows for 404 detection)
-	"fmt"         // String formatting for cache keys and template data
-	"log/slog"    // Structured logging for debugging and error tracking
-	"math"        // Math.Ceil for pagination calculations
-	"net/http"    // HTTP status codes and request/response handling
-	"strconv"     // String to integer conversion for page query parameters
+	"fmt"          // String formatting for cache keys and template data
+	"log/slog"     // Structured logging for debugging and error tracking
+	"math"         // Math.Ceil for pagination calculations
+	"net/http"     // HTTP status codes and request/response handling
+	"strconv"      // String to integer conversion for page query parameters
 
 	// Third-party imports
 	"github.com/labstack/echo/v4" // Echo web framework - routing, context, rendering
 
 	// Internal imports
-	"github.com/narendhupati/bluejay-cms/db/sqlc"          // sqlc-generated database queries
+	"github.com/narendhupati/bluejay-cms/db/sqlc"           // sqlc-generated database queries
 	"github.com/narendhupati/bluejay-cms/internal/services" // Cache service for HTML caching
 )
 
@@ -25,9 +25,9 @@ import (
 // the main blog listing, category filtering, and individual post pages.
 // It implements caching for improved performance on frequently accessed pages.
 type BlogHandler struct {
-	queries *sqlc.Queries    // Database query interface for blog posts and categories
-	logger  *slog.Logger     // Structured logger for errors and debugging
-	cache   *services.Cache  // In-memory cache for rendered HTML pages
+	queries *sqlc.Queries   // Database query interface for blog posts and categories
+	logger  *slog.Logger    // Structured logger for errors and debugging
+	cache   *services.Cache // In-memory cache for rendered HTML pages
 }
 
 // NewBlogHandler creates a new BlogHandler with the required dependencies.
@@ -165,7 +165,7 @@ func (h *BlogHandler) BlogListing(c echo.Context) error {
 	offset := int64((page - 1)) * limit
 
 	// Variables to hold query results (one will be populated based on category filter)
-	var posts []sqlc.ListPublishedPostsRow          // All posts (no category filter)
+	var posts []sqlc.ListPublishedPostsRow              // All posts (no category filter)
 	var catPosts []sqlc.ListPublishedPostsByCategoryRow // Category-filtered posts
 	var totalCount int64
 	var err error
@@ -199,21 +199,33 @@ func (h *BlogHandler) BlogListing(c echo.Context) error {
 	// Fetch all categories for navigation/filtering UI
 	categories, _ := h.queries.ListBlogCategories(ctx)
 
+	categoryName := "All posts"
+	if categorySlug != "" {
+		categoryName = "Unknown category"
+		for _, category := range categories {
+			if category.Slug == categorySlug {
+				categoryName = category.Name
+				break
+			}
+		}
+	}
+
 	// Calculate total pages for pagination controls
 	totalPages := int(math.Ceil(float64(totalCount) / float64(limit)))
 
 	// Assemble template data
 	data := map[string]interface{}{
-		"Title":           "Blog",          // Browser tab title
-		"Posts":           posts,           // All posts (when no filter)
-		"CatPosts":        catPosts,        // Category-filtered posts
-		"FeaturedPost":    featuredPost,    // Featured post to highlight
-		"Categories":      categories,      // All categories for nav
-		"CurrentCategory": categorySlug,    // Selected category
-		"CurrentPage":     "blog",          // For nav highlighting
-		"Page":            page,            // Current page number
-		"TotalPages":      totalPages,      // Total pages
-		"TotalCount":      totalCount,      // Total posts count
+		"Title":               "Blog",       // Browser tab title
+		"Posts":               posts,        // All posts (when no filter)
+		"CatPosts":            catPosts,     // Category-filtered posts
+		"FeaturedPost":        featuredPost, // Featured post to highlight
+		"Categories":          categories,   // All categories for nav
+		"CurrentCategoryName": categoryName,
+		"CurrentCategory":     categorySlug, // Selected category
+		"CurrentPage":         "blog",       // For nav highlighting
+		"Page":                page,         // Current page number
+		"TotalPages":          totalPages,   // Total pages
+		"TotalCount":          totalCount,   // Total posts count
 	}
 
 	// Render template and cache for 5 minutes
@@ -349,8 +361,8 @@ func (h *BlogHandler) BlogPost(c echo.Context) error {
 
 	// Fetch associated data (tags and related products)
 	// Errors are ignored for graceful degradation
-	tags, _ := h.queries.GetPostTagsByPostID(ctx, postID)                   // Topic tags for this post
-	relatedProducts, _ := h.queries.GetPostProductsByPostID(ctx, postID)    // Products mentioned in this post
+	tags, _ := h.queries.GetPostTagsByPostID(ctx, postID)                // Topic tags for this post
+	relatedProducts, _ := h.queries.GetPostProductsByPostID(ctx, postID) // Products mentioned in this post
 
 	// Extract meta description with null-safety
 	metaDesc = ""
@@ -360,20 +372,20 @@ func (h *BlogHandler) BlogPost(c echo.Context) error {
 
 	// Assemble template data
 	data := map[string]interface{}{
-		"Title":           postTitle,                              // Browser tab title
-		"MetaTitle":       postMetaTitle,                          // SEO title
-		"MetaDescription": metaDesc,                               // SEO description
-		"OGImage":         postOgImage,                            // Social sharing image
-		"CanonicalURL":    fmt.Sprintf("/blog/%s", postSlug),      // SEO canonical URL
-		"Post":            post,                                   // Full post data
-		"Tags":            tags,                                   // Topic tags
-		"RelatedProducts": relatedProducts,                        // Related products
-		"CurrentPage":     "blog",                                 // For nav highlighting
+		"Title":           postTitle,                         // Browser tab title
+		"MetaTitle":       postMetaTitle,                     // SEO title
+		"MetaDescription": metaDesc,                          // SEO description
+		"OGImage":         postOgImage,                       // Social sharing image
+		"CanonicalURL":    fmt.Sprintf("/blog/%s", postSlug), // SEO canonical URL
+		"Post":            post,                              // Full post data
+		"Tags":            tags,                              // Topic tags
+		"RelatedProducts": relatedProducts,                   // Related products
+		"CurrentPage":     "blog",                            // For nav highlighting
 	}
 
 	// Handle preview mode
 	if preview {
-		data["IsPreview"] = true // Show preview banner in template
+		data["IsPreview"] = true                                           // Show preview banner in template
 		data["EditURL"] = fmt.Sprintf("/admin/blog/posts/%d/edit", postID) // Link to admin editor
 		// Don't cache preview pages (TTL=0)
 		return h.renderAndCache(c, "preview:blog:"+slug, 0, http.StatusOK, "public/pages/blog_post.html", data)

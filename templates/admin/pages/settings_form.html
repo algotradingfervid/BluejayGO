@@ -16,7 +16,7 @@
             {{end}}
 
             <!-- Unsaved Changes Banner (hidden by default, shown via JS) -->
-            <div id="unsaved-banner" class="hidden bg-yellow-100 border-2 border-black px-4 py-3 mb-6 items-center justify-between" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
+            <div id="unsaved-banner" data-dirty-banner class="hidden bg-yellow-100 border-2 border-black px-4 py-3 mb-6 items-center justify-between" style="font-family: 'JetBrains Mono', monospace; box-shadow: 4px 4px 0px #000;">
                 <div class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-yellow-700" style="font-size: 20px;">warning</span>
                     <span class="text-sm font-bold text-yellow-800 uppercase">You have unsaved changes</span>
@@ -54,8 +54,8 @@
             </div>
 
             <!-- Form -->
-            <form id="settings-form" method="POST" action="/admin/settings" class="space-y-6" onchange="showUnsavedBanner()">
-                <input type="hidden" name="active_tab" id="active-tab-input" value="{{.ActiveTab}}">
+            <form id="settings-form" method="POST" action="/admin/settings" class="space-y-6" data-dirty-track>
+                <input type="hidden" name="active_tab" id="active-tab-input" data-dirty-ignore value="{{.ActiveTab}}">
 
                 <!-- Tab 1: General -->
                 <div id="tab-general" class="tab-content {{if ne .ActiveTab "general"}}hidden{{end}}">
@@ -64,18 +64,18 @@
 
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Site Name</label>
+                                <label for="site_name" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Site Name</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Your company name. Appears in browser tab and site header.">info</span>
                             </div>
-                            <input type="text" name="site_name" value="{{.Settings.SiteName}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                            <input type="text" id="site_name" name="site_name" value="{{.Settings.SiteName}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                         </div>
 
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Site Tagline</label>
+                                <label for="site_tagline" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Site Tagline</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="A short phrase describing your business. Used in SEO and header.">info</span>
                             </div>
-                            <input type="text" name="site_tagline" value="{{.Settings.SiteTagline}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                            <input type="text" id="site_tagline" name="site_tagline" value="{{.Settings.SiteTagline}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                         </div>
 
                         <div class="border-t-2 border-black pt-5 mt-5 space-y-3">
@@ -100,25 +100,25 @@
 
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Email</label>
+                                <label for="contact_email" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Email</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Primary contact email displayed on the site and used for form notifications.">info</span>
                             </div>
-                            <input type="email" name="contact_email" value="{{.Settings.ContactEmail}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                            <input type="email" id="contact_email" name="contact_email" value="{{.Settings.ContactEmail}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Phone</label>
-                            <input type="text" name="contact_phone" value="{{.Settings.ContactPhone}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                            <label for="contact_phone" class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Phone</label>
+                            <input type="text" id="contact_phone" name="contact_phone" value="{{.Settings.ContactPhone}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Address</label>
-                            <textarea name="address" rows="3" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">{{.Settings.Address}}</textarea>
+                            <label for="address" class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Address</label>
+                            <textarea id="address" name="address" rows="3" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">{{.Settings.Address}}</textarea>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Business Hours</label>
-                            <textarea name="business_hours" rows="2" placeholder="MON-FRI: 8AM-6PM PST" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">{{.Settings.BusinessHours}}</textarea>
+                            <label for="business_hours" class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Business Hours</label>
+                            <textarea id="business_hours" name="business_hours" rows="2" placeholder="MON-FRI: 8AM-6PM PST" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">{{.Settings.BusinessHours}}</textarea>
                         </div>
                     </div>
                 </div>
@@ -132,7 +132,7 @@
                         <div>
                             <label for="{{.Name}}" class="block text-sm font-bold text-black uppercase mb-1">{{.Label}} URL</label>
                             <div class="flex items-center gap-2">
-                                <input id="{{.Name}}" type="url" name="{{.Name}}" value="{{.Value}}" placeholder="{{.Placeholder}}" class="flex-1 min-w-0 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" oninput="validateUrl(this); showUnsavedBanner()">
+                                <input id="{{.Name}}" type="url" name="{{.Name}}" value="{{.Value}}" placeholder="{{.Placeholder}}" class="flex-1 min-w-0 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" oninput="validateUrl(this)">
                                 <span class="url-status text-lg" style="min-width: 24px;" aria-live="polite"></span>
                             </div>
                         </div>
@@ -163,10 +163,10 @@
 
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Default Meta Title</label>
+                                <label for="meta_keywords" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Default Meta Title</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Fallback title for pages that don't have their own. Appears in search results.">info</span>
                             </div>
-                            <input type="text" name="meta_keywords" value="{{.Settings.MetaKeywords}}" maxlength="100" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="updateCounter(this, 70)">
+                            <input type="text" id="meta_keywords" name="meta_keywords" value="{{.Settings.MetaKeywords}}" maxlength="100" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="updateCounter(this, 70)">
                             <div class="flex justify-end mt-1">
                                 <span class="char-counter text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;" data-limit="70">0 / 70</span>
                             </div>
@@ -174,10 +174,10 @@
 
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Default Meta Description</label>
+                                <label for="meta_description" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Default Meta Description</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Fallback description for pages without their own. Appears in Google snippets.">info</span>
                             </div>
-                            <textarea name="meta_description" rows="3" maxlength="250" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="updateCounter(this, 160)">{{.Settings.MetaDescription}}</textarea>
+                            <textarea id="meta_description" name="meta_description" rows="3" maxlength="250" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="updateCounter(this, 160)">{{.Settings.MetaDescription}}</textarea>
                             <div class="flex justify-end mt-1">
                                 <span class="char-counter text-xs font-bold" style="font-family: 'JetBrains Mono', monospace;" data-limit="160">0 / 160</span>
                             </div>
@@ -185,18 +185,26 @@
 
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Google Analytics ID</label>
+                                <label for="google_analytics_id" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Google Analytics ID</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Your GA tracking ID (e.g., G-XXXXXXXXXX). Leave blank to disable tracking.">info</span>
                             </div>
-                            <input type="text" name="google_analytics_id" value="{{.Settings.GoogleAnalyticsID}}" placeholder="G-XXXXXXXXXX" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                            <input type="text" id="google_analytics_id" name="google_analytics_id" value="{{.Settings.GoogleAnalyticsID}}" placeholder="G-XXXXXXXXXX" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                         </div>
 
-                        <div class="border-t-2 border-black pt-5 mt-5">
-                            <label class="block text-sm font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Default OG Image</label>
-                            <div class="border-2 border-dashed border-gray-400 p-6 flex flex-col items-center justify-center bg-gray-50">
-                                <span class="material-symbols-outlined text-gray-400 mb-2" style="font-size: 40px;">image</span>
-                                <p class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">Recommended: 1200×630px</p>
+                        <div class="border-t-2 border-black pt-5 mt-5 space-y-3">
+                            <label for="default-og-image" class="block text-sm font-bold uppercase">Default OG Image</label>
+                            <p id="og-image-help" class="text-sm text-gray-600">Choose an image for shared links to pages without their own image. Recommended: 1200×630px. <a href="/admin/media" class="underline font-bold">Upload images in the Media Library</a>.</p>
+                            <select id="default-og-image" name="default_og_image" aria-describedby="og-image-help" onchange="updateOGPreview()" class="w-full border-2 border-black px-3 py-2 bg-white">
+                                <option value="">No default image</option>
+                                {{range .ImageChoices}}
+                                <option value="{{.FilePath}}" {{if eq .FilePath $.Settings.DefaultOgImage}}selected{{end}}>{{.OriginalFilename}}</option>
+                                {{end}}
+                            </select>
+                            <div id="og-image-preview" {{if not .Settings.DefaultOgImage}}hidden{{end}}>
+                                <img id="og-preview-image" {{if .Settings.DefaultOgImage}}src="{{.Settings.DefaultOgImage}}"{{end}} alt="Selected default social sharing image" class="max-h-48 max-w-full object-contain border border-gray-300">
                             </div>
+                            <button id="og-image-remove" type="button" onclick="removeOGImage()" {{if not .Settings.DefaultOgImage}}hidden{{end}} class="border-2 border-black px-3 py-2 text-sm font-bold">Remove default image</button>
+                            <p class="text-xs text-gray-600">Choose another image to replace it, then Save Settings. Removing the default does not delete the media file.</p>
                         </div>
                     </div>
                 </div>
@@ -231,14 +239,7 @@ function switchTab(tab) {
     });
 }
 
-// Unsaved changes detection
-let formDirty = false;
-let originalFormData = null;
-
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('settings-form');
-    originalFormData = new FormData(form);
-
     // Initialize char counters
     document.querySelectorAll('[oninput*="updateCounter"]').forEach(el => {
         const limit = parseInt(el.getAttribute('oninput').match(/\d+/)?.[0] || 70);
@@ -252,24 +253,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function showUnsavedBanner() {
-    if (!formDirty) {
-        formDirty = true;
-        const banner = document.getElementById('unsaved-banner');
-        banner.classList.remove('hidden');
-        banner.classList.add('flex');
-    }
-}
-
 function discardChanges() {
+    window.AdminForms.discard(document.getElementById('settings-form'));
     window.location.reload();
 }
+
+function updateOGPreview() {
+    const value = document.getElementById('default-og-image').value;
+    const image = document.getElementById('og-preview-image');
+    if (value) image.src = value;
+    else image.removeAttribute('src');
+    document.getElementById('og-image-preview').hidden = !value;
+    document.getElementById('og-image-remove').hidden = !value;
+    window.AdminForms?.refresh(document.getElementById('settings-form'));
+}
+function removeOGImage() {
+    document.getElementById('default-og-image').value = '';
+    updateOGPreview();
+}
+window.addEventListener('pageshow', updateOGPreview);
 
 // Character counter
 function updateCounter(input, limit) {
     const counter = input.closest('div').parentElement.querySelector('.char-counter') || input.parentElement.querySelector('.char-counter');
     if (counter) updateCounterDisplay(input, limit, counter);
-    showUnsavedBanner();
+    window.AdminForms?.refresh(document.getElementById('settings-form'));
 }
 
 function updateCounterDisplay(input, limit, counter) {
