@@ -897,15 +897,17 @@ func (h *SolutionsHandler) AddCTA(c echo.Context) error {
 	sectionName := c.FormValue("section_name")
 
 	params := sqlc.CreateSolutionCTAParams{
-		SolutionID:          solutionID,
-		Heading:             heading,
-		Subheading:          sql.NullString{String: subheading, Valid: subheading != ""},
-		PrimaryButtonText:   sql.NullString{String: primaryButtonText, Valid: primaryButtonText != ""},
-		PrimaryButtonUrl:    sql.NullString{String: primaryButtonUrl, Valid: primaryButtonUrl != ""},
-		SecondaryButtonText: sql.NullString{String: secondaryButtonText, Valid: secondaryButtonText != ""},
-		SecondaryButtonUrl:  sql.NullString{String: secondaryButtonUrl, Valid: secondaryButtonUrl != ""},
-		PhoneNumber:         sql.NullString{String: phoneNumber, Valid: phoneNumber != ""},
-		SectionName:         sectionName,
+		IsActive:               c.FormValue("is_active") == "1",
+		SecondaryButtonEnabled: c.FormValue("secondary_button_enabled") == "1",
+		SolutionID:             solutionID,
+		Heading:                heading,
+		Subheading:             sql.NullString{String: subheading, Valid: subheading != ""},
+		PrimaryButtonText:      sql.NullString{String: primaryButtonText, Valid: primaryButtonText != ""},
+		PrimaryButtonUrl:       sql.NullString{String: primaryButtonUrl, Valid: primaryButtonUrl != ""},
+		SecondaryButtonText:    sql.NullString{String: secondaryButtonText, Valid: secondaryButtonText != ""},
+		SecondaryButtonUrl:     sql.NullString{String: secondaryButtonUrl, Valid: secondaryButtonUrl != ""},
+		PhoneNumber:            sql.NullString{String: phoneNumber, Valid: phoneNumber != ""},
+		SectionName:            sectionName,
 	}
 
 	_, err = h.queries.CreateSolutionCTA(c.Request().Context(), params)
@@ -1096,15 +1098,17 @@ func (h *SolutionsHandler) UpdateCTA(c echo.Context) error {
 	phoneNumber := c.FormValue("phone_number")
 
 	err = h.queries.UpdateSolutionCTA(c.Request().Context(), sqlc.UpdateSolutionCTAParams{
-		Heading:             c.FormValue("heading"),
-		Subheading:          sql.NullString{String: subheading, Valid: subheading != ""},
-		PrimaryButtonText:   sql.NullString{String: primaryButtonText, Valid: primaryButtonText != ""},
-		PrimaryButtonUrl:    sql.NullString{String: primaryButtonUrl, Valid: primaryButtonUrl != ""},
-		SecondaryButtonText: sql.NullString{String: secondaryButtonText, Valid: secondaryButtonText != ""},
-		SecondaryButtonUrl:  sql.NullString{String: secondaryButtonUrl, Valid: secondaryButtonUrl != ""},
-		PhoneNumber:         sql.NullString{String: phoneNumber, Valid: phoneNumber != ""},
-		SectionName:         c.FormValue("section_name"),
-		ID:                  ctaID,
+		IsActive:               c.FormValue("is_active") == "1",
+		SecondaryButtonEnabled: c.FormValue("secondary_button_enabled") == "1",
+		Heading:                c.FormValue("heading"),
+		Subheading:             sql.NullString{String: subheading, Valid: subheading != ""},
+		PrimaryButtonText:      sql.NullString{String: primaryButtonText, Valid: primaryButtonText != ""},
+		PrimaryButtonUrl:       sql.NullString{String: primaryButtonUrl, Valid: primaryButtonUrl != ""},
+		SecondaryButtonText:    sql.NullString{String: secondaryButtonText, Valid: secondaryButtonText != ""},
+		SecondaryButtonUrl:     sql.NullString{String: secondaryButtonUrl, Valid: secondaryButtonUrl != ""},
+		PhoneNumber:            sql.NullString{String: phoneNumber, Valid: phoneNumber != ""},
+		SectionName:            c.FormValue("section_name"),
+		ID:                     ctaID,
 	})
 	if err != nil {
 		h.logger.Error("Failed to update solution CTA", "error", err)

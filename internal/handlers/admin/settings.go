@@ -2,8 +2,10 @@ package admin
 
 import (
 	// Standard library imports
-	"log/slog"  // Structured logging for error tracking and debugging
-	"net/http"  // HTTP status codes and request/response handling
+	"log/slog" // Structured logging for error tracking and debugging
+	"net/http"
+	"net/url"
+	"strings"
 
 	// Third-party framework
 	"github.com/labstack/echo/v4" // Echo web framework for HTTP routing and context management
@@ -64,7 +66,7 @@ func (h *SettingsHandler) Edit(c echo.Context) error {
 
 	// Determine which tab should be active (preserves tab state after form submission)
 	activeTab := c.QueryParam("tab")
-	if activeTab == "" {
+	if !validSettingsTab(activeTab) {
 		activeTab = "general" // Default to general tab if not specified
 	}
 
@@ -72,10 +74,11 @@ func (h *SettingsHandler) Edit(c echo.Context) error {
 	// Template path: templates/admin/pages/settings_form.html
 	// Uses admin-layout wrapper for consistent navigation/header
 	return c.Render(http.StatusOK, "admin/pages/settings_form.html", map[string]interface{}{
-		"Title":     "Global Settings",
-		"Settings":  settings,           // Current settings data from database
-		"Saved":     saved,               // Show success message if true
-		"ActiveTab": activeTab,           // Determines which tab is visible/active
+		"Title":        "Global Settings",
+		"Settings":     settings, // Current settings data from database
+		"Saved":        saved,    // Show success message if true
+		"SocialFields": settingsSocialFields(settings),
+		"ActiveTab":    activeTab, // Determines which tab is visible/active
 	})
 }
 
@@ -84,7 +87,9 @@ func (h *SettingsHandler) Edit(c echo.Context) error {
 // HTTP Method: POST
 // Route: /admin/settings
 // Form Fields: All settings fields (site_name, contact_email, meta_description, etc.)
-//              plus active_tab (hidden field to preserve tab state)
+//
+//	plus active_tab (hidden field to preserve tab state)
+//
 // HTMX: Not used - standard form POST with redirect
 //
 // Updates all global settings fields in a single database operation.
@@ -120,20 +125,32 @@ func (h *SettingsHandler) Edit(c echo.Context) error {
 func (h *SettingsHandler) Update(c echo.Context) error {
 	// Extract active tab from hidden form field to preserve UI state after redirect
 	activeTab := c.FormValue("active_tab")
-	if activeTab == "" {
+	if !validSettingsTab(activeTab) {
 		activeTab = "general" // Default to general tab if not specified
+	}
+
+	// Reject unsafe destinations before any settings are changed.
+	for _, field := range []string{"social_facebook", "social_twitter", "social_linkedin", "social_instagram", "social_youtube", "social_threads", "marketplace_gem_url", "marketplace_amazon_url"} {
+		value := strings.TrimSpace(c.FormValue(field))
+		if value != "" && !validSettingsURL(value) {
+			return echo.NewHTTPError(http.StatusBadRequest, "Enter a full http:// or https:// URL for "+strings.ReplaceAll(field, "_", " "))
+		}
+	}
+	logoPath := strings.TrimSpace(c.FormValue("footer_logo_path"))
+	if logoPath != "" && !validSettingsURL(logoPath) && !(strings.HasPrefix(logoPath, "/") && !strings.HasPrefix(logoPath, "//") && !strings.ContainsAny(logoPath, "\\\r\n")) {
+		return echo.NewHTTPError(http.StatusBadRequest, "Footer logo must be an image path starting with / or a full http:// or https:// URL")
 	}
 
 	// Update all global settings fields in database (single UPDATE query)
 	// Settings table contains one row with all global configuration
 	err := h.queries.UpdateGlobalSettings(c.Request().Context(), sqlc.UpdateGlobalSettingsParams{
 		// General settings
-		SiteName:          c.FormValue("site_name"),
-		SiteTagline:       c.FormValue("site_tagline"),
-		ContactEmail:      c.FormValue("contact_email"),
-		ContactPhone:      c.FormValue("contact_phone"),
-		Address:           c.FormValue("address"),
-		BusinessHours:     c.FormValue("business_hours"),
+		SiteName:      c.FormValue("site_name"),
+		SiteTagline:   c.FormValue("site_tagline"),
+		ContactEmail:  c.FormValue("contact_email"),
+		ContactPhone:  c.FormValue("contact_phone"),
+		Address:       c.FormValue("address"),
+		BusinessHours: c.FormValue("business_hours"),
 
 		// SEO settings
 		MetaDescription:   c.FormValue("meta_description"),
@@ -141,11 +158,15 @@ func (h *SettingsHandler) Update(c echo.Context) error {
 		GoogleAnalyticsID: c.FormValue("google_analytics_id"),
 
 		// Social media links
-		SocialFacebook:    c.FormValue("social_facebook"),
-		SocialTwitter:     c.FormValue("social_twitter"),
-		SocialLinkedin:    c.FormValue("social_linkedin"),
-		SocialInstagram:   c.FormValue("social_instagram"),
-		SocialYoutube:     c.FormValue("social_youtube"),
+		SocialFacebook:       strings.TrimSpace(c.FormValue("social_facebook")),
+		SocialTwitter:        strings.TrimSpace(c.FormValue("social_twitter")),
+		SocialLinkedin:       strings.TrimSpace(c.FormValue("social_linkedin")),
+		SocialInstagram:      strings.TrimSpace(c.FormValue("social_instagram")),
+		SocialYoutube:        strings.TrimSpace(c.FormValue("social_youtube")),
+		SocialThreads:        strings.TrimSpace(c.FormValue("social_threads")),
+		FooterLogoPath:       logoPath,
+		MarketplaceGemUrl:    strings.TrimSpace(c.FormValue("marketplace_gem_url")),
+		MarketplaceAmazonUrl: strings.TrimSpace(c.FormValue("marketplace_amazon_url")),
 	})
 	if err != nil {
 		h.logger.Error("failed to update settings", "error", err)
@@ -167,4 +188,38 @@ func (h *SettingsHandler) Update(c echo.Context) error {
 	// saved=1 triggers success message banner in template
 	// tab parameter ensures same tab is displayed after update
 	return c.Redirect(http.StatusSeeOther, "/admin/settings?saved=1&tab="+activeTab)
+}
+
+// Social fields are data rather than a template slice call: Go's built-in slice
+// extracts part of an existing slice and cannot construct a list of platforms.
+type settingsSocialField struct {
+	Label       string
+	Name        string
+	Value       string
+	Placeholder string
+}
+
+func settingsSocialFields(settings sqlc.Setting) []settingsSocialField {
+	return []settingsSocialField{
+		{"Facebook", "social_facebook", settings.SocialFacebook, "https://facebook.com/yourpage"},
+		{"Twitter / X", "social_twitter", settings.SocialTwitter, "https://x.com/yourhandle"},
+		{"LinkedIn", "social_linkedin", settings.SocialLinkedin, "https://linkedin.com/company/yourco"},
+		{"Instagram", "social_instagram", settings.SocialInstagram, "https://instagram.com/yourhandle"},
+		{"Threads", "social_threads", settings.SocialThreads, "https://www.threads.net/@yourhandle"},
+		{"YouTube", "social_youtube", settings.SocialYoutube, "https://youtube.com/@yourchannel"},
+	}
+}
+
+func validSettingsURL(value string) bool {
+	parsed, err := url.Parse(value)
+	return err == nil && (parsed.Scheme == "https" || parsed.Scheme == "http") && parsed.Hostname() != "" && parsed.User == nil
+}
+
+func validSettingsTab(tab string) bool {
+	switch tab {
+	case "general", "contact", "social", "seo", "marketplaces":
+		return true
+	default:
+		return false
+	}
 }

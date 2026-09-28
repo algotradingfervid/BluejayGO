@@ -440,8 +440,8 @@ WHERE solution_id = ?;
 INSERT INTO solution_ctas (
     solution_id, heading, subheading, primary_button_text,
     primary_button_url, secondary_button_text, secondary_button_url,
-    phone_number, section_name
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    phone_number, section_name, is_active, secondary_button_enabled
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 RETURNING *;
 
 -- name: UpdateSolutionCTA :exec
@@ -453,7 +453,8 @@ RETURNING *;
 UPDATE solution_ctas
 SET heading = ?, subheading = ?, primary_button_text = ?,
     primary_button_url = ?, secondary_button_text = ?,
-    secondary_button_url = ?, phone_number = ?, section_name = ?
+    secondary_button_url = ?, phone_number = ?, section_name = ?,
+    is_active = ?, secondary_button_enabled = ?
 WHERE id = ?;
 
 -- name: DeleteSolutionCTA :exec

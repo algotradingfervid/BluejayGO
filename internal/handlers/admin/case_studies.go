@@ -4,13 +4,13 @@ package admin
 
 import (
 	// Standard library imports
-	"database/sql"   // Used for nullable SQL types (NullString, NullInt64)
-	"encoding/json"  // JSON marshaling for storing bullet arrays in database
-	"log/slog"       // Structured logging for error tracking and debugging
-	"math"           // Used for math.Ceil to calculate total pages from item count
-	"net/http"       // HTTP status codes for responses
-	"strconv"        // String to integer conversions for route params and form values
-	"strings"        // String manipulation for splitting comma-separated bullets
+	"database/sql"  // Used for nullable SQL types (NullString, NullInt64)
+	"encoding/json" // JSON marshaling for storing bullet arrays in database
+	"log/slog"      // Structured logging for error tracking and debugging
+	"math"          // Used for math.Ceil to calculate total pages from item count
+	"net/http"      // HTTP status codes for responses
+	"strconv"       // String to integer conversions for route params and form values
+	"strings"       // String manipulation for splitting comma-separated bullets
 
 	// Third-party imports
 	"github.com/labstack/echo/v4" // Echo web framework for HTTP routing and context handling
@@ -199,6 +199,9 @@ func (h *CaseStudiesHandler) Create(c echo.Context) error {
 	solutionContent := c.FormValue("solution_content")
 	outcomeTitle := c.FormValue("outcome_title")
 	outcomeContent := c.FormValue("outcome_content")
+	challengeTitle, challengeContent = services.NormalizeCaseStudySection(challengeTitle, challengeContent, "The Challenge")
+	solutionTitle, solutionContent = services.NormalizeCaseStudySection(solutionTitle, solutionContent, "The Solution")
+	outcomeTitle, outcomeContent = services.NormalizeCaseStudySection(outcomeTitle, outcomeContent, "The Outcome")
 	metaTitle := c.FormValue("meta_title")
 	metaDescription := c.FormValue("meta_description")
 
@@ -221,44 +224,31 @@ func (h *CaseStudiesHandler) Create(c echo.Context) error {
 		isPublished = 1
 	}
 
-	// Convert challenge_bullets comma-separated to JSON array
-	challengeBulletsRaw := c.FormValue("challenge_bullets")
+	// The editor uses one bullet per line; retain commas inside each bullet.
 	challengeBulletsJSON := sql.NullString{}
-	if challengeBulletsRaw != "" {
-		bullets := strings.Split(challengeBulletsRaw, ",")
-		trimmedBullets := make([]string, 0, len(bullets))
-		for _, bullet := range bullets {
-			trimmed := strings.TrimSpace(bullet)
-			if trimmed != "" {
-				trimmedBullets = append(trimmedBullets, trimmed)
-			}
-		}
-		if len(trimmedBullets) > 0 {
-			jsonBytes, err := json.Marshal(trimmedBullets)
-			if err == nil {
-				challengeBulletsJSON = sql.NullString{String: string(jsonBytes), Valid: true}
-			}
-		}
+	if bullets := services.ParseCaseStudyBullets(c.FormValue("challenge_bullets")); len(bullets) > 0 {
+		encoded, _ := json.Marshal(bullets)
+		challengeBulletsJSON = sql.NullString{String: string(encoded), Valid: true}
 	}
 
 	params := sqlc.AdminCreateCaseStudyParams{
-		Slug:              slug,
-		Title:             title,
-		ClientName:        clientName,
-		IndustryID:        industryID,
-		HeroImageUrl:      sql.NullString{String: heroImageUrl, Valid: heroImageUrl != ""},
-		ChallengeBullets:  challengeBulletsJSON,
-		MetaTitle:         sql.NullString{String: metaTitle, Valid: metaTitle != ""},
-		MetaDescription:   sql.NullString{String: metaDescription, Valid: metaDescription != ""},
-		Summary:           summary,
-		ChallengeTitle:    challengeTitle,
-		ChallengeContent:  challengeContent,
-		SolutionTitle:     solutionTitle,
-		SolutionContent:   solutionContent,
-		OutcomeTitle:      outcomeTitle,
-		OutcomeContent:    outcomeContent,
-		IsPublished:       isPublished,
-		DisplayOrder:      displayOrder,
+		Slug:             slug,
+		Title:            title,
+		ClientName:       clientName,
+		IndustryID:       industryID,
+		HeroImageUrl:     sql.NullString{String: heroImageUrl, Valid: heroImageUrl != ""},
+		ChallengeBullets: challengeBulletsJSON,
+		MetaTitle:        sql.NullString{String: metaTitle, Valid: metaTitle != ""},
+		MetaDescription:  sql.NullString{String: metaDescription, Valid: metaDescription != ""},
+		Summary:          summary,
+		ChallengeTitle:   challengeTitle,
+		ChallengeContent: challengeContent,
+		SolutionTitle:    solutionTitle,
+		SolutionContent:  solutionContent,
+		OutcomeTitle:     outcomeTitle,
+		OutcomeContent:   outcomeContent,
+		IsPublished:      isPublished,
+		DisplayOrder:     displayOrder,
 	}
 
 	_, err := h.queries.AdminCreateCaseStudy(c.Request().Context(), params)
@@ -326,6 +316,11 @@ func (h *CaseStudiesHandler) Edit(c echo.Context) error {
 		allProducts = []sqlc.Product{}
 	}
 
+	caseStudy.ChallengeTitle, caseStudy.ChallengeContent = services.NormalizeCaseStudySection(caseStudy.ChallengeTitle, caseStudy.ChallengeContent, "The Challenge")
+	caseStudy.SolutionTitle, caseStudy.SolutionContent = services.NormalizeCaseStudySection(caseStudy.SolutionTitle, caseStudy.SolutionContent, "The Solution")
+	caseStudy.OutcomeTitle, caseStudy.OutcomeContent = services.NormalizeCaseStudySection(caseStudy.OutcomeTitle, caseStudy.OutcomeContent, "The Outcome")
+	caseStudy.ChallengeBullets.String = strings.Join(services.ParseCaseStudyBullets(caseStudy.ChallengeBullets.String), "\n")
+
 	return c.Render(http.StatusOK, "admin/pages/case_studies_form.html", map[string]interface{}{
 		"Title":       "Edit Case Study",
 		"FormAction":  "/admin/case-studies/" + c.Param("id"),
@@ -376,6 +371,9 @@ func (h *CaseStudiesHandler) Update(c echo.Context) error {
 	solutionContent := c.FormValue("solution_content")
 	outcomeTitle := c.FormValue("outcome_title")
 	outcomeContent := c.FormValue("outcome_content")
+	challengeTitle, challengeContent = services.NormalizeCaseStudySection(challengeTitle, challengeContent, "The Challenge")
+	solutionTitle, solutionContent = services.NormalizeCaseStudySection(solutionTitle, solutionContent, "The Solution")
+	outcomeTitle, outcomeContent = services.NormalizeCaseStudySection(outcomeTitle, outcomeContent, "The Outcome")
 	metaTitle := c.FormValue("meta_title")
 	metaDescription := c.FormValue("meta_description")
 
@@ -398,24 +396,11 @@ func (h *CaseStudiesHandler) Update(c echo.Context) error {
 		isPublished = 1
 	}
 
-	// Convert challenge_bullets comma-separated to JSON array
-	challengeBulletsRaw := c.FormValue("challenge_bullets")
+	// The editor uses one bullet per line; retain commas inside each bullet.
 	challengeBulletsJSON := sql.NullString{}
-	if challengeBulletsRaw != "" {
-		bullets := strings.Split(challengeBulletsRaw, ",")
-		trimmedBullets := make([]string, 0, len(bullets))
-		for _, bullet := range bullets {
-			trimmed := strings.TrimSpace(bullet)
-			if trimmed != "" {
-				trimmedBullets = append(trimmedBullets, trimmed)
-			}
-		}
-		if len(trimmedBullets) > 0 {
-			jsonBytes, err := json.Marshal(trimmedBullets)
-			if err == nil {
-				challengeBulletsJSON = sql.NullString{String: string(jsonBytes), Valid: true}
-			}
-		}
+	if bullets := services.ParseCaseStudyBullets(c.FormValue("challenge_bullets")); len(bullets) > 0 {
+		encoded, _ := json.Marshal(bullets)
+		challengeBulletsJSON = sql.NullString{String: string(encoded), Valid: true}
 	}
 
 	params := sqlc.AdminUpdateCaseStudyParams{

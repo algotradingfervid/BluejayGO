@@ -6,9 +6,9 @@ package admin
 
 import (
 	// Standard library imports
-	"log/slog"  // Structured logging for error and debug output
-	"net/http"  // HTTP status codes and request/response handling
-	"strconv"   // String to integer conversion for parsing section IDs
+	"log/slog" // Structured logging for error and debug output
+	"net/http" // HTTP status codes and request/response handling
+	"strconv"  // String to integer conversion for parsing section IDs
 
 	// Third-party framework
 	"github.com/labstack/echo/v4" // Echo web framework for routing and context handling
@@ -173,19 +173,25 @@ func (h *PageSectionsHandler) Update(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid ID")
 	}
 
+	order, err := strconv.ParseInt(c.FormValue("display_order"), 10, 64)
+	if err != nil || order < 0 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Display order must be a non-negative whole number")
+	}
+
 	// Update page section with all form values
 	// Checkbox field: value "on" indicates checked, missing/empty indicates unchecked
 	err = h.queries.UpdatePageSection(c.Request().Context(), sqlc.UpdatePageSectionParams{
-		Heading:             c.FormValue("heading"),              // Main section title
-		Subheading:          c.FormValue("subheading"),           // Secondary title/tagline
-		Description:         c.FormValue("description"),          // Rich text content area
-		Label:               c.FormValue("label"),                // Section identifier/category
-		PrimaryButtonText:   c.FormValue("primary_button_text"),  // Primary CTA button text
-		PrimaryButtonUrl:    c.FormValue("primary_button_url"),   // Primary CTA button URL
+		DisplayOrder:        order,
+		Heading:             c.FormValue("heading"),               // Main section title
+		Subheading:          c.FormValue("subheading"),            // Secondary title/tagline
+		Description:         c.FormValue("description"),           // Rich text content area
+		Label:               c.FormValue("label"),                 // Section identifier/category
+		PrimaryButtonText:   c.FormValue("primary_button_text"),   // Primary CTA button text
+		PrimaryButtonUrl:    c.FormValue("primary_button_url"),    // Primary CTA button URL
 		SecondaryButtonText: c.FormValue("secondary_button_text"), // Secondary CTA button text
 		SecondaryButtonUrl:  c.FormValue("secondary_button_url"),  // Secondary CTA button URL
-		IsActive:            c.FormValue("is_active") == "on",    // Visibility toggle (checkbox to boolean)
-		ID:                  id,                                  // Section ID to update
+		IsActive:            c.FormValue("is_active") == "on",     // Visibility toggle (checkbox to boolean)
+		ID:                  id,                                   // Section ID to update
 	})
 
 	if err != nil {

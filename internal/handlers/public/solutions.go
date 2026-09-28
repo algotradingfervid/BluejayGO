@@ -6,18 +6,18 @@ package public
 
 import (
 	// Standard library imports
-	"bytes"       // Buffer for template rendering to enable HTML caching
+	"bytes"        // Buffer for template rendering to enable HTML caching
 	"database/sql" // SQL error handling (sql.ErrNoRows for 404 detection)
-	"fmt"         // String formatting for cache keys and template data
-	"log/slog"    // Structured logging for debugging and error tracking
-	"net/http"    // HTTP status codes and request/response handling
-	"strings"     // String manipulation for placeholder replacement in sections
+	"fmt"          // String formatting for cache keys and template data
+	"log/slog"     // Structured logging for debugging and error tracking
+	"net/http"     // HTTP status codes and request/response handling
+	"strings"      // String manipulation for placeholder replacement in sections
 
 	// Third-party imports
 	"github.com/labstack/echo/v4" // Echo web framework - routing, context, rendering
 
 	// Internal imports
-	"github.com/narendhupati/bluejay-cms/db/sqlc"          // sqlc-generated database queries
+	"github.com/narendhupati/bluejay-cms/db/sqlc"           // sqlc-generated database queries
 	"github.com/narendhupati/bluejay-cms/internal/services" // Cache service for HTML caching
 )
 
@@ -27,9 +27,9 @@ import (
 // "Cold Chain Monitoring", "Energy Management"). It implements caching for
 // improved performance on these content-heavy pages.
 type SolutionsHandler struct {
-	queries *sqlc.Queries    // Database query interface for solutions and related data
-	logger  *slog.Logger     // Structured logger for errors and debugging
-	cache   *services.Cache  // In-memory cache for rendered HTML pages
+	queries *sqlc.Queries   // Database query interface for solutions and related data
+	logger  *slog.Logger    // Structured logger for errors and debugging
+	cache   *services.Cache // In-memory cache for rendered HTML pages
 }
 
 // NewSolutionsHandler creates a new SolutionsHandler with the required dependencies.
@@ -137,10 +137,10 @@ func (h *SolutionsHandler) renderAndCache(c echo.Context, cacheKey string, ttlSe
 //   - Features section highlights value propositions
 //
 // Page Structure:
-//   1. Hero section - Introduction to solutions approach
-//   2. Solutions grid - Cards for each solution
-//   3. Features section - Benefits of solutions (e.g., "Tailored to Your Industry")
-//   4. CTA section - Contact sales or request consultation
+//  1. Hero section - Introduction to solutions approach
+//  2. Solutions grid - Cards for each solution
+//  3. Features section - Benefits of solutions (e.g., "Tailored to Your Industry")
+//  4. CTA section - Contact sales or request consultation
 //
 // Error Handling:
 //   - Critical errors (solutions list) return HTTP 500
@@ -189,14 +189,14 @@ func (h *SolutionsHandler) SolutionsList(c echo.Context) error {
 
 	// Assemble template data
 	data := map[string]interface{}{
-		"Title":           "Solutions",      // Browser tab title
-		"Solutions":       solutions,        // All published solutions
-		"Features":        features,         // Solution page features
-		"CTA":             cta,              // Call-to-action section
-		"CurrentPage":     "solutions",      // For nav highlighting
-		"PageHero":        heroSection,      // Hero section content
-		"GridSection":     gridSection,      // Grid section heading
-		"FeaturesSection": featuresSection,  // Features section heading
+		"Title":           "Solutions",     // Browser tab title
+		"Solutions":       solutions,       // All published solutions
+		"Features":        features,        // Solution page features
+		"CTA":             cta,             // Call-to-action section
+		"CurrentPage":     "solutions",     // For nav highlighting
+		"PageHero":        heroSection,     // Hero section content
+		"GridSection":     gridSection,     // Grid section heading
+		"FeaturesSection": featuresSection, // Features section heading
 	}
 
 	// Render template and cache for 10 minutes
@@ -266,13 +266,13 @@ func (h *SolutionsHandler) SolutionsList(c echo.Context) error {
 //   - This allows generic section templates to be personalized per solution
 //
 // Page Structure:
-//   1. Hero section - Solution title, tagline, hero image
-//   2. Overview - Detailed description of the solution
-//   3. Statistics - Quantifiable results/metrics
-//   4. Challenges - Problems this solution addresses
-//   5. Products - Featured products in this solution
-//   6. CTAs - Multiple calls-to-action (demo, contact, download)
-//   7. Other solutions - Cross-linking for discovery
+//  1. Hero section - Solution title, tagline, hero image
+//  2. Overview - Detailed description of the solution
+//  3. Statistics - Quantifiable results/metrics
+//  4. Challenges - Problems this solution addresses
+//  5. Products - Featured products in this solution
+//  6. CTAs - Multiple calls-to-action (demo, contact, download)
+//  7. Other solutions - Cross-linking for discovery
 //
 // Error Handling:
 //   - Returns 404 if solution slug doesn't exist
@@ -382,25 +382,25 @@ func (h *SolutionsHandler) SolutionDetail(c echo.Context) error {
 
 	// Assemble template data
 	data := map[string]interface{}{
-		"Title":           solution.Title,                          // Browser tab title
-		"MetaTitle":       solution.MetaTitle,                      // SEO title
-		"MetaDescription": metaDesc,                                // SEO description
-		"MetaDesc":        metaDesc,                                // Duplicate for template compatibility
-		"OGImage":         solution.OgImage,                        // Social sharing image
+		"Title":           solution.Title,                              // Browser tab title
+		"MetaTitle":       solution.MetaTitle,                          // SEO title
+		"MetaDescription": metaDesc,                                    // SEO description
+		"MetaDesc":        metaDesc,                                    // Duplicate for template compatibility
+		"OGImage":         solution.OgImage,                            // Social sharing image
 		"CanonicalURL":    fmt.Sprintf("/solutions/%s", solution.Slug), // SEO canonical URL
-		"Solution":        solution,                                // Core solution data
-		"Stats":           stats,                                   // Statistics/metrics
-		"Challenges":      challenges,                              // Challenges addressed
-		"Products":        products,                                // Featured products
-		"CTAs":            ctas,                                    // Call-to-action sections
-		"OtherSolutions":  otherSolutions,                          // Other solutions for cross-linking
-		"CurrentPage":     "solutions",                             // For nav highlighting
-		"Sections":        sectionMap,                              // Editable sections
+		"Solution":        solution,                                    // Core solution data
+		"Stats":           stats,                                       // Statistics/metrics
+		"Challenges":      challenges,                                  // Challenges addressed
+		"Products":        products,                                    // Featured products
+		"CTAs":            visibleSolutionCTAs(ctas, "public"),         // Call-to-action sections
+		"OtherSolutions":  otherSolutions,                              // Other solutions for cross-linking
+		"CurrentPage":     "solutions",                                 // For nav highlighting
+		"Sections":        sectionMap,                                  // Editable sections
 	}
 
 	// Handle preview mode
 	if preview {
-		data["IsPreview"] = true // Show preview banner in template
+		data["IsPreview"] = true                                               // Show preview banner in template
 		data["EditURL"] = fmt.Sprintf("/admin/solutions/%d/edit", solution.ID) // Link to admin editor
 		// Don't cache preview pages (TTL=0)
 		return h.renderAndCache(c, "preview:solution:"+slug, 0, http.StatusOK, "public/pages/solution_detail.html", data)

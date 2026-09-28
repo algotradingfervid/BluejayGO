@@ -11,6 +11,8 @@ import (
 	"log/slog"
 	// net/http provides HTTP constants and status codes
 	"net/http"
+	"net/mail"
+	"regexp"
 	// strings provides string manipulation utilities like TrimSpace for input sanitization
 	"strings"
 
@@ -25,9 +27,9 @@ import (
 // ContactHandler handles HTTP requests for the Contact Us page and form submissions.
 // It manages displaying office locations and processing contact form submissions with validation.
 type ContactHandler struct {
-	queries *sqlc.Queries    // Database query interface for fetching office locations and storing submissions
-	logger  *slog.Logger     // Structured logger for debugging and error tracking
-	cache   *services.Cache  // In-memory cache for rendered HTML to improve response times
+	queries *sqlc.Queries   // Database query interface for fetching office locations and storing submissions
+	logger  *slog.Logger    // Structured logger for debugging and error tracking
+	cache   *services.Cache // In-memory cache for rendered HTML to improve response times
 }
 
 // NewContactHandler constructs a new ContactHandler with required dependencies.
@@ -118,10 +120,23 @@ func (h *ContactHandler) ShowContactPage(c echo.Context) error {
 		offices = []sqlc.GetActiveOfficeLocationsRow{} // Default to empty slice to prevent template errors
 	}
 
+	// Build map URLs separately from stored data so arbitrary URLs cannot become frames.
+	type contactOffice struct {
+		sqlc.GetActiveOfficeLocationsRow
+		MapEmbedURL      string
+		MapDirectionsURL string
+	}
+	mappedOffices := make([]contactOffice, 0, len(offices))
+	for _, office := range offices {
+		address := strings.Join([]string{office.AddressLine1, office.AddressLine2.String, office.City, office.State, office.PostalCode, office.Country}, ", ")
+		embed, directions := services.OfficeMapURLs(office.MapUrl, address)
+		mappedOffices = append(mappedOffices, contactOffice{office, embed, directions})
+	}
+
 	// Build template data map
 	data := map[string]interface{}{
 		"Title":       "Contact Us",  // Page title for <title> tag and H1
-		"Offices":     offices,       // Array of office location objects for display
+		"Offices":     mappedOffices, // Array of office location objects for display
 		"CurrentPage": "contact",     // Used by navigation to highlight active link
 	}
 
@@ -164,7 +179,14 @@ func (h *ContactHandler) SubmitContactForm(c echo.Context) error {
 	// Validate required fields - reject submission if any are missing
 	// Returns an error HTML fragment that HTMX will swap into the page
 	if name == "" || email == "" || phone == "" || company == "" || message == "" {
-		return c.HTML(http.StatusBadRequest, `<div class="alert alert-error">Name, email, phone, company, and message are required.</div>`)
+		return contactFormError(c, "Name, email, phone, company, and message are required.")
+	}
+
+	if !validContactEmail(email) {
+		return contactFormError(c, "Enter a valid email address, such as name@example.com.")
+	}
+	if !validContactPhone(phone) {
+		return contactFormError(c, "Enter a valid phone number with 7–15 digits. Spaces, parentheses, hyphens and a leading + are allowed.")
 	}
 
 	// Create contact submission record in database
@@ -198,5 +220,69 @@ func (h *ContactHandler) SubmitContactForm(c echo.Context) error {
 
 	// Return success message HTML fragment that HTMX will swap into the page
 	// This replaces the form or displays below it depending on hx-target configuration
-	return c.HTML(http.StatusOK, `<div class="alert alert-success">Thank you for your message. We will get back to you shortly.</div>`)
+	return c.HTML(http.StatusOK, `<div role="status" class="alert alert-success border-2 border-green-700 bg-green-50 p-4 font-mono">Thank you for your message. We will get back to you shortly.</div>`)
+}
+
+// Errors keep the form and its entered values visible. The page explicitly swaps
+// validation responses, since HTMX does not swap HTTP 400 responses by default.
+func contactFormError(c echo.Context, message string) error {
+	return c.HTML(http.StatusBadRequest, `<div role="alert" class="border-2 border-red-700 bg-red-50 p-4 font-mono text-red-800">`+message+`</div>`)
+}
+
+var contactDomainLabel = regexp.MustCompile(`^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$`)
+var contactTLD = regexp.MustCompile(`^[a-zA-Z]{2,63}$`)
+
+func validContactEmail(email string) bool {
+	if len(email) > 254 {
+		return false
+	}
+	parsed, err := mail.ParseAddress(email)
+	if err != nil || parsed.Address != email {
+		return false
+	}
+	parts := strings.Split(email, "@")
+	if len(parts) != 2 || len(parts[0]) > 64 || strings.ContainsAny(parts[0], "\" ()<>\\") {
+		return false
+	}
+	labels := strings.Split(parts[1], ".")
+	if len(labels) < 2 || !contactTLD.MatchString(labels[len(labels)-1]) {
+		return false
+	}
+	for _, label := range labels {
+		if !contactDomainLabel.MatchString(label) {
+			return false
+		}
+	}
+	return true
+}
+
+func validContactPhone(phone string) bool {
+	if len(phone) > 40 {
+		return false
+	}
+	digits := ""
+	open := false
+	groupDigits := 0
+	for i, ch := range phone {
+		switch {
+		case ch >= '0' && ch <= '9':
+			digits += string(ch)
+			if open {
+				groupDigits++
+			}
+		case ch == '+' && i == 0:
+		case ch == '(' && !open:
+			open = true
+			groupDigits = 0
+		case ch == ')' && open && groupDigits > 0:
+			open = false
+		case ch == ' ' || ch == '-':
+		default:
+			return false
+		}
+	}
+	if open || len(digits) < 7 || len(digits) > 15 {
+		return false
+	}
+	return strings.Trim(digits, digits[:1]) != ""
 }

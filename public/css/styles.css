@@ -81,3 +81,52 @@ select:focus {
 @media (max-width: 768px) {
     html { font-size: 14px; }
 }
+
+/* Search suggestions stay in the dialog flow, directly below its input. */
+.search-panel {
+    margin-top: min(8vh, 6rem);
+    max-height: calc(100dvh - 2rem - min(8vh, 6rem));
+    display: flex;
+    flex-direction: column;
+}
+
+.search-results {
+    min-height: 0;
+    overflow-wrap: anywhere;
+}
+
+.search-panel > :not(.search-results) {
+    flex-shrink: 0;
+}
+
+.back-to-top {
+    position: fixed;
+    right: max(1.25rem, env(safe-area-inset-right));
+    bottom: max(1.25rem, env(safe-area-inset-bottom));
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 48px;
+    padding: 0.75rem;
+    border: 2px solid var(--black);
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 4px 4px 0 var(--black);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.back-to-top[hidden] { display: none; }
+.back-to-top:hover { background: var(--primary-dark); }
+.back-to-top:focus-visible,
+#search-modal a:focus-visible,
+#search-modal button:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 4px;
+}
+
+/* Leave room below the footer text for the floating navigation control. */
+body > footer { padding-bottom: 3rem; }

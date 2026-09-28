@@ -62,9 +62,11 @@
                     <p class="text-[10px] font-bold text-[#0066CC] group-hover:text-white uppercase">{{.Tagline.String}}</p>
                     {{end}}
                 </div>
+                {{if $.CategoryHero.PrimaryButtonText}}
                 <div class="mt-auto flex items-center justify-between pt-2">
                     <span class="manual-border bg-black group-hover:bg-white group-hover:text-black text-white px-4 py-2 text-[10px] font-bold uppercase transition-colors">{{$.CategoryHero.PrimaryButtonText}}</span>
                 </div>
+                {{end}}
             </a>
             {{end}}
         </div>

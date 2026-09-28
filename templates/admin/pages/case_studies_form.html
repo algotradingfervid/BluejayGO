@@ -128,12 +128,13 @@
                             Challenge
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="What problem did the client face? Sets the stage for the solution.">ⓘ</span>
                         </label>
-                        <input type="text" name="challenge_title" value="{{if .Item}}{{.Item.ChallengeTitle}}{{end}}"
+                        <p class="text-xs text-gray-600 mb-2">Short section heading (up to 120 characters). Put the full story in the editor below.</p>
+                        <input maxlength="120" aria-label="Challenge heading" type="text" name="challenge_title" value="{{if .Item}}{{.Item.ChallengeTitle}}{{end}}"
                                placeholder="The Challenge"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
                                style="font-family: 'JetBrains Mono', monospace;">
                         <input id="challenge_content" type="hidden" name="challenge_content" value="{{if .Item}}{{.Item.ChallengeContent}}{{end}}">
-                        <trix-editor input="challenge_content" class="trix-content border-2 border-black min-h-[150px] text-sm"></trix-editor>
+                        <trix-editor aria-label="Challenge content" input="challenge_content" class="trix-content border-2 border-black min-h-[150px] text-sm"></trix-editor>
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase mb-1">Challenge Bullets (one per line)</label>
@@ -146,24 +147,26 @@
                             Solution
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="How your products/services solved the client's challenge.">ⓘ</span>
                         </label>
-                        <input type="text" name="solution_title" value="{{if .Item}}{{.Item.SolutionTitle}}{{end}}"
+                        <p class="text-xs text-gray-600 mb-2">Short section heading (up to 120 characters). Put the full story in the editor below.</p>
+                        <input maxlength="120" aria-label="Solution heading" type="text" name="solution_title" value="{{if .Item}}{{.Item.SolutionTitle}}{{end}}"
                                placeholder="Our Solution"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
                                style="font-family: 'JetBrains Mono', monospace;">
                         <input id="solution_content" type="hidden" name="solution_content" value="{{if .Item}}{{.Item.SolutionContent}}{{end}}">
-                        <trix-editor input="solution_content" class="trix-content border-2 border-black min-h-[150px] text-sm"></trix-editor>
+                        <trix-editor aria-label="Solution content" input="solution_content" class="trix-content border-2 border-black min-h-[150px] text-sm"></trix-editor>
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase mb-1">
                             Results
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Key outcomes and benefits the client achieved.">ⓘ</span>
                         </label>
-                        <input type="text" name="outcome_title" value="{{if .Item}}{{.Item.OutcomeTitle}}{{end}}"
+                        <p class="text-xs text-gray-600 mb-2">Short section heading (up to 120 characters). Put the full story in the editor below.</p>
+                        <input maxlength="120" aria-label="Outcome heading" type="text" name="outcome_title" value="{{if .Item}}{{.Item.OutcomeTitle}}{{end}}"
                                placeholder="The Outcome"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
                                style="font-family: 'JetBrains Mono', monospace;">
                         <input id="outcome_content" type="hidden" name="outcome_content" value="{{if .Item}}{{.Item.OutcomeContent}}{{end}}">
-                        <trix-editor input="outcome_content" class="trix-content border-2 border-black min-h-[150px] text-sm"></trix-editor>
+                        <trix-editor aria-label="Outcome content" input="outcome_content" class="trix-content border-2 border-black min-h-[150px] text-sm"></trix-editor>
                     </div>
                 </div>
             </div>

@@ -161,21 +161,23 @@ const createSolutionCTA = `-- name: CreateSolutionCTA :one
 INSERT INTO solution_ctas (
     solution_id, heading, subheading, primary_button_text,
     primary_button_url, secondary_button_text, secondary_button_url,
-    phone_number, section_name
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-RETURNING id, solution_id, heading, subheading, primary_button_text, primary_button_url, secondary_button_text, secondary_button_url, phone_number, section_name
+    phone_number, section_name, is_active, secondary_button_enabled
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+RETURNING id, solution_id, heading, subheading, primary_button_text, primary_button_url, secondary_button_text, secondary_button_url, phone_number, section_name, is_active, secondary_button_enabled
 `
 
 type CreateSolutionCTAParams struct {
-	SolutionID          int64          `json:"solution_id"`
-	Heading             string         `json:"heading"`
-	Subheading          sql.NullString `json:"subheading"`
-	PrimaryButtonText   sql.NullString `json:"primary_button_text"`
-	PrimaryButtonUrl    sql.NullString `json:"primary_button_url"`
-	SecondaryButtonText sql.NullString `json:"secondary_button_text"`
-	SecondaryButtonUrl  sql.NullString `json:"secondary_button_url"`
-	PhoneNumber         sql.NullString `json:"phone_number"`
-	SectionName         string         `json:"section_name"`
+	SolutionID             int64          `json:"solution_id"`
+	Heading                string         `json:"heading"`
+	Subheading             sql.NullString `json:"subheading"`
+	PrimaryButtonText      sql.NullString `json:"primary_button_text"`
+	PrimaryButtonUrl       sql.NullString `json:"primary_button_url"`
+	SecondaryButtonText    sql.NullString `json:"secondary_button_text"`
+	SecondaryButtonUrl     sql.NullString `json:"secondary_button_url"`
+	PhoneNumber            sql.NullString `json:"phone_number"`
+	SectionName            string         `json:"section_name"`
+	IsActive               bool           `json:"is_active"`
+	SecondaryButtonEnabled bool           `json:"secondary_button_enabled"`
 }
 
 // Creates a CTA section for a solution.
@@ -204,6 +206,8 @@ func (q *Queries) CreateSolutionCTA(ctx context.Context, arg CreateSolutionCTAPa
 		arg.SecondaryButtonUrl,
 		arg.PhoneNumber,
 		arg.SectionName,
+		arg.IsActive,
+		arg.SecondaryButtonEnabled,
 	)
 	var i SolutionCta
 	err := row.Scan(
@@ -217,6 +221,8 @@ func (q *Queries) CreateSolutionCTA(ctx context.Context, arg CreateSolutionCTAPa
 		&i.SecondaryButtonUrl,
 		&i.PhoneNumber,
 		&i.SectionName,
+		&i.IsActive,
+		&i.SecondaryButtonEnabled,
 	)
 	return i, err
 }
@@ -716,7 +722,7 @@ func (q *Queries) GetSolutionBySlugIncludeDrafts(ctx context.Context, slug strin
 
 const getSolutionCTAs = `-- name: GetSolutionCTAs :many
 
-SELECT id, solution_id, heading, subheading, primary_button_text, primary_button_url, secondary_button_text, secondary_button_url, phone_number, section_name FROM solution_ctas
+SELECT id, solution_id, heading, subheading, primary_button_text, primary_button_url, secondary_button_text, secondary_button_url, phone_number, section_name, is_active, secondary_button_enabled FROM solution_ctas
 WHERE solution_id = ?
 `
 
@@ -754,6 +760,8 @@ func (q *Queries) GetSolutionCTAs(ctx context.Context, solutionID int64) ([]Solu
 			&i.SecondaryButtonUrl,
 			&i.PhoneNumber,
 			&i.SectionName,
+			&i.IsActive,
+			&i.SecondaryButtonEnabled,
 		); err != nil {
 			return nil, err
 		}
@@ -1359,20 +1367,23 @@ const updateSolutionCTA = `-- name: UpdateSolutionCTA :exec
 UPDATE solution_ctas
 SET heading = ?, subheading = ?, primary_button_text = ?,
     primary_button_url = ?, secondary_button_text = ?,
-    secondary_button_url = ?, phone_number = ?, section_name = ?
+    secondary_button_url = ?, phone_number = ?, section_name = ?,
+    is_active = ?, secondary_button_enabled = ?
 WHERE id = ?
 `
 
 type UpdateSolutionCTAParams struct {
-	Heading             string         `json:"heading"`
-	Subheading          sql.NullString `json:"subheading"`
-	PrimaryButtonText   sql.NullString `json:"primary_button_text"`
-	PrimaryButtonUrl    sql.NullString `json:"primary_button_url"`
-	SecondaryButtonText sql.NullString `json:"secondary_button_text"`
-	SecondaryButtonUrl  sql.NullString `json:"secondary_button_url"`
-	PhoneNumber         sql.NullString `json:"phone_number"`
-	SectionName         string         `json:"section_name"`
-	ID                  int64          `json:"id"`
+	Heading                string         `json:"heading"`
+	Subheading             sql.NullString `json:"subheading"`
+	PrimaryButtonText      sql.NullString `json:"primary_button_text"`
+	PrimaryButtonUrl       sql.NullString `json:"primary_button_url"`
+	SecondaryButtonText    sql.NullString `json:"secondary_button_text"`
+	SecondaryButtonUrl     sql.NullString `json:"secondary_button_url"`
+	PhoneNumber            sql.NullString `json:"phone_number"`
+	SectionName            string         `json:"section_name"`
+	IsActive               bool           `json:"is_active"`
+	SecondaryButtonEnabled bool           `json:"secondary_button_enabled"`
+	ID                     int64          `json:"id"`
 }
 
 // Updates an existing solution CTA.
@@ -1392,6 +1403,8 @@ func (q *Queries) UpdateSolutionCTA(ctx context.Context, arg UpdateSolutionCTAPa
 		arg.SecondaryButtonUrl,
 		arg.PhoneNumber,
 		arg.SectionName,
+		arg.IsActive,
+		arg.SecondaryButtonEnabled,
 		arg.ID,
 	)
 	return err

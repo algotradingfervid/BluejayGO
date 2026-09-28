@@ -11,7 +11,7 @@ import (
 
 const getSettings = `-- name: GetSettings :one
 
-SELECT id, site_name, site_tagline, contact_email, contact_phone, address, footer_text, meta_description, meta_keywords, google_analytics_id, social_linkedin, social_twitter, social_github, created_at, updated_at, social_facebook, social_youtube, social_instagram, business_hours, about_text, show_nav_home, show_nav_about, show_nav_products, show_nav_solutions, show_nav_blog, show_nav_partners, show_nav_contact, show_footer_about, show_footer_socials, show_footer_products, show_footer_solutions, show_footer_resources, show_footer_contact, nav_label_home, nav_label_about, nav_label_products, nav_label_solutions, nav_label_blog, nav_label_partners, nav_label_contact, footer_heading_products, footer_heading_solutions, footer_heading_resources, footer_heading_contact, header_logo_path, header_logo_alt, header_cta_enabled, header_cta_text, header_cta_url, header_cta_style, header_show_phone, header_show_email, header_show_social, header_social_style, show_nav_case_studies, show_nav_whitepapers, nav_label_case_studies, nav_label_whitepapers, footer_columns, footer_bg_style, footer_show_social, footer_social_style, footer_copyright, homepage_show_heroes, homepage_show_stats, homepage_show_testimonials, homepage_show_cta, homepage_max_heroes, homepage_max_stats, homepage_max_testimonials, homepage_hero_autoplay, homepage_hero_interval, about_show_mission, about_show_milestones, about_show_certifications, about_show_team, products_per_page, products_show_categories, products_show_search, products_default_sort, solutions_per_page, solutions_show_industries, solutions_show_search, blog_posts_per_page, blog_show_author, blog_show_date, blog_show_categories, blog_show_tags, blog_show_search FROM settings WHERE id = 1 LIMIT 1
+SELECT id, site_name, site_tagline, contact_email, contact_phone, address, footer_text, meta_description, meta_keywords, google_analytics_id, social_linkedin, social_twitter, social_github, created_at, updated_at, social_facebook, social_youtube, social_instagram, business_hours, about_text, show_nav_home, show_nav_about, show_nav_products, show_nav_solutions, show_nav_blog, show_nav_partners, show_nav_contact, show_footer_about, show_footer_socials, show_footer_products, show_footer_solutions, show_footer_resources, show_footer_contact, nav_label_home, nav_label_about, nav_label_products, nav_label_solutions, nav_label_blog, nav_label_partners, nav_label_contact, footer_heading_products, footer_heading_solutions, footer_heading_resources, footer_heading_contact, header_logo_path, header_logo_alt, header_cta_enabled, header_cta_text, header_cta_url, header_cta_style, header_show_phone, header_show_email, header_show_social, header_social_style, show_nav_case_studies, show_nav_whitepapers, nav_label_case_studies, nav_label_whitepapers, footer_columns, footer_bg_style, footer_show_social, footer_social_style, footer_copyright, homepage_show_heroes, homepage_show_stats, homepage_show_testimonials, homepage_show_cta, homepage_max_heroes, homepage_max_stats, homepage_max_testimonials, homepage_hero_autoplay, homepage_hero_interval, about_show_mission, about_show_milestones, about_show_certifications, about_show_team, products_per_page, products_show_categories, products_show_search, products_default_sort, solutions_per_page, solutions_show_industries, solutions_show_search, blog_posts_per_page, blog_show_author, blog_show_date, blog_show_categories, blog_show_tags, blog_show_search, footer_logo_path, social_threads, marketplace_gem_url, marketplace_amazon_url FROM settings WHERE id = 1 LIMIT 1
 `
 
 // ====================================================================
@@ -130,6 +130,10 @@ func (q *Queries) GetSettings(ctx context.Context) (Setting, error) {
 		&i.BlogShowCategories,
 		&i.BlogShowTags,
 		&i.BlogShowSearch,
+		&i.FooterLogoPath,
+		&i.SocialThreads,
+		&i.MarketplaceGemUrl,
+		&i.MarketplaceAmazonUrl,
 	)
 	return i, err
 }
@@ -232,25 +236,33 @@ SET site_name = ?,
     social_linkedin = ?,
     social_instagram = ?,
     social_youtube = ?,
+    social_threads = ?,
+    footer_logo_path = ?,
+    marketplace_gem_url = ?,
+    marketplace_amazon_url = ?,
     updated_at = CURRENT_TIMESTAMP
 WHERE id = 1
 `
 
 type UpdateGlobalSettingsParams struct {
-	SiteName          string `json:"site_name"`
-	SiteTagline       string `json:"site_tagline"`
-	ContactEmail      string `json:"contact_email"`
-	ContactPhone      string `json:"contact_phone"`
-	Address           string `json:"address"`
-	BusinessHours     string `json:"business_hours"`
-	MetaDescription   string `json:"meta_description"`
-	MetaKeywords      string `json:"meta_keywords"`
-	GoogleAnalyticsID string `json:"google_analytics_id"`
-	SocialFacebook    string `json:"social_facebook"`
-	SocialTwitter     string `json:"social_twitter"`
-	SocialLinkedin    string `json:"social_linkedin"`
-	SocialInstagram   string `json:"social_instagram"`
-	SocialYoutube     string `json:"social_youtube"`
+	SiteName             string `json:"site_name"`
+	SiteTagline          string `json:"site_tagline"`
+	ContactEmail         string `json:"contact_email"`
+	ContactPhone         string `json:"contact_phone"`
+	Address              string `json:"address"`
+	BusinessHours        string `json:"business_hours"`
+	MetaDescription      string `json:"meta_description"`
+	MetaKeywords         string `json:"meta_keywords"`
+	GoogleAnalyticsID    string `json:"google_analytics_id"`
+	SocialFacebook       string `json:"social_facebook"`
+	SocialTwitter        string `json:"social_twitter"`
+	SocialLinkedin       string `json:"social_linkedin"`
+	SocialInstagram      string `json:"social_instagram"`
+	SocialYoutube        string `json:"social_youtube"`
+	SocialThreads        string `json:"social_threads"`
+	FooterLogoPath       string `json:"footer_logo_path"`
+	MarketplaceGemUrl    string `json:"marketplace_gem_url"`
+	MarketplaceAmazonUrl string `json:"marketplace_amazon_url"`
 }
 
 // Updates site-wide global settings (identity, contact, SEO, social).
@@ -283,6 +295,10 @@ func (q *Queries) UpdateGlobalSettings(ctx context.Context, arg UpdateGlobalSett
 		arg.SocialLinkedin,
 		arg.SocialInstagram,
 		arg.SocialYoutube,
+		arg.SocialThreads,
+		arg.FooterLogoPath,
+		arg.MarketplaceGemUrl,
+		arg.MarketplaceAmazonUrl,
 	)
 	return err
 }

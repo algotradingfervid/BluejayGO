@@ -89,6 +89,14 @@
                 </div>
             </div>
 
+            <div class="bg-white border-2 border-black p-5" style="box-shadow: 4px 4px 0px #000;">
+                <label class="flex items-center gap-3 font-bold text-sm uppercase">
+                    <input type="checkbox" name="is_featured" class="w-5 h-5 accent-black" {{if .Item}}{{if .Item.IsFeatured}}checked{{end}}{{end}}>
+                    Show in homepage Trusted Partners
+                </label>
+                <p class="text-xs text-gray-600 mt-2">Select this for each partner you want to feature. Up to 12 active partners appear, in Display Order. Inactive partners stay hidden.</p>
+            </div>
+
             <!-- Section 2: Branding (open) -->
             <div class="bg-white border-2 border-black" style="box-shadow: 4px 4px 0px #000;" data-section>
                 <button type="button" onclick="toggleSection(this)"

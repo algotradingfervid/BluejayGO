@@ -147,7 +147,7 @@ func SecurityHeaders() echo.MiddlewareFunc {
 			// 2. Replace 'https:' in img-src with specific whitelisted domains
 			// 3. Add report-uri or report-to directives to monitor CSP violations
 			// 4. Consider adding frame-ancestors directive (redundant with X-Frame-Options but more flexible)
-			c.Response().Header().Set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.tailwindcss.com cdn.jsdelivr.net fonts.googleapis.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.tailwindcss.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: https:;")
+			c.Response().Header().Set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.tailwindcss.com cdn.jsdelivr.net fonts.googleapis.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.tailwindcss.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: https:; frame-src https://www.google.com/maps https://www.google.com/maps/;")
 
 			// Proceed to the next handler in the middleware chain.
 			// The security headers are already set on the response and will be sent

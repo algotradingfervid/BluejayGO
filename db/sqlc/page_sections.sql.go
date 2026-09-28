@@ -170,7 +170,7 @@ func (q *Queries) ListAllPageSections(ctx context.Context) ([]PageSection, error
 const listPageSections = `-- name: ListPageSections :many
 SELECT id, page_key, section_key, heading, subheading, description, label, primary_button_text, primary_button_url, secondary_button_text, secondary_button_url, is_active, display_order, created_at, updated_at FROM page_sections
 WHERE page_key = ? AND is_active = 1
-ORDER BY display_order ASC
+ORDER BY display_order ASC, section_key ASC
 `
 
 // Retrieves all active sections for a specific page in display order.
@@ -235,6 +235,7 @@ UPDATE page_sections SET
     secondary_button_text = ?,
     secondary_button_url = ?,
     is_active = ?,
+    display_order = ?,
     updated_at = CURRENT_TIMESTAMP
 WHERE id = ?
 `
@@ -249,6 +250,7 @@ type UpdatePageSectionParams struct {
 	SecondaryButtonText string `json:"secondary_button_text"`
 	SecondaryButtonUrl  string `json:"secondary_button_url"`
 	IsActive            bool   `json:"is_active"`
+	DisplayOrder        int64  `json:"display_order"`
 	ID                  int64  `json:"id"`
 }
 
@@ -287,6 +289,7 @@ func (q *Queries) UpdatePageSection(ctx context.Context, arg UpdatePageSectionPa
 		arg.SecondaryButtonText,
 		arg.SecondaryButtonUrl,
 		arg.IsActive,
+		arg.DisplayOrder,
 		arg.ID,
 	)
 	return err

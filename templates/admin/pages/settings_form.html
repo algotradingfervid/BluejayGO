@@ -23,13 +23,13 @@
                 </div>
                 <div class="flex gap-2">
                     <button type="button" onclick="discardChanges()" class="px-3 py-1 border-2 border-black bg-white text-black text-xs font-bold uppercase hover:bg-gray-100" style="font-family: 'JetBrains Mono', monospace;">Discard</button>
-                    <button type="button" onclick="document.getElementById('settings-form').submit()" class="px-3 py-1 border-2 border-black bg-black text-white text-xs font-bold uppercase hover:bg-gray-800" style="font-family: 'JetBrains Mono', monospace;">Save</button>
+                    <button type="button" onclick="document.getElementById('settings-form').requestSubmit()" class="px-3 py-1 border-2 border-black bg-black text-white text-xs font-bold uppercase hover:bg-gray-800" style="font-family: 'JetBrains Mono', monospace;">Save</button>
                 </div>
             </div>
 
             <!-- Tab Navigation -->
             <div class="border-b-2 border-black mb-6">
-                <nav class="flex gap-0 -mb-[2px]" id="tab-nav" style="font-family: 'JetBrains Mono', monospace;">
+                <nav class="flex flex-wrap gap-0 -mb-[2px]" id="tab-nav" style="font-family: 'JetBrains Mono', monospace;">
                     <button type="button" onclick="switchTab('general')" data-tab="general"
                         class="tab-btn px-5 py-3 text-sm font-bold uppercase border-2 border-black border-b-0 bg-white hover:bg-gray-50 transition-colors {{if eq .ActiveTab "general"}}border-b-[3px] border-b-blue-600 text-blue-600 bg-blue-50{{else}}text-gray-500 border-b-2 border-b-black{{end}}">
                         General
@@ -45,6 +45,10 @@
                     <button type="button" onclick="switchTab('seo')" data-tab="seo"
                         class="tab-btn px-5 py-3 text-sm font-bold uppercase border-2 border-black border-b-0 border-l-0 bg-white hover:bg-gray-50 transition-colors {{if eq .ActiveTab "seo"}}border-b-[3px] border-b-blue-600 text-blue-600 bg-blue-50{{else}}text-gray-500 border-b-2 border-b-black{{end}}">
                         SEO Defaults
+                    </button>
+                    <button type="button" onclick="switchTab('marketplaces')" data-tab="marketplaces"
+                        class="tab-btn px-5 py-3 text-sm font-bold uppercase border-2 border-black bg-white hover:bg-gray-50 transition-colors {{if eq .ActiveTab "marketplaces"}}text-blue-600 bg-blue-50{{else}}text-gray-500{{end}}">
+                        Marketplaces
                     </button>
                 </nav>
             </div>
@@ -74,32 +78,17 @@
                             <input type="text" name="site_tagline" value="{{.Settings.SiteTagline}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                         </div>
 
-                        <!-- Branding Section -->
-                        <div class="border-t-2 border-black pt-5 mt-5">
-                            <h3 class="text-sm font-bold uppercase mb-4" style="font-family: 'JetBrains Mono', monospace;">Branding</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="border-2 border-black p-4" style="box-shadow: 2px 2px 0px #000;">
-                                    <label class="block text-xs font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Logo (Light BG)</label>
-                                    <div class="w-full h-20 border-2 border-dashed border-gray-400 flex items-center justify-center bg-gray-50 mb-2">
-                                        <span class="material-symbols-outlined text-gray-400" style="font-size: 32px;">image</span>
-                                    </div>
-                                    <p class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">Recommended: 240×60px</p>
-                                </div>
-                                <div class="border-2 border-black p-4" style="box-shadow: 2px 2px 0px #000;">
-                                    <label class="block text-xs font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Logo (Dark BG)</label>
-                                    <div class="w-full h-20 border-2 border-dashed border-gray-400 flex items-center justify-center bg-gray-800 mb-2">
-                                        <span class="material-symbols-outlined text-gray-500" style="font-size: 32px;">image</span>
-                                    </div>
-                                    <p class="text-xs text-gray-500" style="font-family: 'JetBrains Mono', monospace;">For dark backgrounds</p>
-                                </div>
-                                <div class="border-2 border-black p-4" style="box-shadow: 2px 2px 0px #000;">
-                                    <label class="block text-xs font-bold text-black uppercase mb-2" style="font-family: 'JetBrains Mono', monospace;">Favicon</label>
-                                    <div class="w-16 h-16 border-2 border-dashed border-gray-400 flex items-center justify-center bg-gray-50 mb-2 mx-auto">
-                                        <span class="material-symbols-outlined text-gray-400" style="font-size: 24px;">star</span>
-                                    </div>
-                                    <p class="text-xs text-gray-500 text-center" style="font-family: 'JetBrains Mono', monospace;">Recommended: 32×32px</p>
-                                </div>
-                            </div>
+                        <div class="border-t-2 border-black pt-5 mt-5 space-y-3">
+                            <h3 class="text-sm font-bold uppercase">Footer Branding</h3>
+                            <label for="footer-logo-path" class="block text-sm font-bold uppercase">Footer Logo</label>
+                            <input id="footer-logo-path" type="text" name="footer_logo_path" value="{{.Settings.FooterLogoPath}}" placeholder="/uploads/logo.png" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600">
+                            <p class="text-xs text-gray-600">Paste an image URL or a path from the <a href="/admin/media" class="underline font-bold">Media Library</a>. Leave blank to use the header logo.</p>
+                            {{if .Settings.FooterLogoPath}}
+                            <div class="bg-[#1a1f2e] p-4"><img src="{{.Settings.FooterLogoPath}}" alt="Footer logo preview" class="max-h-20 max-w-full object-contain"></div>
+                            {{else if .Settings.HeaderLogoPath}}
+                            <div class="bg-[#1a1f2e] p-4"><img src="{{.Settings.HeaderLogoPath}}" alt="Current header logo used in footer" class="max-h-20 max-w-full object-contain"></div>
+                            {{end}}
+                            <p class="text-xs text-gray-600">Manage the header logo in <a href="/admin/header" class="underline font-bold">Header &amp; Navigation</a>.</p>
                         </div>
                     </div>
                 </div>
@@ -139,28 +128,31 @@
                     <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
                         <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2" style="font-family: 'JetBrains Mono', monospace;">Social Media</h2>
 
-                        {{range $platform := slice "Facebook" "Twitter" "LinkedIn" "Instagram" "YouTube"}}
+                        {{range .SocialFields}}
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">{{$platform}} URL</label>
-                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Full URL to your {{$platform}} profile page.">info</span>
-                            </div>
+                            <label for="{{.Name}}" class="block text-sm font-bold text-black uppercase mb-1">{{.Label}} URL</label>
                             <div class="flex items-center gap-2">
-                                {{if eq $platform "Facebook"}}
-                                <input type="url" name="social_facebook" value="{{$.Settings.SocialFacebook}}" placeholder="https://facebook.com/yourpage" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
-                                {{else if eq $platform "Twitter"}}
-                                <input type="url" name="social_twitter" value="{{$.Settings.SocialTwitter}}" placeholder="https://x.com/yourhandle" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
-                                {{else if eq $platform "LinkedIn"}}
-                                <input type="url" name="social_linkedin" value="{{$.Settings.SocialLinkedin}}" placeholder="https://linkedin.com/company/yourco" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
-                                {{else if eq $platform "Instagram"}}
-                                <input type="url" name="social_instagram" value="{{$.Settings.SocialInstagram}}" placeholder="https://instagram.com/yourhandle" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
-                                {{else if eq $platform "YouTube"}}
-                                <input type="url" name="social_youtube" value="{{$.Settings.SocialYoutube}}" placeholder="https://youtube.com/@yourchannel" class="flex-1 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;" oninput="validateUrl(this)">
-                                {{end}}
-                                <span class="url-status text-lg" style="min-width: 24px;"></span>
+                                <input id="{{.Name}}" type="url" name="{{.Name}}" value="{{.Value}}" placeholder="{{.Placeholder}}" class="flex-1 min-w-0 border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" oninput="validateUrl(this); showUnsavedBanner()">
+                                <span class="url-status text-lg" style="min-width: 24px;" aria-live="polite"></span>
                             </div>
                         </div>
                         {{end}}
+                        <p class="text-xs text-gray-600">Leave a URL blank to hide that platform in the footer.</p>
+                    </div>
+                </div>
+
+                <div id="tab-marketplaces" class="tab-content {{if ne .ActiveTab "marketplaces"}}hidden{{end}}">
+                    <div class="bg-white border-2 border-black p-6 space-y-5" style="box-shadow: 4px 4px 0px #000;">
+                        <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2">Marketplace Links</h2>
+                        <p class="text-sm text-gray-600">Add BlueJay's marketplace listings to the footer. Leave a URL blank to hide its link.</p>
+                        <div>
+                            <label for="marketplace-gem" class="block text-sm font-bold uppercase mb-1">GeM URL</label>
+                            <input id="marketplace-gem" type="url" name="marketplace_gem_url" value="{{.Settings.MarketplaceGemUrl}}" placeholder="https://..." class="w-full border-2 border-black px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label for="marketplace-amazon" class="block text-sm font-bold uppercase mb-1">Amazon URL</label>
+                            <input id="marketplace-amazon" type="url" name="marketplace_amazon_url" value="{{.Settings.MarketplaceAmazonUrl}}" placeholder="https://..." class="w-full border-2 border-black px-3 py-2 text-sm">
+                        </div>
                     </div>
                 </div>
 
@@ -301,7 +293,8 @@ function validateUrl(input) {
         status.textContent = '';
     } else {
         try {
-            new URL(val);
+            const parsed = new URL(val);
+            if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('Invalid protocol');
             status.textContent = '✓';
             status.className = 'url-status text-lg text-green-600 font-bold';
         } catch {
@@ -309,7 +302,6 @@ function validateUrl(input) {
             status.className = 'url-status text-lg text-red-600 font-bold';
         }
     }
-    showUnsavedBanner();
 }
 </script>
 {{end}}

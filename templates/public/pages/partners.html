@@ -46,14 +46,18 @@
     {{if $partners}}
     <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6">
       {{range $partners}}
-      <div class="bg-white manual-border manual-shadow p-6 text-center hover:-translate-y-1 transition-transform">
+      {{if .WebsiteUrl.String}}
+      <a href="{{.WebsiteUrl.String}}" target="_blank" rel="noopener noreferrer" aria-label="Visit {{.Name}} website (opens in a new tab)" class="block bg-white manual-border manual-shadow p-6 text-center hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
+      {{else}}
+      <div class="bg-white manual-border manual-shadow p-6 text-center">
+      {{end}}
         {{if .LogoUrl.Valid}}
-        <img src="{{.LogoUrl.String}}" alt="{{.Name}}" class="h-12 mx-auto mb-3 object-contain">
+        <img src="{{.LogoUrl.String}}" alt="{{.Name}}" class="h-12 max-w-full mx-auto mb-3 object-contain">
         {{else if .Icon.Valid}}
         <span class="material-symbols-outlined text-4xl text-[#0066CC] mb-3 block">{{.Icon.String}}</span>
         {{end}}
         <p class="font-mono text-sm font-bold uppercase">{{.Name}}</p>
-      </div>
+      {{if .WebsiteUrl.String}}</a>{{else}}</div>{{end}}
       {{end}}
     </div>
     {{else}}

@@ -49,7 +49,7 @@ RETURNING id, created_at;
 --   - Primary: is_primary DESC (primary office first)
 --   - Secondary: display_order ASC (custom sort order)
 --   - Tertiary: id ASC (stable fallback)
-SELECT id, name, address_line1, address_line2, city, state, postal_code, country, phone, email, is_primary
+SELECT id, name, address_line1, address_line2, city, state, postal_code, country, phone, email, map_url, is_primary
 FROM office_locations
 WHERE is_active = 1
 ORDER BY is_primary DESC, display_order ASC, id ASC;
@@ -183,28 +183,28 @@ DELETE FROM contact_submissions WHERE id = ?;
 
 -- name: ListAllOfficeLocations :many
 SELECT id, name, address_line1, address_line2, city, state, postal_code, country,
-       phone, email, is_primary, is_active, display_order, created_at, updated_at
+       phone, email, map_url, is_primary, is_active, display_order, created_at, updated_at
 FROM office_locations
 ORDER BY display_order ASC, id ASC;
 
 -- name: GetOfficeLocationByID :one
 SELECT id, name, address_line1, address_line2, city, state, postal_code, country,
-       phone, email, is_primary, is_active, display_order
+       phone, email, map_url, is_primary, is_active, display_order
 FROM office_locations
 WHERE id = ?;
 
 -- name: CreateOfficeLocation :one
 INSERT INTO office_locations (
     name, address_line1, address_line2, city, state, postal_code, country,
-    phone, email, is_primary, is_active, display_order
+    phone, email, map_url, is_primary, is_active, display_order
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 RETURNING id, created_at, updated_at;
 
 -- name: UpdateOfficeLocation :exec
 UPDATE office_locations
 SET name = ?, address_line1 = ?, address_line2 = ?, city = ?, state = ?,
-    postal_code = ?, country = ?, phone = ?, email = ?, is_primary = ?,
+    postal_code = ?, country = ?, phone = ?, email = ?, map_url = ?, is_primary = ?,
     is_active = ?, display_order = ?, updated_at = CURRENT_TIMESTAMP
 WHERE id = ?;
 

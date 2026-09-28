@@ -63,6 +63,8 @@
                 {{end}}
               </div>
             </div>
+            <iframe src="{{.MapEmbedURL}}" title="Map of {{.Name}} in {{.City}}" class="w-full h-64 mt-6 manual-border" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+            <a href="{{.MapDirectionsURL}}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 mt-4 font-mono font-bold text-[#0066CC] underline">Open map &amp; directions <span aria-hidden="true">↗</span></a>
           </div>
           {{end}}
         </div>
@@ -81,35 +83,38 @@
             <h2 class="text-2xl font-bold font-mono uppercase mb-2">Send Us A Message</h2>
             <p class="text-gray-600 font-mono text-sm mb-8">FILL OUT THE FORM AND WE'LL GET BACK TO YOU WITHIN 24 HOURS.</p>
 
-            <form hx-post="/contact/submit" hx-target="#contactFormContainer" hx-swap="innerHTML">
+            <form id="contact-form" hx-post="/contact/submit" hx-target="#contact-form-feedback" hx-swap="innerHTML">
+              <div id="contact-form-feedback" aria-live="polite" class="mb-6"></div>
               <!-- Name -->
               <div class="mb-6">
-                <label class="block text-sm font-mono uppercase font-bold mb-2">Name *</label>
-                <input type="text" name="name" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="Your full name">
+                <label for="contact-name" class="block text-sm font-mono uppercase font-bold mb-2">Name *</label>
+                <input type="text" id="contact-name" name="name" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="Your full name">
               </div>
 
               <!-- Email -->
               <div class="mb-6">
-                <label class="block text-sm font-mono uppercase font-bold mb-2">Email *</label>
-                <input type="email" name="email" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="your@email.com">
+                <label for="contact-email" class="block text-sm font-mono uppercase font-bold mb-2">Email *</label>
+                <input type="email" id="contact-email" name="email" required maxlength="254" autocomplete="email" aria-describedby="contact-email-hint" pattern="[^@\s]+@[^@\s.]+(?:\.[^@\s.]+)+" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="your@email.com">
+                <p id="contact-email-hint" class="font-mono text-xs mt-2 text-gray-600">Use a complete email address, such as name@example.com.</p>
               </div>
 
               <!-- Phone -->
               <div class="mb-6">
-                <label class="block text-sm font-mono uppercase font-bold mb-2">Phone *</label>
-                <input type="tel" name="phone" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="+1 (555) 000-0000">
+                <label for="contact-phone" class="block text-sm font-mono uppercase font-bold mb-2">Phone *</label>
+                <input type="tel" id="contact-phone" name="phone" required maxlength="40" autocomplete="tel" aria-describedby="contact-phone-hint" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="+91 80194 44755">
+                <p id="contact-phone-hint" class="font-mono text-xs mt-2 text-gray-600">7–15 digits. Spaces, parentheses, hyphens and a leading + are allowed.</p>
               </div>
 
               <!-- Company -->
               <div class="mb-6">
-                <label class="block text-sm font-mono uppercase font-bold mb-2">Company *</label>
-                <input type="text" name="company" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="Company name">
+                <label for="contact-company" class="block text-sm font-mono uppercase font-bold mb-2">Company *</label>
+                <input type="text" id="contact-company" name="company" required class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow" placeholder="Company name">
               </div>
 
               <!-- Inquiry Type -->
               <div class="mb-6">
-                <label class="block text-sm font-mono uppercase font-bold mb-2">Inquiry Type</label>
-                <select name="inquiry_type" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow">
+                <label for="contact-inquiry_type" class="block text-sm font-mono uppercase font-bold mb-2">Inquiry Type</label>
+                <select id="contact-inquiry_type" name="inquiry_type" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow">
                   <option value="">Select an option</option>
                   <option value="sales">Sales Inquiry</option>
                   <option value="support">Technical Support</option>
@@ -121,8 +126,8 @@
 
               <!-- Message -->
               <div class="mb-8">
-                <label class="block text-sm font-mono uppercase font-bold mb-2">Message *</label>
-                <textarea name="message" required rows="5" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow resize-none" placeholder="How can we help you?"></textarea>
+                <label for="contact-message" class="block text-sm font-mono uppercase font-bold mb-2">Message *</label>
+                <textarea id="contact-message" name="message" required rows="5" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow resize-none" placeholder="How can we help you?"></textarea>
               </div>
 
               <!-- Submit -->
@@ -139,14 +144,56 @@
   </div>
 </section>
 
-<!-- Map Placeholder -->
-<section class="manual-border-t">
-  <div class="bg-gray-200 h-96 flex items-center justify-center">
-    <div class="text-center">
-      <span class="material-symbols-outlined text-8xl text-gray-400 mb-4 block">map</span>
-      <p class="font-mono uppercase text-gray-500 font-bold">Map Integration</p>
-    </div>
-  </div>
-</section>
+<script>
+(function () {
+  const form = document.getElementById('contact-form');
+  const email = form.elements.email;
+  const phone = form.elements.phone;
+  function validateEmail() {
+    const value = email.value.trim();
+    const parts = value.split('@');
+    const local = parts[0];
+    const labels = (parts[1] || '').split('.');
+    const valid = value.length <= 254 && parts.length === 2 && local.length <= 64 &&
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/.test(local) &&
+      !local.startsWith('.') && !local.endsWith('.') && !local.includes('..') &&
+      labels.length >= 2 && labels.every(label => /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/.test(label)) &&
+      /^[a-zA-Z]{2,63}$/.test(labels[labels.length - 1]);
+    email.setCustomValidity(value && !valid ? 'Enter a valid email address, such as name@example.com.' : '');
+    email.setAttribute('aria-invalid', value && !valid ? 'true' : 'false');
+  }
+  function validatePhone() {
+    const value = phone.value.trim();
+    const digits = value.replace(/[^0-9]/g, '');
+    let open = false, groupDigits = 0, valid = value.length <= 40;
+    for (let i = 0; i < value.length; i++) {
+      const ch = value[i];
+      if (/[0-9]/.test(ch)) { if (open) groupDigits++; }
+      else if (ch === '+' && i === 0) {}
+      else if (ch === '(' && !open) { open = true; groupDigits = 0; }
+      else if (ch === ')' && open && groupDigits > 0) { open = false; }
+      else if (ch !== ' ' && ch !== '-') { valid = false; }
+    }
+    valid = valid && !open && digits.length >= 7 && digits.length <= 15 && !/^(.)\1+$/.test(digits);
+    phone.setCustomValidity(value && !valid ? 'Enter a valid phone number with 7–15 digits. Spaces, parentheses, hyphens and a leading + are allowed.' : '');
+    phone.setAttribute('aria-invalid', value && !valid ? 'true' : 'false');
+  }
+  email.addEventListener('input', validateEmail);
+  phone.addEventListener('input', validatePhone);
+  form.addEventListener('htmx:validation:validate', function () {
+    email.value = email.value.trim(); phone.value = phone.value.trim();
+    validateEmail(); validatePhone();
+  });
+  document.body.addEventListener('htmx:beforeSwap', function (event) {
+    if (event.detail.target.id === 'contact-form-feedback' && event.detail.xhr.status === 400) {
+      event.detail.shouldSwap = true;
+      event.detail.isError = false;
+    }
+  });
+  form.addEventListener('htmx:afterRequest', function (event) {
+    if (event.detail.successful) { form.reset(); email.setAttribute('aria-invalid', 'false'); phone.setAttribute('aria-invalid', 'false'); }
+  });
+})();
+</script>
 
 {{end}}

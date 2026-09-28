@@ -1,9 +1,22 @@
 {{define "content"}}
 <div class="min-h-screen">
+    {{range .HomepageSections}}
+    {{if eq .SectionKey "hero"}}{{template "home-hero" $}}{{end}}
+    {{if eq .SectionKey "products_section"}}{{template "home-products_section" $}}{{end}}
+    {{if eq .SectionKey "solutions_section"}}{{template "home-solutions_section" $}}{{end}}
+    {{if eq .SectionKey "stats_section"}}{{template "home-stats_section" $}}{{end}}
+    {{if eq .SectionKey "testimonials_section"}}{{template "home-testimonials_section" $}}{{end}}
+    {{if eq .SectionKey "partners_section"}}{{template "home-partners_section" $}}{{end}}
+    {{if eq .SectionKey "blog_section"}}{{template "home-blog_section" $}}{{end}}
+    {{if eq .SectionKey "cta"}}{{template "home-cta" $}}{{end}}
+    {{end}}
+</div>
+{{end}}
 
-    <!-- ==================== HERO BANNER (CAROUSEL) ==================== -->
+{{define "home-hero"}}
+<!-- ==================== HERO BANNER (CAROUSEL) ==================== -->
     {{if .Heroes}}
-    <section class="relative min-h-[600px] manual-border-thick mx-4 md:mx-10 mt-8 bg-white manual-shadow-lg overflow-hidden"
+    <section data-home-section="hero" class="relative min-h-[600px] manual-border-thick mx-4 md:mx-10 mt-8 bg-white manual-shadow-lg overflow-hidden"
              data-hero-carousel
              data-autoplay="{{if .HeroAutoplay}}1{{else}}0{{end}}"
              data-interval="{{.HeroInterval}}">
@@ -13,7 +26,7 @@
         <!-- Sliding track: one slide per active hero -->
         <div class="flex transition-transform duration-500 ease-out relative z-10" data-hero-track style="will-change: transform;">
             {{range $i, $hero := .Heroes}}
-            <div class="w-full flex-shrink-0" data-hero-slide="{{$i}}" aria-hidden="{{if ne $i 0}}true{{else}}false{{end}}">
+            <div class="w-full flex-shrink-0" data-hero-slide="{{$i}}" aria-hidden="{{if ne $i 0}}true{{else}}false{{end}}" {{if ne $i 0}}inert{{end}}>
                 <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]">
                     <div class="space-y-8 relative z-10">
                         {{if $hero.BadgeText.Valid}}
@@ -28,11 +41,11 @@
                             {{$hero.Subheadline}}
                         </p>
                         <div class="flex flex-wrap gap-4">
-                            <a href="{{$hero.PrimaryCtaUrl}}" class="manual-border bg-primary text-white px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                            <a href="{{$hero.PrimaryCtaUrl}}" class="manual-border bg-primary text-white px-8 py-4 font-mono font-bold uppercase manual-shadow active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
                                 {{$hero.PrimaryCtaText}}
                             </a>
                             {{if $hero.SecondaryCtaText.Valid}}
-                            <a href="{{$hero.SecondaryCtaUrl.String}}" class="manual-border bg-white text-black px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
+                            <a href="{{$hero.SecondaryCtaUrl.String}}" class="manual-border bg-white text-black px-8 py-4 font-mono font-bold uppercase manual-shadow active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
                                 {{$hero.SecondaryCtaText.String}}
                             </a>
                             {{end}}
@@ -64,11 +77,11 @@
         <!-- Navigation: only shown when there is more than one slide -->
         {{if gt (len .Heroes) 1}}
         <button type="button" data-hero-prev aria-label="Previous slide"
-                class="absolute left-4 top-1/2 -translate-y-1/2 z-20 manual-border bg-white text-black w-10 h-10 flex items-center justify-center manual-shadow btn-press">
+                class="absolute left-4 top-1/2 -translate-y-1/2 z-20 manual-border bg-white text-black w-12 h-12 flex items-center justify-center manual-shadow active:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
             <span class="material-symbols-outlined">chevron_left</span>
         </button>
         <button type="button" data-hero-next aria-label="Next slide"
-                class="absolute right-4 top-1/2 -translate-y-1/2 z-20 manual-border bg-white text-black w-10 h-10 flex items-center justify-center manual-shadow btn-press">
+                class="absolute right-4 top-1/2 -translate-y-1/2 z-20 manual-border bg-white text-black w-12 h-12 flex items-center justify-center manual-shadow active:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
             <span class="material-symbols-outlined">chevron_right</span>
         </button>
         <!-- Slide indicators (one per slide) -->
@@ -99,6 +112,7 @@
             track.style.transform = 'translateX(-' + (idx * 100) + '%)';
             for (var i = 0; i < slides.length; i++) {
                 slides[i].setAttribute('aria-hidden', i === idx ? 'false' : 'true');
+                slides[i].inert = i !== idx;
             }
             for (var j = 0; j < dots.length; j++) {
                 dots[j].classList.toggle('bg-primary', j === idx);
@@ -119,21 +133,26 @@
         }
         root.addEventListener('mouseenter', stop);
         root.addEventListener('mouseleave', start);
+        root.addEventListener('focusin', stop);
+        root.addEventListener('focusout', function (event) {
+            if (!root.contains(event.relatedTarget)) start();
+        });
 
         show(0);
         start();
     })();
     </script>
     {{end}}
+{{end}}
 
-    <!-- ==================== FEATURED PRODUCTS ==================== -->
+{{define "home-products_section"}}
+<!-- ==================== FEATURED PRODUCTS ==================== -->
     {{if .FeaturedProducts}}
     {{$ps := index .Sections "products_section"}}
-    <section class="max-w-[1200px] mx-auto px-4 py-20">
+    <section data-home-section="products_section" class="max-w-[1200px] mx-auto px-4 py-20">
         <div class="flex items-center gap-4 mb-8">
             <h2 class="font-mono font-black text-2xl uppercase">{{if $ps.Heading}}{{$ps.Heading}}{{else}}Featured Products{{end}}</h2>
             <div class="flex-grow h-[2px] bg-black/20"></div>
-            <span class="font-mono text-xs">Section 02</span>
         </div>
         <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">{{if $ps.Subheading}}{{$ps.Subheading}}{{else}}Discover our most popular interactive solutions{{end}}</p>
 
@@ -167,25 +186,26 @@
         </div>
     </section>
     {{end}}
+{{end}}
 
-    <!-- ==================== INDUSTRY SOLUTIONS ==================== -->
+{{define "home-solutions_section"}}
+<!-- ==================== INDUSTRY SOLUTIONS ==================== -->
     {{if .Solutions}}
     {{$ps := index .Sections "solutions_section"}}
-    <section class="max-w-[1200px] mx-auto px-4 py-20">
+    <section data-home-section="solutions_section" class="max-w-[1200px] mx-auto px-4 py-20">
         <div class="flex items-center gap-4 mb-8">
             <h2 class="font-mono font-black text-2xl uppercase">{{if $ps.Heading}}{{$ps.Heading}}{{else}}Solutions By Industry{{end}}</h2>
             <div class="flex-grow h-[2px] bg-black/20"></div>
-            <span class="font-mono text-xs">Section 03</span>
         </div>
         <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">{{if $ps.Subheading}}{{$ps.Subheading}}{{else}}Tailored technology solutions for every sector{{end}}</p>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="grid gap-6" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));">
             {{range .Solutions}}
-            <a href="/solutions/{{.Slug}}" class="manual-border p-6 bg-white flex flex-col items-center justify-center gap-4 manual-shadow hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer group">
+            <a href="/solutions/{{.Slug}}" class="manual-border p-6 bg-white flex flex-col items-center gap-4 h-full min-w-0 manual-shadow hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer group">
                 <span class="material-symbols-outlined text-4xl">{{.Icon}}</span>
                 <span class="font-mono font-bold text-sm uppercase text-center">{{.Title}}</span>
-                <p class="font-mono text-[10px] text-center opacity-60 group-hover:opacity-80 uppercase hidden md:block">{{.ShortDescription}}</p>
-                <span class="font-mono text-[10px] font-bold flex items-center gap-1 group-hover:text-white">
+                <p class="font-mono text-sm leading-relaxed text-center opacity-70 group-hover:opacity-90 flex-grow">{{.ShortDescription}}</p>
+                <span class="font-mono text-xs font-bold mt-auto pt-2 flex items-center gap-1 group-hover:text-white">
                     Explore <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
                 </span>
             </a>
@@ -193,11 +213,13 @@
         </div>
     </section>
     {{end}}
+{{end}}
 
-    <!-- ==================== COMPANY STATISTICS ==================== -->
-    {{if .Stats}}
+{{define "home-stats_section"}}
+<!-- ==================== COMPANY STATISTICS ==================== -->
+    {{if and .Settings.HomepageShowStats .Stats}}
     {{$ps := index .Sections "stats_section"}}
-    <section class="bg-black text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg">
+    <section data-home-section="stats_section" class="bg-black text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg">
         <h2 class="font-mono font-black text-3xl uppercase mb-12 text-center tracking-widest">{{if $ps.Heading}}{{$ps.Heading}}{{else}}{{.Settings.SiteName}} By The Numbers{{end}}</h2>
         <div class="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             {{range .Stats}}
@@ -209,15 +231,16 @@
         </div>
     </section>
     {{end}}
+{{end}}
 
-    <!-- ==================== CLIENT TESTIMONIALS ==================== -->
-    {{if .Testimonials}}
+{{define "home-testimonials_section"}}
+<!-- ==================== CLIENT TESTIMONIALS ==================== -->
+    {{if and .Settings.HomepageShowTestimonials .Testimonials}}
     {{$ps := index .Sections "testimonials_section"}}
-    <section class="max-w-[1200px] mx-auto px-4 py-20">
+    <section data-home-section="testimonials_section" class="max-w-[1200px] mx-auto px-4 py-20">
         <div class="flex items-center gap-4 mb-8">
             <h2 class="font-mono font-black text-2xl uppercase">{{if $ps.Heading}}{{$ps.Heading}}{{else}}What Our Clients Say{{end}}</h2>
             <div class="flex-grow h-[2px] bg-black/20"></div>
-            <span class="font-mono text-xs">Section 05</span>
         </div>
         <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">{{if $ps.Subheading}}{{$ps.Subheading}}{{else}}Trusted by organizations worldwide{{end}}</p>
 
@@ -287,19 +310,21 @@
     }
     </script>
     {{end}}
+{{end}}
 
-    <!-- ==================== TRUSTED PARTNERS ==================== -->
+{{define "home-partners_section"}}
+<!-- ==================== TRUSTED PARTNERS ==================== -->
     {{if .FeaturedPartners}}
     {{$ps := index .Sections "partners_section"}}
-    <section class="bg-[#F8F9FA] py-16 px-4">
+    <section data-home-section="partners_section" class="bg-[#F8F9FA] py-16 px-4">
         <div class="max-w-[1200px] mx-auto">
             <h2 class="font-mono font-black text-2xl uppercase mb-12 text-center">{{if $ps.Heading}}{{$ps.Heading}}{{else}}Trusted Partners{{end}}</h2>
 
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6">
                 {{range .FeaturedPartners}}
-                <a href="{{if .WebsiteUrl.Valid}}{{.WebsiteUrl.String}}{{else}}/partners{{end}}" class="block w-full h-full manual-border manual-shadow p-6 bg-white flex flex-col items-center justify-center gap-3 hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer group" target="_blank" rel="noopener">
+                <a href="{{if .WebsiteUrl.Valid}}{{.WebsiteUrl.String}}{{else}}/partners{{end}}" class="block w-full h-full manual-border manual-shadow p-6 bg-white flex flex-col items-center justify-center gap-3 hover:bg-primary hover:text-white active:scale-[0.97] transition-all cursor-pointer group" {{if .WebsiteUrl.String}}target="_blank" rel="noopener noreferrer"{{end}}>
                     {{if .LogoUrl.Valid}}
-                    <img class="max-h-10 mx-auto" alt="{{.Name}}" src="{{.LogoUrl.String}}">
+                    <img class="h-12 max-w-full object-contain mx-auto" alt="{{.Name}}" src="{{.LogoUrl.String}}">
                     {{else if .Icon.Valid}}
                     <span class="material-symbols-outlined text-4xl text-[#0066CC] group-hover:text-white">{{.Icon.String}}</span>
                     {{end}}
@@ -316,15 +341,16 @@
         </div>
     </section>
     {{end}}
+{{end}}
 
-    <!-- ==================== LATEST NEWS & INSIGHTS ==================== -->
+{{define "home-blog_section"}}
+<!-- ==================== LATEST NEWS & INSIGHTS ==================== -->
     {{if .LatestPosts}}
     {{$ps := index .Sections "blog_section"}}
-    <section class="max-w-[1200px] mx-auto px-4 py-20">
+    <section data-home-section="blog_section" class="max-w-[1200px] mx-auto px-4 py-20">
         <div class="flex items-center gap-4 mb-8">
             <h2 class="font-mono font-black text-2xl uppercase">{{if $ps.Heading}}{{$ps.Heading}}{{else}}Latest News & Insights{{end}}</h2>
             <div class="flex-grow h-[2px] bg-black/20"></div>
-            <span class="font-mono text-xs">Section 07</span>
         </div>
         <p class="text-center font-mono text-sm opacity-70 mb-12 uppercase">{{if $ps.Subheading}}{{$ps.Subheading}}{{else}}Stay updated with industry trends{{end}}</p>
 
@@ -369,10 +395,12 @@
         </div>
     </section>
     {{end}}
+{{end}}
 
-    <!-- ==================== FINAL CTA SECTION ==================== -->
-    {{if .CTA.ID}}
-    <section class="bg-primary text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg relative overflow-hidden">
+{{define "home-cta"}}
+<!-- ==================== FINAL CTA SECTION ==================== -->
+    {{if and .Settings.HomepageShowCta .CTA.ID}}
+    <section data-home-section="cta" class="bg-primary text-white py-20 px-4 manual-border-thick mx-4 md:mx-10 manual-shadow-lg relative overflow-hidden">
         <div class="absolute inset-0 grid-dotted opacity-10 pointer-events-none"></div>
         <div class="max-w-3xl mx-auto text-center relative z-10">
             <h2 class="font-mono font-black text-3xl md:text-4xl uppercase mb-6">{{.CTA.Headline}}</h2>
@@ -394,6 +422,4 @@
         </div>
     </section>
     {{end}}
-
-</div>
 {{end}}

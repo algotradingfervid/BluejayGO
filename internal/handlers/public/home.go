@@ -109,13 +109,19 @@ func (h *HomeHandler) ShowHomePage(c echo.Context) error {
 	stats, _ := h.queries.ListActiveStats(ctx)                       // Statistics section (e.g., "500+ Customers")
 	testimonials, _ := h.queries.ListActiveTestimonialsHomepage(ctx) // Customer testimonials for homepage
 	cta, _ := h.queries.GetActiveCTA(ctx)                            // Call-to-action banner
+	if limit := settings.HomepageMaxStats; limit > 0 && int64(len(stats)) > limit {
+		stats = stats[:limit]
+	}
+	if limit := settings.HomepageMaxTestimonials; limit > 0 && int64(len(testimonials)) > limit {
+		testimonials = testimonials[:limit]
+	}
 
 	// Existing content tables
 	// Fetch related content to create a comprehensive homepage
-	featuredProducts, _ := h.queries.ListFeaturedProducts(ctx, 6)        // Up to 6 featured products
-	solutions, _ := h.queries.ListPublishedSolutions(ctx)                // All published solutions
-	featuredPartners, _ := h.queries.ListFeaturedPartners(ctx, 12)       // Up to 12 partner logos
-	latestPosts, _ := h.queries.ListLatestPublishedPosts(ctx, 3)         // 3 most recent blog posts
+	featuredProducts, _ := h.queries.ListFeaturedProducts(ctx, 6)  // Up to 6 featured products
+	solutions, _ := h.queries.ListPublishedSolutions(ctx)          // All published solutions
+	featuredPartners, _ := h.queries.ListFeaturedPartners(ctx, 12) // Up to 12 partner logos
+	latestPosts, _ := h.queries.ListLatestPublishedPosts(ctx, 3)   // 3 most recent blog posts
 
 	// Page sections for editable labels/headings
 	// Allows admin to customize section headings without code changes
@@ -128,19 +134,20 @@ func (h *HomeHandler) ShowHomePage(c echo.Context) error {
 
 	// Assemble template data with all homepage content
 	data := map[string]interface{}{
-		"Title":            settings.SiteName,                   // Browser tab title
-		"Settings":         settings,                            // Global site settings
-		"Heroes":           heroes,                              // Active hero slides for the carousel
-		"HeroAutoplay":     settings.HomepageHeroAutoplay != 0,  // Auto-rotate the carousel
-		"HeroInterval":     settings.HomepageHeroInterval,       // Seconds each slide is shown
-		"Stats":            stats,                               // Statistics section
-		"Testimonials":     testimonials,      // Customer testimonials
-		"CTA":              cta,               // Call-to-action banner
-		"FeaturedProducts": featuredProducts,  // Featured products grid
-		"Solutions":        solutions,         // Solutions section
-		"FeaturedPartners": featuredPartners,  // Partner logos
-		"LatestPosts":      latestPosts,       // Recent blog posts
-		"Sections":         sectionMap,        // Editable section content
+		"Title":            settings.SiteName,                  // Browser tab title
+		"Settings":         settings,                           // Global site settings
+		"Heroes":           heroes,                             // Active hero slides for the carousel
+		"HeroAutoplay":     settings.HomepageHeroAutoplay != 0, // Auto-rotate the carousel
+		"HeroInterval":     settings.HomepageHeroInterval,      // Seconds each slide is shown
+		"Stats":            stats,                              // Statistics section
+		"Testimonials":     testimonials,                       // Customer testimonials
+		"CTA":              cta,                                // Call-to-action banner
+		"FeaturedProducts": featuredProducts,                   // Featured products grid
+		"Solutions":        solutions,                          // Solutions section
+		"FeaturedPartners": featuredPartners,                   // Partner logos
+		"LatestPosts":      latestPosts,                        // Recent blog posts
+		"HomepageSections": sections,
+		"Sections":         sectionMap, // Editable section content
 	}
 
 	// Inject footer navigation data set by middleware

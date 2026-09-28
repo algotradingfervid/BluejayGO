@@ -7,6 +7,7 @@
             <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
         </div>
 
+        {{if .Error}}<p role="alert" class="border-2 border-red-700 bg-red-50 text-red-800 p-4 mb-6 max-w-4xl">{{.Error}}</p>{{end}}
         <form method="POST" action="{{.FormAction}}" class="bg-white border-2 border-black p-6 max-w-4xl space-y-6" style="box-shadow: 4px 4px 0px #000;">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Office Name -->
@@ -89,14 +90,16 @@
                 <div>
                     <label class="block text-xs font-bold uppercase mb-1">
                         Map URL
-                        <span class="text-gray-400 cursor-help" title="Google Maps link for this location. Visitors can click to get directions.">&#9432;</span>
+                        <span class="text-gray-400 cursor-help" title="Google Maps HTTPS link for directions. Embed links display the exact map. Share links use the office address for the embedded map.">&#9432;</span>
                     </label>
-                    <input type="url" name="map_url" value=""
-                           placeholder="https://maps.google.com/..."
+                    <input type="url" name="map_url" value="{{if .Item}}{{.Item.MapUrl}}{{end}}"
+                           placeholder="https://www.google.com/maps/..."
+                           aria-describedby="map-url-help"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
 
+                <p id="map-url-help" class="text-xs text-gray-600 md:col-span-2">Paste a Google Maps share, place or embed URL. Leave blank to map the office address. Short share links open for directions; the interactive map uses the address.</p>
                 <!-- Display Order -->
                 <div>
                     <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
@@ -128,7 +131,7 @@
                 <button type="submit"
                         class="bg-black text-white px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
                         style="box-shadow: 4px 4px 0px #000;">
-                    {{if .Item}}Update Office{{else}}Create Office{{end}}
+                    {{if .IsNew}}Create Office{{else}}Update Office{{end}}
                 </button>
             </div>
         </form>

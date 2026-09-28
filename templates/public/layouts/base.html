@@ -79,5 +79,21 @@
         {{template "content" .}}
     </main>
     {{template "footer" .}}
+    <button id="back-to-top" type="button" class="back-to-top" hidden aria-label="Back to top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 12 6-6 6 6M12 6v14" /></svg>
+        <span>Top</span>
+    </button>
+    <script>
+    (function () {
+        var button = document.getElementById('back-to-top');
+        function updateVisibility() { button.hidden = window.scrollY < 300; }
+        window.addEventListener('scroll', updateVisibility, {passive: true});
+        updateVisibility();
+        button.addEventListener('click', function () {
+            document.getElementById('page-top').focus({preventScroll: true});
+            window.scrollTo({top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+        });
+    })();
+    </script>
 </body>
 </html>{{end}}

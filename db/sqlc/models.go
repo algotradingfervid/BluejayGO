@@ -356,6 +356,7 @@ type OfficeLocation struct {
 	DisplayOrder int64          `json:"display_order"`
 	CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`
+	MapUrl       string         `json:"map_url"`
 }
 
 type PageSection struct {
@@ -598,6 +599,10 @@ type Setting struct {
 	BlogShowCategories       int64     `json:"blog_show_categories"`
 	BlogShowTags             int64     `json:"blog_show_tags"`
 	BlogShowSearch           int64     `json:"blog_show_search"`
+	FooterLogoPath           string    `json:"footer_logo_path"`
+	SocialThreads            string    `json:"social_threads"`
+	MarketplaceGemUrl        string    `json:"marketplace_gem_url"`
+	MarketplaceAmazonUrl     string    `json:"marketplace_amazon_url"`
 }
 
 type Solution struct {
@@ -630,16 +635,18 @@ type SolutionChallenge struct {
 }
 
 type SolutionCta struct {
-	ID                  int64          `json:"id"`
-	SolutionID          int64          `json:"solution_id"`
-	Heading             string         `json:"heading"`
-	Subheading          sql.NullString `json:"subheading"`
-	PrimaryButtonText   sql.NullString `json:"primary_button_text"`
-	PrimaryButtonUrl    sql.NullString `json:"primary_button_url"`
-	SecondaryButtonText sql.NullString `json:"secondary_button_text"`
-	SecondaryButtonUrl  sql.NullString `json:"secondary_button_url"`
-	PhoneNumber         sql.NullString `json:"phone_number"`
-	SectionName         string         `json:"section_name"`
+	ID                     int64          `json:"id"`
+	SolutionID             int64          `json:"solution_id"`
+	Heading                string         `json:"heading"`
+	Subheading             sql.NullString `json:"subheading"`
+	PrimaryButtonText      sql.NullString `json:"primary_button_text"`
+	PrimaryButtonUrl       sql.NullString `json:"primary_button_url"`
+	SecondaryButtonText    sql.NullString `json:"secondary_button_text"`
+	SecondaryButtonUrl     sql.NullString `json:"secondary_button_url"`
+	PhoneNumber            sql.NullString `json:"phone_number"`
+	SectionName            string         `json:"section_name"`
+	IsActive               bool           `json:"is_active"`
+	SecondaryButtonEnabled bool           `json:"secondary_button_enabled"`
 }
 
 type SolutionPageFeature struct {

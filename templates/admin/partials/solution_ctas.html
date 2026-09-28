@@ -3,8 +3,9 @@
 <div class="mb-3">
     <p class="text-xs text-gray-500 mb-3" title="Call-to-action buttons shown at the bottom of the solution page.">
         <span class="inline-block cursor-help text-gray-400 mr-1">ⓘ</span>
-        Call-to-action buttons shown at the bottom of the solution page.
+        Call-to-action buttons shown at the bottom of the solution page. Disable a section without deleting its content, or hide only its brochure button.
     </p>
+    <p class="text-xs text-gray-600 mb-3">For a brochure, upload the document in <a href="/admin/media" class="underline">Media Library</a> and paste its URL below, or use the full HTTPS URL of your hosted document. Empty links, # placeholders, and missing local files are hidden on the website.</p>
 </div>
 <div id="ctas-list">
 {{range .CTAs}}
@@ -12,6 +13,10 @@
 <form hx-post="/admin/solutions/{{$.SolutionID}}/ctas/{{.ID}}"
       hx-target="#ctas-section" hx-swap="outerHTML"
       class="mb-3 p-3 border-2 border-black bg-yellow-50 space-y-3" style="box-shadow: 2px 2px 0px #000;">
+    <div class="flex flex-wrap gap-4 border-2 border-black p-3 bg-white">
+        <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" name="is_active" value="1" {{if .IsActive}}checked{{end}}> Show this section</label>
+        <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" name="secondary_button_enabled" value="1" {{if .SecondaryButtonEnabled}}checked{{end}}> Show secondary / brochure button</label>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Heading *</label>
@@ -54,8 +59,8 @@
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
-            <label class="block text-xs font-bold uppercase mb-1">Secondary Button URL</label>
-            <input type="text" name="secondary_button_url" value="{{if .SecondaryButtonUrl.Valid}}{{.SecondaryButtonUrl.String}}{{end}}"
+            <label class="block text-xs font-bold uppercase mb-1">Secondary Button / Brochure URL</label>
+            <input type="text" name="secondary_button_url" placeholder="/uploads/downloads/your-brochure.pdf" value="{{if .SecondaryButtonUrl.Valid}}{{.SecondaryButtonUrl.String}}{{end}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
@@ -78,6 +83,7 @@
 <div class="flex items-center gap-4 mb-3 p-3 border-2 border-black bg-white" style="box-shadow: 2px 2px 0px #000;">
     <div class="flex-grow min-w-0">
         <div class="font-bold text-sm">{{.Heading}}</div>
+        <p class="text-xs font-bold mt-1">Section: {{if .IsActive}}Enabled{{else}}Disabled{{end}} · Brochure / secondary button: {{if .SecondaryButtonEnabled}}Enabled{{else}}Disabled{{end}}</p>
         {{if .Subheading.Valid}}<div class="text-xs text-gray-600">{{.Subheading.String}}</div>{{end}}
         <div class="flex flex-wrap gap-2 mt-2">
             <span class="bg-gray-100 text-black px-2 py-1 text-xs font-bold uppercase border border-black">{{.SectionName}}</span>
@@ -114,6 +120,11 @@
 {{end}}
 </div>
 <form hx-post="/admin/solutions/{{.SolutionID}}/ctas" hx-target="#ctas-section" hx-swap="outerHTML" class="mt-4 space-y-3 border-t-2 border-black pt-4">
+    <div class="flex flex-wrap gap-4 border-2 border-black p-3 bg-white">
+        <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" name="is_active" value="1" checked> Show this section</label>
+        <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" name="secondary_button_enabled" value="1" checked> Show secondary / brochure button</label>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Heading *</label>
@@ -156,8 +167,8 @@
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
-            <label class="block text-xs font-bold uppercase mb-1">Secondary Button URL</label>
-            <input type="text" name="secondary_button_url"
+            <label class="block text-xs font-bold uppercase mb-1">Secondary Button / Brochure URL</label>
+            <input type="text" name="secondary_button_url" placeholder="/uploads/downloads/your-brochure.pdf"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>

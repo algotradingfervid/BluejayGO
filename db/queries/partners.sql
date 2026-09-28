@@ -99,8 +99,8 @@ WHERE p.id = ?;
 --
 -- Note: is_active defaults to 1 (true) via database schema, is_featured defaults to 0
 INSERT INTO partners (
-    name, tier_id, logo_url, icon, website_url, description, display_order
-) VALUES (?, ?, ?, ?, ?, ?, ?)
+    name, tier_id, logo_url, icon, website_url, description, display_order, is_featured
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 RETURNING *;
 
 -- name: UpdatePartner :one
@@ -123,7 +123,7 @@ RETURNING *;
 UPDATE partners
 SET name = ?, tier_id = ?, logo_url = ?, icon = ?,
     website_url = ?, description = ?, display_order = ?,
-    is_active = ?, updated_at = CURRENT_TIMESTAMP
+    is_active = ?, is_featured = ?, updated_at = CURRENT_TIMESTAMP
 WHERE id = ?
 RETURNING *;
 

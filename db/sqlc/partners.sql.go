@@ -13,8 +13,8 @@ import (
 
 const createPartner = `-- name: CreatePartner :one
 INSERT INTO partners (
-    name, tier_id, logo_url, icon, website_url, description, display_order
-) VALUES (?, ?, ?, ?, ?, ?, ?)
+    name, tier_id, logo_url, icon, website_url, description, display_order, is_featured
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 RETURNING id, name, tier_id, logo_url, icon, website_url, description, display_order, is_active, created_at, updated_at, is_featured
 `
 
@@ -26,6 +26,7 @@ type CreatePartnerParams struct {
 	WebsiteUrl   sql.NullString `json:"website_url"`
 	Description  sql.NullString `json:"description"`
 	DisplayOrder int64          `json:"display_order"`
+	IsFeatured   int64          `json:"is_featured"`
 }
 
 // Creates a new partner record.
@@ -52,6 +53,7 @@ func (q *Queries) CreatePartner(ctx context.Context, arg CreatePartnerParams) (P
 		arg.WebsiteUrl,
 		arg.Description,
 		arg.DisplayOrder,
+		arg.IsFeatured,
 	)
 	var i Partner
 	err := row.Scan(
@@ -662,7 +664,7 @@ const updatePartner = `-- name: UpdatePartner :one
 UPDATE partners
 SET name = ?, tier_id = ?, logo_url = ?, icon = ?,
     website_url = ?, description = ?, display_order = ?,
-    is_active = ?, updated_at = CURRENT_TIMESTAMP
+    is_active = ?, is_featured = ?, updated_at = CURRENT_TIMESTAMP
 WHERE id = ?
 RETURNING id, name, tier_id, logo_url, icon, website_url, description, display_order, is_active, created_at, updated_at, is_featured
 `
@@ -676,6 +678,7 @@ type UpdatePartnerParams struct {
 	Description  sql.NullString `json:"description"`
 	DisplayOrder int64          `json:"display_order"`
 	IsActive     int64          `json:"is_active"`
+	IsFeatured   int64          `json:"is_featured"`
 	ID           int64          `json:"id"`
 }
 
@@ -706,6 +709,7 @@ func (q *Queries) UpdatePartner(ctx context.Context, arg UpdatePartnerParams) (P
 		arg.Description,
 		arg.DisplayOrder,
 		arg.IsActive,
+		arg.IsFeatured,
 		arg.ID,
 	)
 	var i Partner

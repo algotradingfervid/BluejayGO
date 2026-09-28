@@ -8,7 +8,6 @@ import (
 	// database/sql provides sql.NullString and sql.ErrNoRows for handling nullable fields and query results
 	"database/sql"
 	// encoding/json provides JSON parsing for challenge bullets stored as JSON array in database
-	"encoding/json"
 	// fmt provides string formatting for building cache keys and URLs
 	"fmt"
 	// log/slog is the structured logging library used for debug and error logging
@@ -30,9 +29,9 @@ import (
 // It manages both the case studies listing page (with optional industry filtering)
 // and individual case study detail pages (with preview mode for admins).
 type CaseStudiesHandler struct {
-	queries *sqlc.Queries    // Database query interface for fetching case studies, industries, products, and metrics
-	logger  *slog.Logger     // Structured logger for debugging and error tracking
-	cache   *services.Cache  // In-memory cache for rendered HTML to improve response times
+	queries *sqlc.Queries   // Database query interface for fetching case studies, industries, products, and metrics
+	logger  *slog.Logger    // Structured logger for debugging and error tracking
+	cache   *services.Cache // In-memory cache for rendered HTML to improve response times
 }
 
 // NewCaseStudiesHandler constructs a new CaseStudiesHandler with required dependencies.
@@ -182,12 +181,12 @@ func (h *CaseStudiesHandler) CaseStudiesList(c echo.Context) error {
 
 	// Build template data map
 	data := map[string]interface{}{
-		"Title":              "Case Studies",      // Page title for <title> tag and H1
-		"CaseStudies":        caseStudies,         // Array of case study objects (filtered or all)
-		"Industries":         industries,          // Array of industry objects for filter dropdown
-		"SelectedIndustryID": selectedIndustryID,  // Currently selected industry ID (0 if none)
-		"TotalCount":         totalCount,          // Number of case studies being displayed
-		"CurrentPage":        "case-studies",      // Used by navigation to highlight active link
+		"Title":              "Case Studies",     // Page title for <title> tag and H1
+		"CaseStudies":        caseStudies,        // Array of case study objects (filtered or all)
+		"Industries":         industries,         // Array of industry objects for filter dropdown
+		"SelectedIndustryID": selectedIndustryID, // Currently selected industry ID (0 if none)
+		"TotalCount":         totalCount,         // Number of case studies being displayed
+		"CurrentPage":        "case-studies",     // Used by navigation to highlight active link
 	}
 
 	// Render template and cache for 10 minutes, return HTML to client
@@ -251,6 +250,9 @@ func (h *CaseStudiesHandler) CaseStudyDetail(c echo.Context) error {
 		// Extract fields from query result
 		csID, csTitle, csSlug, csOgImage = cs.ID, cs.Title, cs.Slug, cs.OgImage
 		csMetaTitle, csMetaDesc, csBullets = cs.MetaTitle, cs.MetaDescription, cs.ChallengeBullets
+		cs.ChallengeTitle, cs.ChallengeContent = services.NormalizeCaseStudySection(cs.ChallengeTitle, cs.ChallengeContent, "The Challenge")
+		cs.SolutionTitle, cs.SolutionContent = services.NormalizeCaseStudySection(cs.SolutionTitle, cs.SolutionContent, "The Solution")
+		cs.OutcomeTitle, cs.OutcomeContent = services.NormalizeCaseStudySection(cs.OutcomeTitle, cs.OutcomeContent, "The Outcome")
 		caseStudyObj = cs
 	} else {
 		// Normal mode: only published case studies visible to public
@@ -265,6 +267,9 @@ func (h *CaseStudiesHandler) CaseStudyDetail(c echo.Context) error {
 		// Extract fields from query result
 		csID, csTitle, csSlug, csOgImage = cs.ID, cs.Title, cs.Slug, cs.OgImage
 		csMetaTitle, csMetaDesc, csBullets = cs.MetaTitle, cs.MetaDescription, cs.ChallengeBullets
+		cs.ChallengeTitle, cs.ChallengeContent = services.NormalizeCaseStudySection(cs.ChallengeTitle, cs.ChallengeContent, "The Challenge")
+		cs.SolutionTitle, cs.SolutionContent = services.NormalizeCaseStudySection(cs.SolutionTitle, cs.SolutionContent, "The Solution")
+		cs.OutcomeTitle, cs.OutcomeContent = services.NormalizeCaseStudySection(cs.OutcomeTitle, cs.OutcomeContent, "The Outcome")
 		caseStudyObj = cs
 	}
 
@@ -286,15 +291,7 @@ func (h *CaseStudiesHandler) CaseStudyDetail(c echo.Context) error {
 
 	// Parse challenge bullets from JSON array stored in database
 	// Challenge bullets are a list of key problems the client was facing
-	var challengeBullets []string
-	if csBullets.Valid {
-		if err := json.Unmarshal([]byte(csBullets.String), &challengeBullets); err != nil {
-			h.logger.Error("failed to parse challenge bullets", "error", err)
-			challengeBullets = []string{} // Fallback to empty array on parse error
-		}
-	} else {
-		challengeBullets = []string{} // No bullets configured
-	}
+	challengeBullets := services.ParseCaseStudyBullets(csBullets.String)
 
 	// Extract meta description for SEO, handling nullable field
 	metaDesc := ""
@@ -309,22 +306,22 @@ func (h *CaseStudiesHandler) CaseStudyDetail(c echo.Context) error {
 
 	// Build template data map with all fetched content
 	data := map[string]interface{}{
-		"Title":            csTitle,           // Page title (used as fallback if MetaTitle empty)
-		"MetaTitle":        metaTitle,         // Custom SEO title for <title> tag
-		"MetaDescription":  metaDesc,          // SEO description for <meta name="description">
-		"MetaDesc":         metaDesc,          // Alias for template compatibility
-		"OGImage":          csOgImage,         // Open Graph image for social media sharing
+		"Title":            csTitle,                                 // Page title (used as fallback if MetaTitle empty)
+		"MetaTitle":        metaTitle,                               // Custom SEO title for <title> tag
+		"MetaDescription":  metaDesc,                                // SEO description for <meta name="description">
+		"MetaDesc":         metaDesc,                                // Alias for template compatibility
+		"OGImage":          csOgImage,                               // Open Graph image for social media sharing
 		"CanonicalURL":     fmt.Sprintf("/case-studies/%s", csSlug), // Canonical URL for SEO
-		"CaseStudy":        caseStudyObj,      // Main case study object with narrative content
-		"Products":         products,          // Array of product objects featured in case study
-		"Metrics":          metrics,           // Array of success metric objects
-		"ChallengeBullets": challengeBullets,  // Array of challenge bullet strings
-		"CurrentPage":      "case-studies",    // Used by navigation to highlight active link
+		"CaseStudy":        caseStudyObj,                            // Main case study object with narrative content
+		"Products":         products,                                // Array of product objects featured in case study
+		"Metrics":          metrics,                                 // Array of success metric objects
+		"ChallengeBullets": challengeBullets,                        // Array of challenge bullet strings
+		"CurrentPage":      "case-studies",                          // Used by navigation to highlight active link
 	}
 
 	// Handle preview mode differently - no caching and add admin edit link
 	if preview {
-		data["IsPreview"] = true // Shows preview banner in template
+		data["IsPreview"] = true                                           // Shows preview banner in template
 		data["EditURL"] = fmt.Sprintf("/admin/case-studies/%d/edit", csID) // Link to admin editor
 		// No caching (ttl=0) for preview mode - always fresh content for admins
 		return h.renderAndCache(c, "preview:case-study:"+slug, 0, http.StatusOK, "public/pages/case_study_detail.html", data)

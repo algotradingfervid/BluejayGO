@@ -47,7 +47,7 @@ WHERE page_key = ? AND section_key = ? AND is_active = 1;
 -- Use case: Rendering all sections for a page, building page content dynamically
 SELECT * FROM page_sections
 WHERE page_key = ? AND is_active = 1
-ORDER BY display_order ASC;
+ORDER BY display_order ASC, section_key ASC;
 
 -- name: GetPageSectionByID :one
 -- Retrieves a single page section by its primary key ID (ignores is_active).
@@ -107,5 +107,6 @@ UPDATE page_sections SET
     secondary_button_text = ?,
     secondary_button_url = ?,
     is_active = ?,
+    display_order = ?,
     updated_at = CURRENT_TIMESTAMP
 WHERE id = ?;

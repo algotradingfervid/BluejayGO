@@ -173,9 +173,9 @@ func (q *Queries) CreateContactSubmission(ctx context.Context, arg CreateContact
 const createOfficeLocation = `-- name: CreateOfficeLocation :one
 INSERT INTO office_locations (
     name, address_line1, address_line2, city, state, postal_code, country,
-    phone, email, is_primary, is_active, display_order
+    phone, email, map_url, is_primary, is_active, display_order
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 RETURNING id, created_at, updated_at
 `
 
@@ -189,6 +189,7 @@ type CreateOfficeLocationParams struct {
 	Country      string         `json:"country"`
 	Phone        sql.NullString `json:"phone"`
 	Email        sql.NullString `json:"email"`
+	MapUrl       string         `json:"map_url"`
 	IsPrimary    int64          `json:"is_primary"`
 	IsActive     int64          `json:"is_active"`
 	DisplayOrder int64          `json:"display_order"`
@@ -211,6 +212,7 @@ func (q *Queries) CreateOfficeLocation(ctx context.Context, arg CreateOfficeLoca
 		arg.Country,
 		arg.Phone,
 		arg.Email,
+		arg.MapUrl,
 		arg.IsPrimary,
 		arg.IsActive,
 		arg.DisplayOrder,
@@ -239,7 +241,7 @@ func (q *Queries) DeleteOfficeLocation(ctx context.Context, id int64) error {
 }
 
 const getActiveOfficeLocations = `-- name: GetActiveOfficeLocations :many
-SELECT id, name, address_line1, address_line2, city, state, postal_code, country, phone, email, is_primary
+SELECT id, name, address_line1, address_line2, city, state, postal_code, country, phone, email, map_url, is_primary
 FROM office_locations
 WHERE is_active = 1
 ORDER BY is_primary DESC, display_order ASC, id ASC
@@ -256,6 +258,7 @@ type GetActiveOfficeLocationsRow struct {
 	Country      string         `json:"country"`
 	Phone        sql.NullString `json:"phone"`
 	Email        sql.NullString `json:"email"`
+	MapUrl       string         `json:"map_url"`
 	IsPrimary    int64          `json:"is_primary"`
 }
 
@@ -288,6 +291,7 @@ func (q *Queries) GetActiveOfficeLocations(ctx context.Context) ([]GetActiveOffi
 			&i.Country,
 			&i.Phone,
 			&i.Email,
+			&i.MapUrl,
 			&i.IsPrimary,
 		); err != nil {
 			return nil, err
@@ -368,7 +372,7 @@ func (q *Queries) GetNextSubmissionID(ctx context.Context, id int64) (int64, err
 
 const getOfficeLocationByID = `-- name: GetOfficeLocationByID :one
 SELECT id, name, address_line1, address_line2, city, state, postal_code, country,
-       phone, email, is_primary, is_active, display_order
+       phone, email, map_url, is_primary, is_active, display_order
 FROM office_locations
 WHERE id = ?
 `
@@ -384,6 +388,7 @@ type GetOfficeLocationByIDRow struct {
 	Country      string         `json:"country"`
 	Phone        sql.NullString `json:"phone"`
 	Email        sql.NullString `json:"email"`
+	MapUrl       string         `json:"map_url"`
 	IsPrimary    int64          `json:"is_primary"`
 	IsActive     int64          `json:"is_active"`
 	DisplayOrder int64          `json:"display_order"`
@@ -403,6 +408,7 @@ func (q *Queries) GetOfficeLocationByID(ctx context.Context, id int64) (GetOffic
 		&i.Country,
 		&i.Phone,
 		&i.Email,
+		&i.MapUrl,
 		&i.IsPrimary,
 		&i.IsActive,
 		&i.DisplayOrder,
@@ -432,10 +438,29 @@ func (q *Queries) GetPreviousSubmissionID(ctx context.Context, id int64) (int64,
 const listAllOfficeLocations = `-- name: ListAllOfficeLocations :many
 
 SELECT id, name, address_line1, address_line2, city, state, postal_code, country,
-       phone, email, is_primary, is_active, display_order, created_at, updated_at
+       phone, email, map_url, is_primary, is_active, display_order, created_at, updated_at
 FROM office_locations
 ORDER BY display_order ASC, id ASC
 `
+
+type ListAllOfficeLocationsRow struct {
+	ID           int64          `json:"id"`
+	Name         string         `json:"name"`
+	AddressLine1 string         `json:"address_line1"`
+	AddressLine2 sql.NullString `json:"address_line2"`
+	City         string         `json:"city"`
+	State        string         `json:"state"`
+	PostalCode   string         `json:"postal_code"`
+	Country      string         `json:"country"`
+	Phone        sql.NullString `json:"phone"`
+	Email        sql.NullString `json:"email"`
+	MapUrl       string         `json:"map_url"`
+	IsPrimary    int64          `json:"is_primary"`
+	IsActive     int64          `json:"is_active"`
+	DisplayOrder int64          `json:"display_order"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+}
 
 // ====================================================================
 // OFFICE LOCATIONS - ADMIN QUERIES
@@ -445,15 +470,15 @@ ORDER BY display_order ASC, id ASC
 // - is_active: controls public visibility
 // - display_order: custom sort order for multiple locations
 // ====================================================================
-func (q *Queries) ListAllOfficeLocations(ctx context.Context) ([]OfficeLocation, error) {
+func (q *Queries) ListAllOfficeLocations(ctx context.Context) ([]ListAllOfficeLocationsRow, error) {
 	rows, err := q.db.QueryContext(ctx, listAllOfficeLocations)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []OfficeLocation{}
+	items := []ListAllOfficeLocationsRow{}
 	for rows.Next() {
-		var i OfficeLocation
+		var i ListAllOfficeLocationsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -465,6 +490,7 @@ func (q *Queries) ListAllOfficeLocations(ctx context.Context) ([]OfficeLocation,
 			&i.Country,
 			&i.Phone,
 			&i.Email,
+			&i.MapUrl,
 			&i.IsPrimary,
 			&i.IsActive,
 			&i.DisplayOrder,
@@ -873,7 +899,7 @@ func (q *Queries) UpdateContactSubmissionStatus(ctx context.Context, arg UpdateC
 const updateOfficeLocation = `-- name: UpdateOfficeLocation :exec
 UPDATE office_locations
 SET name = ?, address_line1 = ?, address_line2 = ?, city = ?, state = ?,
-    postal_code = ?, country = ?, phone = ?, email = ?, is_primary = ?,
+    postal_code = ?, country = ?, phone = ?, email = ?, map_url = ?, is_primary = ?,
     is_active = ?, display_order = ?, updated_at = CURRENT_TIMESTAMP
 WHERE id = ?
 `
@@ -888,6 +914,7 @@ type UpdateOfficeLocationParams struct {
 	Country      string         `json:"country"`
 	Phone        sql.NullString `json:"phone"`
 	Email        sql.NullString `json:"email"`
+	MapUrl       string         `json:"map_url"`
 	IsPrimary    int64          `json:"is_primary"`
 	IsActive     int64          `json:"is_active"`
 	DisplayOrder int64          `json:"display_order"`
@@ -905,6 +932,7 @@ func (q *Queries) UpdateOfficeLocation(ctx context.Context, arg UpdateOfficeLoca
 		arg.Country,
 		arg.Phone,
 		arg.Email,
+		arg.MapUrl,
 		arg.IsPrimary,
 		arg.IsActive,
 		arg.DisplayOrder,

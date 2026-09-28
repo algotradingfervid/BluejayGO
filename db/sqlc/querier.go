@@ -2084,7 +2084,7 @@ type Querier interface {
 	// - is_active: controls public visibility
 	// - display_order: custom sort order for multiple locations
 	// ====================================================================
-	ListAllOfficeLocations(ctx context.Context) ([]OfficeLocation, error)
+	ListAllOfficeLocations(ctx context.Context) ([]ListAllOfficeLocationsRow, error)
 	// Retrieves all page sections across all pages, grouped and ordered.
 	//
 	// Parameters: none

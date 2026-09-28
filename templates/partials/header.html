@@ -1,5 +1,5 @@
 {{define "header"}}
-<header class="sticky top-0 z-50 bg-white border-b-4 border-black">
+<header id="page-top" tabindex="-1" class="sticky top-0 z-50 bg-white border-b-4 border-black">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
             <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -37,7 +37,7 @@
                 {{if and .Settings .Settings.ShowNavBlog}}<a href="/blog" class="text-sm font-medium hover:text-[#0066CC] transition-colors">{{.Settings.NavLabelBlog}}</a>{{end}}
                 {{if and .Settings .Settings.ShowNavPartners}}<a href="/partners" class="text-sm font-medium hover:text-[#0066CC] transition-colors">{{.Settings.NavLabelPartners}}</a>{{end}}
                 <div class="relative" x-data="{ open: false }">
-                    <button onclick="document.getElementById('search-modal').classList.toggle('hidden')" class="p-2 hover:text-[#0066CC] transition-colors" aria-label="Search">
+                    <button type="button" data-open-search aria-haspopup="dialog" aria-controls="search-modal" class="p-2 hover:text-[#0066CC] transition-colors" aria-label="Search">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
@@ -45,6 +45,9 @@
                 </div>
                 {{if and .Settings .Settings.ShowNavContact}}<a href="/contact" class="bg-[#0066CC] text-white px-6 py-3 manual-border manual-shadow hover:bg-[#004499] active:btn-press transition-colors">{{.Settings.NavLabelContact}}</a>{{end}}
             </nav>
+            <button type="button" data-open-search aria-label="Search" aria-haspopup="dialog" aria-controls="search-modal" class="md:hidden p-3 hover:text-[#0066CC]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </button>
             <button class="md:hidden p-2 manual-border manual-shadow active:btn-press">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -53,45 +56,82 @@
         </div>
     </div>
 </header>
-<div id="search-modal" class="hidden fixed inset-0 z-[60] bg-black/50" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="max-w-2xl mx-auto mt-24 bg-white manual-border manual-shadow p-6">
+<div id="search-modal" role="dialog" aria-modal="true" aria-label="Search the website" class="hidden fixed inset-0 z-[60] bg-black/50 p-4">
+    <div class="search-panel max-w-2xl mx-auto bg-white manual-border manual-shadow p-4 sm:p-6">
         <div class="flex items-center gap-3 border-b-2 border-black pb-4 mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input type="text" id="search-input" placeholder="Search products, blog posts, case studies..."
-                class="flex-1 text-lg font-mono outline-none placeholder-gray-400"
+                class="min-w-0 w-full flex-1 text-base sm:text-lg font-mono outline-none placeholder-gray-400"
+                aria-label="Search products, blog posts, and case studies" aria-controls="search-results"
                 hx-get="/search/suggest"
-                hx-trigger="keyup changed delay:300ms"
+                hx-trigger="input changed delay:300ms"
+                hx-sync="this:replace"
                 hx-target="#search-results"
                 hx-params="q"
                 name="q"
                 autocomplete="off">
-            <button onclick="document.getElementById('search-modal').classList.add('hidden')" class="text-gray-400 hover:text-black">
+            <button type="button" data-close-search aria-label="Close search" class="p-2 text-gray-400 hover:text-black">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
-        <div id="search-results" class="max-h-96 overflow-y-auto"></div>
+        <div id="search-results" aria-live="polite" class="search-results overflow-y-auto"></div>
         <div class="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-400">
             Press <kbd class="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded">ESC</kbd> to close
         </div>
     </div>
 </div>
 <script>
-document.addEventListener('keydown', function(e) {
+(function () {
     var modal = document.getElementById('search-modal');
-    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-        modal.classList.add('hidden');
-    }
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        modal.classList.toggle('hidden');
-        if (!modal.classList.contains('hidden')) {
-            document.getElementById('search-input').focus();
+    var input = document.getElementById('search-input');
+    var previousFocus;
+    var previousOverflow;
+    function setSearchOpen(open) {
+        if (open) {
+            if (!modal.classList.contains('hidden')) return;
+            previousFocus = document.activeElement;
+            previousOverflow = document.body.style.overflow;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            input.focus();
+        } else {
+            if (modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            document.body.style.overflow = previousOverflow;
+            if (previousFocus) previousFocus.focus({preventScroll: true});
         }
     }
-});
+    document.querySelectorAll('[data-open-search]').forEach(function (button) {
+        button.addEventListener('click', function () { setSearchOpen(true); });
+    });
+    modal.querySelector('[data-close-search]').addEventListener('click', function () { setSearchOpen(false); });
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) setSearchOpen(false);
+    });
+    document.addEventListener('keydown', function (event) {
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+            event.preventDefault();
+            setSearchOpen(modal.classList.contains('hidden'));
+        }
+        if (modal.classList.contains('hidden')) return;
+        if (event.key === 'Escape') setSearchOpen(false);
+        if (event.key === 'Tab') {
+            var items = modal.querySelectorAll('input, button, a[href]');
+            var first = items[0];
+            var last = items[items.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        }
+    });
+})();
 </script>
 {{end}}

@@ -4,7 +4,7 @@
     <div class="flex-1 overflow-auto p-8">
         <div class="max-w-6xl">
             <h1 class="text-2xl font-bold mb-2">Page Sections</h1>
-            <p class="text-gray-600 mb-8">Manage headings, descriptions, and button text across the site.</p>
+            <p class="text-gray-600 mb-8">Manage headings, descriptions, and button text across the site. For homepage sections, use Edit to change visibility and display order (smaller numbers appear first).</p>
 
             {{range $pageKey, $sections := .GroupedSections}}
             <div class="mb-8">
@@ -15,6 +15,7 @@
                             <tr>
                                 <th class="text-left p-3 font-medium text-gray-700">Section</th>
                                 <th class="text-left p-3 font-medium text-gray-700">Heading</th>
+                                <th class="text-left p-3 font-medium text-gray-700">Order</th>
                                 <th class="text-left p-3 font-medium text-gray-700">Active</th>
                                 <th class="text-left p-3 font-medium text-gray-700">Actions</th>
                             </tr>
@@ -26,6 +27,7 @@
                                     <span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{{.SectionKey}}</span>
                                 </td>
                                 <td class="p-3 font-medium">{{.Heading}}</td>
+                                <td class="p-3">{{.DisplayOrder}}</td>
                                 <td class="p-3">
                                     {{if .IsActive}}
                                     <span class="text-green-600 font-bold">✓</span>

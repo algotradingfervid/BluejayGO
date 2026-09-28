@@ -6,7 +6,7 @@
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-bold uppercase tracking-tight">{{.Title}}</h1>
-                <p class="text-sm text-gray-600 mt-1">Manage partner companies and relationships</p>
+                <p class="text-sm text-gray-600 mt-1">Manage partner companies and relationships. Edit each partner to include it in homepage Trusted Partners.</p>
             </div>
             <div class="flex gap-3">
                 <a href="/admin/partners/testimonials"
@@ -78,6 +78,7 @@
                         <th class="px-4 py-3 text-left text-xs font-bold uppercase">Tier</th>
                         <th class="px-4 py-3 text-left text-xs font-bold uppercase">Website</th>
                         <th class="px-4 py-3 text-left text-xs font-bold uppercase">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold uppercase">Homepage</th>
                         <th class="px-4 py-3 text-right text-xs font-bold uppercase">Actions</th>
                     </tr>
                 </thead>
@@ -111,6 +112,7 @@
                             <span class="bg-gray-300 text-black px-2 py-1 text-xs font-bold uppercase border-2 border-black">Inactive</span>
                             {{end}}
                         </td>
+                        <td class="px-4 py-3 text-xs">{{if and .IsFeatured .IsActive}}Featured{{else if .IsFeatured}}Hidden (inactive){{else}}Not featured{{end}}</td>
                         <td class="px-4 py-3 text-right">
                             <a href="/admin/partners/{{.ID}}/edit"
                                class="inline-block bg-white text-black px-3 py-1 text-xs font-bold uppercase border-2 border-black hover:bg-blue-50 mr-1"

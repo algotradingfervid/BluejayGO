@@ -1,4 +1,13 @@
 {{define "content"}}
+<style>
+.case-study-copy { font-size: 1rem; line-height: 1.8; overflow-wrap: anywhere; }
+.case-study-copy p, .case-study-copy div, .case-study-copy ul, .case-study-copy ol { margin-bottom: 1rem; }
+.case-study-copy > :last-child { margin-bottom: 0; }
+.case-study-copy ul { list-style: disc; padding-left: 1.5rem; }
+.case-study-copy ol { list-style: decimal; padding-left: 1.5rem; }
+.case-study-copy li { margin-bottom: .5rem; }
+.case-study-copy h1, .case-study-copy h2, .case-study-copy h3 { font-size: 1.25rem; line-height: 1.5; margin: 1.5rem 0 .75rem; }
+</style>
 
 <!-- Breadcrumb -->
 <nav class="bg-white manual-border-b">
@@ -34,7 +43,7 @@
       {{end}}
 
       <!-- Title -->
-      <h1 class="text-5xl md:text-7xl font-bold font-mono uppercase mb-6">
+      <h1 class="text-3xl md:text-5xl font-bold font-mono uppercase mb-6">
         {{.CaseStudy.Title}}
       </h1>
 
@@ -56,7 +65,7 @@
 <!-- Challenge Section -->
 <section class="py-16 bg-white manual-border-b">
   <div class="container mx-auto px-4">
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-4xl mx-auto">
 
       <!-- Section Header -->
       <div class="flex items-start gap-4 mb-8">
@@ -64,7 +73,7 @@
           <span class="material-symbols-outlined text-4xl">warning</span>
         </div>
         <div>
-          <h2 class="text-4xl md:text-5xl font-bold font-mono uppercase mb-2">
+          <h2 class="text-2xl md:text-3xl font-bold font-mono mb-2 break-words">
             {{if .CaseStudy.ChallengeTitle}}{{.CaseStudy.ChallengeTitle}}{{else}}The Challenge{{end}}
           </h2>
           <div class="h-2 w-24 bg-orange-500 manual-border"></div>
@@ -72,9 +81,10 @@
       </div>
 
       <!-- Challenge Content -->
-      <div class="bg-orange-50 manual-border manual-shadow-lg p-8">
+      {{if or .CaseStudy.ChallengeContent .ChallengeBullets}}
+      <div class="bg-orange-50 manual-border manual-shadow-lg p-5 md:p-8">
         {{if .CaseStudy.ChallengeContent}}
-        <div class="prose prose-lg max-w-none font-mono mb-6">
+        <div class="case-study-copy font-mono mb-6">
           {{.CaseStudy.ChallengeContent | safeHTML}}
         </div>
         {{end}}
@@ -85,12 +95,13 @@
           {{range .ChallengeBullets}}
           <li class="flex items-start gap-3">
             <span class="material-symbols-outlined text-orange-500 flex-shrink-0 mt-1">cancel</span>
-            <span class="font-mono">{{.}}</span>
+            <span class="font-mono leading-relaxed break-words">{{.}}</span>
           </li>
           {{end}}
         </ul>
         {{end}}
       </div>
+      {{end}}
 
     </div>
   </div>
@@ -99,7 +110,7 @@
 <!-- Solution Section -->
 <section class="py-16 bg-green-50 manual-border-b">
   <div class="container mx-auto px-4">
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-4xl mx-auto">
 
       <!-- Section Header -->
       <div class="flex items-start gap-4 mb-8">
@@ -107,7 +118,7 @@
           <span class="material-symbols-outlined text-4xl">lightbulb</span>
         </div>
         <div>
-          <h2 class="text-4xl md:text-5xl font-bold font-mono uppercase mb-2">
+          <h2 class="text-2xl md:text-3xl font-bold font-mono mb-2 break-words">
             {{if .CaseStudy.SolutionTitle}}{{.CaseStudy.SolutionTitle}}{{else}}The Solution{{end}}
           </h2>
           <div class="h-2 w-24 bg-green-500 manual-border"></div>
@@ -115,13 +126,13 @@
       </div>
 
       <!-- Solution Content -->
-      <div class="bg-white manual-border manual-shadow-lg p-8 mb-12">
-        {{if .CaseStudy.SolutionContent}}
-        <div class="prose prose-lg max-w-none font-mono">
+      {{if .CaseStudy.SolutionContent}}
+      <div class="bg-white manual-border manual-shadow-lg p-5 md:p-8 mb-12">
+        <div class="case-study-copy font-mono">
           {{.CaseStudy.SolutionContent | safeHTML}}
         </div>
-        {{end}}
       </div>
+      {{end}}
 
       <!-- Products Deployed -->
       {{if .Products}}
@@ -170,7 +181,7 @@
 <!-- Outcome Section -->
 <section class="py-16 bg-white manual-border-b">
   <div class="container mx-auto px-4">
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-4xl mx-auto">
 
       <!-- Section Header -->
       <div class="flex items-start gap-4 mb-8">
@@ -178,7 +189,7 @@
           <span class="material-symbols-outlined text-4xl">emoji_events</span>
         </div>
         <div>
-          <h2 class="text-4xl md:text-5xl font-bold font-mono uppercase mb-2">
+          <h2 class="text-2xl md:text-3xl font-bold font-mono mb-2 break-words">
             {{if .CaseStudy.OutcomeTitle}}{{.CaseStudy.OutcomeTitle}}{{else}}The Outcome{{end}}
           </h2>
           <div class="h-2 w-24 bg-[#0066CC] manual-border"></div>
@@ -186,13 +197,13 @@
       </div>
 
       <!-- Outcome Content -->
-      <div class="bg-blue-50 manual-border manual-shadow-lg p-8 mb-12">
-        {{if .CaseStudy.OutcomeContent}}
-        <div class="prose prose-lg max-w-none font-mono">
+      {{if .CaseStudy.OutcomeContent}}
+      <div class="bg-blue-50 manual-border manual-shadow-lg p-5 md:p-8 mb-12">
+        <div class="case-study-copy font-mono">
           {{.CaseStudy.OutcomeContent | safeHTML}}
         </div>
-        {{end}}
       </div>
+      {{end}}
 
       <!-- Key Metrics -->
       {{if .Metrics}}
