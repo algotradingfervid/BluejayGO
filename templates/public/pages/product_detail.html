@@ -45,8 +45,8 @@
             <!-- Gallery -->
             <div>
                 <div class="manual-border-thick bg-gray-100 aspect-square mb-4 overflow-hidden relative" id="main-image-container">
-                    {{if .Product.PrimaryImage.Valid}}
-                    <img alt="{{.Product.Name}}" class="w-full h-full object-contain" id="main-image" src="{{.Product.PrimaryImage.String}}">
+                    {{if .MainImage}}
+                    <img alt="{{.MainImageAlt}}" class="w-full h-full object-contain" id="main-image" src="{{.MainImage}}">
                     {{else}}
                     <div class="w-full h-full flex items-center justify-center" id="main-image-placeholder">
                         <span class="material-symbols-outlined text-8xl opacity-20">desktop_windows</span>
@@ -229,6 +229,7 @@ function switchImage(thumb) {
     var placeholder = document.getElementById('main-image-placeholder');
     if (mainImg) {
         mainImg.src = src;
+        mainImg.alt = thumb.querySelector('img').alt;
     } else if (placeholder) {
         var container = document.getElementById('main-image-container');
         container.innerHTML = '<img alt="Product image" class="w-full h-full object-contain" id="main-image" src="' + src + '">';

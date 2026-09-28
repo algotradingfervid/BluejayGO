@@ -454,6 +454,25 @@ func (h *ProductsHandler) ProductDetail(c echo.Context) error {
 		metaDesc = detail.Product.MetaDescription.String
 	}
 
+	// An explicit gallery selection takes precedence over the Media image. Without
+	// one, keep the Media image, then use the first gallery image as a fallback.
+	mainImage, mainImageAlt := detail.Product.PrimaryImage.String, detail.Product.Name
+	for _, image := range detail.Images {
+		if image.IsThumbnail {
+			mainImage = image.ImagePath
+			if image.AltText.Valid && image.AltText.String != "" {
+				mainImageAlt = image.AltText.String
+			}
+			break
+		}
+	}
+	if mainImage == "" && len(detail.Images) > 0 {
+		mainImage = detail.Images[0].ImagePath
+		if detail.Images[0].AltText.Valid && detail.Images[0].AltText.String != "" {
+			mainImageAlt = detail.Images[0].AltText.String
+		}
+	}
+
 	// Assemble template data with all product information
 	data := map[string]interface{}{
 		"Title":           fmt.Sprintf("%s | Products", detail.Product.Name),                         // Browser tab title
@@ -463,17 +482,20 @@ func (h *ProductsHandler) ProductDetail(c echo.Context) error {
 		"CanonicalURL":    fmt.Sprintf("/products/%s/%s", detail.Category.Slug, detail.Product.Slug), // SEO canonical
 		"Product":         detail.Product,                                                            // Core product data
 		"Category":        detail.Category,                                                           // Parent category
-		"Images":          detail.Images,                                                             // Product image gallery
-		"Features":        detail.Features,                                                           // Features/benefits list
-		"SpecSections":    specSections,                                                              // Specifications grouped by section
-		"Certifications":  detail.Certifications,                                                     // Certifications/compliance
-		"Downloads":       detail.Downloads,                                                          // Downloadable resources
-		"DetailCTA":       detailCTA,                                                                 // Personalized CTA
-		"Sections":        sectionMap,                                                                // Other editable sections
+		"MainImage":       mainImage,
+		"MainImageAlt":    mainImageAlt,
+		"Images":          detail.Images,         // Product image gallery
+		"Features":        detail.Features,       // Features/benefits list
+		"SpecSections":    specSections,          // Specifications grouped by section
+		"Certifications":  detail.Certifications, // Certifications/compliance
+		"Downloads":       detail.Downloads,      // Downloadable resources
+		"DetailCTA":       detailCTA,             // Personalized CTA
+		"Sections":        sectionMap,            // Other editable sections
 	}
 
 	// Handle preview mode (for admin to preview unpublished changes)
 	if preview {
+		data["PreviewStatus"] = detail.Product.Status
 		data["IsPreview"] = true                                                    // Show preview banner in template
 		data["EditURL"] = fmt.Sprintf("/admin/products/%d/edit", detail.Product.ID) // Link to admin editor
 		// Don't cache preview pages (TTL=0)

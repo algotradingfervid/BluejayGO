@@ -399,7 +399,16 @@ RETURNING *;
 -- Use case: Rendering product image gallery, lightbox, thumbnails
 SELECT * FROM product_images
 WHERE product_id = ?
-ORDER BY display_order ASC;
+ORDER BY display_order ASC, id ASC;
+
+-- name: SetPrimaryProductImage :execrows
+-- Select exactly one primary gallery image, only when it belongs to this product.
+UPDATE product_images
+SET is_thumbnail = (product_images.id = sqlc.arg(image_id))
+WHERE product_images.product_id = sqlc.arg(product_id)
+  AND EXISTS (SELECT 1 FROM product_images AS selected
+              WHERE selected.id = sqlc.arg(image_id)
+                AND selected.product_id = sqlc.arg(product_id));
 
 -- name: DeleteProductImage :exec
 -- Deletes a single product gallery image.

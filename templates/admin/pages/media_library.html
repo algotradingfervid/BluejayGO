@@ -168,6 +168,11 @@
         {{else}}
         <div class="bg-white border-2 border-black p-12 text-center" style="box-shadow: 4px 4px 0px #000;">
             <span class="material-symbols-outlined text-5xl text-gray-300 mb-4">perm_media</span>
+            {{if .Search}}
+            <p class="text-lg font-bold uppercase mb-2">No files match your search</p>
+            <p class="text-sm text-gray-600 mb-4">No results for “{{.Search}}”. Try another name or clear your search.</p>
+            <a href="/admin/media" class="inline-block bg-black text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black">Clear search</a>
+            {{else}}
             <p class="text-lg font-bold uppercase mb-2">No Media Files</p>
             <p class="text-sm text-gray-600 mb-4">Upload your first files to get started.</p>
             <button onclick="openUploadModal()"
@@ -175,6 +180,7 @@
                     style="box-shadow: 4px 4px 0px #000;">
                 + Upload Files
             </button>
+            {{end}}
         </div>
         {{end}}
     </div>
@@ -182,7 +188,7 @@
 
 <!-- Upload Modal -->
 <dialog id="upload-modal" aria-labelledby="upload-modal-title" class="media-dialog">
-    <div class="bg-white border-2 border-black w-full max-w-lg" style="box-shadow: 6px 6px 0px #000;">
+    <div class="bg-white border-2 border-black w-full max-w-lg max-h-[90vh] overflow-auto" style="box-shadow: 6px 6px 0px #000;">
         <div class="flex items-center justify-between p-4 border-b-2 border-black bg-gray-100">
             <h2 id="upload-modal-title" class="text-lg font-bold uppercase">Upload Files</h2>
             <button type="button" aria-label="Close upload files" onclick="closeUploadModal()" class="hover:bg-gray-200 p-1">
@@ -190,19 +196,21 @@
             </button>
         </div>
         <div class="p-6">
-            <div id="drop-zone"
-                 class="border-2 border-dashed border-black p-8 text-center cursor-pointer hover:bg-gray-50 mb-4"
+            <button type="button" id="drop-zone" aria-label="Browse files" aria-describedby="upload-file-types"
+                 class="w-full border-2 border-dashed border-black p-8 text-center cursor-pointer hover:bg-gray-50 mb-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"
                  onclick="document.getElementById('file-input').click()"
                  ondragover="event.preventDefault(); this.classList.add('bg-blue-50')"
                  ondragleave="this.classList.remove('bg-blue-50')"
                  ondrop="handleDrop(event)">
                 <span class="material-symbols-outlined text-4xl text-gray-400 mb-2">cloud_upload</span>
-                <p class="text-sm font-bold uppercase mb-1">Drop files here or click to browse</p>
-                <p class="text-xs text-gray-500">JPG, PNG, SVG, GIF, PDF, WebP — Max 10MB per file</p>
-            </div>
+                <span class="block text-sm font-bold uppercase mb-1">Drop files here or browse files</span>
+                <span id="upload-file-types" class="block text-xs text-gray-500">JPG, PNG, SVG, GIF, PDF, WebP — Max 10MB per file</span>
+            </button>
             <input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.svg,.pdf,.webp" class="hidden"
                    onchange="handleFiles(this.files)">
-            <div id="upload-progress" class="space-y-2"></div>
+            <div id="upload-progress" class="space-y-3"></div>
+            <p id="upload-summary" role="status" aria-live="polite" class="text-sm mt-3"></p>
+            <a id="upload-view-files" href="/admin/media" class="hidden mt-4 inline-block bg-black text-white px-4 py-2 border-2 border-black text-sm font-bold">View uploaded files</a>
         </div>
     </div>
 </dialog>
@@ -272,6 +280,7 @@
 let currentView = 'grid';
 let currentMediaId = null;
 let detailRequest = 0;
+let mediaUploadsSaved = false;
 const mediaModalOpeners = new Map();
 function showMediaModal(id, opener) {
     const dialog = document.getElementById(id);
@@ -283,6 +292,7 @@ function showMediaModal(id, opener) {
     const dialog = document.getElementById(id);
     dialog.addEventListener('close', () => {
         if (id === 'detail-modal') { currentMediaId = null; detailRequest++; }
+        if (id === 'upload-modal' && mediaUploadsSaved) { window.location.reload(); return; }
         const opener = mediaModalOpeners.get(id);
         if (opener && opener.isConnected) opener.focus();
     });
@@ -322,7 +332,6 @@ function setView(view) {
 
 function openUploadModal() {
     showMediaModal('upload-modal');
-    document.getElementById('upload-progress').innerHTML = '';
 }
 
 function closeUploadModal() {
@@ -335,48 +344,94 @@ function handleDrop(e) {
     handleFiles(e.dataTransfer.files);
 }
 
+let uploadInProgress = false;
 function handleFiles(files) {
-    const formData = new FormData();
+    if (uploadInProgress || !files.length) return;
     const progressContainer = document.getElementById('upload-progress');
-    progressContainer.innerHTML = '';
-
-    for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
-        const bar = document.createElement('div');
-        bar.innerHTML = `
-            <div class="flex items-center gap-2 text-xs">
-                <span class="truncate flex-1">${files[i].name}</span>
-                <span class="upload-status text-gray-500">Uploading...</span>
-            </div>
-            <div class="w-full bg-gray-200 border border-black mt-1" style="height: 6px;">
-                <div class="bg-blue-600 h-full transition-all" style="width: 0%"></div>
-            </div>`;
-        progressContainer.appendChild(bar);
+    const summary = document.getElementById('upload-summary');
+    const browse = document.getElementById('drop-zone');
+    const viewFiles = document.getElementById('upload-view-files');
+    progressContainer.replaceChildren();
+    summary.textContent = '';
+    viewFiles.classList.add('hidden');
+    const formData = new FormData();
+    const pending = [];
+    let failed = 0;
+    let saved = 0;
+    function showStatus(row, message, success) {
+        row.status.textContent = message;
+        row.status.className = 'block text-xs mt-1 ' + (success ? 'text-green-700' : 'text-red-700');
     }
-
+    for (const file of Array.from(files)) {
+        const container = document.createElement('div');
+        const name = document.createElement('span');
+        name.className = 'block text-xs font-bold';
+        name.style.overflowWrap = 'anywhere';
+        name.textContent = file.name;
+        const status = document.createElement('span');
+        status.className = 'block text-xs text-gray-600 mt-1';
+        container.append(name, status);
+        progressContainer.append(container);
+        const row = {status};
+        if (!/\.(jpe?g|png|gif|svg|pdf|webp)$/i.test(file.name)) {
+            showStatus(row, 'Unsupported file type. Choose JPG, PNG, SVG, GIF, PDF or WebP.', false);
+            failed++;
+        } else if (file.size > 10 * 1024 * 1024) {
+            showStatus(row, 'File exceeds the 10 MB limit. Choose a smaller file.', false);
+            failed++;
+        } else {
+            formData.append('files', file);
+            status.textContent = 'Waiting to upload…';
+            pending.push(row);
+        }
+    }
+    document.getElementById('file-input').value = '';
+    function finish() {
+        uploadInProgress = false;
+        browse.disabled = false;
+        summary.textContent = saved + ' uploaded. ' + failed + ' could not be uploaded.' + (failed ? ' Choose corrected files to try again.' : ' Your files are saved in the library.');
+        viewFiles.classList.toggle('hidden', saved === 0);
+    }
+    if (!pending.length) { finish(); return; }
+    uploadInProgress = true;
+    browse.disabled = true;
+    summary.textContent = 'Uploading ' + pending.length + ' file(s)…';
     const xhr = new XMLHttpRequest();
     xhr.open('POST', '/admin/media/upload');
-    xhr.upload.onprogress = function(e) {
-        if (e.lengthComputable) {
-            const pct = (e.loaded / e.total) * 100;
-            progressContainer.querySelectorAll('.bg-blue-600').forEach(b => b.style.width = pct + '%');
-        }
+    xhr.timeout = 120000;
+    xhr.upload.onprogress = function(event) {
+        const message = event.lengthComputable ? 'Uploading… ' + Math.round(event.loaded / event.total * 100) + '%' : 'Uploading…';
+        pending.forEach(row => row.status.textContent = message);
     };
+    function failRequest(message) {
+        pending.forEach(row => showStatus(row, message, false));
+        failed += pending.length;
+        finish();
+    }
     xhr.onload = function() {
-        if (xhr.status === 200) {
-            progressContainer.querySelectorAll('.upload-status').forEach(s => {
-                s.textContent = 'Done!';
-                s.classList.remove('text-gray-500');
-                s.classList.add('text-green-600');
-            });
-            setTimeout(() => { window.location.reload(); }, 800);
-        } else {
-            progressContainer.querySelectorAll('.upload-status').forEach(s => {
-                s.textContent = 'Error';
-                s.classList.add('text-red-600');
-            });
+        let data;
+        try { data = JSON.parse(xhr.responseText); }
+        catch (_) { failRequest('Upload could not be confirmed. Check the library before retrying.'); return; }
+        if (!Array.isArray(data.results)) {
+            failRequest(data.error || 'Upload could not be confirmed. Check the library before retrying.');
+            return;
         }
+        pending.forEach((row, index) => {
+            const result = data.results.find(item => item.index === index);
+            if (xhr.status >= 200 && xhr.status < 300 && result && result.status === 'uploaded' && result.file && result.file.id) {
+                saved++;
+                mediaUploadsSaved = true;
+                showStatus(row, 'Uploaded', true);
+            } else {
+                failed++;
+                showStatus(row, result && result.error || data.error || 'Upload could not be confirmed. Check the library before retrying.', false);
+            }
+        });
+        finish();
     };
+    xhr.onerror = () => failRequest('Connection lost. Check the library before retrying.');
+    xhr.ontimeout = () => failRequest('Upload timed out. Check the library before retrying.');
+    xhr.onabort = () => failRequest('Upload interrupted. Check the library before retrying.');
     xhr.send(formData);
 }
 

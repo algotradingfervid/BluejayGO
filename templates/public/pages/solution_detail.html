@@ -163,9 +163,9 @@
                 </a>
                 {{end}}
             </div>
-            {{if .PhoneNumber.Valid}}
+            {{if and $.Settings $.Settings.ContactPhone}}
             <p class="font-mono text-sm opacity-80">
-                Or call us directly: <span class="font-bold">{{.PhoneNumber.String}}</span>
+                Or call us directly: <a href="tel:{{$.Settings.ContactPhone}}" class="font-bold underline">{{$.Settings.ContactPhone}}</a>
             </p>
             {{end}}
         </div>

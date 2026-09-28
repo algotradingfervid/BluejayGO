@@ -231,6 +231,7 @@ func (h *CaseStudiesHandler) CaseStudyDetail(c echo.Context) error {
 
 	// Variables to hold case study data regardless of preview vs published query
 	var csID int64
+	previewStatus := "draft"
 	var csTitle, csSlug, csOgImage string
 	var csMetaTitle, csMetaDesc, csBullets sql.NullString
 	var caseStudyObj interface{}
@@ -249,6 +250,9 @@ func (h *CaseStudiesHandler) CaseStudyDetail(c echo.Context) error {
 		}
 		// Extract fields from query result
 		csID, csTitle, csSlug, csOgImage = cs.ID, cs.Title, cs.Slug, cs.OgImage
+		if cs.IsPublished != 0 {
+			previewStatus = "published"
+		}
 		csMetaTitle, csMetaDesc, csBullets = cs.MetaTitle, cs.MetaDescription, cs.ChallengeBullets
 		cs.ChallengeTitle, cs.ChallengeContent = services.NormalizeCaseStudySection(cs.ChallengeTitle, cs.ChallengeContent, "The Challenge")
 		cs.SolutionTitle, cs.SolutionContent = services.NormalizeCaseStudySection(cs.SolutionTitle, cs.SolutionContent, "The Solution")
@@ -321,6 +325,7 @@ func (h *CaseStudiesHandler) CaseStudyDetail(c echo.Context) error {
 
 	// Handle preview mode differently - no caching and add admin edit link
 	if preview {
+		data["PreviewStatus"] = previewStatus
 		data["IsPreview"] = true                                           // Shows preview banner in template
 		data["EditURL"] = fmt.Sprintf("/admin/case-studies/%d/edit", csID) // Link to admin editor
 		// No caching (ttl=0) for preview mode - always fresh content for admins

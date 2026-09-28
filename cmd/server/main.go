@@ -348,7 +348,7 @@ func main() {
 	// HTMX endpoints for managing product details: specs, features, certs, etc.
 	// These routes return HTML fragments for in-page updates without full reload
 
-	pdHandler := adminHandlers.NewProductDetailsHandler(queries, logger, uploadSvc)
+	pdHandler := adminHandlers.NewProductDetailsHandler(queries, logger, uploadSvc, appCache)
 
 	// Technical Specifications - key/value pairs (e.g., "Weight: 2.5kg")
 	adminGroup.GET("/products/:id/specs", pdHandler.ListSpecs)              // HTMX: render specs list
@@ -382,6 +382,7 @@ func main() {
 	adminGroup.POST("/products/:id/images", pdHandler.AddImage)                // HTMX: upload new image
 	adminGroup.DELETE("/products/:id/images/:image_id", pdHandler.DeleteImage) // HTMX: delete specific image
 	adminGroup.POST("/products/:id/images/:image_id", pdHandler.UpdateImage)   // HTMX: update image metadata
+	adminGroup.POST("/products/:id/images/:image_id/primary", pdHandler.SetPrimaryImage)
 
 	// ─────────────────────────────────────────────────────────────────────────
 	// Admin Blog Management Routes (Phase 5)

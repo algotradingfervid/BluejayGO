@@ -238,32 +238,27 @@
         <div class="mt-8 max-w-4xl">
             <h2 class="text-lg font-bold uppercase mb-4">Product Details</h2>
             <div class="border-b-2 border-black mb-6">
-                <nav class="flex" id="detail-tabs">
-                    <button class="px-4 py-2 text-sm font-bold uppercase bg-black text-white border-2 border-black border-b-0"
+                <nav class="flex flex-wrap gap-1" id="detail-tabs" aria-label="Product detail sections">
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-black text-white border-2 border-black"
                             hx-get="/admin/products/{{.Item.ID}}/specs"
                             hx-target="#detail-content"
-                            hx-swap="innerHTML"
-                            onclick="setActiveTab(this)">Specs</button>
-                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100"
+                            hx-swap="innerHTML" aria-current="page">Specs</button>
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black hover:bg-gray-100"
                             hx-get="/admin/products/{{.Item.ID}}/features"
                             hx-target="#detail-content"
-                            hx-swap="innerHTML"
-                            onclick="setActiveTab(this)">Features</button>
-                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100"
+                            hx-swap="innerHTML">Features</button>
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black hover:bg-gray-100"
                             hx-get="/admin/products/{{.Item.ID}}/certifications"
                             hx-target="#detail-content"
-                            hx-swap="innerHTML"
-                            onclick="setActiveTab(this)">Certs</button>
-                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100"
+                            hx-swap="innerHTML">Certs</button>
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black hover:bg-gray-100"
                             hx-get="/admin/products/{{.Item.ID}}/downloads"
                             hx-target="#detail-content"
-                            hx-swap="innerHTML"
-                            onclick="setActiveTab(this)">Downloads</button>
-                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100"
+                            hx-swap="innerHTML">Downloads</button>
+                    <button class="px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black hover:bg-gray-100"
                             hx-get="/admin/products/{{.Item.ID}}/images"
                             hx-target="#detail-content"
-                            hx-swap="innerHTML"
-                            onclick="setActiveTab(this)">Images</button>
+                            hx-swap="innerHTML">Images</button>
                 </nav>
             </div>
             <div id="detail-content"
@@ -321,10 +316,21 @@ function previewImage(input) {
 
 function setActiveTab(el) {
     document.querySelectorAll('#detail-tabs button').forEach(function(btn) {
-        btn.className = 'px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black border-b-0 border-l-0 hover:bg-gray-100';
+        btn.removeAttribute('aria-current');
+        btn.className = 'px-4 py-2 text-sm font-bold uppercase bg-white text-black border-2 border-black hover:bg-gray-100';
     });
-    el.className = 'px-4 py-2 text-sm font-bold uppercase bg-black text-white border-2 border-black border-b-0';
+    el.setAttribute('aria-current', 'page');
+    el.className = 'px-4 py-2 text-sm font-bold uppercase bg-black text-white border-2 border-black';
 }
+
+// A canceled or failed request must leave the visible section and its tab aligned.
+document.addEventListener('htmx:afterSwap', function(event) {
+    var detail = event.detail;
+    var source = detail.requestConfig && detail.requestConfig.elt;
+    if (detail.target && detail.target.id === 'detail-content' && source && source.matches('#detail-tabs button') && detail.xhr.status >= 200 && detail.xhr.status < 300) {
+        setActiveTab(source);
+    }
+});
 
 // Auto-slug generation
 (function() {

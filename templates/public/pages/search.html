@@ -1,40 +1,45 @@
 {{define "content"}}
-<div class="max-w-[1200px] mx-auto px-4 py-20">
+<div class="max-w-[1200px] mx-auto px-4 py-12 sm:py-20">
     <h1 class="font-mono font-black text-3xl uppercase mb-8">Search</h1>
 
-    <div class="mb-12">
-        <form action="/search" method="GET" class="flex gap-4">
-            <input type="text" name="q" value="{{.Query}}" placeholder="Search products, articles, case studies..."
-                class="flex-1 manual-border p-4 font-mono text-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                hx-get="/search/suggest" hx-trigger="input changed delay:300ms" hx-target="#suggestions">
-            <button type="submit" class="manual-border bg-primary text-white px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">
-                <span class="material-symbols-outlined">search</span>
-            </button>
-        </form>
-        <div id="suggestions" class="relative"></div>
-    </div>
+    <form action="/search" method="GET" role="search" class="mb-12">
+        <label for="site-search-query" class="block font-bold mb-2">Search products and articles</label>
+        <div class="flex flex-col sm:flex-row gap-4">
+            <input id="site-search-query" type="search" name="q" value="{{.Query}}" placeholder="Search products and articles..."
+                class="min-w-0 w-full flex-1 manual-border p-4 font-mono text-lg focus:outline-none focus:ring-2 focus:ring-primary">
+            <button type="submit" class="manual-border bg-primary text-white px-8 py-4 font-mono font-bold uppercase manual-shadow btn-press">Search</button>
+        </div>
+    </form>
 
     {{if .Query}}
     <div class="space-y-8">
+        <h2 class="font-mono font-bold text-xl [overflow-wrap:anywhere]">Results for “{{.Query}}”</h2>
         {{if .Results}}
+        <p class="text-sm">Page {{.Page}} · {{len .Results}} result{{if ne (len .Results) 1}}s{{end}} shown</p>
         {{range .Results}}
-        <div class="manual-border bg-white p-6 manual-shadow">
-            <div class="inline-block bg-primary/10 text-primary px-2 py-1 text-[10px] font-bold uppercase mb-2">
-                {{.Type}}
-            </div>
+        <div class="manual-border bg-white p-6 manual-shadow [overflow-wrap:anywhere]">
+            <div class="inline-block bg-primary/10 text-primary px-2 py-1 text-[10px] font-bold uppercase mb-2">{{.Type}}</div>
             <h3 class="font-mono font-bold text-xl mb-2">
                 <a href="{{.URL}}" class="hover:text-primary">{{.Title}}</a>
             </h3>
-            {{if .Excerpt}}
-            <p class="font-mono text-sm opacity-60">{{.Excerpt}}</p>
-            {{end}}
+            {{if .Excerpt}}<p class="font-mono text-sm opacity-60">{{.Excerpt}}</p>{{end}}
         </div>
         {{end}}
+        {{else if .PreviousURL}}
+        <p>No results on this page. <a href="{{.FirstURL}}" class="underline font-bold">Return to the first page</a>.</p>
         {{else}}
         <div class="text-center py-12">
-            <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">search_off</span>
-            <p class="font-mono text-lg opacity-60">No results found for "{{.Query}}"</p>
+            <span aria-hidden="true" class="material-symbols-outlined text-6xl text-gray-300 mb-4">search_off</span>
+            <p class="font-mono text-lg opacity-60">No results found. Try a shorter keyword or check the spelling.</p>
+            <a href="/products" class="inline-block underline font-bold py-3">Browse all products</a>
         </div>
+        {{end}}
+        {{if or .PreviousURL .NextURL}}
+        <nav aria-label="Search result pages" class="flex flex-wrap items-center gap-4">
+            {{if .PreviousURL}}<a href="{{.PreviousURL}}" rel="prev" class="manual-border px-4 py-3 font-bold underline">Previous page</a>{{end}}
+            <span>Page {{.Page}}</span>
+            {{if .NextURL}}<a href="{{.NextURL}}" rel="next" class="manual-border px-4 py-3 font-bold underline">Next page</a>{{end}}
+        </nav>
         {{end}}
     </div>
     {{end}}

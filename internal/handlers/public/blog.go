@@ -316,7 +316,7 @@ func (h *BlogHandler) BlogPost(c echo.Context) error {
 	var post interface{}
 	var postID int64
 	var postTitle, postSlug, postMetaTitle, metaDesc string
-	var postOgImage string
+	var postOgImage, previewStatus string
 	var postMetaDesc sql.NullString
 
 	// Execute different query based on preview mode
@@ -331,6 +331,7 @@ func (h *BlogHandler) BlogPost(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusInternalServerError)
 		}
 		// Extract fields from preview query result
+		previewStatus = p.Status
 		post = p
 		postID = p.ID
 		postTitle = p.Title
@@ -385,6 +386,7 @@ func (h *BlogHandler) BlogPost(c echo.Context) error {
 
 	// Handle preview mode
 	if preview {
+		data["PreviewStatus"] = previewStatus
 		data["IsPreview"] = true                                           // Show preview banner in template
 		data["EditURL"] = fmt.Sprintf("/admin/blog/posts/%d/edit", postID) // Link to admin editor
 		// Don't cache preview pages (TTL=0)

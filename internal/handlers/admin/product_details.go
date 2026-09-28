@@ -26,17 +26,19 @@ type ProductDetailsHandler struct {
 	logger    *slog.Logger                  // Structured logger for error reporting
 	uploadSvc *services.UploadService       // Service for handling file and image uploads
 	partials  map[string]*template.Template // Pre-parsed partial templates for performance
+	cache     *services.Cache
 }
 
 // NewProductDetailsHandler creates and returns a new ProductDetailsHandler instance.
 // It pre-loads all partial templates during initialization for better performance.
 // This constructor is typically called during application initialization.
-func NewProductDetailsHandler(queries *sqlc.Queries, logger *slog.Logger, uploadSvc *services.UploadService) *ProductDetailsHandler {
+func NewProductDetailsHandler(queries *sqlc.Queries, logger *slog.Logger, uploadSvc *services.UploadService, cache *services.Cache) *ProductDetailsHandler {
 	h := &ProductDetailsHandler{
 		queries:   queries,
 		logger:    logger,
 		uploadSvc: uploadSvc,
 		partials:  make(map[string]*template.Template),
+		cache:     cache,
 	}
 	// Pre-parse all partial templates at initialization
 	h.loadPartials()
@@ -707,18 +709,26 @@ func (h *ProductDetailsHandler) AddImage(c echo.Context) error {
 	caption := c.FormValue("caption")
 
 	// Create database record for the image
-	_, err = h.queries.CreateProductImage(ctx, sqlc.CreateProductImageParams{
+	image, err := h.queries.CreateProductImage(ctx, sqlc.CreateProductImageParams{
 		ProductID:    id,
 		ImagePath:    path,                                                  // Stored path from upload service
 		AltText:      sql.NullString{String: altText, Valid: altText != ""}, // Only store if provided
 		Caption:      sql.NullString{String: caption, Valid: caption != ""}, // Only store if provided
 		DisplayOrder: order,
-		IsThumbnail:  isThumbnail, // Boolean flag for thumbnail designation
+		IsThumbnail:  false, // Primary selection is normalized in one scoped update below.
 	})
 	if err != nil {
 		h.logger.Error("failed to create image", "error", err)
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
+
+	if isThumbnail {
+		if _, err := h.queries.SetPrimaryProductImage(ctx, sqlc.SetPrimaryProductImageParams{ImageID: image.ID, ProductID: id}); err != nil {
+			h.logger.Error("failed to select primary image", "error", err)
+			return echo.NewHTTPError(http.StatusInternalServerError)
+		}
+	}
+	h.invalidateProductImages()
 
 	// Log the activity for audit trail
 	logActivity(c, "updated", "product", id, "", "Added image to Product #%d", id)
@@ -748,6 +758,7 @@ func (h *ProductDetailsHandler) DeleteImage(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
+	h.invalidateProductImages()
 	// Log the deletion
 	logActivity(c, "updated", "product", id, "", "Deleted image from Product #%d", id)
 
@@ -777,6 +788,35 @@ func (h *ProductDetailsHandler) UpdateImage(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 
+	h.invalidateProductImages()
 	logActivity(c, "updated", "product", id, "", "Updated image for Product #%d", id)
 	return h.ListImages(c)
+}
+
+// SetPrimaryImage selects a gallery image only within its owning product.
+func (h *ProductDetailsHandler) SetPrimaryImage(c echo.Context) error {
+	productID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil || productID <= 0 {
+		return echo.NewHTTPError(http.StatusNotFound, "Product image not found")
+	}
+	imageID, err := strconv.ParseInt(c.Param("image_id"), 10, 64)
+	if err != nil || imageID <= 0 {
+		return echo.NewHTTPError(http.StatusNotFound, "Product image not found")
+	}
+	changed, err := h.queries.SetPrimaryProductImage(c.Request().Context(), sqlc.SetPrimaryProductImageParams{ProductID: productID, ImageID: imageID})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to select primary image")
+	}
+	if changed == 0 {
+		return echo.NewHTTPError(http.StatusNotFound, "Product image not found")
+	}
+	h.invalidateProductImages()
+	logActivity(c, "updated", "product", productID, "", "Selected primary gallery image for Product #%d", productID)
+	return h.ListImages(c)
+}
+
+func (h *ProductDetailsHandler) invalidateProductImages() {
+	if h.cache != nil {
+		h.cache.DeleteByPrefix("page:products")
+	}
 }

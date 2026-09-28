@@ -1,52 +1,36 @@
-// Package public provides HTTP handlers for public-facing website features.
-// This file implements full-text search functionality across products and blog posts.
 package public
 
 import (
-	"bytes"        // Used for buffering HTML fragments before sending to client
-	"database/sql" // Provides database/sql driver interfaces for SQLite database access
-	"log/slog"     // Structured logging for search query tracking and error reporting
-	"net/http"     // HTTP status codes and constants
-	"strings"      // String manipulation for query sanitization and FTS5 token processing
+	"bytes"
+	"context"
+	"database/sql"
+	"log/slog"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 
-	"github.com/labstack/echo/v4" // Echo web framework for HTTP request/response handling
+	"github.com/labstack/echo/v4"
 )
 
-// SearchResult represents a single search result from any content type.
-// Used to unify results from products, blog posts, and case studies into a consistent format.
+// SearchResult is a published product or article returned by site search.
 type SearchResult struct {
-	Type    string // Content type: "Product" or "Article"
-	Title   string // Display title of the content
-	URL     string // Relative URL path to the content detail page
-	Excerpt string // Short preview text (tagline for products, excerpt for blog posts)
+	Type    string
+	Title   string
+	URL     string
+	Excerpt string
 }
 
-// SearchHandler processes full-text search requests across multiple content types.
-// Uses SQLite FTS5 (Full-Text Search) indexes for fast query performance.
 type SearchHandler struct {
-	db     *sql.DB      // Database connection for executing FTS5 queries
-	logger *slog.Logger // Structured logger for tracking search queries and debugging errors
+	db     *sql.DB
+	logger *slog.Logger
 }
 
-// NewSearchHandler creates a new search handler with database and logger dependencies.
 func NewSearchHandler(db *sql.DB, logger *slog.Logger) *SearchHandler {
 	return &SearchHandler{db: db, logger: logger}
 }
 
-// sanitizeQuery removes FTS5 special characters and adds prefix matching.
-// Prevents FTS5 syntax errors from user input while enabling partial word matching.
-//
-// Security: Neutralizes FTS5 query operators (quotes, wildcards, boolean operators)
-// that could cause SQL injection or unexpected query behavior.
-//
-// Behavior:
-//   - Removes special FTS5 characters: " * ( ) + - ^ : { } ~
-//   - Splits input into individual words
-//   - Wraps each word in quotes and appends * for prefix matching
-//   - Example: "bluetooth speaker" becomes "bluetooth"* "speaker"*
-//
-// This allows users to find "speaker" when searching for "spea" but prevents
-// malicious FTS5 syntax from being executed.
+// sanitizeQuery turns user words into literal FTS prefix terms.
 func sanitizeQuery(q string) string {
 	q = strings.TrimSpace(q)
 	if q == "" {
@@ -83,199 +67,118 @@ func sanitizeQuery(q string) string {
 	return strings.Join(words, " ")
 }
 
-// search executes full-text search queries across products and blog posts.
-// Returns a unified list of results from all content types, limited by the limit parameter.
-//
-// FTS5 Implementation:
-//   - Uses SQLite FTS5 virtual tables (products_fts, blog_posts_fts, case_studies_fts)
-//   - Joins FTS5 results back to main tables via rowid for full data access
-//   - MATCH clause uses sanitized query to prevent syntax errors
-//   - Only searches published content (status = 'published')
-//
-// Query Processing:
-//   - Sanitizes query using sanitizeQuery to prevent FTS5 syntax errors
-//   - Returns nil if sanitized query is empty (invalid input)
-//   - Executes three separate queries sequentially (products → blog → case studies)
-//   - Errors are logged but don't stop subsequent searches (graceful degradation)
-//
-// Performance:
-//   - FTS5 indexes provide fast full-text matching across title, content, and metadata
-//   - LIMIT parameter controls result count per content type
-//   - Results are appended to single slice (not sorted by relevance)
-func (h *SearchHandler) search(query string, limit int) []SearchResult {
+// search returns a stable page of published products and articles. The same
+// matching rules serve suggestions and the complete results page. A negative
+// perTypeLimit leaves each type uncapped for complete paginated results.
+func (h *SearchHandler) search(ctx context.Context, query string, limit, offset, perTypeLimit int64) ([]SearchResult, error) {
 	ftsQuery := sanitizeQuery(query)
 	if ftsQuery == "" {
-		return nil
+		return nil, nil
 	}
-
+	rows, err := h.db.QueryContext(ctx, `
+        WITH product_matches AS (
+            SELECT 0 AS type_order, 'Product' AS result_type, p.name AS title,
+                '/products/' || pc.slug || '/' || p.slug AS url,
+                COALESCE(p.tagline, '') AS excerpt
+            FROM products_fts f
+            JOIN products p ON f.rowid = p.id
+            JOIN product_categories pc ON p.category_id = pc.id
+            WHERE products_fts MATCH ? AND p.status = 'published'
+            ORDER BY p.name COLLATE NOCASE, p.slug LIMIT ?
+        ), article_matches AS (
+            SELECT 1 AS type_order, 'Article' AS result_type, bp.title AS title,
+                '/blog/' || bp.slug AS url, COALESCE(bp.excerpt, '') AS excerpt
+            FROM blog_posts_fts f
+            JOIN blog_posts bp ON f.rowid = bp.id
+            WHERE blog_posts_fts MATCH ? AND bp.status = 'published'
+            ORDER BY bp.title COLLATE NOCASE, bp.slug LIMIT ?
+        )
+        SELECT result_type, title, url, excerpt FROM (
+            SELECT * FROM product_matches UNION ALL SELECT * FROM article_matches
+        ) ORDER BY type_order, title COLLATE NOCASE, url
+        LIMIT ? OFFSET ?`, ftsQuery, perTypeLimit, ftsQuery, perTypeLimit, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 	var results []SearchResult
-
-	// Search products across name, tagline, and description fields
-	// FTS5 index: products_fts includes searchable product content
-	// URL format: /products/{category-slug}/{product-slug}
-	rows, err := h.db.Query(
-		`SELECT p.name, pc.slug, p.slug, COALESCE(p.tagline, '') FROM products_fts f JOIN products p ON f.rowid = p.id JOIN product_categories pc ON p.category_id = pc.id WHERE products_fts MATCH ? AND p.status = 'published' LIMIT ?`,
-		ftsQuery, limit,
-	)
-	if err != nil {
-		h.logger.Error("products fts query failed", "error", err)
-	} else {
-		defer rows.Close()
-		for rows.Next() {
-			var name, catSlug, slug, tagline string
-			if err := rows.Scan(&name, &catSlug, &slug, &tagline); err == nil {
-				// Build hierarchical URL with category slug for better SEO
-				results = append(results, SearchResult{
-					Type:    "Product",
-					Title:   name,
-					URL:     "/products/" + catSlug + "/" + slug,
-					Excerpt: tagline, // Product tagline used as search result preview
-				})
-			}
+	for rows.Next() {
+		var result SearchResult
+		if err := rows.Scan(&result.Type, &result.Title, &result.URL, &result.Excerpt); err != nil {
+			return nil, err
 		}
+		results = append(results, result)
 	}
-
-	// Search blog posts across title, excerpt, and content fields
-	// FTS5 index: blog_posts_fts includes title, excerpt, and full HTML content
-	// URL format: /blog/{post-slug}
-	rows2, err := h.db.Query(
-		`SELECT bp.title, bp.slug, bp.excerpt FROM blog_posts_fts f JOIN blog_posts bp ON f.rowid = bp.id WHERE blog_posts_fts MATCH ? AND bp.status = 'published' LIMIT ?`,
-		ftsQuery, limit,
-	)
-	if err != nil {
-		h.logger.Error("blog_posts fts query failed", "error", err)
-	} else {
-		defer rows2.Close()
-		for rows2.Next() {
-			var title, slug, excerpt string
-			if err := rows2.Scan(&title, &slug, &excerpt); err == nil {
-				// Blog posts labeled as "Article" for user-facing display
-				results = append(results, SearchResult{
-					Type:    "Article",
-					Title:   title,
-					URL:     "/blog/" + slug,
-					Excerpt: excerpt, // Blog excerpt used as search result preview
-				})
-			}
-		}
-	}
-
-	return results
+	return results, rows.Err()
 }
 
-// SearchPage handles the main search results page.
-//
-// HTTP Method: GET
-// Route: /search
-// Query Parameters:
-//   - q: search query string (optional, if empty shows empty results)
-//
-// Template: public/pages/search.html (full page render)
-// HTMX: Not an HTMX endpoint - returns full HTML page
-//
-// Template Data:
-//   - Title: Page title for <title> tag and breadcrumbs
-//   - Query: User's search query (echoed back for display in search box)
-//   - Results: Array of SearchResult objects (empty if no query or no matches)
-//   - Settings: Site settings from middleware (logo, site name, etc.)
-//   - FooterCategories: Product categories for footer navigation
-//   - FooterSolutions: Solutions for footer navigation
-//   - FooterResources: Resource links for footer navigation
-//
-// SEO Behavior:
-//   - Search results pages are not indexed (should include noindex meta tag)
-//   - Query parameter preserved in URL for sharing search results
-//   - Empty query shows search form without results
-//
-// Performance:
-//   - Limits results to 10 per content type (30 max total)
-//   - FTS5 queries are fast even on large content sets
+const searchPageSize int64 = 20
+
+func searchURL(query string, page int64) string {
+	values := url.Values{"q": {query}}
+	if page > 1 {
+		values.Set("page", strconv.FormatInt(page, 10))
+	}
+	return "/search?" + values.Encode()
+}
+
+// SearchPage uses one extra result to detect another page without presenting a
+// capped result count as a total. Invalid page input returns the first page.
 func (h *SearchHandler) SearchPage(c echo.Context) error {
-	query := c.QueryParam("q")
-
-	var results []SearchResult
-	if query != "" {
-		// Execute search across all content types, max 10 results per type
-		results = h.search(query, 10)
+	query := strings.TrimSpace(c.QueryParam("q"))
+	page := int64(1)
+	if value, err := strconv.ParseUint(c.QueryParam("page"), 10, 31); err == nil && value > 0 {
+		page = int64(value)
 	}
-
-	// Build template data with search results and shared layout data
+	if query == "" {
+		page = 1
+	}
+	results, err := h.search(c.Request().Context(), query, searchPageSize+1, (page-1)*searchPageSize, -1)
+	if err != nil {
+		h.logger.Error("site search failed", "error", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Search is temporarily unavailable. Please try again.")
+	}
+	hasNext := int64(len(results)) > searchPageSize
+	if hasNext {
+		results = results[:searchPageSize]
+	}
 	data := map[string]interface{}{
-		"Title":   "Search", // Page title for <title> tag
-		"Query":   query,    // Echo query back for search box value
-		"Results": results,  // Search results or nil if no query
+		"Title": "Search", "Query": query, "Results": results, "Page": page,
+		"FirstURL": searchURL(query, 1),
 	}
-
-	// Add shared layout data from middleware (footer nav, site settings)
-	// These are populated by middleware.LoadFooterData and middleware.LoadSettings
-	if settings := c.Get("settings"); settings != nil {
-		data["Settings"] = settings
+	if page > 1 {
+		data["PreviousURL"] = searchURL(query, page-1)
 	}
-	if cats := c.Get("footer_categories"); cats != nil {
-		data["FooterCategories"] = cats
+	if hasNext {
+		data["NextURL"] = searchURL(query, page+1)
 	}
-	if sols := c.Get("footer_solutions"); sols != nil {
-		data["FooterSolutions"] = sols
+	for key, contextKey := range map[string]string{
+		"Settings": "settings", "FooterCategories": "footer_categories",
+		"FooterSolutions": "footer_solutions", "FooterResources": "footer_resources",
+	} {
+		if value := c.Get(contextKey); value != nil {
+			data[key] = value
+		}
 	}
-	if res := c.Get("footer_resources"); res != nil {
-		data["FooterResources"] = res
-	}
-
-	// Render full search results page with layout
 	return c.Render(http.StatusOK, "public/pages/search.html", data)
 }
 
-// SearchSuggest provides live search suggestions as the user types.
-//
-// HTTP Method: GET
-// Route: /search/suggest
-// Query Parameters:
-//   - q: partial search query string (required for results)
-//
-// Template: public/partials/search_suggestions.html (HTML fragment)
-// HTMX: This is an HTMX endpoint - returns HTML fragment, not full page
-//
-// HTMX Integration:
-//   - Triggered by hx-get on search input field
-//   - Uses hx-trigger="keyup changed delay:300ms" for debounced suggestions
-//   - HTML fragment replaces suggestion dropdown container
-//   - No layout/header/footer - just search result list
-//
-// Template Data:
-//   - Results: Array of SearchResult objects (max 5 items)
-//
-// UX Behavior:
-//   - Shows fewer results (5) than full search page (10) for faster rendering
-//   - Empty query returns empty results (no suggestions shown)
-//   - Renders partial template directly into page via HTMX swap
-//
-// Performance:
-//   - Limits to 5 results total for fast response time
-//   - FTS5 prefix matching enables "type-ahead" behavior
-//   - Buffer used to render template before returning (error handling)
+// SearchSuggest deliberately shows a short list with a route to every result.
 func (h *SearchHandler) SearchSuggest(c echo.Context) error {
 	query := strings.TrimSpace(c.QueryParam("q"))
-
-	var results []SearchResult
-	if query != "" {
-		// Execute search with lower limit (5) for faster suggestion response
-		results = h.search(query, 5)
+	results, err := h.search(c.Request().Context(), query, 10, 0, 5)
+	if err != nil {
+		h.logger.Error("search suggestions failed", "error", err)
+		// The modal can recover through the normal results page after a retry.
+		return echo.NewHTTPError(http.StatusInternalServerError, "Search is temporarily unavailable. Please try again.")
 	}
-
-	// Build minimal template data - no layout data needed for HTMX fragment
 	data := map[string]interface{}{
-		"Results": results,
-		"Query":   query,
+		"Results": results, "Query": query, "SearchURL": searchURL(query, 1),
 	}
-
-	// Render template to buffer to catch errors before sending response
-	// This prevents partial HTML being sent on template errors
 	var buf bytes.Buffer
 	if err := c.Echo().Renderer.Render(&buf, "public/partials/search_suggestions.html", data, c); err != nil {
 		h.logger.Error("search suggestions render failed", "error", err)
 		return err
 	}
-
-	// Return HTML fragment for HTMX to inject into page
 	return c.HTML(http.StatusOK, buf.String())
 }

@@ -536,7 +536,7 @@ func (q *Queries) GetWhitepaperBySlug(ctx context.Context, slug string) (GetWhit
 
 const getWhitepaperBySlugIncludeDrafts = `-- name: GetWhitepaperBySlugIncludeDrafts :one
 SELECT
-    w.id, w.title, w.slug, w.description, w.topic_id, w.pdf_file_path, w.file_size_bytes,
+    w.id, w.title, w.slug, w.description, w.topic_id, w.pdf_file_path, w.file_size_bytes, w.is_published,
     w.page_count, w.published_date, w.cover_color_from, w.cover_color_to, w.download_count,
     w.meta_description, w.meta_title, w.og_image,
     t.name as topic_name, t.color_hex as topic_color_hex
@@ -553,6 +553,7 @@ type GetWhitepaperBySlugIncludeDraftsRow struct {
 	TopicID         int64          `json:"topic_id"`
 	PdfFilePath     string         `json:"pdf_file_path"`
 	FileSizeBytes   int64          `json:"file_size_bytes"`
+	IsPublished     int64          `json:"is_published"`
 	PageCount       sql.NullInt64  `json:"page_count"`
 	PublishedDate   string         `json:"published_date"`
 	CoverColorFrom  string         `json:"cover_color_from"`
@@ -586,6 +587,7 @@ func (q *Queries) GetWhitepaperBySlugIncludeDrafts(ctx context.Context, slug str
 		&i.TopicID,
 		&i.PdfFilePath,
 		&i.FileSizeBytes,
+		&i.IsPublished,
 		&i.PageCount,
 		&i.PublishedDate,
 		&i.CoverColorFrom,

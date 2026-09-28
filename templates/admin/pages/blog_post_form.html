@@ -12,7 +12,8 @@
         </div>
 
         {{if .Saved}}<div role="status" class="border-2 border-green-700 bg-green-50 p-4 mb-4">{{if eq .Item.Status "published"}}Post published. <a class="underline" href="/blog/{{.Item.Slug}}" target="_blank" rel="noopener">View published post</a>{{else}}Draft saved. This post is not public.{{end}}</div>{{end}}
-        <form data-dirty-track action="{{.FormAction}}" method="POST" id="blog-post-form">
+        {{if .BodyError}}<div role="alert" class="border-2 border-red-700 bg-red-50 p-4 mb-4"><p class="font-bold">Your changes were not saved or published.</p><a href="#body-input" data-body-error-link class="underline">{{.BodyError}}</a></div>{{end}}
+        <form data-dirty-track {{if .BodyError}}data-dirty-on-load{{end}} action="{{.FormAction}}" method="POST" id="blog-post-form">
             <div class="flex flex-col lg:flex-row gap-6">
 
                 <!-- LEFT COLUMN (2/3) - Content -->
@@ -68,10 +69,12 @@
                         </div>
                         <div>
                             <label for="body-input" class="block text-xs font-bold uppercase mb-1">
-                                Body *
+                                Body (required to publish)
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="The main content of your post. Use the toolbar for formatting, images, and links.">ⓘ</span>
                             </label>
-                            <textarea id="body-input" name="body" data-rich-editor aria-label="Body" rows="8" class="w-full border-2 border-black p-3 text-sm">{{if .Item}}{{.Item.Body}}{{end}}</textarea>
+                            <textarea id="body-input" name="body" data-rich-editor aria-label="Body" aria-describedby="body-help{{if .BodyError}} body-error{{end}}" {{if .BodyError}}aria-invalid="true"{{end}} rows="8" class="w-full border-2 border-black p-3 text-sm">{{if .Item}}{{.Item.Body}}{{end}}</textarea>
+                            <p id="body-help" class="text-xs text-gray-600 mt-1">Add article text or media before publishing. An unfinished body can be saved as a draft.</p>
+                            {{if .BodyError}}<p id="body-error" class="text-sm text-red-700 font-bold mt-2">{{.BodyError}}</p>{{end}}
                         <p data-editor-fallback class="text-xs text-gray-600 mt-1">Formatting tools are unavailable. You can edit the HTML here; existing content is preserved.</p>
                         </div>
                     </div>
@@ -86,7 +89,7 @@
                         <div class="p-4 space-y-4">
                             <div>
                                 <p class="block text-xs font-bold uppercase mb-1">Current saved status</p>
-                                <p>{{if .Item}}{{if eq .Item.Status "published"}}Published{{else}}Draft{{end}}{{else}}Not saved{{end}}</p>
+                                <p>{{if and .Item .Item.ID}}{{if eq .Item.Status "published"}}Published{{else}}Draft{{end}}{{else}}Not saved{{end}}</p>
                                 <input type="hidden" name="status" value="{{if .Item}}{{.Item.Status}}{{else}}draft{{end}}">
                                 <p class="text-xs text-gray-600">Publish makes this post public. Save Draft makes it private, including a previously published post.</p>
                             </div>
@@ -96,7 +99,7 @@
                                     <span class="inline-block ml-1 cursor-help text-gray-400" title="Date displayed on the article. This does not schedule publication; Publish makes the post public immediately.">ⓘ</span>
                                 </label>
                                 <input id="blog_post_form-published-at" aria-describedby="published-date-help" type="datetime-local" name="published_at"
-                                       value="{{if .Item}}{{if .Item.PublishedAt.Valid}}{{.Item.PublishedAt.Time.Format "2006-01-02T15:04"}}{{end}}{{end}}"
+                                       value="{{if .BodyError}}{{.PublishedDateValue}}{{else if .Item}}{{if .Item.PublishedAt.Valid}}{{.Item.PublishedAt.Time.Format "2006-01-02T15:04"}}{{end}}{{end}}"
                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                        style="font-family: 'JetBrains Mono', monospace;">
                                 <p id="published-date-help" class="text-xs text-gray-600">Article date only. Publish makes the post public immediately.</p>
@@ -107,7 +110,7 @@
                                     <span class="inline-block ml-1 cursor-help text-gray-400" title="Estimated reading time. Helps readers decide to read now or save for later.">ⓘ</span>
                                 </label>
                                 <input id="blog_post_form-reading-time-minutes" type="number" name="reading_time_minutes" min="1"
-                                       value="{{if .Item}}{{if .Item.ReadingTimeMinutes.Valid}}{{.Item.ReadingTimeMinutes.Int64}}{{end}}{{end}}"
+                                       value="{{if .BodyError}}{{.ReadingTimeValue}}{{else if .Item}}{{if .Item.ReadingTimeMinutes.Valid}}{{.Item.ReadingTimeMinutes.Int64}}{{end}}{{end}}"
                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                        style="font-family: 'JetBrains Mono', monospace;">
                             </div>
@@ -123,9 +126,9 @@
                                     Publish
                                 </button>
                             </div>
-                            {{if .Item}}
+                            {{if and .Item .Item.ID}}
                             <div class="pt-2">
-                                <a href="/blog/{{.Item.Slug}}?preview=true" target="_blank"
+                                <a href="/blog/{{if .BodyError}}{{.SavedSlug}}{{else}}{{.Item.Slug}}{{end}}?preview=true" target="_blank"
                                    title="Shows the last saved version. Save changes before previewing." data-saved-preview aria-describedby="saved-preview-help"
                                    class="w-full bg-gray-100 text-black px-4 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-gray-200 inline-flex items-center justify-center gap-2"
                                    style="box-shadow: 2px 2px 0px #000; text-decoration: none;">
@@ -320,6 +323,30 @@
 </div>
 <script>
 (function() {
+    // A rejected publication keeps its inputs and focuses the visible editor.
+    // Trix loads later, so preserve error semantics when it replaces the textarea.
+    var bodyInput = document.getElementById('body-input');
+    var bodyError = document.getElementById('body-error');
+    function focusBodyError() {
+        var editor = document.getElementById('body-input-editor');
+        var target = editor && bodyInput.hidden ? editor : bodyInput;
+        if (bodyError && target) {
+            target.setAttribute('aria-invalid', 'true');
+            target.setAttribute('aria-describedby', 'body-help body-error');
+            target.focus();
+            target.scrollIntoView({block: 'center'});
+        }
+    }
+    if (bodyError) {
+        document.addEventListener('DOMContentLoaded', focusBodyError, {once: true});
+        document.addEventListener('trix-initialize', function(event) {
+            if (event.target.id === 'body-input-editor') focusBodyError();
+        });
+        document.querySelector('[data-body-error-link]').addEventListener('click', function(event) {
+            event.preventDefault();
+            focusBodyError();
+        });
+    }
     // Slug auto-generation and edit toggle
     var titleInput = document.getElementById('post-title');
     var slugInput = document.getElementById('post-slug');

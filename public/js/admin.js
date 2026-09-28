@@ -269,6 +269,26 @@
         // Suggestions and child actions do not save the surrounding editor.
         if (form && detail.elt === form && ['post', 'put', 'patch'].includes(verb) && detail.successful) window.AdminForms.markSaved(form);
     });
+    document.addEventListener('htmx:confirm', function(event) {
+        var detail = event.detail || {};
+        var target = detail.target;
+        // Tabs and sibling actions (such as Set Primary) can replace forms
+        // without navigating. Protect those edits, excluding the form being
+        // submitted and unrelated parents such as a live suggestion's editor.
+        if (event.defaultPrevented || !target || !target.querySelectorAll) return;
+        var initiator = detail.elt;
+        var swapOwner = initiator && initiator.closest('[hx-swap], [data-hx-swap]');
+        var swap = swapOwner && (swapOwner.getAttribute('hx-swap') || swapOwner.getAttribute('data-hx-swap')) || 'innerHTML';
+        if (['none', 'beforebegin', 'afterbegin', 'beforeend', 'afterend'].includes(swap.trim().split(/\s+/)[0])) return;
+        var submittedForm = ['post', 'put', 'patch'].includes(String(detail.verb).toLowerCase()) && initiator && initiator.tagName === 'FORM' ? initiator : null;
+        var forms = Array.from(target.querySelectorAll('form'));
+        if (target.tagName === 'FORM') forms.unshift(target);
+        if (!forms.some(function(form) { return form !== submittedForm && refresh(form); })) return;
+        event.preventDefault();
+        var question = 'You have unsaved changes in this section. Discard them and continue? Choose Cancel to keep editing.';
+        if (detail.question) question += '\n\n' + detail.question;
+        if (window.confirm(question)) detail.issueRequest(true);
+    });
     document.addEventListener('htmx:afterSwap', refreshAll);
     window.addEventListener('beforeunload', function(event) {
         if (!leaving && refreshAll()) { event.preventDefault(); event.returnValue = ''; }
@@ -281,4 +301,38 @@
     });
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', refreshAll);
     else refreshAll();
+})();
+
+/* Native validation must expose the first invalid field before the browser
+   tries to focus it. Required controls in collapsed sections and inactive
+   settings tabs otherwise block submission without visible recovery. */
+(function() {
+    'use strict';
+    var validatingForms = new WeakSet();
+    document.addEventListener('invalid', function(event) {
+        var field = event.target;
+        var form = field.form;
+        if (!form || validatingForms.has(form)) return;
+        validatingForms.add(form);
+        // Keep the first field for the entire native validation pass. Browsers
+        // may run microtasks between invalid events for different controls.
+        setTimeout(function() { validatingForms.delete(form); }, 0);
+
+        var parents = [];
+        for (var parent = field.parentElement; parent; parent = parent.parentElement) parents.unshift(parent);
+        parents.forEach(function(parent) {
+            if (parent.tagName === 'DETAILS') parent.open = true;
+            if (!parent.classList.contains('hidden')) return;
+            if (parent.classList.contains('tab-content') && parent.id.indexOf('tab-') === 0 && typeof window.switchTab === 'function') {
+                window.switchTab(parent.id.slice(4));
+            } else if (parent.id.indexOf('panel-') === 0 && document.getElementById('tab-' + parent.id.slice(6)) && typeof window.switchTab === 'function') {
+                window.switchTab(parent.id.slice(6));
+            } else {
+                var trigger = parent.previousElementSibling;
+                if (trigger && trigger.tagName === 'BUTTON' && trigger.querySelector('.section-chevron')) trigger.click();
+            }
+        });
+        // Do not cancel the invalid event: the browser supplies its normal,
+        // localized message and focuses the now-visible first invalid control.
+    }, true);
 })();

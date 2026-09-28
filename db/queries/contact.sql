@@ -213,3 +213,53 @@ DELETE FROM office_locations WHERE id = ?;
 
 -- name: UnsetPrimaryOfficeLocations :exec
 UPDATE office_locations SET is_primary = 0 WHERE is_primary = 1;
+
+-- Unified inbox scope shared by list, counts and detail navigation.
+-- name: ListFilteredContactSubmissions :many
+SELECT cs.id, cs.name, cs.email, cs.phone, cs.company, cs.inquiry_type, cs.status, cs.submission_type, cs.created_at
+FROM contact_submissions cs
+WHERE (sqlc.arg(filter_status) = '' OR cs.status = sqlc.arg(filter_status))
+  AND (sqlc.arg(filter_type) = '' OR cs.submission_type = sqlc.arg(filter_type))
+  AND (sqlc.arg(filter_search) = '' OR cs.name LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.email LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.phone LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.company LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.message LIKE '%' || sqlc.arg(filter_search) || '%')
+ORDER BY cs.created_at DESC, cs.id DESC
+LIMIT sqlc.arg(page_limit) OFFSET sqlc.arg(page_offset);
+
+-- name: CountFilteredContactSubmissions :one
+SELECT COUNT(*) FROM contact_submissions cs
+WHERE (sqlc.arg(filter_status) = '' OR cs.status = sqlc.arg(filter_status))
+  AND (sqlc.arg(filter_type) = '' OR cs.submission_type = sqlc.arg(filter_type))
+  AND (sqlc.arg(filter_search) = '' OR cs.name LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.email LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.phone LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.company LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.message LIKE '%' || sqlc.arg(filter_search) || '%');
+
+-- name: GetPreviousFilteredSubmissionID :one
+SELECT cs.id FROM contact_submissions cs
+JOIN contact_submissions anchor ON anchor.id = sqlc.arg(current_id)
+WHERE (sqlc.arg(filter_status) = '' OR cs.status = sqlc.arg(filter_status))
+  AND (sqlc.arg(filter_type) = '' OR cs.submission_type = sqlc.arg(filter_type))
+  AND (sqlc.arg(filter_search) = '' OR cs.name LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.email LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.phone LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.company LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.message LIKE '%' || sqlc.arg(filter_search) || '%')
+  AND (cs.created_at, cs.id) > (anchor.created_at, anchor.id)
+ORDER BY cs.created_at ASC, cs.id ASC LIMIT 1;
+
+-- name: GetNextFilteredSubmissionID :one
+SELECT cs.id FROM contact_submissions cs
+JOIN contact_submissions anchor ON anchor.id = sqlc.arg(current_id)
+WHERE (sqlc.arg(filter_status) = '' OR cs.status = sqlc.arg(filter_status))
+  AND (sqlc.arg(filter_type) = '' OR cs.submission_type = sqlc.arg(filter_type))
+  AND (sqlc.arg(filter_search) = '' OR cs.name LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.email LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.phone LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.company LIKE '%' || sqlc.arg(filter_search) || '%'
+       OR cs.message LIKE '%' || sqlc.arg(filter_search) || '%')
+  AND (cs.created_at, cs.id) < (anchor.created_at, anchor.id)
+ORDER BY cs.created_at DESC, cs.id DESC LIMIT 1;

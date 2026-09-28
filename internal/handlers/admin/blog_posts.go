@@ -207,6 +207,9 @@ func (h *BlogPostsHandler) Create(c echo.Context) error {
 	metaDesc := c.FormValue("meta_description")
 	excerpt := c.FormValue("excerpt")
 	status := blogSubmissionStatus(c)
+	if status == "published" && !hasPublishableBlogBody(body) {
+		return h.renderBlogBodyError(c, sqlc.BlogPost{})
+	}
 
 	// Set published_at timestamp only for published posts
 	// If status is "published", parse the provided datetime or default to now
@@ -345,6 +348,9 @@ func (h *BlogPostsHandler) Update(c echo.Context) error {
 	metaDesc := c.FormValue("meta_description")
 	excerpt := c.FormValue("excerpt")
 	status := blogSubmissionStatus(c)
+	if status == "published" && !hasPublishableBlogBody(body) {
+		return h.renderBlogBodyError(c, existing)
+	}
 
 	// The article date is metadata, not a publication scheduler.
 	publishedAt := existing.PublishedAt

@@ -392,7 +392,7 @@ func (h *CaseStudiesHandler) Update(c echo.Context) error {
 	}
 
 	isPublished := int64(0)
-	if c.FormValue("is_published") == "on" {
+	if v := c.FormValue("is_published"); v == "1" || v == "on" {
 		isPublished = 1
 	}
 

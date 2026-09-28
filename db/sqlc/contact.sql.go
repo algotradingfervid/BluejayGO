@@ -95,6 +95,30 @@ func (q *Queries) CountContactSubmissionsSearch(ctx context.Context, arg CountCo
 	return count, err
 }
 
+const countFilteredContactSubmissions = `-- name: CountFilteredContactSubmissions :one
+SELECT COUNT(*) FROM contact_submissions cs
+WHERE (?1 = '' OR cs.status = ?1)
+  AND (?2 = '' OR cs.submission_type = ?2)
+  AND (?3 = '' OR cs.name LIKE '%' || ?3 || '%'
+       OR cs.email LIKE '%' || ?3 || '%'
+       OR cs.phone LIKE '%' || ?3 || '%'
+       OR cs.company LIKE '%' || ?3 || '%'
+       OR cs.message LIKE '%' || ?3 || '%')
+`
+
+type CountFilteredContactSubmissionsParams struct {
+	FilterStatus interface{} `json:"filter_status"`
+	FilterType   interface{} `json:"filter_type"`
+	FilterSearch interface{} `json:"filter_search"`
+}
+
+func (q *Queries) CountFilteredContactSubmissions(ctx context.Context, arg CountFilteredContactSubmissionsParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countFilteredContactSubmissions, arg.FilterStatus, arg.FilterType, arg.FilterSearch)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createContactSubmission = `-- name: CreateContactSubmission :one
 
 
@@ -353,6 +377,39 @@ func (q *Queries) GetContactSubmissionByID(ctx context.Context, id int64) (GetCo
 	return i, err
 }
 
+const getNextFilteredSubmissionID = `-- name: GetNextFilteredSubmissionID :one
+SELECT cs.id FROM contact_submissions cs
+JOIN contact_submissions anchor ON anchor.id = ?1
+WHERE (?2 = '' OR cs.status = ?2)
+  AND (?3 = '' OR cs.submission_type = ?3)
+  AND (?4 = '' OR cs.name LIKE '%' || ?4 || '%'
+       OR cs.email LIKE '%' || ?4 || '%'
+       OR cs.phone LIKE '%' || ?4 || '%'
+       OR cs.company LIKE '%' || ?4 || '%'
+       OR cs.message LIKE '%' || ?4 || '%')
+  AND (cs.created_at, cs.id) < (anchor.created_at, anchor.id)
+ORDER BY cs.created_at DESC, cs.id DESC LIMIT 1
+`
+
+type GetNextFilteredSubmissionIDParams struct {
+	CurrentID    int64       `json:"current_id"`
+	FilterStatus interface{} `json:"filter_status"`
+	FilterType   interface{} `json:"filter_type"`
+	FilterSearch interface{} `json:"filter_search"`
+}
+
+func (q *Queries) GetNextFilteredSubmissionID(ctx context.Context, arg GetNextFilteredSubmissionIDParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getNextFilteredSubmissionID,
+		arg.CurrentID,
+		arg.FilterStatus,
+		arg.FilterType,
+		arg.FilterSearch,
+	)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getNextSubmissionID = `-- name: GetNextSubmissionID :one
 SELECT cs.id FROM contact_submissions cs WHERE cs.created_at < (SELECT cs2.created_at FROM contact_submissions cs2 WHERE cs2.id = ?) ORDER BY cs.created_at DESC LIMIT 1
 `
@@ -414,6 +471,39 @@ func (q *Queries) GetOfficeLocationByID(ctx context.Context, id int64) (GetOffic
 		&i.DisplayOrder,
 	)
 	return i, err
+}
+
+const getPreviousFilteredSubmissionID = `-- name: GetPreviousFilteredSubmissionID :one
+SELECT cs.id FROM contact_submissions cs
+JOIN contact_submissions anchor ON anchor.id = ?1
+WHERE (?2 = '' OR cs.status = ?2)
+  AND (?3 = '' OR cs.submission_type = ?3)
+  AND (?4 = '' OR cs.name LIKE '%' || ?4 || '%'
+       OR cs.email LIKE '%' || ?4 || '%'
+       OR cs.phone LIKE '%' || ?4 || '%'
+       OR cs.company LIKE '%' || ?4 || '%'
+       OR cs.message LIKE '%' || ?4 || '%')
+  AND (cs.created_at, cs.id) > (anchor.created_at, anchor.id)
+ORDER BY cs.created_at ASC, cs.id ASC LIMIT 1
+`
+
+type GetPreviousFilteredSubmissionIDParams struct {
+	CurrentID    int64       `json:"current_id"`
+	FilterStatus interface{} `json:"filter_status"`
+	FilterType   interface{} `json:"filter_type"`
+	FilterSearch interface{} `json:"filter_search"`
+}
+
+func (q *Queries) GetPreviousFilteredSubmissionID(ctx context.Context, arg GetPreviousFilteredSubmissionIDParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getPreviousFilteredSubmissionID,
+		arg.CurrentID,
+		arg.FilterStatus,
+		arg.FilterType,
+		arg.FilterSearch,
+	)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
 }
 
 const getPreviousSubmissionID = `-- name: GetPreviousSubmissionID :one
@@ -774,6 +864,80 @@ func (q *Queries) ListContactSubmissionsByType(ctx context.Context, arg ListCont
 			&i.SubmissionType,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listFilteredContactSubmissions = `-- name: ListFilteredContactSubmissions :many
+SELECT cs.id, cs.name, cs.email, cs.phone, cs.company, cs.inquiry_type, cs.status, cs.submission_type, cs.created_at
+FROM contact_submissions cs
+WHERE (?1 = '' OR cs.status = ?1)
+  AND (?2 = '' OR cs.submission_type = ?2)
+  AND (?3 = '' OR cs.name LIKE '%' || ?3 || '%'
+       OR cs.email LIKE '%' || ?3 || '%'
+       OR cs.phone LIKE '%' || ?3 || '%'
+       OR cs.company LIKE '%' || ?3 || '%'
+       OR cs.message LIKE '%' || ?3 || '%')
+ORDER BY cs.created_at DESC, cs.id DESC
+LIMIT ?5 OFFSET ?4
+`
+
+type ListFilteredContactSubmissionsParams struct {
+	FilterStatus interface{} `json:"filter_status"`
+	FilterType   interface{} `json:"filter_type"`
+	FilterSearch interface{} `json:"filter_search"`
+	PageOffset   int64       `json:"page_offset"`
+	PageLimit    int64       `json:"page_limit"`
+}
+
+type ListFilteredContactSubmissionsRow struct {
+	ID             int64          `json:"id"`
+	Name           string         `json:"name"`
+	Email          string         `json:"email"`
+	Phone          string         `json:"phone"`
+	Company        string         `json:"company"`
+	InquiryType    sql.NullString `json:"inquiry_type"`
+	Status         string         `json:"status"`
+	SubmissionType string         `json:"submission_type"`
+	CreatedAt      time.Time      `json:"created_at"`
+}
+
+// Unified inbox scope shared by list, counts and detail navigation.
+func (q *Queries) ListFilteredContactSubmissions(ctx context.Context, arg ListFilteredContactSubmissionsParams) ([]ListFilteredContactSubmissionsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listFilteredContactSubmissions,
+		arg.FilterStatus,
+		arg.FilterType,
+		arg.FilterSearch,
+		arg.PageOffset,
+		arg.PageLimit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListFilteredContactSubmissionsRow{}
+	for rows.Next() {
+		var i ListFilteredContactSubmissionsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.Phone,
+			&i.Company,
+			&i.InquiryType,
+			&i.Status,
+			&i.SubmissionType,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
