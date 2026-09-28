@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agents for Bluejay CMS — Ideas</title>
+<style>
+  :root {
+    --black: #000;
+    --white: #fff;
+    --accent: #ffd23f;
+    --accent2: #4f9dff;
+    --accent3: #ff6b6b;
+    --accent4: #51cf66;
+    --gray: #f2f2f2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    background: var(--white);
+    color: var(--black);
+    line-height: 1.5;
+    padding: 40px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 2.2rem;
+    text-transform: uppercase;
+    border: 3px solid var(--black);
+    padding: 20px;
+    background: var(--accent);
+    box-shadow: 6px 6px 0 var(--black);
+    margin-bottom: 10px;
+  }
+  .sub { font-size: 0.95rem; margin: 18px 4px 40px; }
+  h2 {
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    border-bottom: 3px solid var(--black);
+    padding-bottom: 8px;
+    margin: 50px 0 24px;
+  }
+  h3 { font-size: 1.05rem; text-transform: uppercase; margin-bottom: 8px; }
+  p { margin-bottom: 12px; }
+  .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    border: 2px solid var(--black);
+    padding: 2px 8px;
+    margin-right: 6px;
+    font-weight: bold;
+  }
+  .tag.easy { background: var(--accent4); }
+  .tag.med  { background: var(--accent); }
+  .tag.hard { background: var(--accent3); color: var(--white); }
+  .card {
+    border: 2px solid var(--black);
+    box-shadow: 4px 4px 0 var(--black);
+    padding: 22px;
+    margin-bottom: 26px;
+    background: var(--white);
+  }
+  .card .num {
+    display: inline-block;
+    background: var(--black);
+    color: var(--white);
+    width: 34px; height: 34px;
+    text-align: center; line-height: 34px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  .head-row { display: flex; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+  ul { margin: 10px 0 10px 22px; }
+  li { margin-bottom: 6px; }
+  .ex {
+    background: var(--gray);
+    border-left: 4px solid var(--black);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 0.85rem;
+  }
+  .ex b { text-transform: uppercase; font-size: 0.7rem; }
+  .maps { font-size: 0.8rem; color: #444; margin-top: 10px; }
+  .maps code { background: var(--accent2); color: var(--white); padding: 1px 5px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.85rem;
+  }
+  th, td { border: 2px solid var(--black); padding: 10px; text-align: left; vertical-align: top; }
+  th { background: var(--black); color: var(--white); text-transform: uppercase; font-size: 0.75rem; }
+  .approach { border-left: 8px solid var(--accent2); }
+  .callout {
+    border: 3px dashed var(--black);
+    padding: 20px;
+    margin: 30px 0;
+    background: var(--gray);
+  }
+  .phase {
+    display: flex; gap: 0; margin: 24px 0; flex-wrap: wrap;
+  }
+  .phase > div {
+    flex: 1; min-width: 200px;
+    border: 2px solid var(--black);
+    padding: 16px;
+    margin-right: -2px;
+  }
+  .phase .p1 { background: var(--accent4); }
+  .phase .p2 { background: var(--accent); }
+  .phase .p3 { background: var(--accent2); color: var(--white); }
+  .footer-note { margin-top: 50px; font-size: 0.85rem; border-top: 3px solid var(--black); padding-top: 16px; }
+  a { color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<h1>AI Agents for Bluejay CMS</h1>
+<p class="sub">
+  Ten ideas for managing all your website content through AI — grounded in how your CMS
+  actually works today. <b>Current state:</b> zero AI integration yet, but every content type
+  (products, blog, solutions, case studies, whitepapers, partners, homepage, about, navigation…)
+  already sits behind a clean, type-safe sqlc query layer and consistent CRUD handlers. That
+  shared layer is exactly what makes AI agents practical to add.
+</p>
+
+<!-- ============ FOUNDATION ============ -->
+<h2>First: How an agent "touches" your content</h2>
+<p>Before the ideas, there are three ways an AI agent can read &amp; change content. Most ideas
+below reuse one of these. This is the single most important design decision.</p>
+
+<div class="card approach">
+  <h3>Approach A — Tool-calling agent over your sqlc layer <span class="tag easy">Recommended</span></h3>
+  <p>The AI is given a set of "tools" that map directly to your existing database queries
+  (<code>ListProducts</code>, <code>CreateBlogPost</code>, <code>UpdateSolution</code>…). When you ask
+  it to do something, it calls those queries the same way a handler does. Safe, auditable via your
+  existing <code>activity_log</code>, no HTTP/CSRF gymnastics.</p>
+  <p class="maps"><b>Why it fits you:</b> sqlc already generates a <code>Querier</code> interface —
+  the agent's tools are thin wrappers around methods that already exist.</p>
+</div>
+
+<div class="card approach">
+  <h3>Approach B — Agent drives your existing admin HTTP endpoints</h3>
+  <p>The AI calls the same <code>POST /admin/products</code> etc. routes the browser uses. Reuses all
+  your validation, but you must handle auth/CSRF for programmatic calls. More moving parts.</p>
+</div>
+
+<div class="card approach">
+  <h3>Approach C — Inline field helpers (no agent loop)</h3>
+  <p>Not a full agent — small "✨ Generate / Improve" buttons next to individual form fields. One
+  prompt, one response, dropped into the textarea. Cheapest to ship, great as a first taste.</p>
+</div>
+
+<!-- ============ IDEAS ============ -->
+<h2>The Ideas</h2>
+
+<div class="card">
+  <div class="head-row"><span class="num">1</span><h3>Conversational Content Manager (the "command bar")</h3>
+  <span class="tag med">Medium</span></div>
+  <p>A chat panel in the admin where you type plain English and it manages content end-to-end. The
+  flagship "manage everything through AI" experience.</p>
+  <div class="ex"><b>You say:</b> "Create a blog post announcing our new partnership with Acme,
+  tag it 'partnerships', and set it to draft." <br><b>It does:</b> drafts the post, creates/links the
+  tag, inserts a draft row, and shows you a preview link before publishing.</div>
+  <p class="maps"><b>Maps to:</b> <code>blog_posts</code>, <code>blog_tags</code>, every CRUD query
+  via Approach A. Uses Claude tool-calling.</p>
+</div>
+
+<div class="card">
+  <div class="head-row"><span class="num">2</span><h3>Content Generation Agent</h3>
+  <span class="tag easy">Easy start</span></div>
+  <p>Drafts new content from a short brief: product descriptions, blog posts, case-study narratives,
+  whitepaper abstracts, solution overviews. Matches your brand tone from a style prompt.</p>
+  <div class="ex"><b>You say:</b> "Write a product description for the BJ-500 sensor — emphasise
+  ruggedness and IoT connectivity." → returns ready-to-edit copy for the product form.</div>
+  <p class="maps"><b>Maps to:</b> <code>products</code>, <code>blog_posts</code>,
+  <code>case_studies</code>, <code>whitepapers</code>, <code>solutions</code>. Starts as Approach C,
+  graduates to A.</p>
+</div>
+
+<div class="card">
+  <div class="head-row"><span class="num">3</span><h3>Editor / Improver Agent</h3>
+  <span class="tag easy">Easy</span></div>
+  <p>Takes existing content and rewrites for tone, grammar, clarity, length, or reading level. Works
+  on the Trix rich-text blog body and any text field.</p>
+  <div class="ex"><b>You say:</b> "Make this case study 30% shorter and more executive-friendly."</div>
+  <p class="maps"><b>Maps to:</b> any text/HTML column — directly LLM-readable since content is
+  stored as plain HTML/text in SQLite.</p>
+</div>
+
+<div class="card">
+  <div class="head-row"><span class="num">4</span><h3>SEO Agent</h3>
+  <span class="tag med">Medium</span></div>
+  <p>Generates and maintains meta titles, meta descriptions, slugs, and keyword suggestions across
+  all content. Can audit the whole site and flag pages with weak/missing metadata, then bulk-fix.</p>
+  <div class="ex"><b>You say:</b> "Find all products with no meta description and write one for each."</div>
+  <p class="maps"><b>Maps to:</b> all collections + your existing <code>settings</code> /
+  <code>SITE_BASE_URL</code> / sitemap logic. Pairs well with your FTS5 search tables.</p>
+</div>
+
+<div class="card">
+  <div class="head-row"><span class="num">5</span><h3>Content Audit &amp; Gap Agent</h3>
+  <span class="tag med">Medium</span></div>
+  <p>Scans the whole CMS and reports problems: stale posts, products missing images/specs, broken or
+  placeholder content, empty homepage sections, inconsistent terminology.</p>
+  <div class="ex"><b>You say:</b> "What's missing or low-quality on the site right now?" → a
+  prioritised checklist you can one-click fix.</div>
+  <p class="maps"><b>Maps to:</b> reads across <code>products</code>+child tables,
+  <code>product_images</code>, <code>page_sections</code>, etc. (Note: many seed
+  <code>/uploads/*.jpg</code> are SVG placeholders — a natural thing to flag.)</p>
+</div>
+
+<div class="card">
+  <div class="head-row"><span class="num">6</span><h3>Media / Image Agent</h3>
+  <span class="tag med">Medium</span></div>
+  <p>Auto-writes alt text and captions for images (accessibility + SEO), suggests which media to
+  attach to which product/post, and flags missing or duplicate images.</p>
+  <p class="maps"><b>Maps to:</b> <code>media_files</code>, <code>product_images</code>,
+  <code>UploadService</code>. Uses Claude vision for alt text.</p>
+</div>
+
+<div class="card">
+  <div class="head-row"><span class="num">7</span><h3>Translation / Localization Agent</h3>
+  <span class="tag hard">Larger</span></div>
+  <p>Translates content into other languages on demand. (Would need new locale columns/tables — a
+  bigger lift, but the agent layer itself is the same.)</p>
+  <p class="maps"><b>Maps to:</b> all editorial collections; requires schema work first.</p>
+</div>
+
+<div class="card">
+  <div class="head-row"><span class="num">8</span><h3>Bulk Operations Agent</h3>
+  <span class="tag med">Medium</span></div>
+  <p>Performs sweeping changes from one instruction across many records — safely, with a preview/diff
+  and a confirm step before writing.</p>
+  <div class="ex"><b>You say:</b> "Re-categorise every product mentioning 'solar' into the Renewables
+  category and add a one-line eco tagline to each."</div>
+  <p class="maps"><b>Maps to:</b> <code>products</code>, <code>product_categories</code>, batch sqlc
+  updates wrapped in a transaction. Logs each change to <code>activity_log</code>.</p>
+</div>
+
+<div class="card">
+  <div class="head-row"><span class="num">9</span><h3>Publishing Workflow Agent</h3>
+  <span class="tag med">Medium</span></div>
+  <p>Manages the lifecycle: draft → review → publish/schedule. Reviews drafts against a checklist
+  (SEO done? image attached? tone on-brand?) and only then allows publish.</p>
+  <p class="maps"><b>Maps to:</b> status/published_at fields across collections,
+  <code>activity_log</code> for the trail.</p>
+</div>
+
+<div class="card">
+  <div class="head-row"><span class="num">10</span><h3>Site Q&amp;A / Knowledge Agent</h3>
+  <span class="tag med">Medium</span></div>
+  <p>Ask questions <i>about</i> your content: "Which products don't appear in any solution?", "How
+  many case studies mention energy savings?". A read-only analyst over your data — great trust-builder
+  before you let agents write.</p>
+  <p class="maps"><b>Maps to:</b> read-only queries + your FTS5 search tables.</p>
+</div>
+
+<!-- ============ COMPARISON ============ -->
+<h2>Effort vs. Impact — at a glance</h2>
+<table>
+  <tr><th>Idea</th><th>Effort</th><th>Impact</th><th>Good first step?</th></tr>
+  <tr><td>3. Editor / Improver</td><td>Low</td><td>High</td><td>★ Yes — inline buttons</td></tr>
+  <tr><td>2. Content Generation</td><td>Low</td><td>High</td><td>★ Yes</td></tr>
+  <tr><td>10. Site Q&amp;A (read-only)</td><td>Low–Med</td><td>Med</td><td>★ Yes — safe, no writes</td></tr>
+  <tr><td>4. SEO Agent</td><td>Med</td><td>High</td><td>Strong phase 2</td></tr>
+  <tr><td>1. Conversational Manager</td><td>Med</td><td>Very High</td><td>The headline feature</td></tr>
+  <tr><td>5. Audit &amp; Gap</td><td>Med</td><td>High</td><td>Phase 2</td></tr>
+  <tr><td>6. Media / Image</td><td>Med</td><td>Med</td><td>Phase 2–3</td></tr>
+  <tr><td>8. Bulk Operations</td><td>Med</td><td>High</td><td>Phase 3 (needs guardrails)</td></tr>
+  <tr><td>9. Publishing Workflow</td><td>Med</td><td>Med</td><td>Phase 3</td></tr>
+  <tr><td>7. Translation</td><td>High</td><td>Varies</td><td>Later — needs schema</td></tr>
+</table>
+
+<!-- ============ RECOMMENDED PATH ============ -->
+<h2>A suggested path</h2>
+<div class="phase">
+  <div class="p1"><h3>Phase 1 — Taste</h3>
+    <p>Add the AI foundation (config for <code>ANTHROPIC_API_KEY</code>, a new
+    <code>internal/services/ai.go</code>) + inline <b>Generate / Improve</b> buttons (Ideas 2 &amp; 3)
+    and the read-only <b>Q&amp;A</b> agent (Idea 10). Low risk, immediately useful.</p></div>
+  <div class="p2"><h3>Phase 2 — Manage</h3>
+    <p>Build the <b>Conversational Content Manager</b> (Idea 1) on Approach A, plus the <b>SEO</b> and
+    <b>Audit</b> agents (Ideas 4 &amp; 5). Now you're truly "managing content through AI."</p></div>
+  <div class="p3"><h3>Phase 3 — Scale</h3>
+    <p>Add <b>Bulk Ops</b>, <b>Publishing Workflow</b>, and <b>Media</b> agents (Ideas 8, 9, 6) with
+    preview/confirm guardrails and full <code>activity_log</code> auditing.</p></div>
+</div>
+
+<div class="callout">
+  <h3>The one decision that unlocks everything</h3>
+  <p>Pick <b>Approach A</b> (tool-calling over your sqlc layer) as the backbone. Almost every idea
+  above becomes "just another tool" the agent can call. We build the engine once, then each agent is
+  mostly a prompt + a set of allowed tools + a confirmation policy.</p>
+</div>
+
+<div class="footer-note">
+  <p><b>What I need from you to turn this into a real design:</b></p>
+  <ul>
+    <li>Which ideas excite you most / map to your actual pain?</li>
+    <li>How much autonomy — should agents write directly, or always preview &amp; confirm first?</li>
+    <li>Are you happy using the <b>Claude API</b> (Anthropic) as the model provider?</li>
+    <li>One agent at a time, or the conversational hub that does it all?</li>
+  </ul>
+  <p>Tell me your picks and I'll turn the chosen direction into a proper spec and implementation plan.</p>
+</div>
+
+</body>
+</html>

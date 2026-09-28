@@ -1,0 +1,149 @@
+package e2e_test
+
+import (
+	"context"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/narendhupati/bluejay-cms/db/sqlc"
+)
+
+func TestPublicBlogListing(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	ctx := context.Background()
+
+	cat, _ := queries.CreateBlogCategory(ctx, sqlc.CreateBlogCategoryParams{
+		Name:  "News",
+		Slug:  "news",
+		ColorHex: "#FF5733",
+	})
+
+	author, _ := queries.CreateBlogAuthor(ctx, sqlc.CreateBlogAuthorParams{
+		Name:  "John Doe",
+		Email: "john@test.com",
+		Bio:   "Writer",
+	})
+
+	_, err := queries.CreateBlogPost(ctx, sqlc.CreateBlogPostParams{
+		Title:      sql.NullString{String: "First Post",
+		Slug:       "first-post",
+		Excerpt:    "This is the first post",
+		Body:    "Full content here",
+		CategoryID: cat.ID,
+		AuthorID:   author.ID,
+		Status:     "published",
+	})
+	if err != nil {
+		t.Fatalf("create blog post: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/blog", nil)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code == http.StatusNotFound {
+		t.Error("blog listing route not found")
+	}
+}
+
+func TestPublicBlogListing_CategoryFilter(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	ctx := context.Background()
+
+	cat, _ := queries.CreateBlogCategory(ctx, sqlc.CreateBlogCategoryParams{
+		Name:  "Tech",
+		Slug:  "tech",
+		ColorHex: "#0000FF",
+	})
+
+	author, _ := queries.CreateBlogAuthor(ctx, sqlc.CreateBlogAuthorParams{
+		Name:  "Jane Doe",
+		Email: "jane@test.com",
+		Bio:   "Tech writer",
+	})
+
+	_, _ = queries.CreateBlogPost(ctx, sqlc.CreateBlogPostParams{
+		Title:      sql.NullString{String: "Tech Post",
+		Slug:       "tech-post",
+		Excerpt:    "Tech content",
+		Body:    "Full tech content",
+		CategoryID: cat.ID,
+		AuthorID:   author.ID,
+		Status:     "published",
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/blog?category=tech", nil)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code == http.StatusNotFound {
+		t.Error("blog category filter route not found")
+	}
+}
+
+func TestPublicBlogListing_Pagination(t *testing.T) {
+	e, queries, cleanup := setupApp(t)
+	defer cleanup()
+	ctx := context.Background()
+
+	cat, _ := queries.CreateBlogCategory(ctx, sqlc.CreateBlogCategoryParams{
+		Name:  "Updates",
+		Slug:  "updates",
+		ColorHex: "#00FF00",
+	})
+
+	author, _ := queries.CreateBlogAuthor(ctx, sqlc.CreateBlogAuthorParams{
+		Name:  "Bob Smith",
+		Email: "bob@test.com",
+		Bio:   "Content creator",
+	})
+
+	for i := 1; i <= 12; i++ {
+		_, _ = queries.CreateBlogPost(ctx, sqlc.CreateBlogPostParams{
+			Title:      sql.NullString{String: "Post " + string(rune(i+'0')),
+			Slug:       "post-" + string(rune(i+'0')),
+			Excerpt:    "Excerpt",
+			Body:    "Content",
+			CategoryID: cat.ID,
+			AuthorID:   author.ID,
+			Status:     "published",
+		})
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/blog?page=2", nil)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code == http.StatusNotFound {
+		t.Error("blog pagination route not found")
+	}
+}
+
+func TestPublicBlogListing_InvalidPage(t *testing.T) {
+	e, _, cleanup := setupApp(t)
+	defer cleanup()
+
+	req := httptest.NewRequest(http.MethodGet, "/blog?page=999", nil)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code == http.StatusNotFound {
+		t.Error("blog invalid page should not return 404")
+	}
+}
+
+func TestPublicBlogListing_InvalidCategory(t *testing.T) {
+	e, _, cleanup := setupApp(t)
+	defer cleanup()
+
+	req := httptest.NewRequest(http.MethodGet, "/blog?category=nonexistent", nil)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+
+	if rec.Code == http.StatusNotFound {
+		t.Error("blog invalid category should not return 404")
+	}
+}
