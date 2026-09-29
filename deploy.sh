@@ -46,6 +46,9 @@ die() { printf '\n\033[1;31mDEPLOY FAILED: %s\033[0m\n' "$1" >&2; exit 1; }
 
 # ── 1. Build ──────────────────────────────────────────────────────────────────
 if [[ "$DO_BUILD" == 1 ]]; then
+  say "Building pinned frontend styles"
+  npm ci --ignore-scripts || die "frontend dependency install failed"
+  npm run build:css || die "frontend stylesheet build failed"
   say "Building static linux/amd64 binary"
   CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -trimpath -ldflags="-s -w" -o bluejay-cms ./cmd/server \

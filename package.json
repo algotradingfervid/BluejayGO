@@ -1,0 +1,13 @@
+{
+  "name": "bluejay-cms-assets",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.public.config.cjs -i styles/tailwind.css -o public/css/tailwind-public.css --minify && tailwindcss -c tailwind.admin.config.cjs -i styles/tailwind.css -o public/css/tailwind-admin.css --minify",
+    "test": "node --test tests/js/*.test.cjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/container-queries": "0.1.1",
+    "@tailwindcss/forms": "0.5.11",
+    "tailwindcss": "3.4.19"
+  }
+}

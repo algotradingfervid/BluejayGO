@@ -2,10 +2,7 @@
 <div class="flex min-h-screen" style="font-family: 'JetBrains Mono', monospace;">
   {{template "admin-sidebar" .}}
   <main class="flex-1 min-w-0 p-6 lg:p-10">
-    <div class="flex items-center gap-3 mb-3">
-      <button type="button" onclick="toggleSidebar()" class="lg:hidden border-2 border-black px-3 py-2" aria-label="Toggle navigation menu">Menu</button>
-      <h1 class="text-3xl font-bold uppercase">Backups</h1>
-    </div>
+    <h1 class="text-3xl font-bold uppercase mb-3">Backups</h1>
     <p class="mb-6 text-gray-700">Daily copies of your website database and uploaded files. The latest 14 daily backups are kept here.</p>
     {{if .Configured}}
       {{if .Healthy}}<div role="status" class="border-2 border-green-700 bg-green-50 p-4 mb-5">The latest scheduled backup completed successfully.</div>

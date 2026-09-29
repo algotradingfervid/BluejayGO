@@ -160,7 +160,10 @@
     var leaving = false;
     function fields(form) {
         return Array.from(form.elements).filter(function(el) {
-            return el.name && !['submit', 'button', 'reset'].includes(el.type) && !el.closest('trix-toolbar, [data-dirty-ignore]');
+            // Trix is form-associated in newer versions. Its backing textarea
+            // already supplies this value; counting the editor added after page
+            // load changes the field list and falsely marks saved forms dirty.
+            return el.name && !['submit', 'button', 'reset'].includes(el.type) && !el.closest('trix-editor, trix-toolbar, [data-dirty-ignore]');
         });
     }
     function value(el, initial) {

@@ -26,7 +26,7 @@ A full-featured content management system built in Go for managing a technology 
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| Language | Go 1.25.5 | Backend runtime |
+| Language | Go 1.27.1 | Backend runtime |
 | Web Framework | Echo v4 | HTTP routing, middleware |
 | Database | SQLite (modernc.org/sqlite) | Data storage, WAL mode |
 | Query Gen | sqlc | Type-safe SQL → Go code |
@@ -34,15 +34,16 @@ A full-featured content management system built in Go for managing a technology 
 | Sessions | gorilla/sessions | Cookie-based authentication |
 | Crypto | golang.org/x/crypto | bcrypt password hashing |
 | Templates | Go html/template | Server-side rendering |
-| Interactivity | HTMX | Dynamic HTML updates |
-| Rich Text | Trix Editor | Blog content editing |
-| CSS | Tailwind CSS (CDN) | Utility-first styling |
+| Interactivity | HTMX 2.0.11 | Dynamic HTML updates |
+| Rich Text | Trix 2.1.19 | Blog content editing |
+| CSS | Tailwind CSS 3.4.19 LTS | Locally compiled styling |
 | Reverse Proxy | Caddy | TLS, static files, headers |
-| DB Backup | Litestream | Continuous SQLite → S3 replication |
+| DB Backup | Scheduled SQLite/upload archives | Admin downloads, 14-archive retention |
 
 ## Prerequisites
 
-- **Go 1.25.5+** — [Download Go](https://go.dev/dl/)
+- **Go 1.27.1+** — [Download Go](https://go.dev/dl/)
+- **Node.js and npm** — For rebuilding the checked-in frontend styles
 - **sqlc** — Install: `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
 - **SQLite3 CLI** — For seeding ([Download SQLite](https://sqlite.org/download.html))
 - **air** (optional) — For hot-reload: `go install github.com/air-verse/air@latest`
@@ -272,3 +273,5 @@ Additional documentation:
 ## Hardened deployment
 
 See [the deployment operations guide](deploy/OPERATIONS.md) for private session keys, state storage, scheduled backups and administrator downloads. Go 1.27.1 or later is required.
+
+Frontend styles are compiled with pinned Tailwind 3.4 LTS dependencies instead of the browser CDN. After changing template classes, run `npm ci --ignore-scripts && npm run build:css` and commit the generated files in `public/css/`. The normal deployment script rebuilds them automatically. `npm test` runs the JavaScript regression tests.
