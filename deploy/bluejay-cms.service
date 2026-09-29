@@ -4,13 +4,36 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
+User=bluejay
+Group=bluejay
 WorkingDirectory=/var/www/bluejay-cms
 ExecStart=/var/www/bluejay-cms/bluejay-cms
 Restart=always
 RestartSec=5s
 Environment="ENVIRONMENT=production"
-Environment="DATABASE_PATH=/var/www/bluejay-cms/bluejay.db"
+Environment="DB_PATH=/var/lib/bluejay-cms/bluejay.db"
+Environment="SESSION_KEY_FILE=/etc/bluejay/session.key"
+Environment="COOKIE_SECURE=true"
+Environment="LISTEN_HOST=127.0.0.1"
+Environment="PORT=28090"
+Environment="BACKUP_DIR=/var/backups/bluejay-cms/daily"
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadWritePaths=/var/lib/bluejay-cms /var/www/bluejay-cms/public/uploads
+TimeoutStopSec=20s
 
 [Install]
 WantedBy=multi-user.target

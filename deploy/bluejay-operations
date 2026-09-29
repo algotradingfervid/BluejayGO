@@ -1,0 +1,13 @@
+#!/usr/bin/python3
+"""Narrow privileged maintenance commands for the named operator account."""
+import os
+import sys
+commands = {
+    "status": ["/usr/bin/systemctl", "--no-pager", "status", "bluejay-cms.service", "bluejay-backup.timer"],
+    "restart": ["/usr/bin/systemctl", "restart", "bluejay-cms.service"],
+    "backup": ["/usr/bin/systemctl", "start", "bluejay-backup.service"],
+    "logs": ["/usr/bin/journalctl", "--no-pager", "-u", "bluejay-cms.service", "-u", "bluejay-backup.service", "-n", "80"],
+}
+if len(sys.argv) != 2 or sys.argv[1] not in commands:
+    sys.exit("Usage: bluejay-operations status|restart|backup|logs")
+os.execve(commands[sys.argv[1]][0], commands[sys.argv[1]], {"PATH": "/usr/bin:/bin", "LANG": "C"})

@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Bluejay backup
+
+[Timer]
+OnCalendar=*-*-* 02:30:00 UTC
+RandomizedDelaySec=10min
+Persistent=true
+Unit=bluejay-backup.service
+
+[Install]
+WantedBy=timers.target

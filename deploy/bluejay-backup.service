@@ -1,0 +1,18 @@
+[Unit]
+Description=Verified daily Bluejay database and upload backup
+After=bluejay-cms.service
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+ExecStart=/usr/bin/python3 /usr/local/lib/bluejay/backup.py
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/backups/bluejay-cms/daily /var/lib/bluejay-cms
+TimeoutStartSec=30min
+Nice=10
+IOSchedulingClass=idle

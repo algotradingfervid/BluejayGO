@@ -61,6 +61,7 @@ make sqlc
 make seed
 
 # Run the server
+export SESSION_SECRET="$(openssl rand -hex 32)"
 make run
 ```
 
@@ -267,3 +268,7 @@ Additional documentation:
 ---
 
 **Bluejay CMS** — A Go-powered content management system with brutalist design, built for simplicity and performance.
+
+## Hardened deployment
+
+See [the deployment operations guide](deploy/OPERATIONS.md) for private session keys, state storage, scheduled backups and administrator downloads. Go 1.27.1 or later is required.

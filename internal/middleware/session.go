@@ -43,11 +43,11 @@ import (
 // The struct is stored in the Echo context under the key "session" and can be accessed
 // in handlers via: sess := c.Get("session").(*middleware.Session)
 type Session struct {
-	*sessions.Session            // Embedded gorilla Session for low-level access
-	UserID            int64      // User database ID (0 = unauthenticated)
-	Email             string     // User email address
-	DisplayName       string     // User display name
-	Role              string     // User role (admin, editor, etc.)
+	*sessions.Session        // Embedded gorilla Session for low-level access
+	UserID            int64  // User database ID (0 = unauthenticated)
+	Email             string // User email address
+	DisplayName       string // User display name
+	Role              string // User role (admin, editor, etc.)
 }
 
 // SessionStore is a package-level variable holding the global CookieStore instance used
@@ -105,7 +105,7 @@ var SessionStore *sessions.CookieStore
 //   - Consider setting SameSite: Strict for maximum CSRF protection (may break some workflows)
 //   - Consider shortening MaxAge for sensitive applications (e.g., 1 hour instead of 7 days)
 //   - Implement session rotation on privilege escalation (e.g., after login)
-func InitSessionStore(secret string) {
+func InitSessionStore(secret string, secure ...bool) {
 	// Create a new CookieStore with the provided secret key for HMAC signing.
 	// gorilla/sessions uses gob encoding to serialize session data, then signs it
 	// with HMAC-SHA256 using the secret key. This prevents tampering but does not
@@ -149,6 +149,11 @@ func InitSessionStore(secret string) {
 		//               None (no protection, requires Secure=true)
 		SameSite: http.SameSiteLaxMode,
 	}
+	if len(secure) > 0 {
+		SessionStore.Options.Secure = secure[0]
+	}
+	// Set both the cookie lifetime and the signing codec's server-side age limit.
+	SessionStore.MaxAge(86400 * 7)
 }
 
 // SessionMiddleware returns an Echo middleware that loads session data for each request and

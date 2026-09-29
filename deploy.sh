@@ -27,7 +27,7 @@ SSH_TARGET="${SSH_TARGET:-root@178.105.217.158}"
 REMOTE_DIR="${REMOTE_DIR:-/var/www/bluejay-cms}"
 SERVICE="${SERVICE:-bluejay-cms}"
 DOMAIN="${DOMAIN:-bluejayinnolabs.com}"
-SSH_OPTS=(-o StrictHostKeyChecking=accept-new -o BatchMode=yes)
+SSH_OPTS=(-o StrictHostKeyChecking=yes -o BatchMode=yes)
 
 # Always run from the repo root (the directory this script lives in).
 cd "$(dirname "$0")"
@@ -81,7 +81,10 @@ say "Syncing public/ (excluding uploads/)"
 say "Setting ownership and restarting $SERVICE"
 ssh "${SSH_OPTS[@]}" "$SSH_TARGET" "
   set -e
-  chown -R www-data:www-data '$REMOTE_DIR'
+  find '$REMOTE_DIR' -path '$REMOTE_DIR/public/uploads' -prune -o -exec chown root:root {} +
+  chown -R bluejay:bluejay '$REMOTE_DIR/public/uploads'
+  test -s /etc/bluejay/session.key
+  test -f /var/lib/bluejay-cms/bluejay.db
   systemctl restart '$SERVICE'
   sleep 3
   systemctl is-active --quiet '$SERVICE' || { journalctl -u '$SERVICE' --no-pager -n 20; exit 1; }

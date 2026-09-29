@@ -11,7 +11,7 @@
 package templates
 
 import (
-	"fmt"        // For string formatting in error messages and file size display
+	"fmt"           // For string formatting in error messages and file size display
 	"html/template" // Go's HTML templating engine with auto-escaping for XSS protection
 	"io"            // For writing rendered templates to HTTP response writers
 	"path/filepath" // For cross-platform file path construction
@@ -54,8 +54,9 @@ type Renderer struct {
 // ensuring that template problems are caught at startup rather than at request time.
 //
 // Example usage:
-//   renderer := NewRenderer("templates/")
-//   e.Renderer = renderer
+//
+//	renderer := NewRenderer("templates/")
+//	e.Renderer = renderer
 func NewRenderer(basePath string) *Renderer {
 	r := &Renderer{
 		templates: make(map[string]*template.Template),
@@ -111,11 +112,11 @@ func (r *Renderer) loadTemplates() {
 	// Functions provide data formatting, math operations, and string manipulation.
 	// These extend Go's built-in template functions (len, printf, etc.)
 	funcMap := template.FuncMap{
-		"safeHTML":   safeHTML,   // Renders HTML without escaping (use carefully!)
-		"formatDate": formatDate, // Formats time.Time to human-readable string
-		"truncate":   truncate,   // Shortens strings with ellipsis
-		"slugify":    slugify,    // Converts strings to URL-safe slugs
-		"now":        time.Now,   // Returns current timestamp
+		"safeHTML":   safeHTML,                            // Renders HTML without escaping (use carefully!)
+		"formatDate": formatDate,                          // Formats time.Time to human-readable string
+		"truncate":   truncate,                            // Shortens strings with ellipsis
+		"slugify":    slugify,                             // Converts strings to URL-safe slugs
+		"now":        time.Now,                            // Returns current timestamp
 		"add":        func(a, b int) int { return a + b }, // Integer addition for templates
 		"sub":        func(a, b int) int { return a - b }, // Integer subtraction for templates
 		"upper":      strings.ToUpper,                     // Converts string to uppercase
@@ -127,7 +128,7 @@ func (r *Renderer) loadTemplates() {
 			}
 			return s
 		},
-		"int64": func(i int) int64 { return int64(i) },     // Type conversion for int to int64
+		"int64": func(i int) int64 { return int64(i) }, // Type conversion for int to int64
 		// formatFileSize converts bytes to human-readable format (B, KB, MB)
 		"formatFileSize": func(size int64) string {
 			if size < 1024 {
@@ -167,6 +168,11 @@ func (r *Renderer) loadTemplates() {
 	r.templates["admin/pages/dashboard.html"] = template.Must(template.New("base").Funcs(funcMap).ParseFiles(
 		filepath.Join(r.basePath, "admin/layouts/base.html"),
 		filepath.Join(r.basePath, "admin/pages/dashboard.html"),
+		filepath.Join(r.basePath, "partials/admin-sidebar.html"),
+	))
+	r.templates["admin/pages/backups.html"] = template.Must(template.New("base").Funcs(funcMap).ParseFiles(
+		filepath.Join(r.basePath, "admin/layouts/base.html"),
+		filepath.Join(r.basePath, "admin/pages/backups.html"),
 		filepath.Join(r.basePath, "partials/admin-sidebar.html"),
 	))
 
@@ -605,7 +611,7 @@ func safeHTML(s string) template.HTML {
 // Parameters:
 //   - t: Time value to format
 //   - format: Go time format string (e.g., "2006-01-02", "Jan 2, 2006")
-//            If empty, defaults to "January 2, 2006"
+//     If empty, defaults to "January 2, 2006"
 //
 // Returns:
 //   - string: Formatted date string

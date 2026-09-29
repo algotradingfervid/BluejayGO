@@ -1,0 +1,25 @@
+{{define "content"}}
+<div class="flex min-h-screen" style="font-family: 'JetBrains Mono', monospace;">
+  {{template "admin-sidebar" .}}
+  <main class="flex-1 min-w-0 p-6 lg:p-10">
+    <div class="flex items-center gap-3 mb-3">
+      <button type="button" onclick="toggleSidebar()" class="lg:hidden border-2 border-black px-3 py-2" aria-label="Toggle navigation menu">Menu</button>
+      <h1 class="text-3xl font-bold uppercase">Backups</h1>
+    </div>
+    <p class="mb-6 text-gray-700">Daily copies of your website database and uploaded files. The latest 14 daily backups are kept here.</p>
+    {{if .Configured}}
+      {{if .Healthy}}<div role="status" class="border-2 border-green-700 bg-green-50 p-4 mb-5">The latest scheduled backup completed successfully.</div>
+      {{else}}<div role="alert" class="border-2 border-red-700 bg-red-50 p-4 mb-5">A recent successful backup could not be confirmed. Ask your server administrator to check the backup job.</div>{{end}}
+      {{if .LastRun}}<p class="text-sm mb-5">Last backup attempt: {{.LastRun}}</p>{{end}}
+    {{else}}<div role="alert" class="border-2 border-red-700 bg-red-50 p-4 mb-5">Scheduled backups have not been configured.</div>{{end}}
+    <p class="border-2 border-black p-4 mb-6">Download a backup regularly and keep it in a secure location away from this server. These files contain private website data and administrator account records. Do not share them publicly.</p>
+    <div class="overflow-x-auto border-2 border-black">
+      <table class="w-full text-left"><caption class="sr-only">Available daily backups</caption>
+        <thead class="bg-gray-100"><tr><th scope="col" class="p-4">Created</th><th scope="col" class="p-4">Size</th><th scope="col" class="p-4">Download</th></tr></thead>
+        <tbody>{{range .Files}}<tr class="border-t-2 border-black"><td class="p-4">{{.Created}}</td><td class="p-4">{{.Size}}</td><td class="p-4"><a class="inline-block border-2 border-black px-4 py-2 font-bold underline" href="/admin/backups/{{.Name}}" download aria-label="Download backup created {{.Created}}">Download backup</a></td></tr>
+        {{else}}<tr><td colspan="3" class="p-5">No completed backups are available yet.</td></tr>{{end}}</tbody>
+      </table>
+    </div>
+  </main>
+</div>
+{{end}}
