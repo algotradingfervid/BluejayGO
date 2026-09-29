@@ -234,6 +234,7 @@ type Querier interface {
 	// Return type: integer count
 	// Used for: Dashboard alert showing draft products needing review
 	CountDraftProducts(ctx context.Context) (int64, error)
+	CountFilteredContactSubmissions(ctx context.Context, arg CountFilteredContactSubmissionsParams) (int64, error)
 	// Returns the total count of all media files.
 	//
 	// Parameters: none
@@ -1559,6 +1560,7 @@ type Querier interface {
 	//
 	// Use case: Editing a specific menu, fetching menu details
 	GetNavigationMenu(ctx context.Context, id int64) (NavigationMenu, error)
+	GetNextFilteredSubmissionID(ctx context.Context, arg GetNextFilteredSubmissionIDParams) (int64, error)
 	// Purpose: Gets ID of submission created BEFORE current one (for "next" navigation button)
 	// Parameters:
 	//   1. current_id (INTEGER): current submission ID
@@ -1669,6 +1671,7 @@ type Querier interface {
 	//   - INNER JOIN ensures only tags actually linked to the post are returned
 	// ORDER BY bt.name: alphabetical tag display
 	GetPostTagsByPostID(ctx context.Context, blogPostID int64) ([]GetPostTagsByPostIDRow, error)
+	GetPreviousFilteredSubmissionID(ctx context.Context, arg GetPreviousFilteredSubmissionIDParams) (int64, error)
 	// Purpose: Gets ID of submission created AFTER current one (for "previous" navigation button)
 	// Parameters:
 	//   1. current_id (INTEGER): current submission ID
@@ -2340,6 +2343,8 @@ type Querier interface {
 	//
 	// Use case: Homepage featured products section, product highlights carousel
 	ListFeaturedProducts(ctx context.Context, limit int64) ([]ListFeaturedProductsRow, error)
+	// Unified inbox scope shared by list, counts and detail navigation.
+	ListFilteredContactSubmissions(ctx context.Context, arg ListFilteredContactSubmissionsParams) ([]ListFilteredContactSubmissionsRow, error)
 	// ====================================================================
 	// FOOTER COLUMN ITEMS
 	// ====================================================================
@@ -3063,6 +3068,8 @@ type Querier interface {
 	// WHERE: status = 'published' ensures only published products can be linked
 	// LIMIT 10: restricts results for autocomplete/typeahead UI
 	SearchPublishedProducts(ctx context.Context, name string) ([]SearchPublishedProductsRow, error)
+	// Select exactly one primary gallery image, only when it belongs to this product.
+	SetPrimaryProductImage(ctx context.Context, arg SetPrimaryProductImageParams) (int64, error)
 	UnsetPrimaryOfficeLocations(ctx context.Context) error
 	// Updates About page section visibility toggles.
 	//

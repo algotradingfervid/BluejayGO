@@ -1,6 +1,7 @@
 {{define "admin-sidebar"}}
-<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-<aside class="admin-sidebar w-[260px] bg-[#004499] text-white border-r-4 border-black flex flex-col h-full">
+<div class="admin-mobile-bar"><button type="button" data-sidebar-toggle aria-controls="admin-navigation" aria-expanded="false" aria-label="Open navigation" onclick="toggleSidebar()"><span aria-hidden="true">☰</span> Menu</button><span>BlueJay CMS</span></div>
+<div class="sidebar-overlay" aria-hidden="true" onclick="toggleSidebar()"></div>
+<aside id="admin-navigation" aria-label="CMS navigation" class="admin-sidebar w-[260px] bg-[#004499] text-white border-r-4 border-black flex flex-col h-full">
     <!-- Logo (pinned top) -->
     <div class="p-5 border-b-2 border-white/30 shrink-0">
         <div class="flex items-center gap-3">
@@ -14,7 +15,7 @@
                 <div class="text-[10px] opacity-60 tracking-widest">CMS</div>
             </div>
             <!-- Mobile close button -->
-            <button onclick="toggleSidebar()" class="lg:hidden ml-auto p-1 hover:bg-[#0066CC]">
+            <button type="button" data-sidebar-close aria-label="Close navigation" onclick="toggleSidebar()" class="lg:hidden ml-auto p-1 hover:bg-[#0066CC]">
                 <span class="material-symbols-outlined text-lg">close</span>
             </button>
         </div>

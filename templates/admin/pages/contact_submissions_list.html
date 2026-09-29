@@ -1,7 +1,7 @@
 {{define "content"}}
 <div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
     {{template "admin-sidebar" .}}
-    <div class="flex-1 overflow-auto p-8 bg-gray-50">
+    <div id="contact-inbox-content" class="flex-1 min-w-0 overflow-auto p-8 bg-gray-50" data-queue-key="{{.ReturnURL}}">
         <!-- Header -->
         <div class="flex justify-between items-center mb-6">
             <div>
@@ -21,17 +21,17 @@
 
         <!-- Tabs -->
         <div class="flex gap-0 mb-6">
-            <a href="/admin/contact/submissions"
-               class="px-5 py-2 text-sm font-bold uppercase border-2 border-black {{if and (eq .Type "") (eq .Status "")}}bg-black text-white{{else}}bg-white text-black hover:bg-gray-100{{end}}"
+            <a href="{{.AllTypeURL}}"
+               class="px-5 py-2 text-sm font-bold uppercase border-2 border-black {{if eq .Type ""}}bg-black text-white{{else}}bg-white text-black hover:bg-gray-100{{end}}"
                style="border-right-width: 1px;">
                 All ({{.TotalAll}})
             </a>
-            <a href="/admin/contact/submissions?type=contact"
+            <a href="{{.ContactTypeURL}}"
                class="px-5 py-2 text-sm font-bold uppercase border-2 border-black {{if eq .Type "contact"}}bg-black text-white{{else}}bg-white text-black hover:bg-gray-100{{end}}"
                style="border-right-width: 1px; border-left-width: 1px;">
                 Contact Form ({{.TotalContact}})
             </a>
-            <a href="/admin/contact/submissions?type=rfq"
+            <a href="{{.RFQTypeURL}}"
                class="px-5 py-2 text-sm font-bold uppercase border-2 border-black {{if eq .Type "rfq"}}bg-black text-white{{else}}bg-white text-black hover:bg-gray-100{{end}}"
                style="border-left-width: 1px;">
                 Request for Quote ({{.TotalRFQ}})
@@ -43,22 +43,23 @@
             <form method="GET" action="/admin/contact/submissions" class="flex flex-wrap items-end gap-4">
                 {{if .Type}}<input type="hidden" name="type" value="{{.Type}}">{{end}}
                 <div class="flex-1 min-w-[200px]">
-                    <label class="block text-xs font-bold uppercase mb-1">Search</label>
-                    <input type="text" name="search" value="{{.Search}}" placeholder="Search by name, email, company..."
+                    <label for="submission-search" class="block text-xs font-bold uppercase mb-1">Search</label>
+                    <input id="submission-search" type="text" name="search" value="{{.Search}}" placeholder="Search by name, email, company..."
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div class="min-w-[150px]">
-                    <label class="block text-xs font-bold uppercase mb-1" title="Filter submissions by their review status.">
+                    <label for="submission-status" class="block text-xs font-bold uppercase mb-1" title="Filter submissions by their review status.">
                         Status <span class="text-gray-400 cursor-help" title="Filter submissions by their review status.">&#9432;</span>
                     </label>
-                    <select name="status"
+                    <select id="submission-status" name="status"
                             class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             style="font-family: 'JetBrains Mono', monospace;">
                         <option value="">All Statuses</option>
                         <option value="new" {{if eq .Status "new"}}selected{{end}}>New</option>
                         <option value="read" {{if eq .Status "read"}}selected{{end}}>Read</option>
                         <option value="replied" {{if eq .Status "replied"}}selected{{end}}>Replied</option>
+                        <option value="closed" {{if eq .Status "closed"}}selected{{end}}>Closed</option>
                     </select>
                 </div>
                 <div class="flex gap-2">
@@ -78,7 +79,8 @@
 
         <!-- Table -->
         {{if .Submissions}}
-        <div class="bg-white border-2 border-black overflow-hidden" style="box-shadow: 4px 4px 0px #000;">
+        <p id="inbox-scroll-hint" class="text-xs text-gray-600 mb-2">Scroll the table sideways to see all columns. With the table focused, use the arrow keys.</p>
+        <div id="contact-inbox-table" role="region" aria-label="Contact submissions" aria-describedby="inbox-scroll-hint" tabindex="0" class="bg-white border-2 border-black overflow-x-auto focus:outline-none focus:ring-2 focus:ring-blue-500" style="max-width: 100%; box-shadow: 4px 4px 0px #000;">
             <table class="min-w-full">
                 <thead>
                     <tr class="border-b-2 border-black bg-gray-100">
@@ -95,7 +97,7 @@
                     {{range .Submissions}}
                     <tr class="border-b border-gray-200 hover:bg-gray-50 {{if eq .Status "new"}}bg-yellow-50{{end}}">
                         <td class="px-4 py-3 text-sm font-bold">
-                            <a href="/admin/contact/submissions/{{.ID}}" class="hover:underline">{{.Name}}</a>
+                            <a href="{{index $.DetailURLs .ID}}" data-submission-link class="hover:underline">{{.Name}}</a>
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-600">{{.Email}}</td>
                         <td class="px-4 py-3 text-sm text-gray-600">{{.Company}}</td>
@@ -113,7 +115,7 @@
                         <td class="px-4 py-3 text-sm text-gray-600 uppercase">{{.SubmissionType}}</td>
                         <td class="px-4 py-3 text-sm text-gray-600">{{.CreatedAt}}</td>
                         <td class="px-4 py-3 text-right text-sm">
-                            <a href="/admin/contact/submissions/{{.ID}}" class="text-black font-bold hover:underline mr-3">View</a>
+                            <a href="{{index $.DetailURLs .ID}}" data-submission-link class="text-black font-bold hover:underline mr-3">View</a>
                             <button hx-delete="/admin/contact/submissions/{{.ID}}" hx-confirm="Delete this submission?" hx-target="closest tr" hx-swap="outerHTML swap:0.3s"
                                     class="text-red-600 font-bold hover:underline">Delete</button>
                         </td>
@@ -129,14 +131,14 @@
             <div class="text-sm text-gray-600">Page {{.Page}} of {{.TotalPages}}</div>
             <div class="flex gap-2">
                 {{if gt .Page 1}}
-                <a href="?page={{sub .Page 1}}{{if .Status}}&status={{.Status}}{{end}}{{if .Type}}&type={{.Type}}{{end}}{{if .Search}}&search={{.Search}}{{end}}"
+                <a href="{{.PreviousPageURL}}"
                    class="px-4 py-2 text-sm font-bold uppercase border-2 border-black bg-white hover:bg-gray-100"
                    style="box-shadow: 3px 3px 0px #000;">
                     &larr; Previous
                 </a>
                 {{end}}
                 {{if lt .Page .TotalPages}}
-                <a href="?page={{add .Page 1}}{{if .Status}}&status={{.Status}}{{end}}{{if .Type}}&type={{.Type}}{{end}}{{if .Search}}&search={{.Search}}{{end}}"
+                <a href="{{.NextPageURL}}"
                    class="px-4 py-2 text-sm font-bold uppercase border-2 border-black bg-white hover:bg-gray-100"
                    style="box-shadow: 3px 3px 0px #000;">
                     Next &rarr;
@@ -152,4 +154,27 @@
         {{end}}
     </div>
 </div>
+<script>
+(function () {
+    var content = document.getElementById('contact-inbox-content');
+    var table = document.getElementById('contact-inbox-table');
+    var hint = document.getElementById('inbox-scroll-hint');
+    var key = 'contact-inbox-scroll:' + content.dataset.queueKey;
+    function updateHint() { if (hint && table) hint.hidden = table.scrollWidth <= table.clientWidth; }
+    function restorePosition() {
+        try {
+            var saved = JSON.parse(sessionStorage.getItem(key));
+            if (saved) { content.scrollTop = saved.top || 0; if (table) table.scrollLeft = saved.left || 0; }
+        } catch (_) {}
+        updateHint();
+    }
+    content.addEventListener('click', function (event) {
+        if (!event.target.closest('a[data-submission-link]')) return;
+        try { sessionStorage.setItem(key, JSON.stringify({top: content.scrollTop, left: table ? table.scrollLeft : 0})); } catch (_) {}
+    });
+    window.addEventListener('pageshow', restorePosition);
+    window.addEventListener('resize', updateHint);
+    requestAnimationFrame(restorePosition);
+})();
+</script>
 {{end}}

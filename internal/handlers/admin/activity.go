@@ -124,15 +124,15 @@ func (h *ActivityHandler) List(c echo.Context) error {
 	// Query the database for activity logs matching the current filters
 	// ListActivityLogs performs filtering, ordering, and pagination in a single query
 	logs, err := h.queries.ListActivityLogs(ctx, sqlc.ListActivityLogsParams{
-		FilterAction: action,        // Filter by action type (empty string = no filter)
-		FilterSearch: search,        // Filter by search term (empty string = no filter)
+		FilterAction: action,          // Filter by action type (empty string = no filter)
+		FilterSearch: search,          // Filter by search term (empty string = no filter)
 		PageLimit:    activityPerPage, // Always fetch exactly 50 rows
-		PageOffset:   offset,         // Skip rows from previous pages
+		PageOffset:   offset,          // Skip rows from previous pages
 	})
 	if err != nil {
 		// Log database errors with structured context for debugging
 		h.logger.Error("failed to list activity logs", "error", err)
-		return echo.NewHTTPError(http.StatusInternalServerError)
+		return renderOperationError(c, "Activity log unavailable", "We could not load activity history. Try again, or contact your site administrator if this continues.", "/admin/activity")
 	}
 
 	// Get the total count of matching logs for pagination calculation
@@ -144,7 +144,7 @@ func (h *ActivityHandler) List(c echo.Context) error {
 	if err != nil {
 		// Log database errors with structured context for debugging
 		h.logger.Error("failed to count activity logs", "error", err)
-		return echo.NewHTTPError(http.StatusInternalServerError)
+		return renderOperationError(c, "Activity log unavailable", "We could not load activity history. Try again, or contact your site administrator if this continues.", "/admin/activity")
 	}
 
 	// Calculate total number of pages needed to display all results
@@ -183,16 +183,16 @@ func (h *ActivityHandler) List(c echo.Context) error {
 	// Template path: templates/admin/pages/activity_log.html
 	// Base layout: templates/admin/layouts/admin-layout.html
 	return c.Render(http.StatusOK, "admin/pages/activity_log.html", map[string]interface{}{
-		"Title":      "Activity Log",     // Browser title and page heading
-		"Logs":       logs,                // Array of activity log entries for current page
-		"Action":     action,              // Current action filter (preserves form state)
-		"Search":     search,              // Current search term (preserves form state)
-		"HasFilters": hasFilters,          // Whether any filters are active (UI visibility)
-		"Page":       page,                // Current page number (for pagination state)
-		"TotalPages": totalPages,          // Total pages (for pagination limits)
-		"Pages":      pages,               // Page number array (for pagination UI)
-		"Total":      total,               // Total filtered results (for "X total entries" display)
-		"ShowFrom":   showFrom,            // First entry number on page (for "Showing X-Y" display)
-		"ShowTo":     showTo,              // Last entry number on page (for "Showing X-Y" display)
+		"Title":      "Activity Log", // Browser title and page heading
+		"Logs":       logs,           // Array of activity log entries for current page
+		"Action":     action,         // Current action filter (preserves form state)
+		"Search":     search,         // Current search term (preserves form state)
+		"HasFilters": hasFilters,     // Whether any filters are active (UI visibility)
+		"Page":       page,           // Current page number (for pagination state)
+		"TotalPages": totalPages,     // Total pages (for pagination limits)
+		"Pages":      pages,          // Page number array (for pagination UI)
+		"Total":      total,          // Total filtered results (for "X total entries" display)
+		"ShowFrom":   showFrom,       // First entry number on page (for "Showing X-Y" display)
+		"ShowTo":     showTo,         // Last entry number on page (for "Showing X-Y" display)
 	})
 }

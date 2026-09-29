@@ -285,7 +285,7 @@ func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
 	adminGroup.DELETE("/products/:id", adminProductsHandler.Delete)
 
 	// Product details (specs, features, certs, downloads, images)
-	pdHandler := adminHandlers.NewProductDetailsHandler(queries, testLogger, uploadSvc)
+	pdHandler := adminHandlers.NewProductDetailsHandler(queries, testLogger, uploadSvc, appCache)
 	adminGroup.GET("/products/:id/specs", pdHandler.ListSpecs)
 	adminGroup.POST("/products/:id/specs", pdHandler.AddSpec)
 	adminGroup.DELETE("/products/:id/specs", pdHandler.DeleteSpecs)
@@ -309,6 +309,7 @@ func setupApp(t *testing.T) (*echo.Echo, *sqlc.Queries, func()) {
 	adminGroup.POST("/products/:id/images", pdHandler.AddImage)
 	adminGroup.DELETE("/products/:id/images/:image_id", pdHandler.DeleteImage)
 	adminGroup.POST("/products/:id/images/:image_id", pdHandler.UpdateImage)
+	adminGroup.POST("/products/:id/images/:image_id/primary", pdHandler.SetPrimaryImage)
 
 	// Blog posts
 	adminBlogPostsHandler := adminHandlers.NewBlogPostsHandler(queries, testLogger, appCache)

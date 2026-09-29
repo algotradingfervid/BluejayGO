@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{if .MetaTitle}}{{.MetaTitle}}{{else}}{{.Title}} - BlueJay Innovative Labs{{end}}</title>
+    {{if .NoIndex}}<meta name="robots" content="noindex">{{end}}
     <meta name="description" content="{{if .MetaDescription}}{{.MetaDescription}}{{else if .Settings}}{{.Settings.MetaDescription}}{{end}}">
     <meta property="og:title" content="{{if .MetaTitle}}{{.MetaTitle}}{{else}}{{.Title}} - BlueJay Innovative Labs{{end}}">
     <meta property="og:description" content="{{if .MetaDescription}}{{.MetaDescription}}{{else if .Settings}}{{.Settings.MetaDescription}}{{end}}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bluejaylabs.com{{.CanonicalURL}}">
-    {{if .OGImage}}<meta property="og:image" content="{{.OGImage}}">{{end}}
+    {{if .OGImage}}<meta property="og:image" content="{{.OGImage}}">{{else if .Settings}}{{if .Settings.DefaultOgImage}}<meta property="og:image" content="{{.Settings.DefaultOgImage}}">{{end}}{{end}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{if .MetaTitle}}{{.MetaTitle}}{{else}}{{.Title}} - BlueJay Innovative Labs{{end}}">
     <meta name="twitter:description" content="{{if .MetaDescription}}{{.MetaDescription}}{{else if .Settings}}{{.Settings.MetaDescription}}{{end}}">
-    {{if .OGImage}}<meta name="twitter:image" content="{{.OGImage}}">{{end}}
+    {{if .OGImage}}<meta name="twitter:image" content="{{.OGImage}}">{{else if .Settings}}{{if .Settings.DefaultOgImage}}<meta name="twitter:image" content="{{.Settings.DefaultOgImage}}">{{end}}{{end}}
     <link rel="canonical" href="https://bluejaylabs.com{{.CanonicalURL}}">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
@@ -52,14 +53,14 @@
 </head>
 <body class="font-mono bg-white">
     {{if .IsPreview}}
-    <div id="preview-banner" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #FBBF24; border-bottom: 3px solid #000; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; font-family: 'JetBrains Mono', monospace;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+    <div id="preview-banner" style="position: relative; z-index: 9999; background: #FBBF24; border-bottom: 3px solid #000; padding: 10px 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; font-family: 'JetBrains Mono', monospace;">
+        <div style="display: flex; align-items: center; gap: 12px; flex: 1 1 260px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" style="flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             <span style="font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #000;">
-                Preview Mode — This content is not published yet
+                Preview of saved version{{if .PreviewStatus}} — Saved status: {{.PreviewStatus}}{{end}}
             </span>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
             {{if .EditURL}}
             <a href="{{.EditURL}}"
                style="background: #000; color: #FBBF24; padding: 6px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; text-decoration: none; border: 2px solid #000;">
@@ -72,7 +73,6 @@
             </button>
         </div>
     </div>
-    <div style="height: 50px;"></div>
     {{end}}
     {{template "header" .}}
     <main>

@@ -842,7 +842,7 @@ func (q *Queries) GetCaseStudyBySlug(ctx context.Context, slug string) (GetCaseS
 
 const getCaseStudyBySlugIncludeDrafts = `-- name: GetCaseStudyBySlugIncludeDrafts :one
 SELECT
-    cs.id, cs.slug, cs.title, cs.client_name, cs.summary,
+    cs.id, cs.slug, cs.title, cs.client_name, cs.summary, cs.is_published,
     cs.industry_id, cs.hero_image_url,
     cs.challenge_title, cs.challenge_content, cs.challenge_bullets,
     cs.solution_title, cs.solution_content,
@@ -860,6 +860,7 @@ type GetCaseStudyBySlugIncludeDraftsRow struct {
 	Title            string         `json:"title"`
 	ClientName       string         `json:"client_name"`
 	Summary          string         `json:"summary"`
+	IsPublished      int64          `json:"is_published"`
 	IndustryID       int64          `json:"industry_id"`
 	HeroImageUrl     sql.NullString `json:"hero_image_url"`
 	ChallengeTitle   string         `json:"challenge_title"`
@@ -893,6 +894,7 @@ func (q *Queries) GetCaseStudyBySlugIncludeDrafts(ctx context.Context, slug stri
 		&i.Title,
 		&i.ClientName,
 		&i.Summary,
+		&i.IsPublished,
 		&i.IndustryID,
 		&i.HeroImageUrl,
 		&i.ChallengeTitle,

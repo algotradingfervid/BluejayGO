@@ -272,5 +272,6 @@ SET site_name = ?,
     footer_logo_path = ?,
     marketplace_gem_url = ?,
     marketplace_amazon_url = ?,
+    default_og_image = ?,
     updated_at = CURRENT_TIMESTAMP
 WHERE id = 1;

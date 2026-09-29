@@ -108,7 +108,7 @@ WHERE w.slug = ? AND w.is_published = 1;
 -- Use case: Admin preview mode, editing draft whitepapers
 -- Note: Does NOT filter by is_published, returns draft whitepapers
 SELECT
-    w.id, w.title, w.slug, w.description, w.topic_id, w.pdf_file_path, w.file_size_bytes,
+    w.id, w.title, w.slug, w.description, w.topic_id, w.pdf_file_path, w.file_size_bytes, w.is_published,
     w.page_count, w.published_date, w.cover_color_from, w.cover_color_to, w.download_count,
     w.meta_description, w.meta_title, w.og_image,
     t.name as topic_name, t.color_hex as topic_color_hex

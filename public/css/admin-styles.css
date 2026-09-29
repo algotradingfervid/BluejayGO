@@ -539,3 +539,19 @@
         transform: translateX(0);
     }
 }
+
+/* Shared compact navigation is present on every CMS screen. */
+.admin-mobile-bar { display: none; }
+.admin-dirty-notice { border: 2px solid #000; background: #fef9c3; color: #713f12; padding: .75rem; margin-bottom: 1rem; }
+@media (max-width: 1023px) {
+    .admin-shell { padding-top: 56px; box-sizing: border-box; }
+    .admin-mobile-bar { display: flex; position: fixed; inset: 0 0 auto; height: 56px; align-items: center; justify-content: space-between; padding: 6px 16px; background: white; border-bottom: 2px solid black; z-index: 35; font-weight: 700; }
+    .admin-mobile-bar button { min-height: 42px; border: 2px solid black; padding: 6px 12px; background: white; }
+    .admin-sidebar { height: 100dvh; }
+}
+@media (prefers-reduced-motion: reduce) { .admin-sidebar { transition: none; } }
+
+.media-dialog { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 1rem; border: 0; background: transparent; }
+.media-dialog[open] { display: flex; align-items: center; justify-content: center; }
+.media-dialog:not([open]) { display: none; }
+.media-dialog::backdrop { background: rgba(0, 0, 0, .5); }

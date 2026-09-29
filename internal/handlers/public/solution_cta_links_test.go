@@ -3,6 +3,7 @@ package public
 import (
 	"bytes"
 	"database/sql"
+	"html"
 	"html/template"
 	"os"
 	"path/filepath"
@@ -63,5 +64,31 @@ func TestSolutionBrochureAvailabilityAndVisibility(t *testing.T) {
 	cta.IsActive = false
 	if html := render([]sqlc.SolutionCta{cta}); strings.Contains(html, "Corporate CTA") {
 		t.Fatal("disabled section rendered")
+	}
+}
+
+func TestSolutionContactUsesConfiguredSitePhone(t *testing.T) {
+	tmpl, err := template.New("solution").Funcs(template.FuncMap{"safeHTML": func(v string) template.HTML { return template.HTML(v) }}).ParseFiles("../../../templates/public/pages/solution_detail.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cta := sqlc.SolutionCta{Heading: "Contact our team", SectionName: "main_cta", PhoneNumber: sql.NullString{String: "+91-120-456-7890", Valid: true}}
+	for _, phone := range []string{"+1 202 555 0143", ""} {
+		var buf bytes.Buffer
+		data := map[string]interface{}{"Solution": sqlc.Solution{}, "Sections": map[string]interface{}{}, "CTAs": []sqlc.SolutionCta{cta}, "Settings": map[string]string{"ContactPhone": phone}}
+		if err := tmpl.ExecuteTemplate(&buf, "content", data); err != nil {
+			t.Fatal(err)
+		}
+		output := html.UnescapeString(buf.String())
+		if strings.Contains(output, cta.PhoneNumber.String) {
+			t.Fatal("legacy CTA phone overrode the configured site phone")
+		}
+		if phone == "" {
+			if strings.Contains(output, "Or call us directly") || strings.Contains(output, `href="tel:`) {
+				t.Fatal("unconfigured phone should not render a call prompt")
+			}
+		} else if !strings.Contains(output, `href="tel:`) || !strings.Contains(output, phone) {
+			t.Fatal("configured phone must render with a telephone link")
+		}
 	}
 }

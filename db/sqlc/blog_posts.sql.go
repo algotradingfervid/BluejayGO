@@ -369,7 +369,7 @@ func (q *Queries) GetFeaturedPost(ctx context.Context) (GetFeaturedPostRow, erro
 
 const getPostBySlugIncludeDrafts = `-- name: GetPostBySlugIncludeDrafts :one
 SELECT
-    bp.id, bp.title, bp.slug, bp.excerpt, bp.body,
+    bp.id, bp.title, bp.slug, bp.excerpt, bp.body, bp.status,
     bp.featured_image_url, bp.featured_image_alt,
     bp.category_id, bc.name AS category_name, bc.slug AS category_slug, bc.color_hex AS category_color,
     bp.author_id, ba.name AS author_name, ba.bio AS author_bio,
@@ -388,6 +388,7 @@ type GetPostBySlugIncludeDraftsRow struct {
 	Slug               string         `json:"slug"`
 	Excerpt            string         `json:"excerpt"`
 	Body               string         `json:"body"`
+	Status             string         `json:"status"`
 	FeaturedImageUrl   sql.NullString `json:"featured_image_url"`
 	FeaturedImageAlt   sql.NullString `json:"featured_image_alt"`
 	CategoryID         int64          `json:"category_id"`
@@ -424,6 +425,7 @@ func (q *Queries) GetPostBySlugIncludeDrafts(ctx context.Context, slug string) (
 		&i.Slug,
 		&i.Excerpt,
 		&i.Body,
+		&i.Status,
 		&i.FeaturedImageUrl,
 		&i.FeaturedImageAlt,
 		&i.CategoryID,

@@ -26,26 +26,26 @@
         <!-- Sliding track: one slide per active hero -->
         <div class="flex transition-transform duration-500 ease-out relative z-10" data-hero-track style="will-change: transform;">
             {{range $i, $hero := .Heroes}}
-            <div class="w-full flex-shrink-0" data-hero-slide="{{$i}}" aria-hidden="{{if ne $i 0}}true{{else}}false{{end}}" {{if ne $i 0}}inert{{end}}>
+            <div class="w-full min-w-0 flex-shrink-0" data-hero-slide="{{$i}}" aria-hidden="{{if ne $i 0}}true{{else}}false{{end}}" {{if ne $i 0}}inert{{end}}>
                 <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]">
-                    <div class="space-y-8 relative z-10">
+                    <div class="min-w-0 space-y-8 relative z-10">
                         {{if $hero.BadgeText.Valid}}
                         <div class="inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase">
                             {{$hero.BadgeText.String}}
                         </div>
                         {{end}}
-                        <h1 class="text-4xl md:text-6xl font-black font-mono leading-none uppercase">
+                        <h1 class="break-words text-4xl md:text-6xl font-black font-mono leading-none uppercase">
                             {{$hero.Headline}}
                         </h1>
                         <p class="text-lg font-mono opacity-80 border-l-4 border-primary pl-4 max-w-xl">
                             {{$hero.Subheadline}}
                         </p>
                         <div class="flex flex-wrap gap-4">
-                            <a href="{{$hero.PrimaryCtaUrl}}" class="manual-border bg-primary text-white px-8 py-4 font-mono font-bold uppercase manual-shadow active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
+                            <a href="{{$hero.PrimaryCtaUrl}}" class="manual-border bg-primary text-white max-w-full px-5 sm:px-8 py-4 font-mono font-bold uppercase manual-shadow active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
                                 {{$hero.PrimaryCtaText}}
                             </a>
                             {{if $hero.SecondaryCtaText.Valid}}
-                            <a href="{{$hero.SecondaryCtaUrl.String}}" class="manual-border bg-white text-black px-8 py-4 font-mono font-bold uppercase manual-shadow active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
+                            <a href="{{$hero.SecondaryCtaUrl.String}}" class="manual-border bg-white text-black max-w-full px-5 sm:px-8 py-4 font-mono font-bold uppercase manual-shadow active:brightness-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
                                 {{$hero.SecondaryCtaText.String}}
                             </a>
                             {{end}}
@@ -74,74 +74,26 @@
             {{end}}
         </div>
 
-        <!-- Navigation: only shown when there is more than one slide -->
+        <!-- Controls occupy their own row, outside every slide's links and image. -->
         {{if gt (len .Heroes) 1}}
-        <button type="button" data-hero-prev aria-label="Previous slide"
-                class="absolute left-4 top-1/2 -translate-y-1/2 z-20 manual-border bg-white text-black w-12 h-12 flex items-center justify-center manual-shadow active:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
-            <span class="material-symbols-outlined">chevron_left</span>
-        </button>
-        <button type="button" data-hero-next aria-label="Next slide"
-                class="absolute right-4 top-1/2 -translate-y-1/2 z-20 manual-border bg-white text-black w-12 h-12 flex items-center justify-center manual-shadow active:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
-            <span class="material-symbols-outlined">chevron_right</span>
-        </button>
-        <!-- Slide indicators (one per slide) -->
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2" data-hero-dots>
-            {{range $i, $hero := .Heroes}}
-            <button type="button" data-hero-dot="{{$i}}" aria-label="Go to slide {{add $i 1}}"
-                    class="w-8 h-2 manual-border {{if eq $i 0}}bg-primary{{else}}bg-gray-200{{end}}"></button>
-            {{end}}
+        <div data-hero-controls class="relative z-20 flex flex-wrap items-center justify-center gap-3 border-t-2 border-black bg-white px-4 py-4">
+            <button type="button" data-hero-rotation aria-label="Pause slideshow" class="manual-border bg-white px-3 min-h-[48px] font-mono text-sm font-bold manual-shadow active:bg-gray-100">Pause</button>
+            <button type="button" data-hero-prev aria-label="Previous slide" class="manual-border bg-white w-12 h-12 flex items-center justify-center manual-shadow active:bg-gray-100">
+                <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+            </button>
+            <div class="flex flex-wrap justify-center gap-2" data-hero-dots>
+                {{range $i, $hero := .Heroes}}
+                <button type="button" data-hero-dot="{{$i}}" aria-label="Go to slide {{add $i 1}}" aria-current="{{if eq $i 0}}true{{else}}false{{end}}" class="w-8 h-8 manual-border {{if eq $i 0}}bg-primary{{else}}bg-gray-200{{end}}"></button>
+                {{end}}
+            </div>
+            <button type="button" data-hero-next aria-label="Next slide" class="manual-border bg-white w-12 h-12 flex items-center justify-center manual-shadow active:bg-gray-100">
+                <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+            </button>
+            <span data-hero-status class="sr-only" aria-live="off"></span>
         </div>
         {{end}}
     </section>
-
-    <script>
-    (function () {
-        var root = document.querySelector('[data-hero-carousel]');
-        if (!root) return;
-        var track = root.querySelector('[data-hero-track]');
-        var slides = root.querySelectorAll('[data-hero-slide]');
-        var dots = root.querySelectorAll('[data-hero-dot]');
-        if (slides.length < 2) return; // Single slide: nothing to rotate
-
-        var idx = 0, timer = null;
-        var autoplay = root.getAttribute('data-autoplay') === '1';
-        var interval = Math.max(2, parseInt(root.getAttribute('data-interval'), 10) || 5) * 1000;
-
-        function show(n) {
-            idx = (n + slides.length) % slides.length;
-            track.style.transform = 'translateX(-' + (idx * 100) + '%)';
-            for (var i = 0; i < slides.length; i++) {
-                slides[i].setAttribute('aria-hidden', i === idx ? 'false' : 'true');
-                slides[i].inert = i !== idx;
-            }
-            for (var j = 0; j < dots.length; j++) {
-                dots[j].classList.toggle('bg-primary', j === idx);
-                dots[j].classList.toggle('bg-gray-200', j !== idx);
-            }
-        }
-        function next() { show(idx + 1); }
-        function prev() { show(idx - 1); }
-        function start() { if (autoplay) { stop(); timer = setInterval(next, interval); } }
-        function stop() { if (timer) { clearInterval(timer); timer = null; } }
-
-        var nextBtn = root.querySelector('[data-hero-next]');
-        var prevBtn = root.querySelector('[data-hero-prev]');
-        if (nextBtn) nextBtn.addEventListener('click', function () { next(); start(); });
-        if (prevBtn) prevBtn.addEventListener('click', function () { prev(); start(); });
-        for (var k = 0; k < dots.length; k++) {
-            (function (i) { dots[i].addEventListener('click', function () { show(i); start(); }); })(k);
-        }
-        root.addEventListener('mouseenter', stop);
-        root.addEventListener('mouseleave', start);
-        root.addEventListener('focusin', stop);
-        root.addEventListener('focusout', function (event) {
-            if (!root.contains(event.relatedTarget)) start();
-        });
-
-        show(0);
-        start();
-    })();
-    </script>
+    <script src="/public/js/hero-carousel.js" defer></script>
     {{end}}
 {{end}}
 

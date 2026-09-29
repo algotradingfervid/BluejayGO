@@ -58,7 +58,19 @@ func (h *SettingsHandler) Edit(c echo.Context) error {
 	settings, err := h.queries.GetSettings(c.Request().Context())
 	if err != nil {
 		h.logger.Error("failed to load settings", "error", err)
-		return echo.NewHTTPError(http.StatusInternalServerError)
+		return renderOperationError(c, "Settings unavailable", "We could not complete this request. Try again, or contact your site administrator if this continues.", "/admin/settings")
+	}
+
+	media, err := h.queries.ListMediaFiles(c.Request().Context(), sqlc.ListMediaFilesParams{Limit: -1})
+	if err != nil {
+		h.logger.Error("failed to load settings image choices", "error", err)
+		return renderOperationError(c, "Settings unavailable", "We could not load the image library. Try again, or contact your site administrator if this continues.", "/admin/settings")
+	}
+	var images []sqlc.MediaFile
+	for _, file := range media {
+		if strings.HasPrefix(file.MimeType, "image/") {
+			images = append(images, file)
+		}
 	}
 
 	// Check for success flag from previous update operation
@@ -75,6 +87,7 @@ func (h *SettingsHandler) Edit(c echo.Context) error {
 	// Uses admin-layout wrapper for consistent navigation/header
 	return c.Render(http.StatusOK, "admin/pages/settings_form.html", map[string]interface{}{
 		"Title":        "Global Settings",
+		"ImageChoices": images,
 		"Settings":     settings, // Current settings data from database
 		"Saved":        saved,    // Show success message if true
 		"SocialFields": settingsSocialFields(settings),
@@ -141,6 +154,14 @@ func (h *SettingsHandler) Update(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Footer logo must be an image path starting with / or a full http:// or https:// URL")
 	}
 
+	ogImage := strings.TrimSpace(c.FormValue("default_og_image"))
+	if ogImage != "" {
+		image, err := h.queries.GetMediaFileByPath(c.Request().Context(), ogImage)
+		if err != nil || !strings.HasPrefix(image.MimeType, "image/") {
+			return echo.NewHTTPError(http.StatusBadRequest, "Choose an image from the media library, or remove the default image")
+		}
+	}
+
 	// Update all global settings fields in database (single UPDATE query)
 	// Settings table contains one row with all global configuration
 	err := h.queries.UpdateGlobalSettings(c.Request().Context(), sqlc.UpdateGlobalSettingsParams{
@@ -156,6 +177,7 @@ func (h *SettingsHandler) Update(c echo.Context) error {
 		MetaDescription:   c.FormValue("meta_description"),
 		MetaKeywords:      c.FormValue("meta_keywords"),
 		GoogleAnalyticsID: c.FormValue("google_analytics_id"),
+		DefaultOgImage:    ogImage,
 
 		// Social media links
 		SocialFacebook:       strings.TrimSpace(c.FormValue("social_facebook")),
@@ -170,7 +192,7 @@ func (h *SettingsHandler) Update(c echo.Context) error {
 	})
 	if err != nil {
 		h.logger.Error("failed to update settings", "error", err)
-		return echo.NewHTTPError(http.StatusInternalServerError)
+		return renderOperationError(c, "Settings unavailable", "We could not complete this request. Try again, or contact your site administrator if this continues.", "/admin/settings")
 	}
 
 	// Invalidate ALL cached public pages. Global settings (contact info, site name,

@@ -1,0 +1,21 @@
+{{define "content"}}
+<section class="max-w-4xl mx-auto px-4 py-16 md:py-24 font-mono">
+  <p class="font-bold text-[#0066CC] mb-4">404</p>
+  <h1 class="text-4xl md:text-6xl font-bold mb-6">Page not found</h1>
+  <p class="text-lg leading-relaxed mb-4">We couldn't find this page. The link may be out of date, or the address may have been typed incorrectly.</p>
+  <p class="mb-8">Check the address, search the website or continue from one of these pages.</p>
+  <nav aria-label="Page recovery" class="flex flex-wrap gap-4 mb-10">
+    <a href="/" class="manual-border px-5 py-3 bg-black text-white font-bold">Home</a>
+    <a href="/products" class="manual-border px-5 py-3 font-bold">Products</a>
+    <a href="/solutions" class="manual-border px-5 py-3 font-bold">Solutions</a>
+    <a href="/contact" class="manual-border px-5 py-3 font-bold">Contact Us</a>
+  </nav>
+  <form action="/search" method="get" class="max-w-xl">
+    <label for="missing-page-search" class="block font-bold mb-3">Search the website</label>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <input id="missing-page-search" name="q" type="search" required class="manual-border px-4 py-3 min-w-0 flex-1" placeholder="Products, solutions or articles">
+      <button type="submit" class="manual-border px-5 py-3 bg-[#0066CC] text-white font-bold">Search</button>
+    </div>
+  </form>
+</section>
+{{end}}

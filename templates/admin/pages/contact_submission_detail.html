@@ -3,21 +3,21 @@
     {{template "admin-sidebar" .}}
     <div class="flex-1 overflow-auto p-8 bg-gray-50">
         <!-- Back + Navigation -->
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
             <div>
-                <a href="/admin/contact/submissions" class="text-sm font-bold uppercase hover:underline">&larr; Back to Submissions</a>
+                <a href="{{.ReturnURL}}" class="text-sm font-bold uppercase hover:underline">&larr; Back to Submissions</a>
                 <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
             </div>
             <div class="flex gap-2">
                 {{if gt .PrevID 0}}
-                <a href="/admin/contact/submissions/{{.PrevID}}"
+                <a href="{{.PrevURL}}"
                    class="px-4 py-2 text-sm font-bold uppercase border-2 border-black bg-white hover:bg-gray-100"
                    style="box-shadow: 3px 3px 0px #000;">
                     &larr; Previous
                 </a>
                 {{end}}
                 {{if gt .NextID 0}}
-                <a href="/admin/contact/submissions/{{.NextID}}"
+                <a href="{{.NextURL}}"
                    class="px-4 py-2 text-sm font-bold uppercase border-2 border-black bg-white hover:bg-gray-100"
                    style="box-shadow: 3px 3px 0px #000;">
                     Next &rarr;
@@ -31,6 +31,8 @@
             <div class="flex flex-wrap gap-3">
                 {{if eq .Submission.Status "new"}}
                 <form method="POST" action="/admin/contact/submissions/{{.Submission.ID}}/status" class="inline">
+                    <input type="hidden" name="return_to" value="{{.ReturnURL}}">
+                    <input type="hidden" name="notes" value="{{if .Submission.Notes.Valid}}{{.Submission.Notes.String}}{{end}}">
                     <input type="hidden" name="status" value="read">
                     <button type="submit"
                         class="bg-gray-200 text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
@@ -40,6 +42,8 @@
                 </form>
                 {{else}}
                 <form method="POST" action="/admin/contact/submissions/{{.Submission.ID}}/status" class="inline">
+                    <input type="hidden" name="return_to" value="{{.ReturnURL}}">
+                    <input type="hidden" name="notes" value="{{if .Submission.Notes.Valid}}{{.Submission.Notes.String}}{{end}}">
                     <input type="hidden" name="status" value="new">
                     <button type="submit"
                         class="bg-yellow-200 text-black px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
@@ -55,7 +59,8 @@
                     Reply via Email <span class="text-blue-200 cursor-help" title="Opens your email client with the sender's address pre-filled.">&#9432;</span>
                 </a>
                 <button hx-delete="/admin/contact/submissions/{{.Submission.ID}}" hx-confirm="Permanently delete this submission?"
-                        hx-on::after-request="if(event.detail.successful) window.location='/admin/contact/submissions'"
+                        data-return-url="{{.ReturnURL}}"
+                        hx-on::after-request="if(event.detail.successful) window.location=this.dataset.returnUrl"
                         class="bg-red-600 text-white px-5 py-2 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
                         style="box-shadow: 3px 3px 0px #000;">
                     Delete
@@ -138,6 +143,7 @@
             <div class="bg-white border-2 border-black p-6" style="box-shadow: 4px 4px 0px #000;">
                 <h2 class="text-sm font-bold uppercase tracking-wider mb-4 pb-2 border-b-2 border-black">Update Status</h2>
                 <form method="POST" action="/admin/contact/submissions/{{.Submission.ID}}/status" class="space-y-4">
+                    <input type="hidden" name="return_to" value="{{.ReturnURL}}">
                     <div>
                         <label class="block text-xs font-bold uppercase mb-1">Status</label>
                         <select name="status"

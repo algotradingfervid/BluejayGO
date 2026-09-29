@@ -92,7 +92,7 @@ WHERE cs.slug = ? AND cs.is_published = 1;
 -- Return type: same as GetCaseStudyBySlug but without publish filter
 -- Note: Used for admin preview functionality; no is_published filter
 SELECT
-    cs.id, cs.slug, cs.title, cs.client_name, cs.summary,
+    cs.id, cs.slug, cs.title, cs.client_name, cs.summary, cs.is_published,
     cs.industry_id, cs.hero_image_url,
     cs.challenge_title, cs.challenge_content, cs.challenge_bullets,
     cs.solution_title, cs.solution_content,

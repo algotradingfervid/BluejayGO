@@ -24,7 +24,7 @@ Extract a trusted backup into a private empty directory, never directly over the
 
 ## Release and server operations
 
-The live hardening was deployed on 29 September 2026 from `codex/bluejay-live-security`, based on the previously deployed commit `931160c`. Use this branch (or integrate its changes) for future releases; deploying the older local `main` would lose these application protections.
+The live hardening was deployed on 29 September 2026 from `codex/bluejay-live-security`, based on the previously deployed commit `931160c`. The security changes and both completed UX review rounds are now integrated into `main`. Use `main` for future releases.
 
 The `bluejay-ops` SSH account accepts the existing authorized operator keys. Its only passwordless sudo entry is the root-owned `/usr/local/sbin/bluejay-operations` wrapper, accepting exactly one of `status`, `restart`, `backup`, or `logs`. For example: `sudo /usr/local/sbin/bluejay-operations backup`. Password and keyboard-interactive SSH authentication are disabled. Root key access remains available for recovery and deployment; both fresh root and operator key logins were checked after reload. Give each team member an individually managed public key when onboarding them.
 

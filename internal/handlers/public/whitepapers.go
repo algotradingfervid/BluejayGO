@@ -30,9 +30,9 @@ import (
 // It manages the whitepapers listing page (with topic filtering), individual whitepaper
 // detail pages (with preview mode for admins), and the gated download form submission.
 type WhitepapersHandler struct {
-	queries *sqlc.Queries    // Database query interface for fetching whitepapers, topics, and recording downloads
-	logger  *slog.Logger     // Structured logger for debugging and error tracking
-	cache   *services.Cache  // In-memory cache for rendered HTML to improve response times
+	queries *sqlc.Queries   // Database query interface for fetching whitepapers, topics, and recording downloads
+	logger  *slog.Logger    // Structured logger for debugging and error tracking
+	cache   *services.Cache // In-memory cache for rendered HTML to improve response times
 }
 
 // NewWhitepapersHandler constructs a new WhitepapersHandler with required dependencies.
@@ -183,12 +183,12 @@ func (h *WhitepapersHandler) WhitepapersList(c echo.Context) error {
 
 	// Build template data map
 	data := map[string]interface{}{
-		"Title":           "Whitepapers",      // Page title for <title> tag and H1
-		"Whitepapers":     whitepapers,        // Array of whitepaper objects (filtered or all)
-		"Topics":          topics,             // Array of topic objects for filter dropdown
-		"SelectedTopicID": selectedTopicID,    // Currently selected topic ID (0 if none)
-		"TotalCount":      totalCount,         // Number of whitepapers being displayed
-		"CurrentPage":     "whitepapers",      // Used by navigation to highlight active link
+		"Title":           "Whitepapers",   // Page title for <title> tag and H1
+		"Whitepapers":     whitepapers,     // Array of whitepaper objects (filtered or all)
+		"Topics":          topics,          // Array of topic objects for filter dropdown
+		"SelectedTopicID": selectedTopicID, // Currently selected topic ID (0 if none)
+		"TotalCount":      totalCount,      // Number of whitepapers being displayed
+		"CurrentPage":     "whitepapers",   // Used by navigation to highlight active link
 	}
 
 	// Render template and cache for 10 minutes, return HTML to client
@@ -233,6 +233,7 @@ func (h *WhitepapersHandler) WhitepaperDetail(c echo.Context) error {
 
 	// Variables to hold whitepaper data regardless of preview vs published query
 	var wpID, wpTopicID int64
+	previewStatus := "draft"
 	var wpTitle, wpMetaTitle string
 	var wpSlug, wpOgImage string
 	var wpMetaDesc sql.NullString
@@ -252,6 +253,9 @@ func (h *WhitepapersHandler) WhitepaperDetail(c echo.Context) error {
 		}
 		// Extract fields from query result
 		wpID, wpTopicID = wp.ID, wp.TopicID
+		if wp.IsPublished != 0 {
+			previewStatus = "published"
+		}
 		wpTitle, wpSlug, wpMetaTitle = wp.Title, wp.Slug, wp.MetaTitle
 		wpOgImage, wpMetaDesc = wp.OgImage, wp.MetaDescription
 		wpObj = wp
@@ -299,21 +303,22 @@ func (h *WhitepapersHandler) WhitepaperDetail(c echo.Context) error {
 
 	// Build template data map with all fetched content
 	data := map[string]interface{}{
-		"Title":           wpTitle,                                    // Page title for <title> tag
-		"MetaTitle":       wpMetaTitle,                                // Custom SEO title
-		"MetaDescription": metaDesc,                                   // SEO description
-		"MetaDesc":        metaDesc,                                   // Alias for template compatibility
-		"OGImage":         wpOgImage,                                  // Open Graph image for social sharing
-		"CanonicalURL":    fmt.Sprintf("/whitepapers/%s", wpSlug),     // Canonical URL for SEO
-		"Whitepaper":      wpObj,                                      // Main whitepaper object
-		"LearningPoints":  learningPoints,                             // Array of learning point objects
-		"RelatedPapers":   relatedPapers,                              // Array of related whitepaper objects
-		"CurrentPage":     "whitepapers",                              // Used by nav to highlight active link
+		"Title":           wpTitle,                                // Page title for <title> tag
+		"MetaTitle":       wpMetaTitle,                            // Custom SEO title
+		"MetaDescription": metaDesc,                               // SEO description
+		"MetaDesc":        metaDesc,                               // Alias for template compatibility
+		"OGImage":         wpOgImage,                              // Open Graph image for social sharing
+		"CanonicalURL":    fmt.Sprintf("/whitepapers/%s", wpSlug), // Canonical URL for SEO
+		"Whitepaper":      wpObj,                                  // Main whitepaper object
+		"LearningPoints":  learningPoints,                         // Array of learning point objects
+		"RelatedPapers":   relatedPapers,                          // Array of related whitepaper objects
+		"CurrentPage":     "whitepapers",                          // Used by nav to highlight active link
 	}
 
 	// Handle preview mode differently - no caching and add admin edit link
 	if preview {
-		data["IsPreview"] = true // Shows preview banner in template
+		data["PreviewStatus"] = previewStatus
+		data["IsPreview"] = true                                          // Shows preview banner in template
 		data["EditURL"] = fmt.Sprintf("/admin/whitepapers/%d/edit", wpID) // Link to admin editor
 		// No caching (ttl=0) for preview mode - always fresh content for admins
 		return h.renderAndCache(c, "preview:whitepaper:"+slug, 0, http.StatusOK, "public/pages/whitepaper_detail.html", data)
@@ -429,9 +434,9 @@ func (h *WhitepapersHandler) WhitepaperDownload(c echo.Context) error {
 
 	// Build template data for success page fragment
 	data := map[string]interface{}{
-		"Whitepaper":    whitepaper,                      // Whitepaper object with title, description
-		"Email":         email,                           // User's email for personalized message
-		"WhitepaperURL": "/" + whitepaper.PdfFilePath,    // Path to PDF file for download link
+		"Whitepaper":    whitepaper,                   // Whitepaper object with title, description
+		"Email":         email,                        // User's email for personalized message
+		"WhitepaperURL": "/" + whitepaper.PdfFilePath, // Path to PDF file for download link
 	}
 	// Inject settings from middleware for consistent branding
 	if settings := c.Get("settings"); settings != nil {

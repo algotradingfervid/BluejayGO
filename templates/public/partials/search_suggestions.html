@@ -1,5 +1,6 @@
 {{define "base"}}
 {{if .Results}}
+<p class="text-sm mb-3 [overflow-wrap:anywhere]">{{len .Results}} search suggestion{{if ne (len .Results) 1}}s{{end}} for “{{.Query}}”</p>
 <div class="manual-border bg-white">
     {{range .Results}}
     <a href="{{.URL}}" class="block p-3 hover:bg-gray-50 border-b border-gray-100">
@@ -8,5 +9,14 @@
     </a>
     {{end}}
 </div>
+<a href="{{.SearchURL}}" class="inline-block underline font-bold py-3">View all results</a>
+{{else if .Query}}
+<div class="manual-border bg-white p-4 space-y-3">
+    <p class="font-bold break-words">No results for “{{.Query}}”</p>
+    <p class="text-sm">Try a shorter keyword or check the spelling.</p>
+    <a href="/products" class="inline-block underline font-bold py-2">Browse all products</a>
+</div>
+{{else}}
+<p class="text-sm text-gray-600">Enter a keyword to search the website.</p>
 {{end}}
 {{end}}

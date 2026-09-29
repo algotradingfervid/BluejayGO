@@ -192,6 +192,7 @@ func (r *Renderer) loadTemplates() {
 			filepath.Join(r.basePath, "public/pages/"+page+".html"),
 			filepath.Join(r.basePath, "partials/header.html"),
 			filepath.Join(r.basePath, "partials/footer.html"),
+			filepath.Join(r.basePath, "public/partials/product_search_content.html"),
 		))
 	}
 
@@ -348,6 +349,7 @@ func (r *Renderer) loadTemplates() {
 	// Returns filtered product grid without page reload.
 	r.templates["public/partials/product_search_results.html"] = template.Must(template.New("base").Funcs(funcMap).ParseFiles(
 		filepath.Join(r.basePath, "public/partials/product_search_results.html"),
+		filepath.Join(r.basePath, "public/partials/product_search_content.html"),
 	))
 
 	// Phase 5: Public blog pages
@@ -421,6 +423,15 @@ func (r *Renderer) loadTemplates() {
 		filepath.Join(r.basePath, "partials/footer.html"),
 	))
 
+	for _, page := range []string{"privacy", "not_found"} {
+		r.templates["public/pages/"+page+".html"] = template.Must(template.New("base").Funcs(funcMap).ParseFiles(
+			filepath.Join(r.basePath, "public/layouts/base.html"),
+			filepath.Join(r.basePath, "public/pages/"+page+".html"),
+			filepath.Join(r.basePath, "partials/header.html"),
+			filepath.Join(r.basePath, "partials/footer.html"),
+		))
+	}
+
 	// Phase 8: Admin whitepaper pages
 	// Uses: admin/layouts/base.html (admin panel structure)
 	// Includes: partials/admin-sidebar.html (admin navigation)
@@ -449,7 +460,7 @@ func (r *Renderer) loadTemplates() {
 	//   - office_locations_form.html: Create/edit form for office location details
 	contactAdminPages := []string{
 		"contact_submissions_list", "contact_submission_detail",
-		"office_locations_list", "office_locations_form",
+		"office_locations_list", "office_locations_form", "activity_log", "operation_error",
 	}
 	for _, page := range contactAdminPages {
 		r.templates["admin/pages/"+page+".html"] = template.Must(template.New("base").Funcs(funcMap).ParseFiles(

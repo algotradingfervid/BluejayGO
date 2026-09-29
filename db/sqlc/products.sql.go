@@ -1160,7 +1160,7 @@ func (q *Queries) ListProductFeatures(ctx context.Context, productID int64) ([]P
 const listProductImages = `-- name: ListProductImages :many
 SELECT id, product_id, image_path, alt_text, caption, display_order, is_thumbnail, created_at FROM product_images
 WHERE product_id = ?
-ORDER BY display_order ASC
+ORDER BY display_order ASC, id ASC
 `
 
 // Retrieves all gallery images for a product in display order.
@@ -1645,6 +1645,29 @@ func (q *Queries) SearchProducts(ctx context.Context, arg SearchProductsParams) 
 		return nil, err
 	}
 	return items, nil
+}
+
+const setPrimaryProductImage = `-- name: SetPrimaryProductImage :execrows
+UPDATE product_images
+SET is_thumbnail = (product_images.id = ?1)
+WHERE product_images.product_id = ?2
+  AND EXISTS (SELECT 1 FROM product_images AS selected
+              WHERE selected.id = ?1
+                AND selected.product_id = ?2)
+`
+
+type SetPrimaryProductImageParams struct {
+	ImageID   int64 `json:"image_id"`
+	ProductID int64 `json:"product_id"`
+}
+
+// Select exactly one primary gallery image, only when it belongs to this product.
+func (q *Queries) SetPrimaryProductImage(ctx context.Context, arg SetPrimaryProductImageParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, setPrimaryProductImage, arg.ImageID, arg.ProductID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 const updateProduct = `-- name: UpdateProduct :exec

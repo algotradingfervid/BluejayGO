@@ -7,8 +7,8 @@ import (
 	"database/sql" // SQL types for handling nullable database fields
 	"fmt"          // String formatting for building dynamic routes and messages
 	"log/slog"     // Structured logging for error and event tracking
-	"math"         // Mathematical operations for pagination calculations
 	"net/http"     // HTTP status codes and request/response handling
+	"net/url"
 	"strconv"
 	"strings" // String to int64 conversions for form values and URL params
 
@@ -45,193 +45,108 @@ func NewAdminContactHandler(queries *sqlc.Queries, logger *slog.Logger, cache *s
 // ==================== CONTACT SUBMISSIONS ====================
 // Contact submissions are form entries from the public-facing contact page.
 // Each submission includes name, email, phone, company, inquiry type, message,
-// status (new/reviewed/responded/archived), and submission type (contact/rfq).
+// status (new/read/replied/closed), and submission type (contact/rfq).
 
-// ListSubmissions displays all contact form submissions with pagination and filtering.
-// HTTP Method: GET
-// Route: /admin/contact/submissions
-// Template: admin/pages/contact_submissions_list.html (full page)
-// HTMX: Not used - returns full page render
-//
-// This handler supports complex filtering and pagination:
-// - Query params: page (pagination), status (filter by status), type (filter by submission type), search (text search)
-// - Implements multiple query strategies based on filter combination
-// - Calculates pagination metadata and tab counts for the UI
-func (h *AdminContactHandler) ListSubmissions(c echo.Context) error {
-	// Parse pagination parameter from query string, default to page 1
-	page := int64(1)
-	if v := c.QueryParam("page"); v != "" {
-		if parsed, err := strconv.ParseInt(v, 10, 64); err == nil && parsed > 0 {
-			page = parsed
-		}
+const contactInboxPath = "/admin/contact/submissions"
+
+// contactQueue accepts only inbox filters, never an arbitrary redirect target.
+type contactQueue struct {
+	status, kind, search string
+	page                 int64
+}
+
+func parseContactQueue(values url.Values) contactQueue {
+	q := contactQueue{page: 1, search: values.Get("search")}
+	switch values.Get("status") {
+	case "new", "read", "replied", "closed":
+		q.status = values.Get("status")
 	}
+	switch values.Get("type") {
+	case "contact", "rfq":
+		q.kind = values.Get("type")
+	}
+	if page, err := strconv.ParseInt(values.Get("page"), 10, 64); err == nil && page > 0 && page <= 1000000 {
+		q.page = page
+	}
+	return q
+}
 
-	// Set items per page and calculate offset for SQL LIMIT/OFFSET
-	perPage := int64(25)
-	offset := (page - 1) * perPage
+func submissionReturnQueue(raw string) contactQueue {
+	u, err := url.Parse(raw)
+	if err != nil || u.IsAbs() || u.Host != "" || u.Path != contactInboxPath || u.Fragment != "" {
+		return parseContactQueue(nil)
+	}
+	return parseContactQueue(u.Query())
+}
 
-	// Extract filter parameters from query string
-	status := c.QueryParam("status")       // Filter by status: new/reviewed/responded/archived
-	submissionType := c.QueryParam("type") // Filter by type: contact/rfq
-	search := c.QueryParam("search")       // Full-text search across multiple fields
+func (q contactQueue) listURL() string {
+	values := url.Values{"page": {strconv.FormatInt(q.page, 10)}}
+	if q.status != "" {
+		values.Set("status", q.status)
+	}
+	if q.kind != "" {
+		values.Set("type", q.kind)
+	}
+	if q.search != "" {
+		values.Set("search", q.search)
+	}
+	return contactInboxPath + "?" + values.Encode()
+}
 
+func (q contactQueue) detailURL(id int64) string {
+	return fmt.Sprintf("%s/%d?%s", contactInboxPath, id, url.Values{"return_to": {q.listURL()}}.Encode())
+}
+
+// ListSubmissions applies the same search/status/type scope to rows, totals and detail links.
+func (h *AdminContactHandler) ListSubmissions(c echo.Context) error {
+	queue := parseContactQueue(c.QueryParams())
 	ctx := c.Request().Context()
-
-	// Collect counts for filter tabs in the UI
-	// These provide badge counts for All/Contact/RFQ tabs and new submissions indicator
+	const perPage int64 = 25
+	count, err := h.queries.CountFilteredContactSubmissions(ctx, sqlc.CountFilteredContactSubmissionsParams{
+		FilterStatus: queue.status, FilterType: queue.kind, FilterSearch: queue.search,
+	})
+	if err != nil {
+		h.logger.Error("Failed to count contact submissions", "error", err)
+		return renderOperationError(c, "Contact inbox unavailable", "We could not load the inbox. Try again, or contact your site administrator if this continues.", contactInboxPath)
+	}
+	totalPages := (count + perPage - 1) / perPage
+	if totalPages > 0 && queue.page > totalPages {
+		queue.page = totalPages
+	}
+	if totalPages == 0 {
+		queue.page = 1
+	}
+	submissions, err := h.queries.ListFilteredContactSubmissions(ctx, sqlc.ListFilteredContactSubmissionsParams{
+		FilterStatus: queue.status, FilterType: queue.kind, FilterSearch: queue.search,
+		PageLimit: perPage, PageOffset: (queue.page - 1) * perPage,
+	})
+	if err != nil {
+		h.logger.Error("Failed to list contact submissions", "error", err)
+		return renderOperationError(c, "Contact inbox unavailable", "We could not load the inbox. Try again, or contact your site administrator if this continues.", contactInboxPath)
+	}
 	totalAll, _ := h.queries.CountContactSubmissions(ctx)
 	totalContact, _ := h.queries.CountContactSubmissionsByType(ctx, "contact")
 	totalRFQ, _ := h.queries.CountContactSubmissionsByType(ctx, "rfq")
 	newCount, _ := h.queries.CountContactSubmissionsByStatus(ctx, "new")
-
-	// Submissions slice will hold the query results
-	var submissions []listSubmissionRow
-	var totalCount int64
-
-	// Execute different queries based on filter combination
-	// This implements a branching query strategy for optimal SQL performance
-
-	if search != "" {
-		// SEARCH QUERY: Full-text search across name, email, phone, and company fields
-		// Wrap search string in sql.NullString for sqlc parameter binding
-		searchParam := sql.NullString{String: search, Valid: true}
-
-		// Execute search query with same search term applied to 4 columns
-		items, err := h.queries.SearchContactSubmissions(ctx, sqlc.SearchContactSubmissionsParams{
-			Column1: searchParam, // Searches name field
-			Column2: searchParam, // Searches email field
-			Column3: searchParam, // Searches phone field
-			Column4: searchParam, // Searches company field
-			Limit:   perPage,
-			Offset:  offset,
-		})
-		if err != nil {
-			h.logger.Error("Failed to search contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
-		}
-
-		// Convert sqlc-generated struct to internal list row struct
-		for _, item := range items {
-			submissions = append(submissions, listSubmissionRow{
-				ID: item.ID, Name: item.Name, Email: item.Email, Phone: item.Phone,
-				Company: item.Company, InquiryType: item.InquiryType, Status: item.Status,
-				SubmissionType: item.SubmissionType, CreatedAt: item.CreatedAt,
-			})
-		}
-
-		// Get total count for pagination (matching search criteria)
-		cnt, _ := h.queries.CountContactSubmissionsSearch(ctx, sqlc.CountContactSubmissionsSearchParams{
-			Column1: searchParam, Column2: searchParam, Column3: searchParam, Column4: searchParam,
-		})
-		totalCount = cnt
-	} else if status != "" && submissionType != "" {
-		// COMBINED FILTER: Both status AND type filters active
-		items, err := h.queries.ListContactSubmissionsByStatusAndType(ctx, sqlc.ListContactSubmissionsByStatusAndTypeParams{
-			Status: status, SubmissionType: submissionType, Limit: perPage, Offset: offset,
-		})
-		if err != nil {
-			h.logger.Error("Failed to list contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
-		}
-		for _, item := range items {
-			submissions = append(submissions, listSubmissionRow{
-				ID: item.ID, Name: item.Name, Email: item.Email, Phone: item.Phone,
-				Company: item.Company, InquiryType: item.InquiryType, Status: item.Status,
-				SubmissionType: item.SubmissionType, CreatedAt: item.CreatedAt,
-			})
-		}
-		cnt, _ := h.queries.CountContactSubmissionsByStatusAndType(ctx, sqlc.CountContactSubmissionsByStatusAndTypeParams{
-			Status: status, SubmissionType: submissionType,
-		})
-		totalCount = cnt
-	} else if status != "" {
-		// STATUS FILTER ONLY: Filter by status (new/reviewed/responded/archived)
-		items, err := h.queries.ListContactSubmissionsByStatus(ctx, sqlc.ListContactSubmissionsByStatusParams{
-			Status: status, Limit: perPage, Offset: offset,
-		})
-		if err != nil {
-			h.logger.Error("Failed to list contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
-		}
-		for _, item := range items {
-			submissions = append(submissions, listSubmissionRow{
-				ID: item.ID, Name: item.Name, Email: item.Email, Phone: item.Phone,
-				Company: item.Company, InquiryType: item.InquiryType, Status: item.Status,
-				SubmissionType: item.SubmissionType, CreatedAt: item.CreatedAt,
-			})
-		}
-		cnt, _ := h.queries.CountContactSubmissionsByStatus(ctx, status)
-		totalCount = cnt
-	} else if submissionType != "" {
-		// TYPE FILTER ONLY: Filter by submission type (contact/rfq)
-		items, err := h.queries.ListContactSubmissionsByType(ctx, sqlc.ListContactSubmissionsByTypeParams{
-			SubmissionType: submissionType, Limit: perPage, Offset: offset,
-		})
-		if err != nil {
-			h.logger.Error("Failed to list contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
-		}
-		for _, item := range items {
-			submissions = append(submissions, listSubmissionRow{
-				ID: item.ID, Name: item.Name, Email: item.Email, Phone: item.Phone,
-				Company: item.Company, InquiryType: item.InquiryType, Status: item.Status,
-				SubmissionType: item.SubmissionType, CreatedAt: item.CreatedAt,
-			})
-		}
-		cnt, _ := h.queries.CountContactSubmissionsByType(ctx, submissionType)
-		totalCount = cnt
-	} else {
-		// NO FILTERS: List all submissions with pagination only
-		items, err := h.queries.ListContactSubmissions(ctx, sqlc.ListContactSubmissionsParams{
-			Limit: perPage, Offset: offset,
-		})
-		if err != nil {
-			h.logger.Error("Failed to list contact submissions", "error", err)
-			return c.String(http.StatusInternalServerError, "Failed to load submissions")
-		}
-		for _, item := range items {
-			submissions = append(submissions, listSubmissionRow{
-				ID: item.ID, Name: item.Name, Email: item.Email, Phone: item.Phone,
-				Company: item.Company, InquiryType: item.InquiryType, Status: item.Status,
-				SubmissionType: item.SubmissionType, CreatedAt: item.CreatedAt,
-			})
-		}
-		totalCount = totalAll
+	detailURLs := make(map[int64]string, len(submissions))
+	for _, item := range submissions {
+		detailURLs[item.ID] = queue.detailURL(item.ID)
 	}
-
-	// Calculate total pages for pagination controls using ceiling division
-	totalPages := int64(math.Ceil(float64(totalCount) / float64(perPage)))
-
-	// Render the list page with submissions data and filter/pagination metadata
+	previous, next := queue, queue
+	previous.page--
+	next.page++
+	all, contact, rfq := queue, queue, queue
+	all.kind, contact.kind, rfq.kind = "", "contact", "rfq"
+	all.page, contact.page, rfq.page = 1, 1, 1
 	return c.Render(http.StatusOK, "admin/pages/contact_submissions_list.html", map[string]interface{}{
-		"Title":        "Contact Submissions",
-		"Submissions":  submissions,    // Filtered and paginated submissions
-		"Page":         page,           // Current page number
-		"TotalPages":   totalPages,     // Total pages for pagination controls
-		"TotalCount":   totalCount,     // Total count of filtered results
-		"Status":       status,         // Active status filter (for UI state)
-		"Type":         submissionType, // Active type filter (for UI state)
-		"Search":       search,         // Active search term (for UI state)
-		"TotalAll":     totalAll,       // Badge count for "All" tab
-		"TotalContact": totalContact,   // Badge count for "Contact" tab
-		"TotalRFQ":     totalRFQ,       // Badge count for "RFQ" tab
-		"NewCount":     newCount,       // Badge count for new submissions
+		"Title": "Contact Submissions", "Submissions": submissions,
+		"Page": int(queue.page), "TotalPages": totalPages, "TotalCount": count,
+		"Status": queue.status, "Type": queue.kind, "Search": queue.search,
+		"TotalAll": totalAll, "TotalContact": totalContact, "TotalRFQ": totalRFQ, "NewCount": newCount,
+		"ReturnURL": queue.listURL(), "DetailURLs": detailURLs,
+		"PreviousPageURL": previous.listURL(), "NextPageURL": next.listURL(),
+		"AllTypeURL": all.listURL(), "ContactTypeURL": contact.listURL(), "RFQTypeURL": rfq.listURL(),
 	})
-}
-
-// listSubmissionRow is an internal struct for holding submission list data.
-// It normalizes the different sqlc-generated query result structs into a
-// common format for template rendering.
-type listSubmissionRow struct {
-	ID             int64          // Primary key
-	Name           string         // Submitter name
-	Email          string         // Submitter email
-	Phone          string         // Submitter phone
-	Company        string         // Submitter company
-	InquiryType    sql.NullString // Optional inquiry type/category
-	Status         string         // Submission status (new/reviewed/responded/archived)
-	SubmissionType string         // Type of submission (contact/rfq)
-	CreatedAt      interface{}    // Timestamp of submission
 }
 
 // ViewSubmission displays a single contact submission in detail view.
@@ -258,23 +173,23 @@ func (h *AdminContactHandler) ViewSubmission(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Failed to load submission")
 	}
 
-	// Get prev/next submission IDs for keyboard navigation arrows
-	// Allows admin to quickly browse through submissions without returning to list
-	prevID := int64(0)
-	nextID := int64(0)
-	if pid, err := h.queries.GetPreviousSubmissionID(ctx, id); err == nil {
-		prevID = pid
+	queue := submissionReturnQueue(c.QueryParam("return_to"))
+	prevID, prevErr := h.queries.GetPreviousFilteredSubmissionID(ctx, sqlc.GetPreviousFilteredSubmissionIDParams{
+		CurrentID: id, FilterStatus: queue.status, FilterType: queue.kind, FilterSearch: queue.search,
+	})
+	nextID, nextErr := h.queries.GetNextFilteredSubmissionID(ctx, sqlc.GetNextFilteredSubmissionIDParams{
+		CurrentID: id, FilterStatus: queue.status, FilterType: queue.kind, FilterSearch: queue.search,
+	})
+	for _, navErr := range []error{prevErr, nextErr} {
+		if navErr != nil && navErr != sql.ErrNoRows {
+			h.logger.Error("Failed to load contact queue navigation", "error", navErr)
+			return renderOperationError(c, "Contact queue unavailable", "We could not load this queue. Return to the inbox and try again.", queue.listURL())
+		}
 	}
-	if nid, err := h.queries.GetNextSubmissionID(ctx, id); err == nil {
-		nextID = nid
-	}
-
-	// Render detail page with submission data and navigation IDs
 	return c.Render(http.StatusOK, "admin/pages/contact_submission_detail.html", map[string]interface{}{
-		"Title":      "Contact Submission",
-		"Submission": submission,
-		"PrevID":     prevID, // 0 if at beginning of list
-		"NextID":     nextID, // 0 if at end of list
+		"Title": "Contact Submission", "Submission": submission,
+		"PrevID": prevID, "NextID": nextID,
+		"PrevURL": queue.detailURL(prevID), "NextURL": queue.detailURL(nextID), "ReturnURL": queue.listURL(),
 	})
 }
 
@@ -312,7 +227,7 @@ func (h *AdminContactHandler) UpdateSubmissionStatus(c echo.Context) error {
 	logActivity(c, "updated", "contact_submission", id, "", "Updated Contact Submission #%d status", id)
 
 	// Redirect back to the submission detail page
-	return c.Redirect(http.StatusSeeOther, "/admin/contact/submissions/"+c.Param("id"))
+	return c.Redirect(http.StatusSeeOther, submissionReturnQueue(c.FormValue("return_to")).detailURL(id))
 }
 
 // BulkMarkRead marks all new submissions as read/reviewed in a single operation.

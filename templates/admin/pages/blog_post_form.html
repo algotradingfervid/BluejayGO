@@ -1,6 +1,7 @@
 {{define "content"}}
-<link rel="stylesheet" type="text/css" href="/public/css/trix.css">
-<script type="text/javascript" src="/public/js/vendor/trix.js"></script>
+<link rel="stylesheet" href="/public/css/trix.css">
+<script defer src="/public/js/vendor/trix.js"></script>
+<script defer src="/public/js/admin-editors.js"></script>
 <div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
     {{template "admin-sidebar" .}}
     <div class="flex-1 overflow-auto p-8 bg-gray-50">
@@ -10,7 +11,9 @@
             <h1 class="text-2xl font-bold uppercase tracking-tight mt-2">{{.Title}}</h1>
         </div>
 
-        <form action="{{.FormAction}}" method="POST" id="blog-post-form">
+        {{if .Saved}}<div role="status" class="border-2 border-green-700 bg-green-50 p-4 mb-4">{{if eq .Item.Status "published"}}Post published. <a class="underline" href="/blog/{{.Item.Slug}}" target="_blank" rel="noopener">View published post</a>{{else}}Draft saved. This post is not public.{{end}}</div>{{end}}
+        {{if .BodyError}}<div role="alert" class="border-2 border-red-700 bg-red-50 p-4 mb-4"><p class="font-bold">Your changes were not saved or published.</p><a href="#body-input" data-body-error-link class="underline">{{.BodyError}}</a></div>{{end}}
+        <form data-dirty-track {{if .BodyError}}data-dirty-on-load{{end}} action="{{.FormAction}}" method="POST" id="blog-post-form">
             <div class="flex flex-col lg:flex-row gap-6">
 
                 <!-- LEFT COLUMN (2/3) - Content -->
@@ -19,7 +22,7 @@
                     <!-- Section 1: Title & Slug -->
                     <div class="bg-white border-2 border-black p-5 space-y-4" style="box-shadow: 4px 4px 0px #000;">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="post-title" class="block text-xs font-bold uppercase mb-1">
                                 Title *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="The headline of your blog post. Make it engaging and descriptive.">ⓘ</span>
                             </label>
@@ -29,7 +32,7 @@
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="post-slug" class="block text-xs font-bold uppercase mb-1">
                                 Slug *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="URL path for this post. Auto-generated from title. Only edit if you need a custom URL.">ⓘ</span>
                             </label>
@@ -50,7 +53,7 @@
                     <!-- Section 2: Content -->
                     <div class="bg-white border-2 border-black p-5 space-y-4" style="box-shadow: 4px 4px 0px #000;">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="excerpt-input" class="block text-xs font-bold uppercase mb-1">
                                 Excerpt
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="A brief summary shown on blog listing pages and in search results. Keep it compelling.">ⓘ</span>
                             </label>
@@ -65,12 +68,14 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
-                                Body *
+                            <label for="body-input" class="block text-xs font-bold uppercase mb-1">
+                                Body (required to publish)
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="The main content of your post. Use the toolbar for formatting, images, and links.">ⓘ</span>
                             </label>
-                            <input id="body-input" type="hidden" name="body" value="{{if .Item}}{{.Item.Body}}{{end}}">
-                            <trix-editor input="body-input" class="trix-content border-2 border-black min-h-[400px] text-sm"></trix-editor>
+                            <textarea id="body-input" name="body" data-rich-editor aria-label="Body" aria-describedby="body-help{{if .BodyError}} body-error{{end}}" {{if .BodyError}}aria-invalid="true"{{end}} rows="8" class="w-full border-2 border-black p-3 text-sm">{{if .Item}}{{.Item.Body}}{{end}}</textarea>
+                            <p id="body-help" class="text-xs text-gray-600 mt-1">Add article text or media before publishing. An unfinished body can be saved as a draft.</p>
+                            {{if .BodyError}}<p id="body-error" class="text-sm text-red-700 font-bold mt-2">{{.BodyError}}</p>{{end}}
+                        <p data-editor-fallback class="text-xs text-gray-600 mt-1">Formatting tools are unavailable. You can edit the HTML here; existing content is preserved.</p>
                         </div>
                     </div>
                 </div>
@@ -83,31 +88,29 @@
                         <div class="px-4 py-3 bg-black text-white font-bold uppercase text-sm">Publish</div>
                         <div class="p-4 space-y-4">
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-1">Status *</label>
-                                <select name="status" id="post-status" required
-                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        style="font-family: 'JetBrains Mono', monospace;">
-                                    <option value="draft" {{if and .Item (eq .Item.Status "draft")}}selected{{end}}>Draft</option>
-                                    <option value="published" {{if and .Item (eq .Item.Status "published")}}selected{{end}}>Published</option>
-                                </select>
+                                <p class="block text-xs font-bold uppercase mb-1">Current saved status</p>
+                                <p>{{if and .Item .Item.ID}}{{if eq .Item.Status "published"}}Published{{else}}Draft{{end}}{{else}}Not saved{{end}}</p>
+                                <input type="hidden" name="status" value="{{if .Item}}{{.Item.Status}}{{else}}draft{{end}}">
+                                <p class="text-xs text-gray-600">Publish makes this post public. Save Draft makes it private, including a previously published post.</p>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-1">
+                                <label for="blog_post_form-published-at" class="block text-xs font-bold uppercase mb-1">
                                     Published Date
-                                    <span class="inline-block ml-1 cursor-help text-gray-400" title="When this post goes live. Leave blank to publish immediately.">ⓘ</span>
+                                    <span class="inline-block ml-1 cursor-help text-gray-400" title="Date displayed on the article. This does not schedule publication; Publish makes the post public immediately.">ⓘ</span>
                                 </label>
-                                <input type="datetime-local" name="published_at"
-                                       value="{{if .Item}}{{if .Item.PublishedAt.Valid}}{{.Item.PublishedAt.Time.Format "2006-01-02T15:04"}}{{end}}{{end}}"
+                                <input id="blog_post_form-published-at" aria-describedby="published-date-help" type="datetime-local" name="published_at"
+                                       value="{{if .BodyError}}{{.PublishedDateValue}}{{else if .Item}}{{if .Item.PublishedAt.Valid}}{{.Item.PublishedAt.Time.Format "2006-01-02T15:04"}}{{end}}{{end}}"
                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                        style="font-family: 'JetBrains Mono', monospace;">
+                                <p id="published-date-help" class="text-xs text-gray-600">Article date only. Publish makes the post public immediately.</p>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-1">
+                                <label for="blog_post_form-reading-time-minutes" class="block text-xs font-bold uppercase mb-1">
                                     Reading Time (min)
                                     <span class="inline-block ml-1 cursor-help text-gray-400" title="Estimated reading time. Helps readers decide to read now or save for later.">ⓘ</span>
                                 </label>
-                                <input type="number" name="reading_time_minutes" min="1"
-                                       value="{{if .Item}}{{if .Item.ReadingTimeMinutes.Valid}}{{.Item.ReadingTimeMinutes.Int64}}{{end}}{{end}}"
+                                <input id="blog_post_form-reading-time-minutes" type="number" name="reading_time_minutes" min="1"
+                                       value="{{if .BodyError}}{{.ReadingTimeValue}}{{else if .Item}}{{if .Item.ReadingTimeMinutes.Valid}}{{.Item.ReadingTimeMinutes.Int64}}{{end}}{{end}}"
                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                        style="font-family: 'JetBrains Mono', monospace;">
                             </div>
@@ -123,15 +126,16 @@
                                     Publish
                                 </button>
                             </div>
-                            {{if .Item}}
+                            {{if and .Item .Item.ID}}
                             <div class="pt-2">
-                                <a href="/blog/{{.Item.Slug}}?preview=true" target="_blank"
-                                   title="Preview how this content will look on the public site."
+                                <a href="/blog/{{if .BodyError}}{{.SavedSlug}}{{else}}{{.Item.Slug}}{{end}}?preview=true" target="_blank"
+                                   title="Shows the last saved version. Save changes before previewing." data-saved-preview aria-describedby="saved-preview-help"
                                    class="w-full bg-gray-100 text-black px-4 py-2 text-xs font-bold uppercase border-2 border-black hover:bg-gray-200 inline-flex items-center justify-center gap-2"
                                    style="box-shadow: 2px 2px 0px #000; text-decoration: none;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                    Preview
+                                    Preview saved version
                                 </a>
+                <p id="saved-preview-help" class="text-xs text-gray-600">Preview shows the last saved version. Save your changes first.</p>
                             </div>
                             {{end}}
                         </div>
@@ -156,7 +160,7 @@
                                 {{end}}
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-1">Image URL</label>
+                                <label for="featured-image-url" class="block text-xs font-bold uppercase mb-1">Image URL</label>
                                 <input type="url" name="featured_image_url" id="featured-image-url"
                                        value="{{if .Item}}{{if .Item.FeaturedImageUrl.Valid}}{{.Item.FeaturedImageUrl.String}}{{end}}{{end}}"
                                        placeholder="https://..."
@@ -164,11 +168,11 @@
                                        style="font-family: 'JetBrains Mono', monospace;">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-1">
+                                <label for="blog_post_form-featured-image-alt" class="block text-xs font-bold uppercase mb-1">
                                     Alt Text
                                     <span class="inline-block ml-1 cursor-help text-gray-400" title="Describe the image for accessibility. Also used when image can't load.">ⓘ</span>
                                 </label>
-                                <input type="text" name="featured_image_alt"
+                                <input id="blog_post_form-featured-image-alt" type="text" name="featured_image_alt"
                                        value="{{if .Item}}{{if .Item.FeaturedImageAlt.Valid}}{{.Item.FeaturedImageAlt.String}}{{end}}{{end}}"
                                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                        style="font-family: 'JetBrains Mono', monospace;">
@@ -181,11 +185,11 @@
                         <div class="px-4 py-3 bg-black text-white font-bold uppercase text-sm">Taxonomy</div>
                         <div class="p-4 space-y-4">
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-1">
+                                <label for="blog_post_form-category-id" class="block text-xs font-bold uppercase mb-1">
                                     Category *
                                     <span class="inline-block ml-1 cursor-help text-gray-400" title="The main category this post belongs to.">ⓘ</span>
                                 </label>
-                                <select name="category_id" required
+                                <select id="blog_post_form-category-id" name="category_id" required
                                         class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         style="font-family: 'JetBrains Mono', monospace;">
                                     <option value="">Select Category</option>
@@ -195,11 +199,11 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-1">
+                                <label for="blog_post_form-author-id" class="block text-xs font-bold uppercase mb-1">
                                     Author *
                                     <span class="inline-block ml-1 cursor-help text-gray-400" title="Who wrote this post. Shown on the post page with their bio.">ⓘ</span>
                                 </label>
-                                <select name="author_id" required
+                                <select id="blog_post_form-author-id" name="author_id" required
                                         class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         style="font-family: 'JetBrains Mono', monospace;">
                                     <option value="">Select Author</option>
@@ -210,7 +214,7 @@
                             </div>
                             <!-- Tags -->
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-1">
+                                <label for="tag-search" class="block text-xs font-bold uppercase mb-1">
                                     Tags
                                     <span class="inline-block ml-1 cursor-help text-gray-400" title="Tags help readers find related posts. Add up to 10 tags.">ⓘ</span>
                                 </label>
@@ -249,7 +253,7 @@
                         <div id="seo-section" class="hidden">
                             <div class="p-4 space-y-4">
                                 <div>
-                                    <label class="block text-xs font-bold uppercase mb-1">Meta Title</label>
+                                    <label for="meta-title-input" class="block text-xs font-bold uppercase mb-1">Meta Title</label>
                                     <input type="text" name="meta_title" id="meta-title-input" maxlength="70"
                                            value="{{if .Item}}{{.Item.MetaTitle}}{{end}}"
                                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -262,7 +266,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold uppercase mb-1">Meta Description</label>
+                                    <label for="meta-desc-input" class="block text-xs font-bold uppercase mb-1">Meta Description</label>
                                     <textarea name="meta_description" id="meta-desc-input" rows="3" maxlength="160"
                                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                               style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{if .Item.MetaDescription.Valid}}{{.Item.MetaDescription.String}}{{end}}{{end}}</textarea>
@@ -298,7 +302,7 @@
                                 {{end}}
                             </div>
                             <div class="relative">
-                                <input type="text" id="product-search" placeholder="Search products..."
+                                <input type="text" id="product-search" aria-label="Search related products" placeholder="Search products..."
                                     autocomplete="off"
                                     hx-get="/admin/blog/products/search"
                                     hx-trigger="input changed delay:200ms, focus"
@@ -319,6 +323,30 @@
 </div>
 <script>
 (function() {
+    // A rejected publication keeps its inputs and focuses the visible editor.
+    // Trix loads later, so preserve error semantics when it replaces the textarea.
+    var bodyInput = document.getElementById('body-input');
+    var bodyError = document.getElementById('body-error');
+    function focusBodyError() {
+        var editor = document.getElementById('body-input-editor');
+        var target = editor && bodyInput.hidden ? editor : bodyInput;
+        if (bodyError && target) {
+            target.setAttribute('aria-invalid', 'true');
+            target.setAttribute('aria-describedby', 'body-help body-error');
+            target.focus();
+            target.scrollIntoView({block: 'center'});
+        }
+    }
+    if (bodyError) {
+        document.addEventListener('DOMContentLoaded', focusBodyError, {once: true});
+        document.addEventListener('trix-initialize', function(event) {
+            if (event.target.id === 'body-input-editor') focusBodyError();
+        });
+        document.querySelector('[data-body-error-link]').addEventListener('click', function(event) {
+            event.preventDefault();
+            focusBodyError();
+        });
+    }
     // Slug auto-generation and edit toggle
     var titleInput = document.getElementById('post-title');
     var slugInput = document.getElementById('post-slug');

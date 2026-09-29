@@ -206,7 +206,10 @@ func (h *BlogPostsHandler) Create(c echo.Context) error {
 	featuredAlt := c.FormValue("featured_image_alt")
 	metaDesc := c.FormValue("meta_description")
 	excerpt := c.FormValue("excerpt")
-	status := c.FormValue("status")
+	status := blogSubmissionStatus(c)
+	if status == "published" && !hasPublishableBlogBody(body) {
+		return h.renderBlogBodyError(c, sqlc.BlogPost{})
+	}
 
 	// Set published_at timestamp only for published posts
 	// If status is "published", parse the provided datetime or default to now
@@ -270,7 +273,7 @@ func (h *BlogPostsHandler) Create(c echo.Context) error {
 	// Invalidate all blog-related cache entries since new content was created
 	h.cache.DeleteByPrefix("page:blog")
 	logActivity(c, "created", "blog_post", 0, title, "Created blog_post '%s'", title)
-	return c.Redirect(http.StatusSeeOther, "/admin/blog/posts")
+	return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/admin/blog/posts/%d/edit?saved=1", post.ID))
 }
 
 // Edit handles GET /admin/blog/posts/:id/edit
@@ -298,8 +301,9 @@ func (h *BlogPostsHandler) Edit(c echo.Context) error {
 
 	return c.Render(http.StatusOK, "admin/pages/blog_post_form.html", map[string]interface{}{
 		"Title":        "Edit Blog Post",
+		"Saved":        c.QueryParam("saved") == "1",
 		"FormAction":   fmt.Sprintf("/admin/blog/posts/%d", id),
-		"Item":         post,         // Existing post data
+		"Item":         post, // Existing post data
 		"Categories":   categories,
 		"Authors":      authors,
 		"AllTags":      allTags,
@@ -343,18 +347,17 @@ func (h *BlogPostsHandler) Update(c echo.Context) error {
 	featuredAlt := c.FormValue("featured_image_alt")
 	metaDesc := c.FormValue("meta_description")
 	excerpt := c.FormValue("excerpt")
-	status := c.FormValue("status")
+	status := blogSubmissionStatus(c)
+	if status == "published" && !hasPublishableBlogBody(body) {
+		return h.renderBlogBodyError(c, existing)
+	}
 
-	// Preserve existing published_at unless transitioning from draft/scheduled to published
-	// Only set published_at when first publishing the post
+	// The article date is metadata, not a publication scheduler.
 	publishedAt := existing.PublishedAt
-	if status == "published" && !existing.PublishedAt.Valid {
-		pubStr := c.FormValue("published_at")
-		if t, err := time.Parse("2006-01-02T15:04", pubStr); err == nil {
-			publishedAt = sql.NullTime{Time: t, Valid: true}
-		} else {
-			publishedAt = sql.NullTime{Time: time.Now(), Valid: true} // Default to now
-		}
+	if date, err := time.Parse("2006-01-02T15:04", c.FormValue("published_at")); err == nil {
+		publishedAt = sql.NullTime{Time: date, Valid: true}
+	} else if status == "published" && !publishedAt.Valid {
+		publishedAt = sql.NullTime{Time: time.Now(), Valid: true}
 	}
 
 	// Update the blog post in the database
@@ -410,7 +413,7 @@ func (h *BlogPostsHandler) Update(c echo.Context) error {
 	// Invalidate all blog-related cache entries since content was modified
 	h.cache.DeleteByPrefix("page:blog")
 	logActivity(c, "updated", "blog_post", id, title, "Updated blog_post '%s'", title)
-	return c.Redirect(http.StatusSeeOther, "/admin/blog/posts")
+	return c.Redirect(http.StatusSeeOther, fmt.Sprintf("/admin/blog/posts/%d/edit?saved=1", id))
 }
 
 // Delete handles DELETE /admin/blog/posts/:id
@@ -462,4 +465,18 @@ func (h *BlogPostsHandler) SearchProducts(c echo.Context) error {
 		"Products": products,
 		"Query":    q,
 	})
+}
+
+// Explicit submit buttons take precedence over the legacy status field.
+func blogSubmissionStatus(c echo.Context) string {
+	switch c.FormValue("submit_action") {
+	case "publish":
+		return "published"
+	case "draft":
+		return "draft"
+	}
+	if c.FormValue("status") == "published" {
+		return "published"
+	}
+	return "draft"
 }

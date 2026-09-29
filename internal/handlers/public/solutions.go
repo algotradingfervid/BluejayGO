@@ -400,6 +400,10 @@ func (h *SolutionsHandler) SolutionDetail(c echo.Context) error {
 
 	// Handle preview mode
 	if preview {
+		data["PreviewStatus"] = "draft"
+		if solution.IsPublished.Valid && solution.IsPublished.Bool {
+			data["PreviewStatus"] = "published"
+		}
 		data["IsPreview"] = true                                               // Show preview banner in template
 		data["EditURL"] = fmt.Sprintf("/admin/solutions/%d/edit", solution.ID) // Link to admin editor
 		// Don't cache preview pages (TTL=0)

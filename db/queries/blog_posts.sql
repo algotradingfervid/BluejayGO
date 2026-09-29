@@ -132,7 +132,7 @@ WHERE bp.slug = ? AND bp.status = 'published' AND bp.published_at IS NOT NULL;
 -- Note: Used for admin preview functionality; no status/published_at filter
 --       allows editors to preview unpublished/draft content
 SELECT
-    bp.id, bp.title, bp.slug, bp.excerpt, bp.body,
+    bp.id, bp.title, bp.slug, bp.excerpt, bp.body, bp.status,
     bp.featured_image_url, bp.featured_image_alt,
     bp.category_id, bc.name AS category_name, bc.slug AS category_slug, bc.color_hex AS category_color,
     bp.author_id, ba.name AS author_name, ba.bio AS author_bio,

@@ -103,6 +103,7 @@ func main() {
 	// Templates are loaded from the "templates" directory
 	// Used by both admin panel and public pages
 	e.Renderer = templates.NewRenderer("templates")
+	e.HTTPErrorHandler = publicHandlers.NewPublicHTTPErrorHandler(e, queries)
 
 	// Apply middleware stack (executed in order for each request):
 	// 1. Recovery - catches panics and returns 500 errors gracefully
@@ -363,7 +364,7 @@ func main() {
 	// HTMX endpoints for managing product details: specs, features, certs, etc.
 	// These routes return HTML fragments for in-page updates without full reload
 
-	pdHandler := adminHandlers.NewProductDetailsHandler(queries, logger, uploadSvc)
+	pdHandler := adminHandlers.NewProductDetailsHandler(queries, logger, uploadSvc, appCache)
 
 	// Technical Specifications - key/value pairs (e.g., "Weight: 2.5kg")
 	adminGroup.GET("/products/:id/specs", pdHandler.ListSpecs)              // HTMX: render specs list
@@ -397,6 +398,7 @@ func main() {
 	adminGroup.POST("/products/:id/images", pdHandler.AddImage)                // HTMX: upload new image
 	adminGroup.DELETE("/products/:id/images/:image_id", pdHandler.DeleteImage) // HTMX: delete specific image
 	adminGroup.POST("/products/:id/images/:image_id", pdHandler.UpdateImage)   // HTMX: update image metadata
+	adminGroup.POST("/products/:id/images/:image_id/primary", pdHandler.SetPrimaryImage)
 
 	// ─────────────────────────────────────────────────────────────────────────
 	// Admin Blog Management Routes (Phase 5)
@@ -439,6 +441,7 @@ func main() {
 	contactHandler := publicHandlers.NewContactHandler(queries, logger, appCache)
 	// Rate limiter: maximum 5 submissions per hour per IP address
 	contactLimiter := customMiddleware.NewRateLimiter(5, time.Hour)
+	publicGroup.GET("/privacy", contactHandler.ShowPrivacyNotice)
 	publicGroup.GET("/contact", contactHandler.ShowContactPage) // Display contact form and offices
 	// Contact form submission with rate limiting middleware applied
 	publicGroup.POST("/contact/submit", contactHandler.SubmitContactForm, contactLimiter.Middleware())

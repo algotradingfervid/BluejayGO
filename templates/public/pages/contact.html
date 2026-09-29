@@ -85,6 +85,15 @@
 
             <form id="contact-form" hx-post="/contact/submit" hx-target="#contact-form-feedback" hx-swap="innerHTML">
               <div id="contact-form-feedback" aria-live="polite" class="mb-6"></div>
+              {{if .QuoteProduct}}
+              <div class="manual-border bg-blue-50 p-4 mb-6 font-mono" id="quote-context">
+                <p class="font-bold">Quote request: {{.QuoteProduct.Name}}</p>
+                <p class="text-sm mt-1">SKU: {{.QuoteProduct.Sku}}</p>
+                <p class="text-sm mt-2">The product is included in your message below. You can edit the message or choose another inquiry type before sending.</p>
+              </div>
+              {{else if .QuoteUnavailable}}
+              <p class="manual-border bg-amber-50 p-4 mb-6 font-mono" role="status">This product is no longer available here. Tell us which model you need in your message.</p>
+              {{end}}
               <!-- Name -->
               <div class="mb-6">
                 <label for="contact-name" class="block text-sm font-mono uppercase font-bold mb-2">Name *</label>
@@ -116,7 +125,7 @@
                 <label for="contact-inquiry_type" class="block text-sm font-mono uppercase font-bold mb-2">Inquiry Type</label>
                 <select id="contact-inquiry_type" name="inquiry_type" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow">
                   <option value="">Select an option</option>
-                  <option value="sales">Sales Inquiry</option>
+                  <option value="sales" {{if .QuoteProduct}}selected{{end}}>Sales Inquiry</option>
                   <option value="support">Technical Support</option>
                   <option value="partnership">Partnership Opportunity</option>
                   <option value="demo">Request a Demo</option>
@@ -127,8 +136,10 @@
               <!-- Message -->
               <div class="mb-8">
                 <label for="contact-message" class="block text-sm font-mono uppercase font-bold mb-2">Message *</label>
-                <textarea id="contact-message" name="message" required rows="5" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow resize-none" placeholder="How can we help you?"></textarea>
+                <textarea id="contact-message" name="message" required rows="5" class="w-full manual-border px-4 py-3 font-mono focus:outline-none focus:manual-shadow resize-none" placeholder="How can we help you?">{{.InitialMessage}}</textarea>
               </div>
+
+              <p class="font-mono text-sm text-gray-700 mb-6">We use the details you submit to review and respond to your enquiry. Read our <a href="/privacy" class="underline font-bold text-[#0066CC]">Privacy Notice</a> before sending.</p>
 
               <!-- Submit -->
               <button type="submit" class="w-full bg-black text-white px-6 py-4 manual-border manual-shadow hover:manual-shadow-lg font-mono uppercase text-sm font-bold hover:-translate-y-1 transition-all btn-press flex items-center justify-center gap-2">
@@ -191,7 +202,7 @@
     }
   });
   form.addEventListener('htmx:afterRequest', function (event) {
-    if (event.detail.successful) { form.reset(); email.setAttribute('aria-invalid', 'false'); phone.setAttribute('aria-invalid', 'false'); }
+    if (event.detail.successful) { form.reset(); form.elements.message.value = ''; form.elements.inquiry_type.value = ''; const quote = document.getElementById('quote-context'); if (quote) quote.remove(); email.setAttribute('aria-invalid', 'false'); phone.setAttribute('aria-invalid', 'false'); }
   });
 })();
 </script>
