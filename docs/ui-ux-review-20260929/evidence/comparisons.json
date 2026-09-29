@@ -1,0 +1,52 @@
+[
+  {
+    "phase": "before",
+    "case": "product editor desktop",
+    "formHeight": 1164.59375,
+    "saveTop": 1236.59375,
+    "visibleFields": 7
+  },
+  {
+    "phase": "before",
+    "case": "product actions mobile",
+    "left": 635.53125,
+    "right": 685.734375,
+    "viewport": 390
+  },
+  {
+    "phase": "before",
+    "case": "contact mobile",
+    "nameFieldTop": 3867
+  },
+  {
+    "phase": "before",
+    "case": "solution editor",
+    "registered": false,
+    "editable": false
+  },
+  {
+    "phase": "after",
+    "case": "product editor desktop",
+    "formHeight": 637.65625,
+    "saveTop": 693.65625,
+    "visibleFields": 5
+  },
+  {
+    "phase": "after",
+    "case": "product actions mobile",
+    "left": 128,
+    "right": 178.203125,
+    "viewport": 390
+  },
+  {
+    "phase": "after",
+    "case": "contact mobile",
+    "nameFieldTop": 597.5
+  },
+  {
+    "phase": "after",
+    "case": "solution editor",
+    "registered": true,
+    "editable": true
+  }
+]

@@ -1,0 +1,130 @@
+{
+  "passed": 25,
+  "rows": [
+    {
+      "route": "/admin/case-studies/10/edit",
+      "width": 320,
+      "overflow": []
+    },
+    {
+      "route": "/admin/products",
+      "width": 320,
+      "overflow": []
+    },
+    {
+      "route": "/admin/about/milestones",
+      "width": 320,
+      "overflow": []
+    },
+    {
+      "route": "/admin/solutions/19/edit",
+      "width": 320,
+      "overflow": []
+    },
+    {
+      "route": "/admin/blog/posts/new",
+      "width": 320,
+      "overflow": []
+    },
+    {
+      "route": "/admin/case-studies/10/edit",
+      "width": 390,
+      "overflow": []
+    },
+    {
+      "route": "/admin/products",
+      "width": 390,
+      "overflow": []
+    },
+    {
+      "route": "/admin/about/milestones",
+      "width": 390,
+      "overflow": []
+    },
+    {
+      "route": "/admin/solutions/19/edit",
+      "width": 390,
+      "overflow": []
+    },
+    {
+      "route": "/admin/blog/posts/new",
+      "width": 390,
+      "overflow": []
+    },
+    {
+      "route": "/admin/case-studies/10/edit",
+      "width": 768,
+      "overflow": []
+    },
+    {
+      "route": "/admin/products",
+      "width": 768,
+      "overflow": []
+    },
+    {
+      "route": "/admin/about/milestones",
+      "width": 768,
+      "overflow": []
+    },
+    {
+      "route": "/admin/solutions/19/edit",
+      "width": 768,
+      "overflow": []
+    },
+    {
+      "route": "/admin/blog/posts/new",
+      "width": 768,
+      "overflow": []
+    },
+    {
+      "route": "/admin/case-studies/10/edit",
+      "width": 1024,
+      "overflow": []
+    },
+    {
+      "route": "/admin/products",
+      "width": 1024,
+      "overflow": []
+    },
+    {
+      "route": "/admin/about/milestones",
+      "width": 1024,
+      "overflow": []
+    },
+    {
+      "route": "/admin/solutions/19/edit",
+      "width": 1024,
+      "overflow": []
+    },
+    {
+      "route": "/admin/blog/posts/new",
+      "width": 1024,
+      "overflow": []
+    },
+    {
+      "route": "/admin/case-studies/10/edit",
+      "width": 1440,
+      "overflow": []
+    },
+    {
+      "route": "/admin/products",
+      "width": 1440,
+      "overflow": []
+    },
+    {
+      "route": "/admin/about/milestones",
+      "width": 1440,
+      "overflow": []
+    },
+    {
+      "route": "/admin/solutions/19/edit",
+      "width": 1440,
+      "overflow": []
+    },
+    {
+      "route": "/admin/blog/posts/new",
+      "width": 1440,
+      "overflow": []
+    }
+  ]
+}

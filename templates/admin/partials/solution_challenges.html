@@ -15,26 +15,26 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Icon</label>
-            <input type="text" name="icon" required value="{{.Icon}}"
+            <input aria-label="Icon" type="text" name="icon" required value="{{.Icon}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Title</label>
-            <input type="text" name="title" required value="{{.Title}}"
+            <input aria-label="Title" type="text" name="title" required value="{{.Title}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Order</label>
-            <input type="number" name="display_order" value="{{if .DisplayOrder.Valid}}{{.DisplayOrder.Int64}}{{else}}0{{end}}"
+            <input aria-label="Order" type="number" name="display_order" value="{{if .DisplayOrder.Valid}}{{.DisplayOrder.Int64}}{{else}}0{{end}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
     </div>
     <div>
         <label class="block text-xs font-bold uppercase mb-1">Description</label>
-        <textarea name="description" required rows="2"
+        <textarea aria-label="Description" name="description" required rows="2"
                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   style="font-family: 'JetBrains Mono', monospace;">{{.Description}}</textarea>
     </div>
@@ -83,26 +83,26 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Icon</label>
-            <input type="text" name="icon" required placeholder="e.g. target"
+            <input aria-label="Icon" type="text" name="icon" required placeholder="e.g. target"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Title</label>
-            <input type="text" name="title" required
+            <input aria-label="Title" type="text" name="title" required
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Order</label>
-            <input type="number" name="display_order" value="0"
+            <input aria-label="Order" type="number" name="display_order" value="0"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
     </div>
     <div>
         <label class="block text-xs font-bold uppercase mb-1">Description</label>
-        <textarea name="description" required rows="2"
+        <textarea aria-label="Description" name="description" required rows="2"
                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   style="font-family: 'JetBrains Mono', monospace;"></textarea>
     </div>

@@ -17,29 +17,29 @@
                 </div>
                 <div class="p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="about-mvv-form-mission" class="block text-xs font-bold uppercase mb-1">
                             Mission Statement *
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Your company's mission - what you do and why. Keep to 1-2 sentences.">ⓘ</span>
                         </label>
-                        <textarea name="mission" rows="3" required
+                        <textarea id="about-mvv-form-mission" name="mission" rows="3" required
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Mission}}{{end}}</textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="about-mvv-form-vision" class="block text-xs font-bold uppercase mb-1">
                             Vision Statement *
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Where your company is headed. An aspirational future state.">ⓘ</span>
                         </label>
-                        <textarea name="vision" rows="3" required
+                        <textarea id="about-mvv-form-vision" name="vision" rows="3" required
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Vision}}{{end}}</textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="about-mvv-form-values-summary" class="block text-xs font-bold uppercase mb-1">
                             Values Introduction
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Brief intro text before the list of core values.">ⓘ</span>
                         </label>
-                        <textarea name="values_summary" rows="3"
+                        <textarea id="about-mvv-form-values-summary" name="values_summary" rows="3"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.ValuesSummary.String}}{{end}}</textarea>
                     </div>
@@ -54,29 +54,29 @@
                 <div class="p-5">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="about-mvv-form-mission-icon" class="block text-xs font-bold uppercase mb-1">
                                 Mission Icon
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Material Symbols icon name for the mission section.">ⓘ</span>
                             </label>
-                            <input type="text" name="mission_icon" value="{{if .Item}}{{.Item.MissionIcon}}{{else}}flag{{end}}"
+                            <input id="about-mvv-form-mission-icon" type="text" name="mission_icon" value="{{if .Item}}{{.Item.MissionIcon}}{{else}}flag{{end}}"
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="about-mvv-form-vision-icon" class="block text-xs font-bold uppercase mb-1">
                                 Vision Icon
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Material Symbols icon name for the vision section.">ⓘ</span>
                             </label>
-                            <input type="text" name="vision_icon" value="{{if .Item}}{{.Item.VisionIcon}}{{else}}visibility{{end}}"
+                            <input id="about-mvv-form-vision-icon" type="text" name="vision_icon" value="{{if .Item}}{{.Item.VisionIcon}}{{else}}visibility{{end}}"
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="about-mvv-form-values-icon" class="block text-xs font-bold uppercase mb-1">
                                 Values Icon
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Material Symbols icon name for the values section.">ⓘ</span>
                             </label>
-                            <input type="text" name="values_icon" value="{{if .Item}}{{.Item.ValuesIcon}}{{else}}diamond{{end}}"
+                            <input id="about-mvv-form-values-icon" type="text" name="values_icon" value="{{if .Item}}{{.Item.ValuesIcon}}{{else}}diamond{{end}}"
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>

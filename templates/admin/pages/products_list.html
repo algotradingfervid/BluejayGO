@@ -19,15 +19,15 @@
         <div class="bg-white border-2 border-black p-4 mb-6" style="box-shadow: 4px 4px 0px #000;">
             <form method="GET" action="/admin/products" class="flex flex-wrap items-end gap-4">
                 <div class="flex-1 min-w-[200px]">
-                    <label class="block text-xs font-bold uppercase mb-1">Search</label>
-                    <input type="text" name="search" value="{{.Search}}" placeholder="Search by name or SKU..."
+                    <label for="products-list-search" class="block text-xs font-bold uppercase mb-1">Search</label>
+                    <input id="products-list-search" type="text" name="search" value="{{.Search}}" placeholder="Search by name or SKU..."
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            title="Search products by name or SKU number."
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div class="min-w-[150px]">
-                    <label class="block text-xs font-bold uppercase mb-1">Status</label>
-                    <select name="status"
+                    <label for="products-list-status" class="block text-xs font-bold uppercase mb-1">Status</label>
+                    <select id="products-list-status" name="status"
                             class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             style="font-family: 'JetBrains Mono', monospace;">
                         <option value="">All Statuses</option>
@@ -37,8 +37,8 @@
                     </select>
                 </div>
                 <div class="min-w-[150px]">
-                    <label class="block text-xs font-bold uppercase mb-1">Category</label>
-                    <select name="category"
+                    <label for="products-list-category" class="block text-xs font-bold uppercase mb-1">Category</label>
+                    <select id="products-list-category" name="category"
                             class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             style="font-family: 'JetBrains Mono', monospace;">
                         <option value="">All Categories</option>

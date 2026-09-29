@@ -1,0 +1,12 @@
+?   	github.com/narendhupati/bluejay-cms/cmd/server	[no test files]
+ok  	github.com/narendhupati/bluejay-cms/internal/config	0.585s
+ok  	github.com/narendhupati/bluejay-cms/internal/database	1.124s
+ok  	github.com/narendhupati/bluejay-cms/internal/e2e	37.929s
+ok  	github.com/narendhupati/bluejay-cms/internal/handlers/admin	5.181s
+ok  	github.com/narendhupati/bluejay-cms/internal/handlers/public	3.496s
+ok  	github.com/narendhupati/bluejay-cms/internal/middleware	3.070s
+?   	github.com/narendhupati/bluejay-cms/internal/models	[no test files]
+ok  	github.com/narendhupati/bluejay-cms/internal/services	4.832s
+?   	github.com/narendhupati/bluejay-cms/internal/templates	[no test files]
+?   	github.com/narendhupati/bluejay-cms/internal/testutil	[no test files]
+ok  	github.com/narendhupati/bluejay-cms/db/sqlc	4.839s

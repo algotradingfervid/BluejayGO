@@ -1,0 +1,162 @@
+[
+  {
+    "route": "/",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/products",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/products/interactive-flat-panels/bj-ifp65-interactive-panel",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/contact",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/search?q=display",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/dashboard",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/products",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/products/new",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/header",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/footer",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/solutions/new",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/media",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/whitepapers/new",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/about/milestones",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/solutions/19/edit",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/admin/blog/posts/new",
+    "width": 1440,
+    "violations": []
+  },
+  {
+    "route": "/",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/products",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/products/interactive-flat-panels/bj-ifp65-interactive-panel",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/contact",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/search?q=display",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/dashboard",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/products",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/products/new",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/header",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/footer",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/solutions/new",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/media",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/whitepapers/new",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/about/milestones",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/solutions/19/edit",
+    "width": 390,
+    "violations": []
+  },
+  {
+    "route": "/admin/blog/posts/new",
+    "width": 390,
+    "violations": []
+  }
+]

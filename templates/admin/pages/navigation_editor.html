@@ -26,17 +26,17 @@
                         <form method="POST" action="/admin/navigation/{{.Menu.ID}}/settings" class="space-y-4">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <label class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Menu Name</label>
+                                    <label for="navigation-editor-name" class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Menu Name</label>
                                     <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Internal name for this menu (e.g., 'Main Header Nav').">info</span>
                                 </div>
-                                <input type="text" name="name" value="{{.Menu.Name}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                <input id="navigation-editor-name" type="text" name="name" value="{{.Menu.Name}}" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                             </div>
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <label class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Location</label>
+                                    <label for="navigation-editor-location" class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Location</label>
                                     <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Where this menu appears on the site.">info</span>
                                 </div>
-                                <select name="location" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                <select id="navigation-editor-location" name="location" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                                     <option value="header" {{if eq .Menu.Location "header"}}selected{{end}}>Header</option>
                                     <option value="footer" {{if eq .Menu.Location "footer"}}selected{{end}}>Footer</option>
                                     <option value="footer_legal" {{if eq .Menu.Location "footer_legal"}}selected{{end}}>Footer Legal</option>
@@ -59,10 +59,10 @@
                             <input type="hidden" name="link_type" value="page">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <label class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Page</label>
+                                    <label for="navigation-editor-page-identifier" class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Page</label>
                                     <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Link to an existing page on your site.">info</span>
                                 </div>
-                                <select name="page_identifier" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                <select id="navigation-editor-page-identifier" name="page_identifier" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                                     {{range .PageOptions}}
                                     <option value="{{.}}">{{.}}</option>
                                     {{end}}
@@ -84,14 +84,14 @@
                             <input type="hidden" name="link_type" value="custom">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <label class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Label</label>
+                                    <label for="navigation-editor-label" class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Label</label>
                                     <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Link to any URL, internal or external.">info</span>
                                 </div>
-                                <input type="text" name="label" placeholder="Link text" required class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                <input id="navigation-editor-label" type="text" name="label" placeholder="Link text" required class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">URL</label>
-                                <input type="text" name="url" placeholder="https://example.com" required class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                <label for="navigation-editor-url" class="block text-xs font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">URL</label>
+                                <input id="navigation-editor-url" type="text" name="url" placeholder="https://example.com" required class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                             </div>
                             <button type="submit" class="w-full px-4 py-2 border-2 border-black bg-green-50 text-xs font-bold uppercase hover:bg-green-100" style="font-family: 'JetBrains Mono', monospace; box-shadow: 3px 3px 0px #000;" onmouseenter="this.style.boxShadow='1px 1px 0px #000'" onmouseleave="this.style.boxShadow='3px 3px 0px #000'">
                                 Add to Menu
@@ -109,10 +109,10 @@
                             <input type="hidden" name="link_type" value="dropdown">
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <label class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Name</label>
+                                    <label for="navigation-editor-label" class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Name</label>
                                     <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Creates a dropdown menu with child links.">info</span>
                                 </div>
-                                <input type="text" name="label" placeholder="Dropdown name" required class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                                <input id="navigation-editor-label" type="text" name="label" placeholder="Dropdown name" required class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                             </div>
                             <button type="submit" class="w-full px-4 py-2 border-2 border-black bg-purple-50 text-xs font-bold uppercase hover:bg-purple-100" style="font-family: 'JetBrains Mono', monospace; box-shadow: 3px 3px 0px #000;" onmouseenter="this.style.boxShadow='1px 1px 0px #000'" onmouseleave="this.style.boxShadow='3px 3px 0px #000'">
                                 Add to Menu
@@ -222,7 +222,7 @@
         <form id="edit-form" method="POST" class="space-y-4">
             <div>
                 <div class="flex items-center gap-2 mb-1">
-                    <label class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Label</label>
+                    <label for="edit-label" class="block text-xs font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Label</label>
                     <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Display text for this menu link.">info</span>
                 </div>
                 <input type="text" name="label" id="edit-label" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
@@ -245,7 +245,7 @@
                 </div>
             </div>
             <div id="edit-page-field">
-                <label class="block text-xs font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Page</label>
+                <label for="edit-page" class="block text-xs font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Page</label>
                 <select name="page_identifier" id="edit-page" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                     {{range .PageOptions}}
                     <option value="{{.}}">{{.}}</option>
@@ -253,7 +253,7 @@
                 </select>
             </div>
             <div id="edit-url-field">
-                <label class="block text-xs font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">URL</label>
+                <label for="edit-url" class="block text-xs font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">URL</label>
                 <input type="text" name="url" id="edit-url" placeholder="https://example.com" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
             </div>
             <div class="flex gap-4">

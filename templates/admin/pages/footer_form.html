@@ -76,7 +76,7 @@
                                 <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Column Heading</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="The bold title shown above this column's links.">info</span>
                             </div>
-                            <input type="text" name="col_{{$idx}}_heading" value="{{$colData.Heading}}" placeholder="Column heading" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                            <input aria-label="Column {{$idx}} heading" type="text" name="col_{{$idx}}_heading" value="{{$colData.Heading}}" placeholder="Column heading" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                         </div>
 
                         <div>
@@ -113,7 +113,7 @@
 
                         <!-- Text section -->
                         <div class="col-text-section" data-column="{{$idx}}" {{if ne $colData.Type "text"}}style="display:none"{{end}}>
-                            <textarea name="col_{{$idx}}_content" rows="4" placeholder="Custom footer text content..." class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">{{$colData.Content}}</textarea>
+                            <textarea aria-label="Column {{$idx}} text content" name="col_{{$idx}}_content" rows="4" placeholder="Custom footer text content..." class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">{{$colData.Content}}</textarea>
                         </div>
 
                         <!-- Contact section -->
@@ -145,8 +145,8 @@
 
                     <div class="flex items-center gap-3">
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="footer_show_social" class="sr-only peer" {{if .Settings.FooterShowSocial}}checked{{end}}>
-                            <div class="toggle-switch peer-checked:active" onclick="this.classList.toggle('active'); this.previousElementSibling.checked = !this.previousElementSibling.checked;"></div>
+                            <input type="checkbox" aria-label="Show social icons in footer" name="footer_show_social" class="sr-only peer" {{if .Settings.FooterShowSocial}}checked{{end}}>
+                            <div class="toggle-switch peer-checked:active"></div>
                         </label>
                         <span class="text-sm font-bold uppercase" style="font-family: 'JetBrains Mono', monospace;">Show Social Icons in Footer</span>
                     </div>
@@ -204,11 +204,11 @@
 
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Copyright Text</label>
+                            <label for="footer-form-footer-copyright" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Copyright Text</label>
                             <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" title="Footer copyright text. Use {year} for auto-updating year.">info</span>
                         </div>
-                        <input type="text" name="footer_copyright" value="{{.Settings.FooterCopyright}}" placeholder="© {year} Company Name. All rights reserved." class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
-                        <p class="text-xs text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">Use <code class="bg-gray-200 px-1">{year}</code> for auto-updating year</p>
+                        <input id="footer-form-footer-copyright" type="text" name="footer_copyright" value="{{.Settings.FooterCopyright}}" placeholder="© {year} Company Name. All rights reserved." class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        <p class="text-xs text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">Use <code class="bg-gray-200 text-gray-700 px-1">{year}</code> for auto-updating year</p>
                     </div>
 
                     <div>

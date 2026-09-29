@@ -15,21 +15,21 @@
             <h2 class="text-sm font-bold uppercase mb-4">+ New Tag</h2>
             <form action="/admin/blog/tags" method="POST" class="flex items-end gap-4">
                 <div class="flex-1">
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="blog-tags-list-name" class="block text-xs font-bold uppercase mb-1">
                         Name
                         <span class="inline-block ml-1 cursor-help text-gray-400" title="Tag name. Use lowercase, hyphen-separated (e.g., 'machine-learning').">ⓘ</span>
                     </label>
-                    <input type="text" name="name" required
+                    <input id="blog-tags-list-name" type="text" name="name" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;"
                            placeholder="e.g., machine-learning">
                 </div>
                 <div class="flex-1">
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="blog-tags-list-slug" class="block text-xs font-bold uppercase mb-1">
                         Slug
                         <span class="inline-block ml-1 cursor-help text-gray-400" title="URL-friendly version. Auto-generated from name.">ⓘ</span>
                     </label>
-                    <input type="text" name="slug" required
+                    <input id="blog-tags-list-slug" type="text" name="slug" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
@@ -44,7 +44,7 @@
         {{if .Items}}
         <!-- Search -->
         <div class="mb-4">
-            <input type="text" id="tag-search" placeholder="Search tags..."
+            <input type="text" id="tag-search" aria-label="Search tags" placeholder="Search tags..."
                    class="border-2 border-black px-3 py-2 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;"
                    oninput="filterTags(this.value)">

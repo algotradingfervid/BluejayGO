@@ -130,3 +130,32 @@ select:focus {
 
 /* Leave room below the footer text for the floating navigation control. */
 body > footer { padding-bottom: 3rem; }
+
+/* Verified at 1600ms before setting the production interaction duration. */
+:root { --ui-motion-duration: 180ms; }
+.skip-link { position: fixed; left: 1rem; top: -8rem; z-index: 100; padding: .75rem 1rem; background: #004499; color: white; border: 2px solid black; }
+.skip-link:focus { top: 1rem; }
+:focus-visible { outline: 3px solid #0066cc; outline-offset: 3px; }
+#main-content { scroll-margin-top: 6rem; }
+main h1, main h2, main h3, main p, main a { overflow-wrap: anywhere; }
+.contact-enquiry, .contact-offices { min-width: 0; }
+@media (min-width: 1024px) {
+    .contact-layout { grid-template-areas: 'offices enquiry'; }
+    .contact-offices { grid-area: offices; }
+    .contact-enquiry { grid-area: enquiry; }
+}
+#mobile-navigation:not([hidden]) { animation: ui-reveal var(--ui-motion-duration) ease-out; }
+#search-modal:not(.hidden) .search-panel { animation: surface-reveal var(--ui-motion-duration) ease-out; }
+@keyframes surface-reveal { from { transform: translateY(-4px); } to { transform: translateY(0); } }
+@keyframes ui-reveal { from { opacity: .65; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+.breadcrumb-trail { flex-wrap: wrap; overflow-wrap: anywhere; }
+.breadcrumb-trail > * { min-width: 0; max-width: 100%; }
+
+.breadcrumb-trail { opacity: 1; }
+.testimonial-selector { width: 44px; height: 44px; font-size: .8rem; font-weight: 700; }
+
+.ui-request-feedback { padding: .75rem; margin: .75rem 0; border: 2px solid #991b1b; background: #fef2f2; color: #991b1b; font-size: .875rem; overflow-wrap: anywhere; }

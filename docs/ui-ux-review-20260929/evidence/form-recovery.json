@@ -1,0 +1,16 @@
+{
+  "passed": 11,
+  "checks": [
+    "invalid collapsed section opens and focuses its field",
+    "corrected field is valid",
+    "first hidden invalid tab opens and receives focus",
+    "later invalid tab does not hide first error",
+    "next invalid field is reachable on the next submission",
+    "Cancel prevents replacing dirty detail form",
+    "Discard resumes the requested detail replacement",
+    "suggestion GET does not discard surrounding edits",
+    "save POST is not intercepted as navigation",
+    "sibling mutation cannot silently replace another dirty form",
+    "undoing inline edits allows clean navigation without prompt"
+  ]
+}

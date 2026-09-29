@@ -11,7 +11,8 @@
     function getSavedStates() {
         try {
             var raw = localStorage.getItem(STORAGE_KEY);
-            return raw ? JSON.parse(raw) : {};
+            var states = raw ? JSON.parse(raw) : {};
+            return states && typeof states === 'object' && !Array.isArray(states) ? states : {};
         } catch(e) {
             return {};
         }
@@ -63,6 +64,12 @@
         sidebar.classList.toggle('open', compact && open);
         sidebar.inert = compact && !open;
         sidebar.setAttribute('aria-hidden', String(compact && !open));
+        var main = sidebar.parentElement.querySelector(':scope > .flex-1');
+        var mobileBar = document.querySelector('.admin-mobile-bar');
+        if (main) main.inert = compact && open;
+        if (mobileBar) mobileBar.inert = compact && open;
+        if (compact && open) { sidebar.setAttribute('role', 'dialog'); sidebar.setAttribute('aria-modal', 'true'); }
+        else { sidebar.removeAttribute('role'); sidebar.removeAttribute('aria-modal'); }
         var overlay = document.querySelector('.sidebar-overlay');
         if (overlay) overlay.classList.toggle('active', compact && open);
         document.querySelectorAll('[data-sidebar-toggle]').forEach(function(button) {
@@ -104,14 +111,15 @@
         var currentPath = window.location.pathname;
         var savedStates = getSavedStates();
 
-        // Mark active link
-        var allLinks = document.querySelectorAll('#sidebar-nav [data-path]');
-        for (var i = 0; i < allLinks.length; i++) {
-            var link = allLinks[i];
-            var linkPath = link.getAttribute('data-path');
-            if (currentPath === linkPath || currentPath.indexOf(linkPath + '/') === 0) {
-                link.classList.add('active');
-            }
+        // Prefer the most specific destination: settings must not select All Products.
+        var allLinks = Array.from(document.querySelectorAll('#sidebar-nav [data-path]'));
+        var matches = allLinks.filter(function(link) {
+            var path = link.getAttribute('data-path');
+            return currentPath === path || currentPath.indexOf(path + '/') === 0;
+        }).sort(function(a, b) { return b.getAttribute('data-path').length - a.getAttribute('data-path').length; });
+        if (matches[0]) {
+            matches[0].classList.add('active');
+            matches[0].setAttribute('aria-current', 'page');
         }
 
         // Find which group the active link belongs to and auto-expand it
@@ -174,6 +182,10 @@
             var selected = options.filter(function(o) { return initial ? o.defaultSelected : o.selected; });
             if (initial && !selected.length && !el.multiple && options.length) selected = [options[0]];
             return selected.map(function(o) { return o.value; });
+        }
+        // Color controls normalize valid hex to lowercase even without user input.
+        if (initial && el.type === 'color') {
+            return /^#[0-9a-f]{6}$/i.test(el.defaultValue) ? el.defaultValue.toLowerCase() : '#000000';
         }
         return initial ? el.defaultValue : el.value;
     }
@@ -317,6 +329,7 @@
         var form = field.form;
         if (!form || validatingForms.has(form)) return;
         validatingForms.add(form);
+        form.dispatchEvent(new CustomEvent('admin:reveal-field', {detail: {field: field}}));
         // Keep the first field for the entire native validation pass. Browsers
         // may run microtasks between invalid events for different controls.
         setTimeout(function() { validatingForms.delete(form); }, 0);

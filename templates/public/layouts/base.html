@@ -23,6 +23,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="/public/css/styles.css">
     <script src="/public/js/vendor/htmx.min.js"></script>
+    <script defer src="/public/js/ui-polish.js"></script>
 </head>
 <body class="font-mono bg-white">
     {{if .IsPreview}}
@@ -47,8 +48,9 @@
         </div>
     </div>
     {{end}}
+    <a class="skip-link" href="#main-content">Skip to content</a>
     {{template "header" .}}
-    <main>
+    <main id="main-content" tabindex="-1">
         {{template "content" .}}
     </main>
     {{template "footer" .}}

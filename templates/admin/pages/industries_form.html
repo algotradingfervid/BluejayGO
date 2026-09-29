@@ -6,20 +6,20 @@
             <h1 class="text-2xl font-bold mb-6">{{.Title}}</h1>
             <form method="POST" action="{{.FormAction}}" class="bg-white rounded-lg shadow p-6 space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm" required>
+                    <label for="industries-form-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <input id="industries-form-name" type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Icon (Material Symbol)</label>
-                    <input type="text" name="icon" value="{{if .Item}}{{.Item.Icon}}{{end}}" placeholder="business" class="w-full border border-gray-300 rounded px-3 py-2 text-sm" required>
+                    <label for="industries-form-icon" class="block text-sm font-medium text-gray-700 mb-1">Icon (Material Symbol)</label>
+                    <input id="industries-form-icon" type="text" name="icon" value="{{if .Item}}{{.Item.Icon}}{{end}}" placeholder="business" class="w-full border border-gray-300 rounded px-3 py-2 text-sm" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea name="description" rows="3" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
+                    <label for="industries-form-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea id="industries-form-description" name="description" rows="3" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
-                    <input type="number" name="sort_order" value="{{if .Item}}{{.Item.SortOrder}}{{else}}0{{end}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                    <label for="industries-form-sort-order" class="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
+                    <input id="industries-form-sort-order" type="number" name="sort_order" value="{{if .Item}}{{.Item.SortOrder}}{{else}}0{{end}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
                 </div>
                 <div class="flex justify-end gap-3 pt-4">
                     <a href="/admin/industries" class="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm">Cancel</a>

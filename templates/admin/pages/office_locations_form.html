@@ -12,11 +12,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Office Name -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="office-locations-form-name" class="block text-xs font-bold uppercase mb-1">
                         Office Name *
                         <span class="text-gray-400 cursor-help" title="Name for this location (e.g., 'Houston Headquarters', 'Dallas Office').">&#9432;</span>
                     </label>
-                    <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
+                    <input id="office-locations-form-name" type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            placeholder="e.g., Houston Headquarters"
                            style="font-family: 'JetBrains Mono', monospace;">
@@ -24,75 +24,75 @@
 
                 <!-- Address Line 1 -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Address Line 1 *</label>
-                    <input type="text" name="address_line1" value="{{if .Item}}{{.Item.AddressLine1}}{{end}}" required
+                    <label for="office-locations-form-address-line1" class="block text-xs font-bold uppercase mb-1">Address Line 1 *</label>
+                    <input id="office-locations-form-address-line1" type="text" name="address_line1" value="{{if .Item}}{{.Item.AddressLine1}}{{end}}" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
 
                 <!-- Address Line 2 -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Address Line 2</label>
-                    <input type="text" name="address_line2" value="{{if .Item}}{{if .Item.AddressLine2.Valid}}{{.Item.AddressLine2.String}}{{end}}{{end}}"
+                    <label for="office-locations-form-address-line2" class="block text-xs font-bold uppercase mb-1">Address Line 2</label>
+                    <input id="office-locations-form-address-line2" type="text" name="address_line2" value="{{if .Item}}{{if .Item.AddressLine2.Valid}}{{.Item.AddressLine2.String}}{{end}}{{end}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
 
                 <!-- City -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">City *</label>
-                    <input type="text" name="city" value="{{if .Item}}{{.Item.City}}{{end}}" required
+                    <label for="office-locations-form-city" class="block text-xs font-bold uppercase mb-1">City *</label>
+                    <input id="office-locations-form-city" type="text" name="city" value="{{if .Item}}{{.Item.City}}{{end}}" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
 
                 <!-- State -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">State *</label>
-                    <input type="text" name="state" value="{{if .Item}}{{.Item.State}}{{end}}" required
+                    <label for="office-locations-form-state" class="block text-xs font-bold uppercase mb-1">State *</label>
+                    <input id="office-locations-form-state" type="text" name="state" value="{{if .Item}}{{.Item.State}}{{end}}" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
 
                 <!-- Postal Code -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Postal Code *</label>
-                    <input type="text" name="postal_code" value="{{if .Item}}{{.Item.PostalCode}}{{end}}" required
+                    <label for="office-locations-form-postal-code" class="block text-xs font-bold uppercase mb-1">Postal Code *</label>
+                    <input id="office-locations-form-postal-code" type="text" name="postal_code" value="{{if .Item}}{{.Item.PostalCode}}{{end}}" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
 
                 <!-- Country -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Country *</label>
-                    <input type="text" name="country" value="{{if .Item}}{{.Item.Country}}{{else}}India{{end}}" required
+                    <label for="office-locations-form-country" class="block text-xs font-bold uppercase mb-1">Country *</label>
+                    <input id="office-locations-form-country" type="text" name="country" value="{{if .Item}}{{.Item.Country}}{{else}}India{{end}}" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
 
                 <!-- Phone -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Phone</label>
-                    <input type="text" name="phone" value="{{if .Item}}{{if .Item.Phone.Valid}}{{.Item.Phone.String}}{{end}}{{end}}"
+                    <label for="office-locations-form-phone" class="block text-xs font-bold uppercase mb-1">Phone</label>
+                    <input id="office-locations-form-phone" type="text" name="phone" value="{{if .Item}}{{if .Item.Phone.Valid}}{{.Item.Phone.String}}{{end}}{{end}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
 
                 <!-- Email -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Email</label>
-                    <input type="email" name="email" value="{{if .Item}}{{if .Item.Email.Valid}}{{.Item.Email.String}}{{end}}{{end}}"
+                    <label for="office-locations-form-email" class="block text-xs font-bold uppercase mb-1">Email</label>
+                    <input id="office-locations-form-email" type="email" name="email" value="{{if .Item}}{{if .Item.Email.Valid}}{{.Item.Email.String}}{{end}}{{end}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
 
                 <!-- Map URL -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="office-locations-form-map-url" class="block text-xs font-bold uppercase mb-1">
                         Map URL
                         <span class="text-gray-400 cursor-help" title="Google Maps HTTPS link for directions. Embed links display the exact map. Share links use the office address for the embedded map.">&#9432;</span>
                     </label>
-                    <input type="url" name="map_url" value="{{if .Item}}{{.Item.MapUrl}}{{end}}"
+                    <input id="office-locations-form-map-url" type="url" name="map_url" value="{{if .Item}}{{.Item.MapUrl}}{{end}}"
                            placeholder="https://www.google.com/maps/..."
                            aria-describedby="map-url-help"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -102,8 +102,8 @@
                 <p id="map-url-help" class="text-xs text-gray-600 md:col-span-2">Paste a Google Maps share, place or embed URL. Leave blank to map the office address. Short share links open for directions; the interactive map uses the address.</p>
                 <!-- Display Order -->
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
-                    <input type="number" name="display_order" min="0" value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
+                    <label for="office-locations-form-display-order" class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                    <input id="office-locations-form-display-order" type="number" name="display_order" min="0" value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>

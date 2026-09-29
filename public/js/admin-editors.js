@@ -24,6 +24,7 @@
                 }
             });
             var original = source.value;
+            var initialDocument = null;
             editor.addEventListener('trix-initialize', function () {
                 source.hidden = true;
                 // There is no attachment upload endpoint for these editors.
@@ -39,10 +40,17 @@
                     if (label.htmlFor === source.id) label.htmlFor = editor.id;
                 });
                 // Loading the editor must not change the saved HTML until the user edits.
+                initialDocument = JSON.stringify(editor.editor.getDocument().toJSON());
                 source.value = original;
                 if (window.AdminForms) window.AdminForms.refresh(source.form);
             }, {once: true});
             editor.addEventListener('trix-change', function () {
+                // Undo can restore the original document after Trix has normalized
+                // its HTML. Preserve the saved HTML (including unsupported IDs)
+                // when both text and formatting return to their initial state.
+                if (initialDocument !== null && JSON.stringify(editor.editor.getDocument().toJSON()) === initialDocument) {
+                    source.value = original;
+                }
                 source.dispatchEvent(new Event('input', {bubbles: true}));
             });
             source.insertAdjacentElement('afterend', editor);

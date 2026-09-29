@@ -21,7 +21,7 @@
              data-autoplay="{{if .HeroAutoplay}}1{{else}}0{{end}}"
              data-interval="{{.HeroInterval}}">
         <div class="absolute inset-0 grid-dotted pointer-events-none z-0"></div>
-        <div class="absolute top-4 right-4 font-mono text-[10px] opacity-50 uppercase z-20">Ref. Manual v2026.01</div>
+        <div class="absolute top-4 right-4 font-mono text-[10px] opacity-70 uppercase z-20">Ref. Manual v2026.01</div>
 
         <!-- Sliding track: one slide per active hero -->
         <div class="flex transition-transform duration-500 ease-out relative z-10" data-hero-track style="will-change: transform;">
@@ -238,7 +238,7 @@
             <!-- Carousel Indicators -->
             <div class="flex justify-center gap-2 mt-8">
                 {{range $i, $t := .Testimonials}}
-                <button class="w-3 h-3 manual-border transition-colors {{if eq $i 0}}bg-primary{{else}}bg-gray-200{{end}}" data-testimonial-btn="{{$i}}" onclick="showTestimonial({{$i}})"></button>
+                <button type="button" aria-label="Show testimonial {{add $i 1}}" aria-pressed="{{if eq $i 0}}true{{else}}false{{end}}" class="testimonial-selector manual-border transition-colors {{if eq $i 0}}bg-primary text-white{{else}}bg-gray-200{{end}}" data-testimonial-btn="{{$i}}" onclick="showTestimonial({{$i}})">{{add $i 1}}</button>
                 {{end}}
             </div>
         </div>
@@ -249,7 +249,8 @@
             el.classList.add('hidden');
         });
         document.querySelectorAll('[data-testimonial-btn]').forEach(function(el) {
-            el.classList.remove('bg-primary');
+            el.classList.remove('bg-primary', 'text-white');
+            el.setAttribute('aria-pressed', 'false');
             el.classList.add('bg-gray-200');
         });
         var target = document.querySelector('[data-testimonial="' + index + '"]');
@@ -257,7 +258,8 @@
         var btn = document.querySelector('[data-testimonial-btn="' + index + '"]');
         if (btn) {
             btn.classList.remove('bg-gray-200');
-            btn.classList.add('bg-primary');
+            btn.classList.add('bg-primary', 'text-white');
+            btn.setAttribute('aria-pressed', 'true');
         }
     }
     </script>
@@ -324,7 +326,7 @@
                     </div>
                     <h3 class="font-mono font-bold text-lg mb-2 uppercase">{{.Title}}</h3>
                     <p class="font-mono text-xs opacity-60 group-hover:opacity-80 mb-4 flex-grow uppercase">{{.Excerpt}}</p>
-                    <div class="flex items-center justify-between text-[10px] font-mono opacity-50 group-hover:opacity-70 uppercase mb-4">
+                    <div class="flex items-center justify-between text-[10px] font-mono opacity-70 group-hover:opacity-70 uppercase mb-4">
                         {{if .PublishedAt.Valid}}
                         <span>{{.PublishedAt.Time.Format "Jan 02, 2006"}}</span>
                         {{end}}

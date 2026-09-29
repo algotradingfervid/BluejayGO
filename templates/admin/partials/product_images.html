@@ -26,17 +26,17 @@
             <img src="{{$img.ImagePath}}" alt="" class="w-full h-24 object-cover border-2 border-black">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Alt Text</label>
-                <input type="text" name="alt_text" value="{{if $img.AltText.Valid}}{{$img.AltText.String}}{{end}}"
+                <input aria-label="Alt Text" type="text" name="alt_text" value="{{if $img.AltText.Valid}}{{$img.AltText.String}}{{end}}"
                        class="w-full border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Caption</label>
-                <input type="text" name="caption" value="{{if $img.Caption.Valid}}{{$img.Caption.String}}{{end}}"
+                <input aria-label="Caption" type="text" name="caption" value="{{if $img.Caption.Valid}}{{$img.Caption.String}}{{end}}"
                        class="w-full border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
-                <input type="number" name="display_order" value="{{$img.DisplayOrder}}"
+                <input aria-label="Order" type="number" name="display_order" value="{{$img.DisplayOrder}}"
                        class="w-full border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div class="flex gap-2">
@@ -106,17 +106,17 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Alt Text</label>
-                <input type="text" name="alt_text" placeholder="Image description"
+                <input aria-label="Alt Text" type="text" name="alt_text" placeholder="Image description"
                        class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Caption</label>
-                <input type="text" name="caption" placeholder="Optional caption"
+                <input aria-label="Caption" type="text" name="caption" placeholder="Optional caption"
                        class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
-                <input type="number" name="display_order" placeholder="0" value="0"
+                <input aria-label="Order" type="number" name="display_order" placeholder="0" value="0"
                        class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div class="flex items-end">
@@ -128,7 +128,7 @@
         </div>
         <div>
             <label class="block text-xs font-bold uppercase tracking-wider mb-1">Image File *</label>
-            <input type="file" name="image" accept="image/*" required
+            <input aria-label="Image File *" type="file" name="image" accept="image/*" required
                    class="w-full text-sm border-2 border-black p-2 bg-white file:mr-3 file:py-1 file:px-3 file:border-2 file:border-black file:bg-black file:text-white file:font-bold file:text-xs file:uppercase file:cursor-pointer">
         </div>
         <button type="submit" class="bg-black text-white px-6 py-2 text-sm font-bold uppercase tracking-wider border-2 border-black hover:bg-white hover:text-black transition-colors" style="box-shadow: 3px 3px 0px #000;">

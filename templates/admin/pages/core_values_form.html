@@ -17,37 +17,37 @@
                 <div class="p-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="core-values-form-title" class="block text-xs font-bold uppercase mb-1">
                                 Title *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="The value name (e.g., 'Innovation', 'Integrity').">ⓘ</span>
                             </label>
-                            <input type="text" name="title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
+                            <input id="core-values-form-title" type="text" name="title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="core-values-form-icon" class="block text-xs font-bold uppercase mb-1">
                                 Icon *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Material Symbols icon name. Browse icons at fonts.google.com/icons.">ⓘ</span>
                             </label>
-                            <input type="text" name="icon" value="{{if .Item}}{{.Item.Icon}}{{end}}" required
+                            <input id="core-values-form-icon" type="text" name="icon" value="{{if .Item}}{{.Item.Icon}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;"
                                    placeholder="e.g. star, lightbulb, handshake">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="core-values-form-description" class="block text-xs font-bold uppercase mb-1">
                             Description *
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="1-2 sentences explaining what this value means to your company.">ⓘ</span>
                         </label>
-                        <textarea name="description" rows="3" required
+                        <textarea id="core-values-form-description" name="description" rows="3" required
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
                     </div>
                     <div class="max-w-xs">
-                        <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
-                        <input type="number" name="display_order" value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
+                        <label for="core-values-form-display-order" class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                        <input id="core-values-form-display-order" type="number" name="display_order" value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;">
                     </div>

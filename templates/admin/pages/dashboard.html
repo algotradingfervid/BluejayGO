@@ -11,7 +11,7 @@
                         <div class="text-xs text-gray-600">{{.Role}}</div>
                     </div>
                     <form method="POST" action="/admin/logout">
-                        <button type="submit" class="bg-red-500 text-white px-4 py-2 manual-border manual-shadow hover:bg-red-600 active:btn-press transition-colors text-sm font-bold">LOGOUT</button>
+                        <button type="submit" class="bg-red-700 text-white px-4 py-2 manual-border manual-shadow hover:bg-red-600 active:btn-press transition-colors text-sm font-bold">LOGOUT</button>
                     </form>
                 </div>
             </div>
@@ -33,11 +33,11 @@
                 <!-- Published Blog Posts -->
                 <div class="bg-white p-6 manual-border manual-shadow relative group" title="Shows the count of blog posts currently published on your site.">
                     <div class="flex items-start justify-between mb-3">
-                        <span class="material-symbols-outlined text-3xl text-[#E65100]">article</span>
+                        <span class="material-symbols-outlined text-3xl text-[#9A3412]">article</span>
                     </div>
                     <div class="text-4xl font-bold text-black mb-1">{{.PublishedBlogPosts}}</div>
                     <div class="text-sm text-gray-600 font-medium">Published Blog Posts</div>
-                    <a href="/admin/blog/posts" class="text-xs font-bold text-[#E65100] hover:underline mt-3 inline-block">View All →</a>
+                    <a href="/admin/blog/posts" class="text-xs font-bold text-[#9A3412] hover:underline mt-3 inline-block">View All →</a>
                 </div>
 
                 <!-- Contact Submissions -->
@@ -45,7 +45,7 @@
                     <div class="flex items-start justify-between mb-3">
                         <span class="material-symbols-outlined text-3xl text-[#2E7D32]">mail</span>
                         {{if gt .NewContactSubmissions 0}}
-                        <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 manual-border">{{.NewContactSubmissions}} new</span>
+                        <span class="bg-red-700 text-white text-xs font-bold px-2 py-1 manual-border">{{.NewContactSubmissions}} new</span>
                         {{end}}
                     </div>
                     <div class="text-4xl font-bold text-black mb-1">{{.ContactSubmissions}}</div>

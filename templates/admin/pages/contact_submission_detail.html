@@ -145,8 +145,8 @@
                 <form method="POST" action="/admin/contact/submissions/{{.Submission.ID}}/status" class="space-y-4">
                     <input type="hidden" name="return_to" value="{{.ReturnURL}}">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Status</label>
-                        <select name="status"
+                        <label for="contact-submission-detail-status" class="block text-xs font-bold uppercase mb-1">Status</label>
+                        <select id="contact-submission-detail-status" name="status"
                                 class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 style="font-family: 'JetBrains Mono', monospace;">
                             <option value="new" {{if eq .Submission.Status "new"}}selected{{end}}>New</option>
@@ -156,8 +156,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Notes</label>
-                        <textarea name="notes" rows="4"
+                        <label for="contact-submission-detail-notes" class="block text-xs font-bold uppercase mb-1">Notes</label>
+                        <textarea id="contact-submission-detail-notes" name="notes" rows="4"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Submission.Notes.Valid}}{{.Submission.Notes.String}}{{end}}</textarea>
                     </div>

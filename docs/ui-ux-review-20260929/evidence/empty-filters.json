@@ -1,0 +1,25 @@
+{
+  "passed": 4,
+  "cases": [
+    {
+      "route": "/admin/products?search=QA-NO-RESULT-XYZ",
+      "status": 200,
+      "width": 320
+    },
+    {
+      "route": "/admin/blog/posts?search=QA-NO-RESULT-XYZ",
+      "status": 200,
+      "width": 320
+    },
+    {
+      "route": "/search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E",
+      "status": 200,
+      "width": 320
+    },
+    {
+      "route": "/search?q=UnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbrokenUnbroken",
+      "status": 200,
+      "width": 320
+    }
+  ]
+}

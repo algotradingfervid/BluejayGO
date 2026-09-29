@@ -11,11 +11,11 @@
         <form method="POST" action="{{.FormAction}}" class="max-w-2xl space-y-4">
             <div class="bg-white border-2 border-black p-5 space-y-4" style="box-shadow: 4px 4px 0px #000;">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="testimonials-form-partner-id" class="block text-xs font-bold uppercase mb-1">
                         Partner *
                         <span class="inline-block ml-1 cursor-help text-gray-400" title="The partner company this testimonial is from.">ⓘ</span>
                     </label>
-                    <select name="partner_id" required
+                    <select id="testimonials-form-partner-id" name="partner_id" required
                             class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                             style="font-family: 'JetBrains Mono', monospace;">
                         <option value="">Select a Partner</option>
@@ -25,38 +25,38 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="testimonials-form-author-name" class="block text-xs font-bold uppercase mb-1">
                         Author Name *
                         <span class="inline-block ml-1 cursor-help text-gray-400" title="Name of the person giving the testimonial.">ⓘ</span>
                     </label>
-                    <input type="text" name="author_name"
+                    <input id="testimonials-form-author-name" type="text" name="author_name"
                            value="{{if .Item}}{{.Item.AuthorName}}{{end}}" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="testimonials-form-author-title" class="block text-xs font-bold uppercase mb-1">
                         Author Title *
                         <span class="inline-block ml-1 cursor-help text-gray-400" title="Job title (e.g., 'VP of Operations').">ⓘ</span>
                     </label>
-                    <input type="text" name="author_title"
+                    <input id="testimonials-form-author-title" type="text" name="author_title"
                            value="{{if .Item}}{{.Item.AuthorTitle}}{{end}}" required
                            placeholder="e.g. VP of Operations"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="testimonials-form-quote" class="block text-xs font-bold uppercase mb-1">
                         Quote *
                         <span class="inline-block ml-1 cursor-help text-gray-400" title="The testimonial text. Keep it concise and specific about results.">ⓘ</span>
                     </label>
-                    <textarea name="quote" rows="4" required
+                    <textarea id="testimonials-form-quote" name="quote" rows="4" required
                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                               style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Quote}}{{end}}</textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Display Order</label>
-                    <input type="number" name="display_order" min="0"
+                    <label for="testimonials-form-display-order" class="block text-xs font-bold uppercase mb-1">Display Order</label>
+                    <input id="testimonials-form-display-order" type="number" name="display_order" min="0"
                            value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                            style="font-family: 'JetBrains Mono', monospace;">

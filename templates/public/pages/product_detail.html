@@ -9,10 +9,10 @@
 .product-overview a { text-decoration: underline; }
 .product-overview blockquote { border-left: 3px solid #0066CC; padding-left: 1rem; margin: 1rem 0; }
 </style>
-<main>
+<div>
     <!-- Breadcrumb -->
     <div class="max-w-[1440px] mx-auto px-4 md:px-10 py-4">
-        <nav class="flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
+        <nav aria-label="Breadcrumb" class="breadcrumb-trail flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
             <a class="hover:text-[#0066CC]" href="/">Home</a>
             <span class="material-symbols-outlined text-[12px]">chevron_right</span>
             <a class="hover:text-[#0066CC]" href="/products">Products</a>
@@ -157,7 +157,7 @@
                 <span class="material-symbols-outlined text-3xl text-[#0066CC] mb-2">verified</span>
                 <p class="text-[10px] font-bold uppercase leading-tight">{{.CertificationName}}</p>
                 {{if .CertificationCode.Valid}}
-                <p class="text-[9px] opacity-50 mt-1 font-mono">{{.CertificationCode.String}}</p>
+                <p class="text-xs opacity-70 mt-1 font-mono">{{.CertificationCode.String}}</p>
                 {{end}}
             </div>
             {{end}}
@@ -175,13 +175,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {{range .Downloads}}
             <a href="{{.FilePath}}" class="manual-border bg-white p-5 manual-shadow flex items-center gap-4 group hover:-translate-y-0.5 transition-transform" download>
-                <div class="w-12 h-12 flex items-center justify-center manual-border text-[10px] font-black uppercase
-                    {{if eq .FileType "pdf"}}bg-red-500 text-white
+                <div class="w-12 h-12 shrink-0 flex items-center justify-center manual-border text-[10px] font-black uppercase
+                    {{if eq .FileType "pdf"}}bg-red-700 text-white
                     {{else if eq .FileType "zip"}}bg-yellow-400 text-black
-                    {{else if eq .FileType "exe"}}bg-blue-500 text-white
-                    {{else if eq .FileType "doc"}}bg-green-500 text-white
-                    {{else if eq .FileType "docx"}}bg-green-500 text-white
-                    {{else}}bg-gray-400 text-white
+                    {{else if eq .FileType "exe"}}bg-blue-700 text-white
+                    {{else if eq .FileType "doc"}}bg-green-700 text-white
+                    {{else if eq .FileType "docx"}}bg-green-700 text-white
+                    {{else}}bg-gray-700 text-white
                     {{end}}">
                     {{.FileType}}
                 </div>
@@ -190,12 +190,12 @@
                     {{if .Description.Valid}}
                     <p class="text-[10px] opacity-60 uppercase truncate">{{.Description.String}}</p>
                     {{end}}
-                    <div class="flex items-center gap-3 mt-1 text-[9px] opacity-40 font-mono uppercase">
-                        {{if .Version.Valid}}<span>v{{.Version.String}}</span>{{end}}
-                        {{if .FileSize.Valid}}<span>{{.FileSize.Int64}} bytes</span>{{end}}
+                    <div class="flex items-center gap-3 mt-1 text-xs opacity-70 font-mono uppercase">
+                        {{if .Version.Valid}}<span>Version {{.Version.String}}</span>{{end}}
+                        {{if .FileSize.Valid}}<span>{{formatFileSize .FileSize.Int64}}</span>{{end}}
                     </div>
                 </div>
-                <span class="material-symbols-outlined text-[#0066CC] opacity-0 group-hover:opacity-100 transition-opacity">download</span>
+                <span class="material-symbols-outlined text-[#0066CC] " aria-hidden="true">download</span>
             </a>
             {{end}}
         </div>
@@ -220,7 +220,7 @@
             </div>
         </div>
     </section>
-</main>
+</div>
 
 <script>
 function switchImage(thumb) {

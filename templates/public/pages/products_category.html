@@ -1,8 +1,8 @@
 {{define "content"}}
-<main>
+<div>
     <!-- Breadcrumb -->
     <div class="max-w-[1440px] mx-auto px-4 md:px-10 py-4">
-        <nav class="flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
+        <nav aria-label="Breadcrumb" class="breadcrumb-trail flex items-center gap-2 text-[10px] uppercase font-bold opacity-60">
             <a class="hover:text-[#0066CC]" href="/">Home</a>
             <span class="material-symbols-outlined text-[12px]">chevron_right</span>
             <a class="hover:text-[#0066CC]" href="/products">Products</a>
@@ -85,5 +85,5 @@
         </div>
         {{end}}
     </section>
-</main>
+</div>
 {{end}}

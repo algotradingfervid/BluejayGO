@@ -1,4 +1,7 @@
 {{define "content"}}
+<link rel="stylesheet" href="/public/css/trix.css">
+<script defer src="/public/js/vendor/trix.js"></script>
+<script defer src="/public/js/admin-editors.js"></script>
 <div class="flex h-screen" style="font-family: 'JetBrains Mono', monospace;">
     {{template "admin-sidebar" .}}
     <div class="flex-1 overflow-auto p-8 bg-gray-50">
@@ -20,35 +23,35 @@
                 <div class="section-body p-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="solutions-form-title" class="block text-xs font-bold uppercase mb-1">
                                 Title *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Solution name as displayed on the site.">ⓘ</span>
                             </label>
-                            <input type="text" name="title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
+                            <input id="solutions-form-title" type="text" name="title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="solutions-form-slug" class="block text-xs font-bold uppercase mb-1">
                                 Slug *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="URL-friendly version of the name. Auto-generated but editable.">ⓘ</span>
                             </label>
-                            <input type="text" name="slug" value="{{if .Item}}{{.Item.Slug}}{{end}}" required
+                            <input id="solutions-form-slug" type="text" name="slug" value="{{if .Item}}{{.Item.Slug}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="solutions-form-icon" class="block text-xs font-bold uppercase mb-1">
                                 Icon (Material Symbol) *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Which industry this solution serves.">ⓘ</span>
                             </label>
-                            <input type="text" name="icon" value="{{if .Item}}{{.Item.Icon}}{{end}}" required placeholder="e.g. school"
+                            <input id="solutions-form-icon" type="text" name="icon" value="{{if .Item}}{{.Item.Icon}}{{end}}" required placeholder="e.g. school"
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Status</label>
-                            <select name="is_published"
+                            <label for="solutions-form-is-published" class="block text-xs font-bold uppercase mb-1">Status</label>
+                            <select id="solutions-form-is-published" name="is_published"
                                     class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     style="font-family: 'JetBrains Mono', monospace;">
                                 <option value="0" {{if .Item}}{{if not .Item.IsPublished.Bool}}selected{{end}}{{end}}>Draft</option>
@@ -57,24 +60,24 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="solutions-form-short-description" class="block text-xs font-bold uppercase mb-1">
                             Short Description *
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="1-2 sentence summary shown on solution cards.">ⓘ</span>
                         </label>
-                        <textarea name="short_description" required rows="2"
+                        <textarea id="solutions-form-short-description" name="short_description" required rows="2"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.ShortDescription}}{{end}}</textarea>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Display Order</label>
-                            <input type="number" name="display_order" value="{{if .Item}}{{.Item.DisplayOrder.Int64}}{{else}}0{{end}}"
+                            <label for="solutions-form-display-order" class="block text-xs font-bold uppercase mb-1">Display Order</label>
+                            <input id="solutions-form-display-order" type="number" name="display_order" value="{{if .Item}}{{.Item.DisplayOrder.Int64}}{{else}}0{{end}}"
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Reference Code</label>
-                            <input type="text" name="reference_code" value="{{if .Item}}{{.Item.ReferenceCode.String}}{{end}}" placeholder="e.g. EDU-2026.01"
+                            <label for="solutions-form-reference-code" class="block text-xs font-bold uppercase mb-1">Reference Code</label>
+                            <input id="solutions-form-reference-code" type="text" name="reference_code" value="{{if .Item}}{{.Item.ReferenceCode.String}}{{end}}" placeholder="e.g. EDU-2026.01"
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
@@ -91,18 +94,15 @@
                 </button>
                 <div class="section-body p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="overview-input" class="block text-xs font-bold uppercase mb-1">
                             Full Description
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Detailed description of the solution, including how it works and benefits.">ⓘ</span>
                         </label>
-                        <input id="overview-input" type="hidden" name="overview_content"
-                               value="{{if .Item}}{{if .Item.OverviewContent.Valid}}{{.Item.OverviewContent.String}}{{end}}{{end}}">
-                        <trix-editor input="overview-input"
-                                     class="border-2 border-black text-sm min-h-[150px] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                     style="font-family: 'JetBrains Mono', monospace;"></trix-editor>
+                        <textarea id="overview-input" name="overview_content" data-rich-editor aria-label="Full Description" rows="8" class="w-full border-2 border-black p-3 text-sm">{{if .Item}}{{if .Item.OverviewContent.Valid}}{{.Item.OverviewContent.String}}{{end}}{{end}}</textarea>
+                        <p data-editor-fallback class="text-xs text-gray-600 mt-1">Formatting tools are unavailable. You can edit the HTML here; existing content is preserved.</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="solutions-form-hero-image-file" class="block text-xs font-bold uppercase mb-1">
                             Hero Image
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Main banner image for the solution page. Recommended 1200x600.">ⓘ</span>
                         </label>
@@ -111,27 +111,27 @@
                             <img src="{{.Item.HeroImageUrl.String}}" alt="Hero preview" class="w-48 h-24 object-contain border-2 border-black bg-gray-50">
                         </div>
                         {{end}}{{end}}
-                        <input type="file" name="hero_image_file" accept=".jpg,.jpeg,.png,.webp,.svg,image/*"
+                        <input id="solutions-form-hero-image-file" type="file" name="hero_image_file" accept=".jpg,.jpeg,.png,.webp,.svg,image/*"
                                class="w-full border-2 border-black px-3 py-2 text-sm bg-white file:mr-3 file:border-2 file:border-black file:bg-gray-100 file:px-3 file:py-1 file:text-xs file:font-bold file:uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;">
                         <p class="text-xs text-gray-500 mt-1" style="font-family: 'JetBrains Mono', monospace;">Upload an image (max 5MB, recommended 1200×600). Uploading overrides the URL below.</p>
 
-                        <label class="block text-xs font-bold uppercase mt-3 mb-1 text-gray-600">Or paste an image URL</label>
-                        <input type="text" name="hero_image_url" value="{{if .Item}}{{.Item.HeroImageUrl.String}}{{end}}"
+                        <label for="solutions-form-hero-image-url" class="block text-xs font-bold uppercase mt-3 mb-1 text-gray-600">Or paste an image URL</label>
+                        <input id="solutions-form-hero-image-url" type="text" name="hero_image_url" value="{{if .Item}}{{.Item.HeroImageUrl.String}}{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;"
                                placeholder="https://... or /uploads/solutions/...">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Hero Title</label>
-                            <input type="text" name="hero_title" value="{{if .Item}}{{.Item.HeroTitle.String}}{{end}}"
+                            <label for="solutions-form-hero-title" class="block text-xs font-bold uppercase mb-1">Hero Title</label>
+                            <input id="solutions-form-hero-title" type="text" name="hero_title" value="{{if .Item}}{{.Item.HeroTitle.String}}{{end}}"
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Hero Description</label>
-                            <textarea name="hero_description" rows="2"
+                            <label for="solutions-form-hero-description" class="block text-xs font-bold uppercase mb-1">Hero Description</label>
+                            <textarea id="solutions-form-hero-description" name="hero_description" rows="2"
                                       class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                       style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.HeroDescription.String}}{{end}}</textarea>
                         </div>
@@ -148,8 +148,8 @@
                 </button>
                 <div class="section-body p-5 space-y-4 hidden">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Meta Title</label>
-                        <input type="text" name="meta_title" maxlength="70"
+                        <label for="solutions-form-meta-title" class="block text-xs font-bold uppercase mb-1">Meta Title</label>
+                        <input id="solutions-form-meta-title" type="text" name="meta_title" maxlength="70"
                                value="{{if .Item}}{{.Item.MetaTitle}}{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;"
@@ -157,8 +157,8 @@
                         <p class="text-xs text-gray-500 mt-1"><span id="meta-title-count">0</span>/70 characters</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Meta Description</label>
-                        <textarea name="meta_description" maxlength="160" rows="2"
+                        <label for="solutions-form-meta-description" class="block text-xs font-bold uppercase mb-1">Meta Description</label>
+                        <textarea id="solutions-form-meta-description" name="meta_description" maxlength="160" rows="2"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;"
                                   oninput="updateCharCount(this, 'meta-desc-count', 160)">{{if .Item}}{{.Item.MetaDescription.String}}{{end}}</textarea>
@@ -168,7 +168,7 @@
             </div>
 
             <!-- Submit -->
-            <div class="pt-2 flex gap-3 items-center">
+            <div class="pt-2 flex flex-wrap gap-3 items-center">
                 <button type="submit"
                         class="bg-blue-600 text-white px-8 py-3 text-sm font-bold uppercase border-2 border-black hover:translate-x-[1px] hover:translate-y-[1px]"
                         style="box-shadow: 4px 4px 0px #000;">
@@ -191,7 +191,7 @@
         <div class="mt-8 max-w-4xl">
             <h2 class="text-lg font-bold uppercase mb-4">Solution Details</h2>
             <div class="border-b-2 border-black mb-0">
-                <nav class="flex" id="detail-tabs">
+                <nav class="flex flex-wrap gap-1" id="detail-tabs" aria-label="Solution detail sections">
                     <button class="px-4 py-2 text-sm font-bold uppercase bg-black text-white border-2 border-black border-b-0"
                             hx-get="/admin/solutions/{{.Item.ID}}/challenges-tab"
                             hx-target="#detail-content"

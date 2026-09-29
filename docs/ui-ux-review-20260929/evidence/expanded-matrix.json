@@ -1,0 +1,5428 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "title": "BlueJay Innovative Labs - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Innovative Solutions With Unmatched Support",
+      "Interactive Displays Built To Endure",
+      "360-Degree Capture For Every Room"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [
+      {
+        "tag": "DIV",
+        "cls": "w-full min-w-0 flex-shrink-0",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "min-w-0 space-y-8 relative z-10",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase",
+        "text": "New: BJ-IFP75 Series"
+      },
+      {
+        "tag": "H1",
+        "cls": "break-words text-4xl md:text-6xl font-black font-mono leading-none uppercase",
+        "text": "Interactive Displays Built To Endure"
+      }
+    ],
+    "errors": [],
+    "screenshot": "home-1440.png"
+  },
+  {
+    "path": "/about",
+    "status": 200,
+    "title": "About Us - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Transforming Collaboration Through Innovative Display Technology"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_about-1440.png"
+  },
+  {
+    "path": "/products",
+    "status": 200,
+    "title": "Products - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Our Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products-1440.png"
+  },
+  {
+    "path": "/products/interactive-flat-panels/bj-ifp65-interactive-panel",
+    "status": 200,
+    "title": "BJ-IFP65 | Products - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "BJ-IFP65"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products_interactive-flat-panels_bj-ifp65-interactive-panel-1440.png"
+  },
+  {
+    "path": "/solutions",
+    "status": 200,
+    "title": "Solutions - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Industry Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions-1440.png"
+  },
+  {
+    "path": "/solutions/education",
+    "status": 200,
+    "title": "Education23 - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Education Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions_education-1440.png"
+  },
+  {
+    "path": "/blog",
+    "status": 200,
+    "title": "Blog - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "BlueJay Insights"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_blog-1440.png"
+  },
+  {
+    "path": "/case-studies",
+    "status": 200,
+    "title": "Case Studies - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_case-studies-1440.png"
+  },
+  {
+    "path": "/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Whitepapers & Resources"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_whitepapers-1440.png"
+  },
+  {
+    "path": "/partners",
+    "status": 200,
+    "title": "Partners - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Our Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_partners-1440.png"
+  },
+  {
+    "path": "/contact",
+    "status": 200,
+    "title": "Contact Us - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Contact Us"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_contact-1440.png"
+  },
+  {
+    "path": "/privacy",
+    "status": 200,
+    "title": "Privacy Notice - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Privacy Notice"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_privacy-1440.png"
+  },
+  {
+    "path": "/search?q=display",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_display-1440.png"
+  },
+  {
+    "path": "/search?q=zzzznomatch",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_zzzznomatch-1440.png"
+  },
+  {
+    "path": "/not-a-real-page",
+    "status": 404,
+    "title": "Page not found - BlueJay Innovative Labs",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Page not found"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_not-a-real-page-1440.png"
+  },
+  {
+    "path": "/admin/dashboard",
+    "status": 200,
+    "title": "Dashboard - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Dashboard"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_dashboard-1440.png"
+  },
+  {
+    "path": "/admin/homepage/heroes",
+    "status": 200,
+    "title": "Homepage Heroes - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Homepage Heroes"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes-1440.png"
+  },
+  {
+    "path": "/admin/homepage/stats",
+    "status": 200,
+    "title": "Homepage Stats - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Homepage Stats"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_stats-1440.png"
+  },
+  {
+    "path": "/admin/homepage/testimonials",
+    "status": 200,
+    "title": "Homepage Testimonials - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Homepage Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_testimonials-1440.png"
+  },
+  {
+    "path": "/admin/homepage/cta",
+    "status": 200,
+    "title": "Homepage CTAs - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Homepage CTAs"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_cta-1440.png"
+  },
+  {
+    "path": "/admin/page-sections",
+    "status": 200,
+    "title": "Page Sections - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Page Sections"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_page-sections-1440.png"
+  },
+  {
+    "path": "/admin/homepage/settings",
+    "status": 200,
+    "title": "Homepage Settings - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Homepage Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_settings-1440.png"
+  },
+  {
+    "path": "/admin/about/overview",
+    "status": 200,
+    "title": "Company Overview - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Company Overview"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_overview-1440.png"
+  },
+  {
+    "path": "/admin/about/mvv",
+    "status": 200,
+    "title": "Mission, Vision & Values - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Mission, Vision & Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_mvv-1440.png"
+  },
+  {
+    "path": "/admin/about/values",
+    "status": 200,
+    "title": "Core Values - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Core Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_values-1440.png"
+  },
+  {
+    "path": "/admin/about/milestones",
+    "status": 200,
+    "title": "Milestones - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Milestones"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_milestones-1440.png"
+  },
+  {
+    "path": "/admin/about/certifications",
+    "status": 200,
+    "title": "Certifications - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Certifications"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_certifications-1440.png"
+  },
+  {
+    "path": "/admin/about/settings",
+    "status": 200,
+    "title": "About Settings - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "About Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_settings-1440.png"
+  },
+  {
+    "path": "/admin/header",
+    "status": 200,
+    "title": "Header Management - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Header Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_header-1440.png"
+  },
+  {
+    "path": "/admin/footer",
+    "status": 200,
+    "title": "Footer Management - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Footer Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_footer-1440.png"
+  },
+  {
+    "path": "/admin/products",
+    "status": 200,
+    "title": "Manage Products - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Manage Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products-1440.png"
+  },
+  {
+    "path": "/admin/product-categories",
+    "status": 200,
+    "title": "Product Categories - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Product Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_product-categories-1440.png"
+  },
+  {
+    "path": "/admin/products/settings",
+    "status": 200,
+    "title": "Products Settings - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Products Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_settings-1440.png"
+  },
+  {
+    "path": "/admin/solutions",
+    "status": 200,
+    "title": "Solutions - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions-1440.png"
+  },
+  {
+    "path": "/admin/solutions/settings",
+    "status": 200,
+    "title": "Solutions Settings - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Solutions Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_settings-1440.png"
+  },
+  {
+    "path": "/admin/blog/posts",
+    "status": 200,
+    "title": "Manage Blog Posts - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Manage Blog Posts"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts-1440.png"
+  },
+  {
+    "path": "/admin/blog-categories",
+    "status": 200,
+    "title": "Blog Categories - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Blog Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-categories-1440.png"
+  },
+  {
+    "path": "/admin/blog-authors",
+    "status": 200,
+    "title": "Blog Authors - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Blog Authors"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-authors-1440.png"
+  },
+  {
+    "path": "/admin/blog/tags",
+    "status": 200,
+    "title": "Blog Tags - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Blog Tags"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_tags-1440.png"
+  },
+  {
+    "path": "/admin/blog/settings",
+    "status": 200,
+    "title": "Blog Settings - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Blog Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_settings-1440.png"
+  },
+  {
+    "path": "/admin/case-studies",
+    "status": 200,
+    "title": "Case Studies - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies-1440.png"
+  },
+  {
+    "path": "/admin/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Whitepapers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers-1440.png"
+  },
+  {
+    "path": "/admin/whitepaper-topics",
+    "status": 200,
+    "title": "Whitepaper Topics - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Whitepaper Topics"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepaper-topics-1440.png"
+  },
+  {
+    "path": "/admin/partners",
+    "status": 200,
+    "title": "Partners - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners-1440.png"
+  },
+  {
+    "path": "/admin/partner-tiers",
+    "status": 200,
+    "title": "Partner Tiers - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Partner Tiers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partner-tiers-1440.png"
+  },
+  {
+    "path": "/admin/partners/testimonials",
+    "status": 200,
+    "title": "Partner Testimonials - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Partner Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_testimonials-1440.png"
+  },
+  {
+    "path": "/admin/backups",
+    "status": 200,
+    "title": "Backups - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Backups"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_backups-1440.png"
+  },
+  {
+    "path": "/admin/media",
+    "status": 200,
+    "title": "Media Library - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Media Library"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_media-1440.png"
+  },
+  {
+    "path": "/admin/contact/submissions",
+    "status": 200,
+    "title": "Contact Submissions - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Contact Submissions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_submissions-1440.png"
+  },
+  {
+    "path": "/admin/contact/offices",
+    "status": 200,
+    "title": "Office Locations - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Office Locations"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_offices-1440.png"
+  },
+  {
+    "path": "/admin/navigation",
+    "status": 200,
+    "title": "Navigation Menus - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Navigation Menus"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_navigation-1440.png"
+  },
+  {
+    "path": "/admin/activity",
+    "status": 200,
+    "title": "Activity Log - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Activity Log"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_activity-1440.png"
+  },
+  {
+    "path": "/admin/settings",
+    "status": 200,
+    "title": "Global Settings - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Global Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_settings-1440.png"
+  },
+  {
+    "path": "/admin/products/new",
+    "status": 200,
+    "title": "New Product - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "New Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_new-1440.png"
+  },
+  {
+    "path": "/admin/products/43/edit",
+    "status": 200,
+    "title": "Edit Product - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Edit Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_43_edit-1440.png"
+  },
+  {
+    "path": "/admin/blog/posts/new",
+    "status": 200,
+    "title": "New Blog Post - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "New Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_new-1440.png"
+  },
+  {
+    "path": "/admin/blog/posts/40/edit",
+    "status": 200,
+    "title": "Edit Blog Post - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Edit Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_40_edit-1440.png"
+  },
+  {
+    "path": "/admin/solutions/new",
+    "status": 200,
+    "title": "New Solution - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "New Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_new-1440.png"
+  },
+  {
+    "path": "/admin/solutions/19/edit",
+    "status": 200,
+    "title": "Edit Solution - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Edit Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_19_edit-1440.png"
+  },
+  {
+    "path": "/admin/case-studies/new",
+    "status": 200,
+    "title": "New Case Study - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "New Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies_new-1440.png"
+  },
+  {
+    "path": "/admin/case-studies/10/edit",
+    "status": 200,
+    "title": "Edit Case Study - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Edit Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies_10_edit-1440.png"
+  },
+  {
+    "path": "/admin/whitepapers/new",
+    "status": 200,
+    "title": "New Whitepaper - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "New Whitepaper"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers_new-1440.png"
+  },
+  {
+    "path": "/admin/partners/new",
+    "status": 200,
+    "title": "New Partner - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "New Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_new-1440.png"
+  },
+  {
+    "path": "/admin/partners/12/edit",
+    "status": 200,
+    "title": "Edit Partner - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Edit Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_12_edit-1440.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/new",
+    "status": 200,
+    "title": "New Hero - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "New Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_new-1440.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/1/edit",
+    "status": 200,
+    "title": "Edit Hero - Admin Panel",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Edit Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_1_edit-1440.png"
+  },
+  {
+    "path": "/",
+    "status": 200,
+    "title": "BlueJay Innovative Labs - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Innovative Solutions With Unmatched Support",
+      "Interactive Displays Built To Endure",
+      "360-Degree Capture For Every Room"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [
+      {
+        "tag": "DIV",
+        "cls": "w-full min-w-0 flex-shrink-0",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "min-w-0 space-y-8 relative z-10",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase",
+        "text": "New: BJ-IFP75 Series"
+      },
+      {
+        "tag": "H1",
+        "cls": "break-words text-4xl md:text-6xl font-black font-mono leading-none uppercase",
+        "text": "Interactive Displays Built To Endure"
+      }
+    ],
+    "errors": [],
+    "screenshot": "home-390.png"
+  },
+  {
+    "path": "/about",
+    "status": 200,
+    "title": "About Us - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Transforming Collaboration Through Innovative Display Technology"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_about-390.png"
+  },
+  {
+    "path": "/products",
+    "status": 200,
+    "title": "Products - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Our Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products-390.png"
+  },
+  {
+    "path": "/products/interactive-flat-panels/bj-ifp65-interactive-panel",
+    "status": 200,
+    "title": "BJ-IFP65 | Products - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "BJ-IFP65"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products_interactive-flat-panels_bj-ifp65-interactive-panel-390.png"
+  },
+  {
+    "path": "/solutions",
+    "status": 200,
+    "title": "Solutions - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Industry Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions-390.png"
+  },
+  {
+    "path": "/solutions/education",
+    "status": 200,
+    "title": "Education23 - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Education Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions_education-390.png"
+  },
+  {
+    "path": "/blog",
+    "status": 200,
+    "title": "Blog - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "BlueJay Insights"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_blog-390.png"
+  },
+  {
+    "path": "/case-studies",
+    "status": 200,
+    "title": "Case Studies - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_case-studies-390.png"
+  },
+  {
+    "path": "/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Whitepapers & Resources"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_whitepapers-390.png"
+  },
+  {
+    "path": "/partners",
+    "status": 200,
+    "title": "Partners - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Our Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_partners-390.png"
+  },
+  {
+    "path": "/contact",
+    "status": 200,
+    "title": "Contact Us - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Contact Us"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_contact-390.png"
+  },
+  {
+    "path": "/privacy",
+    "status": 200,
+    "title": "Privacy Notice - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Privacy Notice"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_privacy-390.png"
+  },
+  {
+    "path": "/search?q=display",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_display-390.png"
+  },
+  {
+    "path": "/search?q=zzzznomatch",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_zzzznomatch-390.png"
+  },
+  {
+    "path": "/not-a-real-page",
+    "status": 404,
+    "title": "Page not found - BlueJay Innovative Labs",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Page not found"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_not-a-real-page-390.png"
+  },
+  {
+    "path": "/admin/dashboard",
+    "status": 200,
+    "title": "Dashboard - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Dashboard"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_dashboard-390.png"
+  },
+  {
+    "path": "/admin/homepage/heroes",
+    "status": 200,
+    "title": "Homepage Heroes - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Homepage Heroes"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes-390.png"
+  },
+  {
+    "path": "/admin/homepage/stats",
+    "status": 200,
+    "title": "Homepage Stats - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Homepage Stats"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_stats-390.png"
+  },
+  {
+    "path": "/admin/homepage/testimonials",
+    "status": 200,
+    "title": "Homepage Testimonials - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Homepage Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_testimonials-390.png"
+  },
+  {
+    "path": "/admin/homepage/cta",
+    "status": 200,
+    "title": "Homepage CTAs - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Homepage CTAs"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_cta-390.png"
+  },
+  {
+    "path": "/admin/page-sections",
+    "status": 200,
+    "title": "Page Sections - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Page Sections"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_page-sections-390.png"
+  },
+  {
+    "path": "/admin/homepage/settings",
+    "status": 200,
+    "title": "Homepage Settings - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Homepage Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_settings-390.png"
+  },
+  {
+    "path": "/admin/about/overview",
+    "status": 200,
+    "title": "Company Overview - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Company Overview"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_overview-390.png"
+  },
+  {
+    "path": "/admin/about/mvv",
+    "status": 200,
+    "title": "Mission, Vision & Values - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Mission, Vision & Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_mvv-390.png"
+  },
+  {
+    "path": "/admin/about/values",
+    "status": 200,
+    "title": "Core Values - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Core Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_values-390.png"
+  },
+  {
+    "path": "/admin/about/milestones",
+    "status": 200,
+    "title": "Milestones - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Milestones"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_milestones-390.png"
+  },
+  {
+    "path": "/admin/about/certifications",
+    "status": 200,
+    "title": "Certifications - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Certifications"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_certifications-390.png"
+  },
+  {
+    "path": "/admin/about/settings",
+    "status": 200,
+    "title": "About Settings - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "About Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_settings-390.png"
+  },
+  {
+    "path": "/admin/header",
+    "status": 200,
+    "title": "Header Management - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Header Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_header-390.png"
+  },
+  {
+    "path": "/admin/footer",
+    "status": 200,
+    "title": "Footer Management - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Footer Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_footer-390.png"
+  },
+  {
+    "path": "/admin/products",
+    "status": 200,
+    "title": "Manage Products - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Manage Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products-390.png"
+  },
+  {
+    "path": "/admin/product-categories",
+    "status": 200,
+    "title": "Product Categories - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Product Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_product-categories-390.png"
+  },
+  {
+    "path": "/admin/products/settings",
+    "status": 200,
+    "title": "Products Settings - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Products Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_settings-390.png"
+  },
+  {
+    "path": "/admin/solutions",
+    "status": 200,
+    "title": "Solutions - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions-390.png"
+  },
+  {
+    "path": "/admin/solutions/settings",
+    "status": 200,
+    "title": "Solutions Settings - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Solutions Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_settings-390.png"
+  },
+  {
+    "path": "/admin/blog/posts",
+    "status": 200,
+    "title": "Manage Blog Posts - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Manage Blog Posts"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts-390.png"
+  },
+  {
+    "path": "/admin/blog-categories",
+    "status": 200,
+    "title": "Blog Categories - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Blog Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-categories-390.png"
+  },
+  {
+    "path": "/admin/blog-authors",
+    "status": 200,
+    "title": "Blog Authors - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Blog Authors"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-authors-390.png"
+  },
+  {
+    "path": "/admin/blog/tags",
+    "status": 200,
+    "title": "Blog Tags - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Blog Tags"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_tags-390.png"
+  },
+  {
+    "path": "/admin/blog/settings",
+    "status": 200,
+    "title": "Blog Settings - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Blog Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_settings-390.png"
+  },
+  {
+    "path": "/admin/case-studies",
+    "status": 200,
+    "title": "Case Studies - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies-390.png"
+  },
+  {
+    "path": "/admin/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Whitepapers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers-390.png"
+  },
+  {
+    "path": "/admin/whitepaper-topics",
+    "status": 200,
+    "title": "Whitepaper Topics - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Whitepaper Topics"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepaper-topics-390.png"
+  },
+  {
+    "path": "/admin/partners",
+    "status": 200,
+    "title": "Partners - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners-390.png"
+  },
+  {
+    "path": "/admin/partner-tiers",
+    "status": 200,
+    "title": "Partner Tiers - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Partner Tiers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partner-tiers-390.png"
+  },
+  {
+    "path": "/admin/partners/testimonials",
+    "status": 200,
+    "title": "Partner Testimonials - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Partner Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_testimonials-390.png"
+  },
+  {
+    "path": "/admin/backups",
+    "status": 200,
+    "title": "Backups - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Backups"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_backups-390.png"
+  },
+  {
+    "path": "/admin/media",
+    "status": 200,
+    "title": "Media Library - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Media Library"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_media-390.png"
+  },
+  {
+    "path": "/admin/contact/submissions",
+    "status": 200,
+    "title": "Contact Submissions - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Contact Submissions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_submissions-390.png"
+  },
+  {
+    "path": "/admin/contact/offices",
+    "status": 200,
+    "title": "Office Locations - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Office Locations"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_offices-390.png"
+  },
+  {
+    "path": "/admin/navigation",
+    "status": 200,
+    "title": "Navigation Menus - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Navigation Menus"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_navigation-390.png"
+  },
+  {
+    "path": "/admin/activity",
+    "status": 200,
+    "title": "Activity Log - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Activity Log"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_activity-390.png"
+  },
+  {
+    "path": "/admin/settings",
+    "status": 200,
+    "title": "Global Settings - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Global Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_settings-390.png"
+  },
+  {
+    "path": "/admin/products/new",
+    "status": 200,
+    "title": "New Product - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "New Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_new-390.png"
+  },
+  {
+    "path": "/admin/products/43/edit",
+    "status": 200,
+    "title": "Edit Product - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Edit Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_43_edit-390.png"
+  },
+  {
+    "path": "/admin/blog/posts/new",
+    "status": 200,
+    "title": "New Blog Post - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "New Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_new-390.png"
+  },
+  {
+    "path": "/admin/blog/posts/40/edit",
+    "status": 200,
+    "title": "Edit Blog Post - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Edit Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_40_edit-390.png"
+  },
+  {
+    "path": "/admin/solutions/new",
+    "status": 200,
+    "title": "New Solution - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "New Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_new-390.png"
+  },
+  {
+    "path": "/admin/solutions/19/edit",
+    "status": 200,
+    "title": "Edit Solution - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Edit Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_19_edit-390.png"
+  },
+  {
+    "path": "/admin/case-studies/new",
+    "status": 200,
+    "title": "New Case Study - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "New Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies_new-390.png"
+  },
+  {
+    "path": "/admin/case-studies/10/edit",
+    "status": 200,
+    "title": "Edit Case Study - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Edit Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies_10_edit-390.png"
+  },
+  {
+    "path": "/admin/whitepapers/new",
+    "status": 200,
+    "title": "New Whitepaper - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "New Whitepaper"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers_new-390.png"
+  },
+  {
+    "path": "/admin/partners/new",
+    "status": 200,
+    "title": "New Partner - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "New Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_new-390.png"
+  },
+  {
+    "path": "/admin/partners/12/edit",
+    "status": 200,
+    "title": "Edit Partner - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Edit Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_12_edit-390.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/new",
+    "status": 200,
+    "title": "New Hero - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "New Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_new-390.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/1/edit",
+    "status": 200,
+    "title": "Edit Hero - Admin Panel",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Edit Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_1_edit-390.png"
+  },
+  {
+    "path": "/",
+    "status": 200,
+    "title": "BlueJay Innovative Labs - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Innovative Solutions With Unmatched Support",
+      "Interactive Displays Built To Endure",
+      "360-Degree Capture For Every Room"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [
+      {
+        "tag": "DIV",
+        "cls": "w-full min-w-0 flex-shrink-0",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "min-w-0 space-y-8 relative z-10",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase",
+        "text": "New: BJ-IFP75 Series"
+      },
+      {
+        "tag": "H1",
+        "cls": "break-words text-4xl md:text-6xl font-black font-mono leading-none uppercase",
+        "text": "Interactive Displays Built To Endure"
+      }
+    ],
+    "errors": [],
+    "screenshot": "home-320.png"
+  },
+  {
+    "path": "/about",
+    "status": 200,
+    "title": "About Us - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Transforming Collaboration Through Innovative Display Technology"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_about-320.png"
+  },
+  {
+    "path": "/products",
+    "status": 200,
+    "title": "Products - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Our Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products-320.png"
+  },
+  {
+    "path": "/products/interactive-flat-panels/bj-ifp65-interactive-panel",
+    "status": 200,
+    "title": "BJ-IFP65 | Products - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "BJ-IFP65"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products_interactive-flat-panels_bj-ifp65-interactive-panel-320.png"
+  },
+  {
+    "path": "/solutions",
+    "status": 200,
+    "title": "Solutions - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Industry Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions-320.png"
+  },
+  {
+    "path": "/solutions/education",
+    "status": 200,
+    "title": "Education23 - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Education Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions_education-320.png"
+  },
+  {
+    "path": "/blog",
+    "status": 200,
+    "title": "Blog - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "BlueJay Insights"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_blog-320.png"
+  },
+  {
+    "path": "/case-studies",
+    "status": 200,
+    "title": "Case Studies - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_case-studies-320.png"
+  },
+  {
+    "path": "/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Whitepapers & Resources"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_whitepapers-320.png"
+  },
+  {
+    "path": "/partners",
+    "status": 200,
+    "title": "Partners - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Our Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_partners-320.png"
+  },
+  {
+    "path": "/contact",
+    "status": 200,
+    "title": "Contact Us - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Contact Us"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_contact-320.png"
+  },
+  {
+    "path": "/privacy",
+    "status": 200,
+    "title": "Privacy Notice - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Privacy Notice"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_privacy-320.png"
+  },
+  {
+    "path": "/search?q=display",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_display-320.png"
+  },
+  {
+    "path": "/search?q=zzzznomatch",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_zzzznomatch-320.png"
+  },
+  {
+    "path": "/not-a-real-page",
+    "status": 404,
+    "title": "Page not found - BlueJay Innovative Labs",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Page not found"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_not-a-real-page-320.png"
+  },
+  {
+    "path": "/admin/dashboard",
+    "status": 200,
+    "title": "Dashboard - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Dashboard"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_dashboard-320.png"
+  },
+  {
+    "path": "/admin/homepage/heroes",
+    "status": 200,
+    "title": "Homepage Heroes - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Homepage Heroes"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes-320.png"
+  },
+  {
+    "path": "/admin/homepage/stats",
+    "status": 200,
+    "title": "Homepage Stats - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Homepage Stats"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_stats-320.png"
+  },
+  {
+    "path": "/admin/homepage/testimonials",
+    "status": 200,
+    "title": "Homepage Testimonials - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Homepage Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_testimonials-320.png"
+  },
+  {
+    "path": "/admin/homepage/cta",
+    "status": 200,
+    "title": "Homepage CTAs - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Homepage CTAs"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_cta-320.png"
+  },
+  {
+    "path": "/admin/page-sections",
+    "status": 200,
+    "title": "Page Sections - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Page Sections"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_page-sections-320.png"
+  },
+  {
+    "path": "/admin/homepage/settings",
+    "status": 200,
+    "title": "Homepage Settings - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Homepage Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_settings-320.png"
+  },
+  {
+    "path": "/admin/about/overview",
+    "status": 200,
+    "title": "Company Overview - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Company Overview"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_overview-320.png"
+  },
+  {
+    "path": "/admin/about/mvv",
+    "status": 200,
+    "title": "Mission, Vision & Values - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Mission, Vision & Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_mvv-320.png"
+  },
+  {
+    "path": "/admin/about/values",
+    "status": 200,
+    "title": "Core Values - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Core Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_values-320.png"
+  },
+  {
+    "path": "/admin/about/milestones",
+    "status": 200,
+    "title": "Milestones - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Milestones"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_milestones-320.png"
+  },
+  {
+    "path": "/admin/about/certifications",
+    "status": 200,
+    "title": "Certifications - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Certifications"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_certifications-320.png"
+  },
+  {
+    "path": "/admin/about/settings",
+    "status": 200,
+    "title": "About Settings - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "About Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_settings-320.png"
+  },
+  {
+    "path": "/admin/header",
+    "status": 200,
+    "title": "Header Management - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Header Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_header-320.png"
+  },
+  {
+    "path": "/admin/footer",
+    "status": 200,
+    "title": "Footer Management - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Footer Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_footer-320.png"
+  },
+  {
+    "path": "/admin/products",
+    "status": 200,
+    "title": "Manage Products - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Manage Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products-320.png"
+  },
+  {
+    "path": "/admin/product-categories",
+    "status": 200,
+    "title": "Product Categories - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Product Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_product-categories-320.png"
+  },
+  {
+    "path": "/admin/products/settings",
+    "status": 200,
+    "title": "Products Settings - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Products Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_settings-320.png"
+  },
+  {
+    "path": "/admin/solutions",
+    "status": 200,
+    "title": "Solutions - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions-320.png"
+  },
+  {
+    "path": "/admin/solutions/settings",
+    "status": 200,
+    "title": "Solutions Settings - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Solutions Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_settings-320.png"
+  },
+  {
+    "path": "/admin/blog/posts",
+    "status": 200,
+    "title": "Manage Blog Posts - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Manage Blog Posts"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts-320.png"
+  },
+  {
+    "path": "/admin/blog-categories",
+    "status": 200,
+    "title": "Blog Categories - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Blog Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-categories-320.png"
+  },
+  {
+    "path": "/admin/blog-authors",
+    "status": 200,
+    "title": "Blog Authors - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Blog Authors"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-authors-320.png"
+  },
+  {
+    "path": "/admin/blog/tags",
+    "status": 200,
+    "title": "Blog Tags - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Blog Tags"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_tags-320.png"
+  },
+  {
+    "path": "/admin/blog/settings",
+    "status": 200,
+    "title": "Blog Settings - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Blog Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_settings-320.png"
+  },
+  {
+    "path": "/admin/case-studies",
+    "status": 200,
+    "title": "Case Studies - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies-320.png"
+  },
+  {
+    "path": "/admin/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Whitepapers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers-320.png"
+  },
+  {
+    "path": "/admin/whitepaper-topics",
+    "status": 200,
+    "title": "Whitepaper Topics - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Whitepaper Topics"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepaper-topics-320.png"
+  },
+  {
+    "path": "/admin/partners",
+    "status": 200,
+    "title": "Partners - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners-320.png"
+  },
+  {
+    "path": "/admin/partner-tiers",
+    "status": 200,
+    "title": "Partner Tiers - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Partner Tiers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partner-tiers-320.png"
+  },
+  {
+    "path": "/admin/partners/testimonials",
+    "status": 200,
+    "title": "Partner Testimonials - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Partner Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_testimonials-320.png"
+  },
+  {
+    "path": "/admin/backups",
+    "status": 200,
+    "title": "Backups - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Backups"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_backups-320.png"
+  },
+  {
+    "path": "/admin/media",
+    "status": 200,
+    "title": "Media Library - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Media Library"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_media-320.png"
+  },
+  {
+    "path": "/admin/contact/submissions",
+    "status": 200,
+    "title": "Contact Submissions - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Contact Submissions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_submissions-320.png"
+  },
+  {
+    "path": "/admin/contact/offices",
+    "status": 200,
+    "title": "Office Locations - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Office Locations"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_offices-320.png"
+  },
+  {
+    "path": "/admin/navigation",
+    "status": 200,
+    "title": "Navigation Menus - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Navigation Menus"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_navigation-320.png"
+  },
+  {
+    "path": "/admin/activity",
+    "status": 200,
+    "title": "Activity Log - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Activity Log"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_activity-320.png"
+  },
+  {
+    "path": "/admin/settings",
+    "status": 200,
+    "title": "Global Settings - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Global Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_settings-320.png"
+  },
+  {
+    "path": "/admin/products/new",
+    "status": 200,
+    "title": "New Product - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "New Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_new-320.png"
+  },
+  {
+    "path": "/admin/products/43/edit",
+    "status": 200,
+    "title": "Edit Product - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Edit Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_43_edit-320.png"
+  },
+  {
+    "path": "/admin/blog/posts/new",
+    "status": 200,
+    "title": "New Blog Post - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "New Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_new-320.png"
+  },
+  {
+    "path": "/admin/blog/posts/40/edit",
+    "status": 200,
+    "title": "Edit Blog Post - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Edit Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_40_edit-320.png"
+  },
+  {
+    "path": "/admin/solutions/new",
+    "status": 200,
+    "title": "New Solution - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "New Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_new-320.png"
+  },
+  {
+    "path": "/admin/solutions/19/edit",
+    "status": 200,
+    "title": "Edit Solution - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Edit Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_19_edit-320.png"
+  },
+  {
+    "path": "/admin/case-studies/new",
+    "status": 200,
+    "title": "New Case Study - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "New Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies_new-320.png"
+  },
+  {
+    "path": "/admin/case-studies/10/edit",
+    "status": 200,
+    "title": "Edit Case Study - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Edit Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [
+      {
+        "tag": "A",
+        "cls": "bg-white text-black px-6 py-2 text-sm font-bold uppercase border-2 border-black hover:bg-gray-100",
+        "text": "Cancel"
+      }
+    ],
+    "errors": [],
+    "screenshot": "_admin_case-studies_10_edit-320.png"
+  },
+  {
+    "path": "/admin/whitepapers/new",
+    "status": 200,
+    "title": "New Whitepaper - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "New Whitepaper"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers_new-320.png"
+  },
+  {
+    "path": "/admin/partners/new",
+    "status": 200,
+    "title": "New Partner - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "New Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_new-320.png"
+  },
+  {
+    "path": "/admin/partners/12/edit",
+    "status": 200,
+    "title": "Edit Partner - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Edit Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_12_edit-320.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/new",
+    "status": 200,
+    "title": "New Hero - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "New Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_new-320.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/1/edit",
+    "status": 200,
+    "title": "Edit Hero - Admin Panel",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Edit Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_1_edit-320.png"
+  },
+  {
+    "path": "/",
+    "status": 200,
+    "title": "BlueJay Innovative Labs - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Innovative Solutions With Unmatched Support",
+      "Interactive Displays Built To Endure",
+      "360-Degree Capture For Every Room"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [
+      {
+        "tag": "DIV",
+        "cls": "w-full min-w-0 flex-shrink-0",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "min-w-0 space-y-8 relative z-10",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase",
+        "text": "New: BJ-IFP75 Series"
+      },
+      {
+        "tag": "H1",
+        "cls": "break-words text-4xl md:text-6xl font-black font-mono leading-none uppercase",
+        "text": "Interactive Displays Built To Endure"
+      }
+    ],
+    "errors": [],
+    "screenshot": "home-768.png"
+  },
+  {
+    "path": "/about",
+    "status": 200,
+    "title": "About Us - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Transforming Collaboration Through Innovative Display Technology"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_about-768.png"
+  },
+  {
+    "path": "/products",
+    "status": 200,
+    "title": "Products - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Our Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products-768.png"
+  },
+  {
+    "path": "/products/interactive-flat-panels/bj-ifp65-interactive-panel",
+    "status": 200,
+    "title": "BJ-IFP65 | Products - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "BJ-IFP65"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products_interactive-flat-panels_bj-ifp65-interactive-panel-768.png"
+  },
+  {
+    "path": "/solutions",
+    "status": 200,
+    "title": "Solutions - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Industry Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions-768.png"
+  },
+  {
+    "path": "/solutions/education",
+    "status": 200,
+    "title": "Education23 - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Education Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions_education-768.png"
+  },
+  {
+    "path": "/blog",
+    "status": 200,
+    "title": "Blog - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "BlueJay Insights"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_blog-768.png"
+  },
+  {
+    "path": "/case-studies",
+    "status": 200,
+    "title": "Case Studies - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_case-studies-768.png"
+  },
+  {
+    "path": "/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Whitepapers & Resources"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_whitepapers-768.png"
+  },
+  {
+    "path": "/partners",
+    "status": 200,
+    "title": "Partners - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Our Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_partners-768.png"
+  },
+  {
+    "path": "/contact",
+    "status": 200,
+    "title": "Contact Us - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Contact Us"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_contact-768.png"
+  },
+  {
+    "path": "/privacy",
+    "status": 200,
+    "title": "Privacy Notice - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Privacy Notice"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_privacy-768.png"
+  },
+  {
+    "path": "/search?q=display",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_display-768.png"
+  },
+  {
+    "path": "/search?q=zzzznomatch",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_zzzznomatch-768.png"
+  },
+  {
+    "path": "/not-a-real-page",
+    "status": 404,
+    "title": "Page not found - BlueJay Innovative Labs",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Page not found"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_not-a-real-page-768.png"
+  },
+  {
+    "path": "/admin/dashboard",
+    "status": 200,
+    "title": "Dashboard - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Dashboard"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_dashboard-768.png"
+  },
+  {
+    "path": "/admin/homepage/heroes",
+    "status": 200,
+    "title": "Homepage Heroes - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Homepage Heroes"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes-768.png"
+  },
+  {
+    "path": "/admin/homepage/stats",
+    "status": 200,
+    "title": "Homepage Stats - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Homepage Stats"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_stats-768.png"
+  },
+  {
+    "path": "/admin/homepage/testimonials",
+    "status": 200,
+    "title": "Homepage Testimonials - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Homepage Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_testimonials-768.png"
+  },
+  {
+    "path": "/admin/homepage/cta",
+    "status": 200,
+    "title": "Homepage CTAs - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Homepage CTAs"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_cta-768.png"
+  },
+  {
+    "path": "/admin/page-sections",
+    "status": 200,
+    "title": "Page Sections - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Page Sections"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_page-sections-768.png"
+  },
+  {
+    "path": "/admin/homepage/settings",
+    "status": 200,
+    "title": "Homepage Settings - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Homepage Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_settings-768.png"
+  },
+  {
+    "path": "/admin/about/overview",
+    "status": 200,
+    "title": "Company Overview - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Company Overview"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_overview-768.png"
+  },
+  {
+    "path": "/admin/about/mvv",
+    "status": 200,
+    "title": "Mission, Vision & Values - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Mission, Vision & Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_mvv-768.png"
+  },
+  {
+    "path": "/admin/about/values",
+    "status": 200,
+    "title": "Core Values - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Core Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_values-768.png"
+  },
+  {
+    "path": "/admin/about/milestones",
+    "status": 200,
+    "title": "Milestones - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Milestones"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_milestones-768.png"
+  },
+  {
+    "path": "/admin/about/certifications",
+    "status": 200,
+    "title": "Certifications - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Certifications"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_certifications-768.png"
+  },
+  {
+    "path": "/admin/about/settings",
+    "status": 200,
+    "title": "About Settings - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "About Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_settings-768.png"
+  },
+  {
+    "path": "/admin/header",
+    "status": 200,
+    "title": "Header Management - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Header Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_header-768.png"
+  },
+  {
+    "path": "/admin/footer",
+    "status": 200,
+    "title": "Footer Management - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Footer Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_footer-768.png"
+  },
+  {
+    "path": "/admin/products",
+    "status": 200,
+    "title": "Manage Products - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Manage Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products-768.png"
+  },
+  {
+    "path": "/admin/product-categories",
+    "status": 200,
+    "title": "Product Categories - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Product Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_product-categories-768.png"
+  },
+  {
+    "path": "/admin/products/settings",
+    "status": 200,
+    "title": "Products Settings - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Products Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_settings-768.png"
+  },
+  {
+    "path": "/admin/solutions",
+    "status": 200,
+    "title": "Solutions - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions-768.png"
+  },
+  {
+    "path": "/admin/solutions/settings",
+    "status": 200,
+    "title": "Solutions Settings - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Solutions Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_settings-768.png"
+  },
+  {
+    "path": "/admin/blog/posts",
+    "status": 200,
+    "title": "Manage Blog Posts - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Manage Blog Posts"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts-768.png"
+  },
+  {
+    "path": "/admin/blog-categories",
+    "status": 200,
+    "title": "Blog Categories - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Blog Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-categories-768.png"
+  },
+  {
+    "path": "/admin/blog-authors",
+    "status": 200,
+    "title": "Blog Authors - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Blog Authors"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-authors-768.png"
+  },
+  {
+    "path": "/admin/blog/tags",
+    "status": 200,
+    "title": "Blog Tags - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Blog Tags"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_tags-768.png"
+  },
+  {
+    "path": "/admin/blog/settings",
+    "status": 200,
+    "title": "Blog Settings - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Blog Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_settings-768.png"
+  },
+  {
+    "path": "/admin/case-studies",
+    "status": 200,
+    "title": "Case Studies - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies-768.png"
+  },
+  {
+    "path": "/admin/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Whitepapers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers-768.png"
+  },
+  {
+    "path": "/admin/whitepaper-topics",
+    "status": 200,
+    "title": "Whitepaper Topics - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Whitepaper Topics"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepaper-topics-768.png"
+  },
+  {
+    "path": "/admin/partners",
+    "status": 200,
+    "title": "Partners - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners-768.png"
+  },
+  {
+    "path": "/admin/partner-tiers",
+    "status": 200,
+    "title": "Partner Tiers - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Partner Tiers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partner-tiers-768.png"
+  },
+  {
+    "path": "/admin/partners/testimonials",
+    "status": 200,
+    "title": "Partner Testimonials - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Partner Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_testimonials-768.png"
+  },
+  {
+    "path": "/admin/backups",
+    "status": 200,
+    "title": "Backups - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Backups"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_backups-768.png"
+  },
+  {
+    "path": "/admin/media",
+    "status": 200,
+    "title": "Media Library - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Media Library"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_media-768.png"
+  },
+  {
+    "path": "/admin/contact/submissions",
+    "status": 200,
+    "title": "Contact Submissions - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Contact Submissions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_submissions-768.png"
+  },
+  {
+    "path": "/admin/contact/offices",
+    "status": 200,
+    "title": "Office Locations - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Office Locations"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_offices-768.png"
+  },
+  {
+    "path": "/admin/navigation",
+    "status": 200,
+    "title": "Navigation Menus - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Navigation Menus"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_navigation-768.png"
+  },
+  {
+    "path": "/admin/activity",
+    "status": 200,
+    "title": "Activity Log - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Activity Log"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_activity-768.png"
+  },
+  {
+    "path": "/admin/settings",
+    "status": 200,
+    "title": "Global Settings - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Global Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_settings-768.png"
+  },
+  {
+    "path": "/admin/products/new",
+    "status": 200,
+    "title": "New Product - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "New Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_new-768.png"
+  },
+  {
+    "path": "/admin/products/43/edit",
+    "status": 200,
+    "title": "Edit Product - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Edit Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_43_edit-768.png"
+  },
+  {
+    "path": "/admin/blog/posts/new",
+    "status": 200,
+    "title": "New Blog Post - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "New Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_new-768.png"
+  },
+  {
+    "path": "/admin/blog/posts/40/edit",
+    "status": 200,
+    "title": "Edit Blog Post - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Edit Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_40_edit-768.png"
+  },
+  {
+    "path": "/admin/solutions/new",
+    "status": 200,
+    "title": "New Solution - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "New Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_new-768.png"
+  },
+  {
+    "path": "/admin/solutions/19/edit",
+    "status": 200,
+    "title": "Edit Solution - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Edit Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_19_edit-768.png"
+  },
+  {
+    "path": "/admin/case-studies/new",
+    "status": 200,
+    "title": "New Case Study - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "New Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies_new-768.png"
+  },
+  {
+    "path": "/admin/case-studies/10/edit",
+    "status": 200,
+    "title": "Edit Case Study - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Edit Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies_10_edit-768.png"
+  },
+  {
+    "path": "/admin/whitepapers/new",
+    "status": 200,
+    "title": "New Whitepaper - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "New Whitepaper"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers_new-768.png"
+  },
+  {
+    "path": "/admin/partners/new",
+    "status": 200,
+    "title": "New Partner - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "New Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_new-768.png"
+  },
+  {
+    "path": "/admin/partners/12/edit",
+    "status": 200,
+    "title": "Edit Partner - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Edit Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_12_edit-768.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/new",
+    "status": 200,
+    "title": "New Hero - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "New Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_new-768.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/1/edit",
+    "status": 200,
+    "title": "Edit Hero - Admin Panel",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Edit Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_1_edit-768.png"
+  },
+  {
+    "path": "/",
+    "status": 200,
+    "title": "BlueJay Innovative Labs - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Innovative Solutions With Unmatched Support",
+      "Interactive Displays Built To Endure",
+      "360-Degree Capture For Every Room"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [
+      {
+        "tag": "DIV",
+        "cls": "w-full min-w-0 flex-shrink-0",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "grid md:grid-cols-2 gap-8 md:gap-12 items-center p-8 md:p-12 min-h-[600px]",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "min-w-0 space-y-8 relative z-10",
+        "text": "New: BJ-IFP75 Series\n                        \n                        \n         "
+      },
+      {
+        "tag": "DIV",
+        "cls": "inline-block bg-black text-white px-3 py-1 font-mono text-xs uppercase",
+        "text": "New: BJ-IFP75 Series"
+      },
+      {
+        "tag": "H1",
+        "cls": "break-words text-4xl md:text-6xl font-black font-mono leading-none uppercase",
+        "text": "Interactive Displays Built To Endure"
+      }
+    ],
+    "errors": [],
+    "screenshot": "home-1024.png"
+  },
+  {
+    "path": "/about",
+    "status": 200,
+    "title": "About Us - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Transforming Collaboration Through Innovative Display Technology"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_about-1024.png"
+  },
+  {
+    "path": "/products",
+    "status": 200,
+    "title": "Products - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Our Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products-1024.png"
+  },
+  {
+    "path": "/products/interactive-flat-panels/bj-ifp65-interactive-panel",
+    "status": 200,
+    "title": "BJ-IFP65 | Products - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "BJ-IFP65"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_products_interactive-flat-panels_bj-ifp65-interactive-panel-1024.png"
+  },
+  {
+    "path": "/solutions",
+    "status": 200,
+    "title": "Solutions - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Industry Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions-1024.png"
+  },
+  {
+    "path": "/solutions/education",
+    "status": 200,
+    "title": "Education23 - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Education Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_solutions_education-1024.png"
+  },
+  {
+    "path": "/blog",
+    "status": 200,
+    "title": "Blog - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "BlueJay Insights"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_blog-1024.png"
+  },
+  {
+    "path": "/case-studies",
+    "status": 200,
+    "title": "Case Studies - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_case-studies-1024.png"
+  },
+  {
+    "path": "/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Whitepapers & Resources"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_whitepapers-1024.png"
+  },
+  {
+    "path": "/partners",
+    "status": 200,
+    "title": "Partners - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Our Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_partners-1024.png"
+  },
+  {
+    "path": "/contact",
+    "status": 200,
+    "title": "Contact Us - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Contact Us"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_contact-1024.png"
+  },
+  {
+    "path": "/privacy",
+    "status": 200,
+    "title": "Privacy Notice - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Privacy Notice"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_privacy-1024.png"
+  },
+  {
+    "path": "/search?q=display",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_display-1024.png"
+  },
+  {
+    "path": "/search?q=zzzznomatch",
+    "status": 200,
+    "title": "Search - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Search"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_search_q_zzzznomatch-1024.png"
+  },
+  {
+    "path": "/not-a-real-page",
+    "status": 404,
+    "title": "Page not found - BlueJay Innovative Labs",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Page not found"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_not-a-real-page-1024.png"
+  },
+  {
+    "path": "/admin/dashboard",
+    "status": 200,
+    "title": "Dashboard - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Dashboard"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_dashboard-1024.png"
+  },
+  {
+    "path": "/admin/homepage/heroes",
+    "status": 200,
+    "title": "Homepage Heroes - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Homepage Heroes"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes-1024.png"
+  },
+  {
+    "path": "/admin/homepage/stats",
+    "status": 200,
+    "title": "Homepage Stats - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Homepage Stats"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_stats-1024.png"
+  },
+  {
+    "path": "/admin/homepage/testimonials",
+    "status": 200,
+    "title": "Homepage Testimonials - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Homepage Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_testimonials-1024.png"
+  },
+  {
+    "path": "/admin/homepage/cta",
+    "status": 200,
+    "title": "Homepage CTAs - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Homepage CTAs"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_cta-1024.png"
+  },
+  {
+    "path": "/admin/page-sections",
+    "status": 200,
+    "title": "Page Sections - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Page Sections"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_page-sections-1024.png"
+  },
+  {
+    "path": "/admin/homepage/settings",
+    "status": 200,
+    "title": "Homepage Settings - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Homepage Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_settings-1024.png"
+  },
+  {
+    "path": "/admin/about/overview",
+    "status": 200,
+    "title": "Company Overview - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Company Overview"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_overview-1024.png"
+  },
+  {
+    "path": "/admin/about/mvv",
+    "status": 200,
+    "title": "Mission, Vision & Values - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Mission, Vision & Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_mvv-1024.png"
+  },
+  {
+    "path": "/admin/about/values",
+    "status": 200,
+    "title": "Core Values - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Core Values"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_values-1024.png"
+  },
+  {
+    "path": "/admin/about/milestones",
+    "status": 200,
+    "title": "Milestones - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Milestones"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_milestones-1024.png"
+  },
+  {
+    "path": "/admin/about/certifications",
+    "status": 200,
+    "title": "Certifications - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Certifications"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_certifications-1024.png"
+  },
+  {
+    "path": "/admin/about/settings",
+    "status": 200,
+    "title": "About Settings - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "About Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_about_settings-1024.png"
+  },
+  {
+    "path": "/admin/header",
+    "status": 200,
+    "title": "Header Management - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Header Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_header-1024.png"
+  },
+  {
+    "path": "/admin/footer",
+    "status": 200,
+    "title": "Footer Management - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Footer Management"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_footer-1024.png"
+  },
+  {
+    "path": "/admin/products",
+    "status": 200,
+    "title": "Manage Products - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Manage Products"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products-1024.png"
+  },
+  {
+    "path": "/admin/product-categories",
+    "status": 200,
+    "title": "Product Categories - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Product Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_product-categories-1024.png"
+  },
+  {
+    "path": "/admin/products/settings",
+    "status": 200,
+    "title": "Products Settings - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Products Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_settings-1024.png"
+  },
+  {
+    "path": "/admin/solutions",
+    "status": 200,
+    "title": "Solutions - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Solutions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions-1024.png"
+  },
+  {
+    "path": "/admin/solutions/settings",
+    "status": 200,
+    "title": "Solutions Settings - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Solutions Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_settings-1024.png"
+  },
+  {
+    "path": "/admin/blog/posts",
+    "status": 200,
+    "title": "Manage Blog Posts - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Manage Blog Posts"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts-1024.png"
+  },
+  {
+    "path": "/admin/blog-categories",
+    "status": 200,
+    "title": "Blog Categories - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Blog Categories"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-categories-1024.png"
+  },
+  {
+    "path": "/admin/blog-authors",
+    "status": 200,
+    "title": "Blog Authors - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Blog Authors"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog-authors-1024.png"
+  },
+  {
+    "path": "/admin/blog/tags",
+    "status": 200,
+    "title": "Blog Tags - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Blog Tags"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_tags-1024.png"
+  },
+  {
+    "path": "/admin/blog/settings",
+    "status": 200,
+    "title": "Blog Settings - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Blog Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_settings-1024.png"
+  },
+  {
+    "path": "/admin/case-studies",
+    "status": 200,
+    "title": "Case Studies - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Case Studies"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies-1024.png"
+  },
+  {
+    "path": "/admin/whitepapers",
+    "status": 200,
+    "title": "Whitepapers - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Whitepapers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers-1024.png"
+  },
+  {
+    "path": "/admin/whitepaper-topics",
+    "status": 200,
+    "title": "Whitepaper Topics - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Whitepaper Topics"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepaper-topics-1024.png"
+  },
+  {
+    "path": "/admin/partners",
+    "status": 200,
+    "title": "Partners - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Partners"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners-1024.png"
+  },
+  {
+    "path": "/admin/partner-tiers",
+    "status": 200,
+    "title": "Partner Tiers - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Partner Tiers"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partner-tiers-1024.png"
+  },
+  {
+    "path": "/admin/partners/testimonials",
+    "status": 200,
+    "title": "Partner Testimonials - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Partner Testimonials"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_testimonials-1024.png"
+  },
+  {
+    "path": "/admin/backups",
+    "status": 200,
+    "title": "Backups - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Backups"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_backups-1024.png"
+  },
+  {
+    "path": "/admin/media",
+    "status": 200,
+    "title": "Media Library - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Media Library"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_media-1024.png"
+  },
+  {
+    "path": "/admin/contact/submissions",
+    "status": 200,
+    "title": "Contact Submissions - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Contact Submissions"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_submissions-1024.png"
+  },
+  {
+    "path": "/admin/contact/offices",
+    "status": 200,
+    "title": "Office Locations - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Office Locations"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_contact_offices-1024.png"
+  },
+  {
+    "path": "/admin/navigation",
+    "status": 200,
+    "title": "Navigation Menus - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Navigation Menus"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_navigation-1024.png"
+  },
+  {
+    "path": "/admin/activity",
+    "status": 200,
+    "title": "Activity Log - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Activity Log"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_activity-1024.png"
+  },
+  {
+    "path": "/admin/settings",
+    "status": 200,
+    "title": "Global Settings - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Global Settings"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_settings-1024.png"
+  },
+  {
+    "path": "/admin/products/new",
+    "status": 200,
+    "title": "New Product - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "New Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_new-1024.png"
+  },
+  {
+    "path": "/admin/products/43/edit",
+    "status": 200,
+    "title": "Edit Product - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Edit Product"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_products_43_edit-1024.png"
+  },
+  {
+    "path": "/admin/blog/posts/new",
+    "status": 200,
+    "title": "New Blog Post - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "New Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_new-1024.png"
+  },
+  {
+    "path": "/admin/blog/posts/40/edit",
+    "status": 200,
+    "title": "Edit Blog Post - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Edit Blog Post"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_blog_posts_40_edit-1024.png"
+  },
+  {
+    "path": "/admin/solutions/new",
+    "status": 200,
+    "title": "New Solution - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "New Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_new-1024.png"
+  },
+  {
+    "path": "/admin/solutions/19/edit",
+    "status": 200,
+    "title": "Edit Solution - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Edit Solution"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_solutions_19_edit-1024.png"
+  },
+  {
+    "path": "/admin/case-studies/new",
+    "status": 200,
+    "title": "New Case Study - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "New Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies_new-1024.png"
+  },
+  {
+    "path": "/admin/case-studies/10/edit",
+    "status": 200,
+    "title": "Edit Case Study - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Edit Case Study"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_case-studies_10_edit-1024.png"
+  },
+  {
+    "path": "/admin/whitepapers/new",
+    "status": 200,
+    "title": "New Whitepaper - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "New Whitepaper"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_whitepapers_new-1024.png"
+  },
+  {
+    "path": "/admin/partners/new",
+    "status": 200,
+    "title": "New Partner - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "New Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_new-1024.png"
+  },
+  {
+    "path": "/admin/partners/12/edit",
+    "status": 200,
+    "title": "Edit Partner - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Edit Partner"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_partners_12_edit-1024.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/new",
+    "status": 200,
+    "title": "New Hero - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "New Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_new-1024.png"
+  },
+  {
+    "path": "/admin/homepage/heroes/1/edit",
+    "status": 200,
+    "title": "Edit Hero - Admin Panel",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "headings": [
+      "Edit Hero"
+    ],
+    "brokenImages": [],
+    "duplicates": [],
+    "unlabelled": [],
+    "overflow": [],
+    "errors": [],
+    "screenshot": "_admin_homepage_heroes_1_edit-1024.png"
+  }
+]

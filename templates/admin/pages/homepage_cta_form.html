@@ -17,8 +17,8 @@
               class="bg-white border-2 border-black p-6 space-y-5 max-w-2xl" style="box-shadow: 4px 4px 0px #000;">
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Heading</label>
-                <input type="text" name="headline" value="{{.Item.Headline}}"
+                <label for="homepage-cta-form-headline" class="block text-xs font-bold uppercase mb-1">Heading</label>
+                <input id="homepage-cta-form-headline" type="text" name="headline" value="{{.Item.Headline}}"
                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                        style="font-family: 'JetBrains Mono', monospace;" required
                        title="CTA section heading (e.g., 'Ready to get started?').">
@@ -26,8 +26,8 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Description</label>
-                <textarea name="description" rows="3"
+                <label for="homepage-cta-form-description" class="block text-xs font-bold uppercase mb-1">Description</label>
+                <textarea id="homepage-cta-form-description" name="description" rows="3"
                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           style="font-family: 'JetBrains Mono', monospace;"
                           title="Supporting text encouraging action.">{{.Item.Description.String}}</textarea>
@@ -36,16 +36,16 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Button Text</label>
-                    <input type="text" name="primary_cta_text" value="{{.Item.PrimaryCtaText}}"
+                    <label for="homepage-cta-form-primary-cta-text" class="block text-xs font-bold uppercase mb-1">Button Text</label>
+                    <input id="homepage-cta-form-primary-cta-text" type="text" name="primary_cta_text" value="{{.Item.PrimaryCtaText}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;" required
                            title="Primary button label.">
                     <p class="text-xs text-gray-500 mt-1">Primary button label.</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Button Link</label>
-                    <input type="text" name="primary_cta_url" value="{{.Item.PrimaryCtaUrl}}"
+                    <label for="homepage-cta-form-primary-cta-url" class="block text-xs font-bold uppercase mb-1">Button Link</label>
+                    <input id="homepage-cta-form-primary-cta-url" type="text" name="primary_cta_url" value="{{.Item.PrimaryCtaUrl}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;" required>
                 </div>
@@ -53,14 +53,14 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Secondary Button Text</label>
-                    <input type="text" name="secondary_cta_text" value="{{.Item.SecondaryCtaText.String}}"
+                    <label for="homepage-cta-form-secondary-cta-text" class="block text-xs font-bold uppercase mb-1">Secondary Button Text</label>
+                    <input id="homepage-cta-form-secondary-cta-text" type="text" name="secondary_cta_text" value="{{.Item.SecondaryCtaText.String}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Secondary Button URL</label>
-                    <input type="text" name="secondary_cta_url" value="{{.Item.SecondaryCtaUrl.String}}"
+                    <label for="homepage-cta-form-secondary-cta-url" class="block text-xs font-bold uppercase mb-1">Secondary Button URL</label>
+                    <input id="homepage-cta-form-secondary-cta-url" type="text" name="secondary_cta_url" value="{{.Item.SecondaryCtaUrl.String}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
@@ -86,8 +86,8 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
-                    <input type="number" name="display_order" value=""
+                    <label for="homepage-cta-form-display-order" class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                    <input id="homepage-cta-form-display-order" type="number" name="display_order" value=""
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>

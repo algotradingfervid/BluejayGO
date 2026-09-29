@@ -47,10 +47,10 @@
 
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Solutions Per Page</label>
+                            <label for="solutions-settings-solutions-per-page" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Solutions Per Page</label>
                             <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Number of solutions shown per page on the public listing.">info</span>
                         </div>
-                        <input type="number" name="solutions_per_page" value="{{.Settings.SolutionsPerPage}}" min="4" max="48"
+                        <input id="solutions-settings-solutions-per-page" type="number" name="solutions_per_page" value="{{.Settings.SolutionsPerPage}}" min="4" max="48"
                             class="w-32 px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
                             style="font-family: 'JetBrains Mono', monospace;">
                     </div>

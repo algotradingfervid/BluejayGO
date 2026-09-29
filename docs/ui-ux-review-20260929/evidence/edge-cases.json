@@ -1,0 +1,32 @@
+{
+  "passed": 27,
+  "checks": [
+    "public skip link is first keyboard stop",
+    "public skip link moves focus into main",
+    "mobile menu Escape restores toggle focus",
+    "search Escape restores opener",
+    "testimonial selection announces current state",
+    "testimonial touch target is 44px",
+    "admin skip link is first keyboard stop",
+    "admin skip reaches main",
+    "drawer isolates background from interaction",
+    "drawer has modal semantics",
+    "drawer reverse-tab remains inside",
+    "drawer Escape restores menu focus",
+    "desktop resize clears modal and inert states",
+    "stage transition disabled for reduced motion",
+    "final stage timing is 180ms",
+    "live reduced-motion change cancels motion",
+    "rapid stage changes leave one panel and one current marker",
+    "solution editor starts clean with saved HTML intact",
+    "solution rich-text edit survives server round trip",
+    "failed enquiry shows retry guidance and preserves input",
+    "successful retry clears failure notice",
+    "no-script product form retains core inputs",
+    "no-script product optional sections remain usable",
+    "no-script rich HTML textarea stays editable",
+    "sidebar recovers from stored state null",
+    "sidebar recovers from stored state [true]",
+    "sidebar recovers from stored state {broken"
+  ]
+}

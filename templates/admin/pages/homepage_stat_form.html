@@ -17,8 +17,8 @@
               class="bg-white border-2 border-black p-6 space-y-5 max-w-2xl" style="box-shadow: 4px 4px 0px #000;">
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Number / Value</label>
-                <input type="text" name="stat_value" value="{{.Item.StatValue}}"
+                <label for="homepage-stat-form-stat-value" class="block text-xs font-bold uppercase mb-1">Number / Value</label>
+                <input id="homepage-stat-form-stat-value" type="text" name="stat_value" value="{{.Item.StatValue}}"
                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                        style="font-family: 'JetBrains Mono', monospace;" required
                        title="The stat number displayed prominently (e.g., '500+', '98%', '24/7').">
@@ -26,8 +26,8 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Label</label>
-                <input type="text" name="stat_label" value="{{.Item.StatLabel}}"
+                <label for="homepage-stat-form-stat-label" class="block text-xs font-bold uppercase mb-1">Label</label>
+                <input id="homepage-stat-form-stat-label" type="text" name="stat_label" value="{{.Item.StatLabel}}"
                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                        style="font-family: 'JetBrains Mono', monospace;" required
                        title="What the number represents (e.g., 'Products Sold', 'Customer Satisfaction').">
@@ -35,8 +35,8 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Icon (Material Symbol)</label>
-                <input type="text" name="icon" value=""
+                <label for="homepage-stat-form-icon" class="block text-xs font-bold uppercase mb-1">Icon (Material Symbol)</label>
+                <input id="homepage-stat-form-icon" type="text" name="icon" value=""
                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                        style="font-family: 'JetBrains Mono', monospace;"
                        title="Optional icon displayed with the stat.">
@@ -45,8 +45,8 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
-                    <input type="number" name="display_order" value="{{.Item.DisplayOrder}}"
+                    <label for="homepage-stat-form-display-order" class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                    <input id="homepage-stat-form-display-order" type="number" name="display_order" value="{{.Item.DisplayOrder}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>

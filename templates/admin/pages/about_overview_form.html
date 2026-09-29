@@ -18,20 +18,20 @@
                 <div class="p-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="about-overview-form-headline" class="block text-xs font-bold uppercase mb-1">
                                 Headline *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="The main heading for the About page.">ⓘ</span>
                             </label>
-                            <input type="text" name="headline" value="{{if .Item}}{{.Item.Headline}}{{end}}" required
+                            <input id="about-overview-form-headline" type="text" name="headline" value="{{if .Item}}{{.Item.Headline}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="about-overview-form-tagline" class="block text-xs font-bold uppercase mb-1">
                                 Tagline *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Subheading text below the main title.">ⓘ</span>
                             </label>
-                            <input type="text" name="tagline" value="{{if .Item}}{{.Item.Tagline}}{{end}}" required
+                            <input id="about-overview-form-tagline" type="text" name="tagline" value="{{if .Item}}{{.Item.Tagline}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
@@ -46,29 +46,29 @@
                 </div>
                 <div class="p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="about-overview-form-description-main" class="block text-xs font-bold uppercase mb-1">
                             Main Description *
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Full description of your company. Shown as the main About page content.">ⓘ</span>
                         </label>
-                        <textarea name="description_main" rows="4" required
+                        <textarea id="about-overview-form-description-main" name="description_main" rows="4" required
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.DescriptionMain}}{{end}}</textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="about-overview-form-description-secondary" class="block text-xs font-bold uppercase mb-1">
                             Secondary Description
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Additional supporting text for the About page.">ⓘ</span>
                         </label>
-                        <textarea name="description_secondary" rows="3"
+                        <textarea id="about-overview-form-description-secondary" name="description_secondary" rows="3"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.DescriptionSecondary.String}}{{end}}</textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="about-overview-form-description-tertiary" class="block text-xs font-bold uppercase mb-1">
                             Tertiary Description
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Third block of descriptive text, shown below secondary.">ⓘ</span>
                         </label>
-                        <textarea name="description_tertiary" rows="3"
+                        <textarea id="about-overview-form-description-tertiary" name="description_tertiary" rows="3"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.DescriptionTertiary.String}}{{end}}</textarea>
                     </div>
@@ -82,20 +82,20 @@
                 </div>
                 <div class="p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="about-overview-form-hero-image-url" class="block text-xs font-bold uppercase mb-1">
                             Hero Image URL
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Banner image for the About page hero section.">ⓘ</span>
                         </label>
-                        <input type="text" name="hero_image_url" value="{{if .Item}}{{.Item.HeroImageUrl.String}}{{end}}"
+                        <input id="about-overview-form-hero-image-url" type="text" name="hero_image_url" value="{{if .Item}}{{.Item.HeroImageUrl.String}}{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="about-overview-form-company-image-url" class="block text-xs font-bold uppercase mb-1">
                             Company Image URL
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Company photo or team image for the About page.">ⓘ</span>
                         </label>
-                        <input type="text" name="company_image_url" value="{{if .Item}}{{.Item.CompanyImageUrl.String}}{{end}}"
+                        <input id="about-overview-form-company-image-url" type="text" name="company_image_url" value="{{if .Item}}{{.Item.CompanyImageUrl.String}}{{end}}"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;">
                     </div>

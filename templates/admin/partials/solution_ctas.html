@@ -20,33 +20,33 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Heading *</label>
-            <input type="text" name="heading" required value="{{.Heading}}"
+            <input aria-label="Heading *" type="text" name="heading" required value="{{.Heading}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Section Name</label>
-            <input type="text" name="section_name" required value="{{.SectionName}}"
+            <input aria-label="Section Name" type="text" name="section_name" required value="{{.SectionName}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
     </div>
     <div>
         <label class="block text-xs font-bold uppercase mb-1">Subheading</label>
-        <input type="text" name="subheading" value="{{if .Subheading.Valid}}{{.Subheading.String}}{{end}}"
+        <input aria-label="Subheading" type="text" name="subheading" value="{{if .Subheading.Valid}}{{.Subheading.String}}{{end}}"
                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                style="font-family: 'JetBrains Mono', monospace;">
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Primary Button Text</label>
-            <input type="text" name="primary_button_text" value="{{if .PrimaryButtonText.Valid}}{{.PrimaryButtonText.String}}{{end}}"
+            <input aria-label="Primary Button Text" type="text" name="primary_button_text" value="{{if .PrimaryButtonText.Valid}}{{.PrimaryButtonText.String}}{{end}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Primary Button URL</label>
-            <input type="text" name="primary_button_url" value="{{if .PrimaryButtonUrl.Valid}}{{.PrimaryButtonUrl.String}}{{end}}"
+            <input aria-label="Primary Button URL" type="text" name="primary_button_url" value="{{if .PrimaryButtonUrl.Valid}}{{.PrimaryButtonUrl.String}}{{end}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
@@ -54,20 +54,20 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Secondary Button Text</label>
-            <input type="text" name="secondary_button_text" value="{{if .SecondaryButtonText.Valid}}{{.SecondaryButtonText.String}}{{end}}"
+            <input aria-label="Secondary Button Text" type="text" name="secondary_button_text" value="{{if .SecondaryButtonText.Valid}}{{.SecondaryButtonText.String}}{{end}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Secondary Button / Brochure URL</label>
-            <input type="text" name="secondary_button_url" placeholder="/uploads/downloads/your-brochure.pdf" value="{{if .SecondaryButtonUrl.Valid}}{{.SecondaryButtonUrl.String}}{{end}}"
+            <input aria-label="Secondary Button / Brochure URL" type="text" name="secondary_button_url" placeholder="/uploads/downloads/your-brochure.pdf" value="{{if .SecondaryButtonUrl.Valid}}{{.SecondaryButtonUrl.String}}{{end}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
     </div>
     <div>
         <label class="block text-xs font-bold uppercase mb-1">Phone Number</label>
-        <input type="text" name="phone_number" value="{{if .PhoneNumber.Valid}}{{.PhoneNumber.String}}{{end}}"
+        <input aria-label="Phone Number" type="text" name="phone_number" value="{{if .PhoneNumber.Valid}}{{.PhoneNumber.String}}{{end}}"
                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                style="font-family: 'JetBrains Mono', monospace;">
     </div>
@@ -128,33 +128,33 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Heading *</label>
-            <input type="text" name="heading" required
+            <input aria-label="Heading *" type="text" name="heading" required
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Section Name</label>
-            <input type="text" name="section_name" required value="main_cta"
+            <input aria-label="Section Name" type="text" name="section_name" required value="main_cta"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
     </div>
     <div>
         <label class="block text-xs font-bold uppercase mb-1">Subheading</label>
-        <input type="text" name="subheading"
+        <input aria-label="Subheading" type="text" name="subheading"
                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                style="font-family: 'JetBrains Mono', monospace;">
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Primary Button Text</label>
-            <input type="text" name="primary_button_text"
+            <input aria-label="Primary Button Text" type="text" name="primary_button_text"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Primary Button URL</label>
-            <input type="text" name="primary_button_url"
+            <input aria-label="Primary Button URL" type="text" name="primary_button_url"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
@@ -162,20 +162,20 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Secondary Button Text</label>
-            <input type="text" name="secondary_button_text"
+            <input aria-label="Secondary Button Text" type="text" name="secondary_button_text"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Secondary Button / Brochure URL</label>
-            <input type="text" name="secondary_button_url" placeholder="/uploads/downloads/your-brochure.pdf"
+            <input aria-label="Secondary Button / Brochure URL" type="text" name="secondary_button_url" placeholder="/uploads/downloads/your-brochure.pdf"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
     </div>
     <div>
         <label class="block text-xs font-bold uppercase mb-1">Phone Number</label>
-        <input type="text" name="phone_number"
+        <input aria-label="Phone Number" type="text" name="phone_number"
                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                style="font-family: 'JetBrains Mono', monospace;">
     </div>

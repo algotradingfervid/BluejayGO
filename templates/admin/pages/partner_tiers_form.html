@@ -15,29 +15,29 @@
                     Tiers define partnership levels. Partners are grouped by tier on the public page.
                 </p>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="partner-tiers-form-name" class="block text-xs font-bold uppercase mb-1">
                         Name *
                         <span class="inline-block ml-1 cursor-help text-gray-400" title="The tier name, e.g. Gold, Silver, Bronze.">ⓘ</span>
                     </label>
-                    <input type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
+                    <input id="partner-tiers-form-name" type="text" name="name" value="{{if .Item}}{{.Item.Name}}{{end}}" required
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="partner-tiers-form-description" class="block text-xs font-bold uppercase mb-1">
                         Description
                         <span class="inline-block ml-1 cursor-help text-gray-400" title="A short description of what this tier level means.">ⓘ</span>
                     </label>
-                    <textarea name="description" rows="3"
+                    <textarea id="partner-tiers-form-description" name="description" rows="3"
                               class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                               style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">
+                    <label for="partner-tiers-form-sort-order" class="block text-xs font-bold uppercase mb-1">
                         Sort Order
                         <span class="inline-block ml-1 cursor-help text-gray-400" title="Lower numbers appear first. Use this to rank tiers (e.g., Gold=1, Silver=2, Bronze=3).">ⓘ</span>
                     </label>
-                    <input type="number" name="sort_order" min="0"
+                    <input id="partner-tiers-form-sort-order" type="number" name="sort_order" min="0"
                            value="{{if .Item}}{{.Item.SortOrder}}{{else}}0{{end}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                            style="font-family: 'JetBrains Mono', monospace;">

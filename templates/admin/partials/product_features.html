@@ -53,12 +53,12 @@
             <button hx-get="/admin/products/{{$.ProductID}}/features?edit={{.ID}}"
                     hx-target="#features-section"
                     hx-swap="outerHTML"
-                    class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-600 hover:text-black text-xs font-bold uppercase">&#9998;</button>
+                    class="admin-detail-action transition-opacity text-gray-600 hover:text-black text-xs font-bold uppercase" aria-label="Edit feature">&#9998;</button>
             <button hx-delete="/admin/products/{{$.ProductID}}/features/{{.ID}}"
                     hx-target="#features-section"
                     hx-swap="outerHTML"
                     hx-confirm="Delete this feature?"
-                    class="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase">&#x2715;</button>
+                    class="admin-detail-action transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase" aria-label="Delete feature">&#x2715;</button>
         </div>
         {{end}}
         {{end}}
@@ -78,12 +78,12 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div class="md:col-span-3">
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Feature Text</label>
-                <input type="text" name="feature_text" placeholder="e.g. IP67 rated for outdoor use" required
+                <input aria-label="Feature Text" type="text" name="feature_text" placeholder="e.g. IP67 rated for outdoor use" required
                        class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
-                <input type="number" name="display_order" placeholder="0" value="0"
+                <input aria-label="Order" type="number" name="display_order" placeholder="0" value="0"
                        class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
         </div>

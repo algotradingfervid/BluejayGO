@@ -71,30 +71,30 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Max Heroes</label>
+                                <label for="homepage-settings-homepage-max-heroes" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Max Heroes</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Maximum number of hero slides in the banner rotation.">info</span>
                             </div>
-                            <input type="number" name="homepage_max_heroes" value="{{.Settings.HomepageMaxHeroes}}" min="1" max="20"
+                            <input id="homepage-settings-homepage-max-heroes" type="number" name="homepage_max_heroes" value="{{.Settings.HomepageMaxHeroes}}" min="1" max="20"
                                 class="w-full px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
                                 style="font-family: 'JetBrains Mono', monospace;">
                         </div>
 
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Max Stats</label>
+                                <label for="homepage-settings-homepage-max-stats" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Max Stats</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Maximum number of stat items displayed in the stats bar.">info</span>
                             </div>
-                            <input type="number" name="homepage_max_stats" value="{{.Settings.HomepageMaxStats}}" min="1" max="12"
+                            <input id="homepage-settings-homepage-max-stats" type="number" name="homepage_max_stats" value="{{.Settings.HomepageMaxStats}}" min="1" max="12"
                                 class="w-full px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
                                 style="font-family: 'JetBrains Mono', monospace;">
                         </div>
 
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Max Testimonials</label>
+                                <label for="homepage-settings-homepage-max-testimonials" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Max Testimonials</label>
                                 <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="Maximum number of testimonials shown on the homepage.">info</span>
                             </div>
-                            <input type="number" name="homepage_max_testimonials" value="{{.Settings.HomepageMaxTestimonials}}" min="1" max="12"
+                            <input id="homepage-settings-homepage-max-testimonials" type="number" name="homepage_max_testimonials" value="{{.Settings.HomepageMaxTestimonials}}" min="1" max="12"
                                 class="w-full px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
                                 style="font-family: 'JetBrains Mono', monospace;">
                         </div>
@@ -115,10 +115,10 @@
 
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <label class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Rotation Interval (seconds)</label>
+                            <label for="homepage-settings-homepage-hero-interval" class="block text-sm font-bold text-black uppercase" style="font-family: 'JetBrains Mono', monospace;">Rotation Interval (seconds)</label>
                             <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 14px;" title="How many seconds each hero slide displays before advancing. Only applies when auto-rotate is enabled.">info</span>
                         </div>
-                        <input type="number" name="homepage_hero_interval" value="{{.Settings.HomepageHeroInterval}}" min="2" max="30"
+                        <input id="homepage-settings-homepage-hero-interval" type="number" name="homepage_hero_interval" value="{{.Settings.HomepageHeroInterval}}" min="2" max="30"
                             class="w-32 px-3 py-2 border-2 border-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
                             style="font-family: 'JetBrains Mono', monospace;">
                     </div>

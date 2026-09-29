@@ -1,0 +1,29 @@
+{
+  "branch": "codex/ui-ux-review-20260929",
+  "baseline": "dd1d30d",
+  "status": "Implementation verified; merge and production deployment pending approval",
+  "baselineScreens": 132,
+  "expandedScreens": 330,
+  "targetedLayoutChecks": 25,
+  "layoutNote": "The 330-screen matrix found a remaining case-study action-row overflow at 320px. It was fixed, then 25 targeted checks passed across all five widths. Inactive carousel panels and clipped semantic table headers are intentionally excluded.",
+  "browserAssertions": {
+    "readiness": 37,
+    "edge-cases": 27,
+    "form-recovery": 11,
+    "rich-editor-regression": 5
+  },
+  "axeScans": 32,
+  "axeViolations": 0,
+  "animationFrames": {
+    "slow": 15,
+    "final": 15
+  },
+  "finalMotionDurationMs": 180,
+  "goTests": "All application packages passed with -count=1; see go-final.log",
+  "javascriptUnitTests": 7,
+  "cleanup": "Complete: bluejay-review closed; browser list empty; original browser/daemon PIDs absent; ports 28123, 28124 and 28125 no longer listening; disposable credential files removed.",
+  "scope": "Disposable local DB; headless Chromium; no production writes or deployments",
+  "emptyAndExtremeQueryChecks": 4,
+  "implementationFindings": 22,
+  "totalBrowserAssertions": 80
+}

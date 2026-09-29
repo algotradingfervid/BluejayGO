@@ -1,0 +1,19 @@
+
+> test
+> node --test tests/js/*.test.cjs
+
+✔ explicit pause survives hover, focus and manual navigation; Play resumes (1.030875ms)
+✔ reduced motion starts manual, disables transitions and responds to preference changes (0.326958ms)
+✔ inactive slides are inert and hidden; arrows and dots wrap correctly (0.513042ms)
+✔ hover, focus and background tabs suspend automatic changes (0.529708ms)
+✔ mobile navigation toggles, Escape closes and returns focus, desktop resize resets (0.966917ms)
+✔ search closes mobile navigation, traps focus and restores opener plus scrolling (0.323042ms)
+✔ pending suggestions signal busy without taking search focus (0.27525ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29.6435

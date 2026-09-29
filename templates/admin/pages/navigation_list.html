@@ -16,12 +16,12 @@
                 <h2 class="text-lg font-bold uppercase border-b-2 border-black pb-2 mb-4" style="font-family: 'JetBrains Mono', monospace;">Create New Menu</h2>
                 <form method="POST" action="/admin/navigation" class="flex gap-4 items-end">
                     <div class="flex-1">
-                        <label class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Menu Name</label>
-                        <input type="text" name="name" placeholder="e.g., Main Header Nav" required class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        <label for="navigation-list-name" class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Menu Name</label>
+                        <input id="navigation-list-name" type="text" name="name" placeholder="e.g., Main Header Nav" required class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                     </div>
                     <div class="w-48">
-                        <label class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Location</label>
-                        <select name="location" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
+                        <label for="navigation-list-location" class="block text-sm font-bold text-black uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Location</label>
+                        <select id="navigation-list-location" name="location" class="w-full border-2 border-black px-3 py-2 text-sm bg-white focus:outline-none focus:border-blue-600" style="font-family: 'JetBrains Mono', monospace;">
                             <option value="header">Header</option>
                             <option value="footer">Footer</option>
                             <option value="footer_legal">Footer Legal</option>

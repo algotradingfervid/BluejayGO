@@ -17,8 +17,8 @@
               class="bg-white border-2 border-black p-6 space-y-5 max-w-2xl" style="box-shadow: 4px 4px 0px #000;">
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Headline</label>
-                <input type="text" name="headline" value="{{.Item.Headline}}"
+                <label for="homepage-hero-form-headline" class="block text-xs font-bold uppercase mb-1">Headline</label>
+                <input id="homepage-hero-form-headline" type="text" name="headline" value="{{.Item.Headline}}"
                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                        style="font-family: 'JetBrains Mono', monospace;" required
                        title="Hero banner headline. Keep it bold and concise (5-8 words).">
@@ -26,8 +26,8 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Subheadline</label>
-                <textarea name="subheadline" rows="3"
+                <label for="homepage-hero-form-subheadline" class="block text-xs font-bold uppercase mb-1">Subheadline</label>
+                <textarea id="homepage-hero-form-subheadline" name="subheadline" rows="3"
                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           style="font-family: 'JetBrains Mono', monospace;" required
                           title="Supporting text below the headline. 1-2 sentences max.">{{.Item.Subheadline}}</textarea>
@@ -35,8 +35,8 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Background Image URL</label>
-                <input type="text" name="background_image" value="{{.Item.BackgroundImage.String}}"
+                <label for="homepage-hero-form-background-image" class="block text-xs font-bold uppercase mb-1">Background Image URL</label>
+                <input id="homepage-hero-form-background-image" type="text" name="background_image" value="{{.Item.BackgroundImage.String}}"
                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                        style="font-family: 'JetBrains Mono', monospace;"
                        title="Full-width banner image. Recommended: 1920x600. Text overlays this image.">
@@ -44,24 +44,24 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Badge Text</label>
-                <input type="text" name="badge_text" value="{{.Item.BadgeText.String}}"
+                <label for="homepage-hero-form-badge-text" class="block text-xs font-bold uppercase mb-1">Badge Text</label>
+                <input id="homepage-hero-form-badge-text" type="text" name="badge_text" value="{{.Item.BadgeText.String}}"
                        class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                        style="font-family: 'JetBrains Mono', monospace;">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">CTA Button Text</label>
-                    <input type="text" name="primary_cta_text" value="{{.Item.PrimaryCtaText}}"
+                    <label for="homepage-hero-form-primary-cta-text" class="block text-xs font-bold uppercase mb-1">CTA Button Text</label>
+                    <input id="homepage-hero-form-primary-cta-text" type="text" name="primary_cta_text" value="{{.Item.PrimaryCtaText}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;" required
                            title="Text on the hero's call-to-action button (e.g., 'Get Started').">
                     <p class="text-xs text-gray-500 mt-1">e.g., "Get Started"</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">CTA Button Link</label>
-                    <input type="text" name="primary_cta_url" value="{{.Item.PrimaryCtaUrl}}"
+                    <label for="homepage-hero-form-primary-cta-url" class="block text-xs font-bold uppercase mb-1">CTA Button Link</label>
+                    <input id="homepage-hero-form-primary-cta-url" type="text" name="primary_cta_url" value="{{.Item.PrimaryCtaUrl}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;" required
                            title="Where the CTA button links to.">
@@ -71,14 +71,14 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Secondary CTA Text</label>
-                    <input type="text" name="secondary_cta_text" value="{{.Item.SecondaryCtaText.String}}"
+                    <label for="homepage-hero-form-secondary-cta-text" class="block text-xs font-bold uppercase mb-1">Secondary CTA Text</label>
+                    <input id="homepage-hero-form-secondary-cta-text" type="text" name="secondary_cta_text" value="{{.Item.SecondaryCtaText.String}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Secondary CTA URL</label>
-                    <input type="text" name="secondary_cta_url" value="{{.Item.SecondaryCtaUrl.String}}"
+                    <label for="homepage-hero-form-secondary-cta-url" class="block text-xs font-bold uppercase mb-1">Secondary CTA URL</label>
+                    <input id="homepage-hero-form-secondary-cta-url" type="text" name="secondary_cta_url" value="{{.Item.SecondaryCtaUrl.String}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
@@ -86,8 +86,8 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
-                    <input type="number" name="display_order" value="{{.Item.DisplayOrder}}"
+                    <label for="homepage-hero-form-display-order" class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                    <input id="homepage-hero-form-display-order" type="number" name="display_order" value="{{.Item.DisplayOrder}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>

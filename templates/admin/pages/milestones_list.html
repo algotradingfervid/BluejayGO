@@ -14,12 +14,12 @@
 
         {{if .Items}}
         <!-- Vertical Timeline -->
-        <div class="max-w-3xl relative">
+        <div class="milestone-timeline max-w-3xl relative">
             <!-- Timeline Line -->
             <div class="absolute left-[59px] top-0 bottom-0 w-[2px] bg-black"></div>
 
             {{range .Items}}
-            <div class="flex gap-6 mb-6 relative">
+            <div class="milestone-record flex gap-6 mb-6 relative">
                 <!-- Year Badge -->
                 <div class="flex-shrink-0 w-[120px] text-right">
                     <span class="inline-block bg-black text-white text-xs font-bold px-3 py-1">{{.Year}}</span>
@@ -30,7 +30,7 @@
 
                 <!-- Content Card -->
                 <div class="flex-1 bg-white border-2 border-black p-4" style="box-shadow: 4px 4px 0px #000;">
-                    <div class="flex justify-between items-start">
+                    <div class="milestone-content flex justify-between items-start">
                         <div>
                             <h3 class="font-bold uppercase text-sm">{{.Title}}</h3>
                             <p class="text-xs text-gray-600 mt-1">{{.Description}}</p>

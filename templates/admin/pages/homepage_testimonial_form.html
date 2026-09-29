@@ -18,22 +18,22 @@
               class="bg-white border-2 border-black p-6 space-y-5 max-w-2xl" style="box-shadow: 4px 4px 0px #000;">
 
             <div>
-                <label class="block text-xs font-bold uppercase mb-1">Quote</label>
-                <textarea name="quote" rows="4"
+                <label for="homepage-testimonial-form-quote" class="block text-xs font-bold uppercase mb-1">Quote</label>
+                <textarea id="homepage-testimonial-form-quote" name="quote" rows="4"
                           class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           style="font-family: 'JetBrains Mono', monospace;" required>{{.Item.Quote}}</textarea>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Author Name</label>
-                    <input type="text" name="author_name" value="{{.Item.AuthorName}}"
+                    <label for="homepage-testimonial-form-author-name" class="block text-xs font-bold uppercase mb-1">Author Name</label>
+                    <input id="homepage-testimonial-form-author-name" type="text" name="author_name" value="{{.Item.AuthorName}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;" required>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Author Title</label>
-                    <input type="text" name="author_title" value="{{.Item.AuthorTitle.String}}"
+                    <label for="homepage-testimonial-form-author-title" class="block text-xs font-bold uppercase mb-1">Author Title</label>
+                    <input id="homepage-testimonial-form-author-title" type="text" name="author_title" value="{{.Item.AuthorTitle.String}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
@@ -41,14 +41,14 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Author Company</label>
-                    <input type="text" name="author_company" value="{{.Item.AuthorCompany.String}}"
+                    <label for="homepage-testimonial-form-author-company" class="block text-xs font-bold uppercase mb-1">Author Company</label>
+                    <input id="homepage-testimonial-form-author-company" type="text" name="author_company" value="{{.Item.AuthorCompany.String}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Author Image URL</label>
-                    <input type="text" name="author_image" value="{{.Item.AuthorImage.String}}"
+                    <label for="homepage-testimonial-form-author-image" class="block text-xs font-bold uppercase mb-1">Author Image URL</label>
+                    <input id="homepage-testimonial-form-author-image" type="text" name="author_image" value="{{.Item.AuthorImage.String}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
@@ -56,14 +56,14 @@
 
             <div class="grid grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Rating (1-5)</label>
-                    <input type="number" name="rating" value="{{.Item.Rating}}" min="1" max="5"
+                    <label for="homepage-testimonial-form-rating" class="block text-xs font-bold uppercase mb-1">Rating (1-5)</label>
+                    <input id="homepage-testimonial-form-rating" type="number" name="rating" value="{{.Item.Rating}}" min="1" max="5"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
-                    <input type="number" name="display_order" value="{{.Item.DisplayOrder}}"
+                    <label for="homepage-testimonial-form-display-order" class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                    <input id="homepage-testimonial-form-display-order" type="number" name="display_order" value="{{.Item.DisplayOrder}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>

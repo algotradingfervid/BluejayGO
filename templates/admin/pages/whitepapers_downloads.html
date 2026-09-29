@@ -25,8 +25,8 @@
         <div class="bg-white border-2 border-black p-4 mb-6" style="box-shadow: 4px 4px 0px #000;">
             <form method="GET" action="/admin/whitepapers/downloads" class="flex flex-wrap items-end gap-4">
                 <div class="min-w-[200px]">
-                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Whitepaper</label>
-                    <select name="whitepaper"
+                    <label for="whitepapers-downloads-whitepaper" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Whitepaper</label>
+                    <select id="whitepapers-downloads-whitepaper" name="whitepaper"
                             class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             style="font-family: 'JetBrains Mono', monospace;">
                         <option value="">All Whitepapers</option>
@@ -36,14 +36,14 @@
                     </select>
                 </div>
                 <div class="min-w-[150px]">
-                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Date From</label>
-                    <input type="date" name="date_from" value="{{.DateFrom}}"
+                    <label for="whitepapers-downloads-date-from" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Date From</label>
+                    <input id="whitepapers-downloads-date-from" type="date" name="date_from" value="{{.DateFrom}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>
                 <div class="min-w-[150px]">
-                    <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Date To</label>
-                    <input type="date" name="date_to" value="{{.DateTo}}"
+                    <label for="whitepapers-downloads-date-to" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Date To</label>
+                    <input id="whitepapers-downloads-date-to" type="date" name="date_to" value="{{.DateTo}}"
                            class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                            style="font-family: 'JetBrains Mono', monospace;">
                 </div>

@@ -17,30 +17,30 @@
                 <div class="p-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="milestones-form-year" class="block text-xs font-bold uppercase mb-1">
                                 Year *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="The year this milestone occurred (e.g., 2015).">ⓘ</span>
                             </label>
-                            <input type="number" name="year" value="{{if .Item}}{{.Item.Year}}{{end}}" required
+                            <input id="milestones-form-year" type="number" name="year" value="{{if .Item}}{{.Item.Year}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="milestones-form-title" class="block text-xs font-bold uppercase mb-1">
                                 Title *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Brief milestone headline (e.g., 'Founded in Houston, TX').">ⓘ</span>
                             </label>
-                            <input type="text" name="title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
+                            <input id="milestones-form-title" type="text" name="title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="milestones-form-description" class="block text-xs font-bold uppercase mb-1">
                             Description *
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Details about this milestone event.">ⓘ</span>
                         </label>
-                        <textarea name="description" rows="3" required
+                        <textarea id="milestones-form-description" name="description" rows="3" required
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
                     </div>
@@ -52,8 +52,8 @@
                             <label for="is_current" class="text-xs font-bold uppercase cursor-pointer">Current Year</label>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Sort Order</label>
-                            <input type="number" name="display_order" value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
+                            <label for="milestones-form-display-order" class="block text-xs font-bold uppercase mb-1">Sort Order</label>
+                            <input id="milestones-form-display-order" type="number" name="display_order" value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>

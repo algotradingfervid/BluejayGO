@@ -27,23 +27,23 @@
                     <h2 class="text-lg font-bold border-b-2 border-black pb-2 mb-2">Main Content</h2>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Heading</label>
-                        <input type="text" name="heading" value="{{.Section.Heading}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="page-sections-form-heading" class="block text-sm font-medium text-gray-700 mb-1">Heading</label>
+                        <input id="page-sections-form-heading" type="text" name="heading" value="{{.Section.Heading}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Subheading</label>
-                        <input type="text" name="subheading" value="{{.Section.Subheading}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="page-sections-form-subheading" class="block text-sm font-medium text-gray-700 mb-1">Subheading</label>
+                        <input id="page-sections-form-subheading" type="text" name="subheading" value="{{.Section.Subheading}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea name="description" rows="4" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{.Section.Description}}</textarea>
+                        <label for="page-sections-form-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="page-sections-form-description" name="description" rows="4" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{.Section.Description}}</textarea>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Label</label>
-                        <input type="text" name="label" value="{{.Section.Label}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="page-sections-form-label" class="block text-sm font-medium text-gray-700 mb-1">Label</label>
+                        <input id="page-sections-form-label" type="text" name="label" value="{{.Section.Label}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <p class="text-xs text-gray-500 mt-1">Optional badge or label text.</p>
                     </div>
                 </div>
@@ -53,13 +53,13 @@
                     <h2 class="text-lg font-bold border-b-2 border-black pb-2 mb-2">Primary Button</h2>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
-                        <input type="text" name="primary_button_text" value="{{.Section.PrimaryButtonText}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="page-sections-form-primary-button-text" class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+                        <input id="page-sections-form-primary-button-text" type="text" name="primary_button_text" value="{{.Section.PrimaryButtonText}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Button URL</label>
-                        <input type="text" name="primary_button_url" value="{{.Section.PrimaryButtonUrl}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="page-sections-form-primary-button-url" class="block text-sm font-medium text-gray-700 mb-1">Button URL</label>
+                        <input id="page-sections-form-primary-button-url" type="text" name="primary_button_url" value="{{.Section.PrimaryButtonUrl}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
@@ -68,13 +68,13 @@
                     <h2 class="text-lg font-bold border-b-2 border-black pb-2 mb-2">Secondary Button</h2>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
-                        <input type="text" name="secondary_button_text" value="{{.Section.SecondaryButtonText}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="page-sections-form-secondary-button-text" class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+                        <input id="page-sections-form-secondary-button-text" type="text" name="secondary_button_text" value="{{.Section.SecondaryButtonText}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Button URL</label>
-                        <input type="text" name="secondary_button_url" value="{{.Section.SecondaryButtonUrl}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="page-sections-form-secondary-button-url" class="block text-sm font-medium text-gray-700 mb-1">Button URL</label>
+                        <input id="page-sections-form-secondary-button-url" type="text" name="secondary_button_url" value="{{.Section.SecondaryButtonUrl}}" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 

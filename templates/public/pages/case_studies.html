@@ -1,9 +1,9 @@
 {{define "content"}}
 
 <!-- Breadcrumb -->
-<nav class="bg-white manual-border-b">
+<nav aria-label="Breadcrumb" class="bg-white manual-border-b">
   <div class="container mx-auto px-4 py-3">
-    <ol class="flex items-center space-x-2 text-sm font-mono uppercase">
+    <ol class="breadcrumb-trail flex items-center space-x-2 text-sm font-mono uppercase">
       <li><a href="/" class="text-gray-600 hover:text-black">Home</a></li>
       <li class="text-gray-400">/</li>
       <li class="text-black font-bold">Case Studies</li>
@@ -40,7 +40,7 @@
           </div>
 
           <form method="GET" action="/case-studies" class="flex items-center gap-4">
-            <select name="industry" onchange="this.form.submit()" class="bg-white manual-border px-4 py-3 font-mono uppercase text-sm focus:outline-none focus:manual-shadow">
+            <select aria-label="Filter by industry" name="industry" onchange="this.form.submit()" class="bg-white manual-border px-4 py-3 font-mono uppercase text-sm focus:outline-none focus:manual-shadow">
               <option value="">All Industries</option>
               {{range .Industries}}
               <option value="{{.ID}}" {{if eq $.SelectedIndustryID .ID}}selected{{end}}>{{.Name}}</option>

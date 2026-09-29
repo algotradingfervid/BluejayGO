@@ -15,19 +15,19 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Value</label>
-            <input type="text" name="value" required value="{{.Value}}"
+            <input aria-label="Value" type="text" name="value" required value="{{.Value}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Label</label>
-            <input type="text" name="label" required value="{{.Label}}"
+            <input aria-label="Label" type="text" name="label" required value="{{.Label}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Order</label>
-            <input type="number" name="display_order" value="{{if .DisplayOrder.Valid}}{{.DisplayOrder.Int64}}{{else}}0{{end}}"
+            <input aria-label="Order" type="number" name="display_order" value="{{if .DisplayOrder.Valid}}{{.DisplayOrder.Int64}}{{else}}0{{end}}"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
@@ -76,19 +76,19 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Value</label>
-            <input type="text" name="value" required placeholder="e.g. 500+"
+            <input aria-label="Value" type="text" name="value" required placeholder="e.g. 500+"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Label</label>
-            <input type="text" name="label" required placeholder="e.g. Schools Served"
+            <input aria-label="Label" type="text" name="label" required placeholder="e.g. Schools Served"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>
         <div>
             <label class="block text-xs font-bold uppercase mb-1">Order</label>
-            <input type="number" name="display_order" value="0"
+            <input aria-label="Order" type="number" name="display_order" value="0"
                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                    style="font-family: 'JetBrains Mono', monospace;">
         </div>

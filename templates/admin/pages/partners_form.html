@@ -20,7 +20,7 @@
                 <div class="section-body p-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="partner-name" class="block text-xs font-bold uppercase mb-1">
                                 Company Name *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Partner company's official name.">ⓘ</span>
                             </label>
@@ -30,7 +30,7 @@
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="partner-slug" class="block text-xs font-bold uppercase mb-1">
                                 Slug
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="URL-friendly identifier. Auto-generated from name.">ⓘ</span>
                             </label>
@@ -40,11 +40,11 @@
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="partners-form-tier-id" class="block text-xs font-bold uppercase mb-1">
                                 Tier *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Partnership level. Manage tiers in the sidebar under Partners > Tiers.">ⓘ</span>
                             </label>
-                            <select name="tier_id" required
+                            <select id="partners-form-tier-id" name="tier_id" required
                                     class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                                     style="font-family: 'JetBrains Mono', monospace;">
                                 <option value="">Select a Tier</option>
@@ -54,20 +54,20 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">
+                            <label for="partners-form-website-url" class="block text-xs font-bold uppercase mb-1">
                                 Website URL
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Link to partner's website. Shown as a clickable link on the partners page.">ⓘ</span>
                             </label>
-                            <input type="url" name="website_url"
+                            <input id="partners-form-website-url" type="url" name="website_url"
                                    value="{{if .Item}}{{.Item.WebsiteUrl.String}}{{end}}"
                                    placeholder="https://..."
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Status</label>
+                            <label for="partners-form-is-active" class="block text-xs font-bold uppercase mb-1">Status</label>
                             {{if .Item}}
-                            <select name="is_active"
+                            <select id="partners-form-is-active" name="is_active"
                                     class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                                     style="font-family: 'JetBrains Mono', monospace;">
                                 <option value="1" {{if .Item.IsActive}}selected{{end}}>Active</option>
@@ -79,8 +79,8 @@
                             {{end}}
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Display Order</label>
-                            <input type="number" name="display_order" min="0"
+                            <label for="partners-form-display-order" class="block text-xs font-bold uppercase mb-1">Display Order</label>
+                            <input id="partners-form-display-order" type="number" name="display_order" min="0"
                                    value="{{if .Item}}{{.Item.DisplayOrder}}{{else}}0{{end}}"
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
@@ -106,11 +106,11 @@
                 </button>
                 <div class="section-body p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="partners-form-logo-url" class="block text-xs font-bold uppercase mb-1">
                             Company Logo URL
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Partner's logo. Displayed on the partners page. Recommended: 200x100 PNG with transparency.">ⓘ</span>
                         </label>
-                        <input type="text" name="logo_url"
+                        <input id="partners-form-logo-url" type="text" name="logo_url"
                                value="{{if .Item}}{{.Item.LogoUrl.String}}{{end}}"
                                placeholder="https://example.com/logo.png"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -127,21 +127,21 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="partners-form-icon" class="block text-xs font-bold uppercase mb-1">
                             Icon (Material Symbol)
                         </label>
-                        <input type="text" name="icon"
+                        <input id="partners-form-icon" type="text" name="icon"
                                value="{{if .Item}}{{.Item.Icon.String}}{{end}}"
                                placeholder="e.g. business, storefront"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                                style="font-family: 'JetBrains Mono', monospace;">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">
+                        <label for="partners-form-description" class="block text-xs font-bold uppercase mb-1">
                             Description
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Brief description of the partnership and what they offer.">ⓘ</span>
                         </label>
-                        <textarea name="description" rows="4"
+                        <textarea id="partners-form-description" name="description" rows="4"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description.String}}{{end}}</textarea>
                     </div>
@@ -157,16 +157,16 @@
                 </button>
                 <div class="section-body p-5 space-y-4 hidden">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Meta Title</label>
-                        <input type="text" name="meta_title" maxlength="70"
+                        <label for="partners-form-meta-title" class="block text-xs font-bold uppercase mb-1">Meta Title</label>
+                        <input id="partners-form-meta-title" type="text" name="meta_title" maxlength="70"
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                                style="font-family: 'JetBrains Mono', monospace;"
                                oninput="updateCharCount(this, 'meta-title-count', 70)">
                         <p class="text-xs text-gray-500 mt-1"><span id="meta-title-count">0</span>/70 characters</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Meta Description</label>
-                        <textarea name="meta_description" maxlength="160" rows="2"
+                        <label for="partners-form-meta-description" class="block text-xs font-bold uppercase mb-1">Meta Description</label>
+                        <textarea id="partners-form-meta-description" name="meta_description" maxlength="160" rows="2"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                                   style="font-family: 'JetBrains Mono', monospace;"
                                   oninput="updateCharCount(this, 'meta-desc-count', 160)"></textarea>

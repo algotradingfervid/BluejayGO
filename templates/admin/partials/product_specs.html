@@ -44,13 +44,13 @@
                   hx-swap="outerHTML"
                   class="px-4 py-3 border-b border-gray-300 last:border-b-0 bg-yellow-50 space-y-2">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    <input type="text" name="section_name" value="{{.SectionName}}" required placeholder="Section"
+                    <input aria-label="Section" type="text" name="section_name" value="{{.SectionName}}" required placeholder="Section"
                            class="border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
-                    <input type="text" name="spec_key" value="{{.SpecKey}}" required placeholder="Label"
+                    <input aria-label="Label" type="text" name="spec_key" value="{{.SpecKey}}" required placeholder="Label"
                            class="border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
-                    <input type="text" name="spec_value" value="{{.SpecValue}}" required placeholder="Value"
+                    <input aria-label="Value" type="text" name="spec_value" value="{{.SpecValue}}" required placeholder="Value"
                            class="border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
-                    <input type="number" name="display_order" value="{{.DisplayOrder}}" placeholder="Order"
+                    <input aria-label="Order" type="number" name="display_order" value="{{.DisplayOrder}}" placeholder="Order"
                            class="border-2 border-black px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
                 </div>
                 <div class="flex gap-2">
@@ -71,12 +71,12 @@
                 <button hx-get="/admin/products/{{$.ProductID}}/specs?edit={{.ID}}"
                         hx-target="#specs-section"
                         hx-swap="outerHTML"
-                        class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-600 hover:text-black text-xs font-bold uppercase">&#9998;</button>
+                        class="admin-detail-action transition-opacity text-gray-600 hover:text-black text-xs font-bold uppercase" aria-label="Edit spec">&#9998;</button>
                 <button hx-delete="/admin/products/{{$.ProductID}}/specs/{{.ID}}"
                         hx-target="#specs-section"
                         hx-swap="outerHTML"
                         hx-confirm="Delete this spec?"
-                        class="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase">&#x2715;</button>
+                        class="admin-detail-action transition-opacity text-red-600 hover:text-red-800 text-xs font-bold uppercase" aria-label="Delete spec">&#x2715;</button>
             </div>
             {{end}}
         {{end}}
@@ -99,22 +99,22 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Section</label>
-                <input type="text" name="section_name" placeholder="e.g. Motor" required
+                <input aria-label="Section" type="text" name="section_name" placeholder="e.g. Motor" required
                        class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Label</label>
-                <input type="text" name="spec_key" placeholder="e.g. Voltage" required
+                <input aria-label="Label" type="text" name="spec_key" placeholder="e.g. Voltage" required
                        class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Value</label>
-                <input type="text" name="spec_value" placeholder="e.g. 24V DC" required
+                <input aria-label="Value" type="text" name="spec_value" placeholder="e.g. 24V DC" required
                        class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider mb-1">Order</label>
-                <input type="number" name="display_order" placeholder="0" value="0"
+                <input aria-label="Order" type="number" name="display_order" placeholder="0" value="0"
                        class="w-full border-2 border-black px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-yellow-300">
             </div>
         </div>

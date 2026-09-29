@@ -1,0 +1,10 @@
+{
+  "passed": 5,
+  "checks": [
+    "saved editor starts clean",
+    "real edits are protected",
+    "Undo restores exact original HTML and clean state",
+    "Redo restores dirty state",
+    "formatting changes are not mistaken for Undo"
+  ]
+}

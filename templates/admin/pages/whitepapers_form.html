@@ -19,28 +19,28 @@
                 <div class="section-body p-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
+                            <label for="whitepapers-form-title" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
                                 Title *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="Whitepaper title. Use a clear, benefit-driven title.">ⓘ</span>
                             </label>
-                            <input type="text" name="title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
+                            <input id="whitepapers-form-title" type="text" name="title" value="{{if .Item}}{{.Item.Title}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
+                            <label for="whitepapers-form-slug" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
                                 Slug *
                             </label>
-                            <input type="text" name="slug" value="{{if .Item}}{{.Item.Slug}}{{end}}" required
+                            <input id="whitepapers-form-slug" type="text" name="slug" value="{{if .Item}}{{.Item.Slug}}{{end}}" required
                                    class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    style="font-family: 'JetBrains Mono', monospace;">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
+                            <label for="whitepapers-form-topic-id" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
                                 Topic *
                                 <span class="inline-block ml-1 cursor-help text-gray-400" title="The subject category for this whitepaper.">ⓘ</span>
                             </label>
-                            <select name="topic_id" required
+                            <select id="whitepapers-form-topic-id" name="topic_id" required
                                     class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     style="font-family: 'JetBrains Mono', monospace;">
                                 <option value="">Select Topic</option>
@@ -61,10 +61,10 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
+                        <label for="whitepapers-form-published-date" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
                             Published Date
                         </label>
-                        <input type="date" name="published_date" value="{{if .Item}}{{.Item.PublishedDate}}{{end}}"
+                        <input id="whitepapers-form-published-date" type="date" name="published_date" value="{{if .Item}}{{.Item.PublishedDate}}{{end}}"
                                class="w-full md:w-1/2 border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;">
                     </div>
@@ -81,20 +81,20 @@
                 </button>
                 <div class="section-body p-5 space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
+                        <label for="whitepapers-form-description" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
                             Summary *
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Executive summary shown on the listing page. Convince readers to download.">ⓘ</span>
                         </label>
-                        <textarea name="description" required rows="4"
+                        <textarea id="whitepapers-form-description" name="description" required rows="4"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{.Item.Description}}{{end}}</textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
+                        <label for="whitepapers-form-pdf-file" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">
                             PDF File
                             <span class="inline-block ml-1 cursor-help text-gray-400" title="Upload the whitepaper PDF file. This is what users download.">ⓘ</span>
                         </label>
-                        <input type="file" name="pdf_file" accept=".pdf"
+                        <input id="whitepapers-form-pdf-file" type="file" name="pdf_file" accept=".pdf"
                                class="w-full text-sm border-2 border-black px-3 py-2"
                                style="font-family: 'JetBrains Mono', monospace;">
                         {{if .Item}}{{if .Item.PdfFilePath}}
@@ -107,8 +107,8 @@
                         {{end}}{{end}}
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Page Count</label>
-                        <input type="number" name="page_count" min="0" value="{{if .Item}}{{if .Item.PageCount.Valid}}{{.Item.PageCount.Int64}}{{end}}{{end}}"
+                        <label for="whitepapers-form-page-count" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Page Count</label>
+                        <input id="whitepapers-form-page-count" type="number" name="page_count" min="0" value="{{if .Item}}{{if .Item.PageCount.Valid}}{{.Item.PageCount.Int64}}{{end}}{{end}}"
                                class="w-full md:w-1/3 border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;">
                     </div>
@@ -130,13 +130,13 @@
                         </label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs text-gray-600 mb-1" style="font-family: 'JetBrains Mono', monospace;">Color From</label>
-                                <input type="color" name="cover_color_from" value="{{if .Item}}{{.Item.CoverColorFrom}}{{else}}#3B82F6{{end}}"
+                                <label for="whitepapers-form-cover-color-from" class="block text-xs text-gray-600 mb-1" style="font-family: 'JetBrains Mono', monospace;">Color From</label>
+                                <input id="whitepapers-form-cover-color-from" type="color" name="cover_color_from" value="{{if .Item}}{{.Item.CoverColorFrom}}{{else}}#3B82F6{{end}}"
                                        class="w-full h-10 border-2 border-black cursor-pointer">
                             </div>
                             <div>
-                                <label class="block text-xs text-gray-600 mb-1" style="font-family: 'JetBrains Mono', monospace;">Color To</label>
-                                <input type="color" name="cover_color_to" value="{{if .Item}}{{.Item.CoverColorTo}}{{else}}#1E40AF{{end}}"
+                                <label for="whitepapers-form-cover-color-to" class="block text-xs text-gray-600 mb-1" style="font-family: 'JetBrains Mono', monospace;">Color To</label>
+                                <input id="whitepapers-form-cover-color-to" type="color" name="cover_color_to" value="{{if .Item}}{{.Item.CoverColorTo}}{{else}}#1E40AF{{end}}"
                                        class="w-full h-10 border-2 border-black cursor-pointer">
                             </div>
                         </div>
@@ -226,14 +226,14 @@
                 </button>
                 <div class="section-body p-5 space-y-4 hidden">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Meta Title</label>
-                        <input type="text" name="meta_title" value=""
+                        <label for="whitepapers-form-meta-title" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Meta Title</label>
+                        <input id="whitepapers-form-meta-title" type="text" name="meta_title" value=""
                                class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                style="font-family: 'JetBrains Mono', monospace;">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Meta Description</label>
-                        <textarea name="meta_description" rows="3"
+                        <label for="whitepapers-form-meta-description" class="block text-xs font-bold uppercase mb-1" style="font-family: 'JetBrains Mono', monospace;">Meta Description</label>
+                        <textarea id="whitepapers-form-meta-description" name="meta_description" rows="3"
                                   class="w-full border-2 border-black px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   style="font-family: 'JetBrains Mono', monospace;">{{if .Item}}{{if .Item.MetaDescription.Valid}}{{.Item.MetaDescription.String}}{{end}}{{end}}</textarea>
                     </div>
