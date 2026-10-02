@@ -6,13 +6,14 @@
             <!-- Column 1: Logo + About + Social -->
             {{if and .Settings .Settings.ShowFooterAbout}}
             <div>
-                <div class="flex items-center gap-2 mb-4">
+                <div class="footer-brand mb-4">
                     {{if .Settings.FooterLogoPath}}
-                    <img src="{{.Settings.FooterLogoPath}}" alt="{{.Settings.SiteName}}" class="h-12 w-auto max-w-[220px] object-contain">
+                    <img src="{{.Settings.FooterLogoPath}}" alt="{{.Settings.SiteName}}" class="site-footer-logo{{if eq .Settings.FooterLogoPath "/public/images/bluejay-logo-light.svg"}} site-footer-logo-light{{end}}">
                     {{else if .Settings.HeaderLogoPath}}
-                    <img src="{{.Settings.HeaderLogoPath}}" alt="{{.Settings.SiteName}}" class="h-12 w-auto max-w-[220px] object-contain">
-                    {{end}}
+                    <img src="{{.Settings.HeaderLogoPath}}" alt="{{.Settings.SiteName}}" class="site-footer-logo{{if eq .Settings.HeaderLogoPath "/public/images/bluejay-logo-light.svg"}} site-footer-logo-light{{end}}">
+                    {{else}}
                     <span class="font-black text-lg tracking-wider uppercase">{{.Settings.SiteName}}</span>
+                    {{end}}
                 </div>
                 {{if and .Settings .Settings.AboutText}}
                 <p class="text-sm text-gray-400 leading-relaxed mb-5">{{.Settings.AboutText}}</p>

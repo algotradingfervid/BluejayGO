@@ -159,3 +159,11 @@ main h1, main h2, main h3, main p, main a { overflow-wrap: anywhere; }
 .testimonial-selector { width: 44px; height: 44px; font-size: .8rem; font-weight: 700; }
 
 .ui-request-feedback { padding: .75rem; margin: .75rem 0; border: 2px solid #991b1b; background: #fef2f2; color: #991b1b; font-size: .875rem; overflow-wrap: anywhere; }
+
+/* Keep the complete wordmark legible without crowding navigation. */
+.site-header-logo { display: block; width: 232px; max-width: 100%; height: auto; max-height: 56px; object-fit: contain; }
+.site-footer-logo { display: block; width: 224px; max-width: 100%; height: auto; max-height: 72px; object-fit: contain; }
+.site-footer-logo-light { box-sizing: content-box; max-width: calc(100% - 24px); padding: 12px; background: white; }
+@media (max-width: 639px) {
+    .site-header-logo { width: 176px; }
+}
